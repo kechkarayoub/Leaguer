@@ -203,8 +203,7 @@ Thumbs.db
 # Docker
 docker-compose.override.yml
 docker-compose.override.yaml
-**/Dockerfile
-**/docker-compose.yml
+
 
 # Images Docker et dossiers de cache
 **/logs

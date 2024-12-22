@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  postgres:
+    env_file:
+      - .env
+    image: postgres:latest
+    container_name: db-container
+    networks:
+      - leaguer-network
+    environment:
+      POSTGRES_USER: ${DB_USER_NM}
+      POSTGRES_PASSWORD: ${DB_USER_PW}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - ${DB_CONTAINER_EXTERNAL_PORT}:${DB_CONTAINER_INTERNAL_PORT}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  backend:
+    networks:
+      - leaguer-network
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - ${DJANGO_CONTAINER_EXTERNAL_PORT}:${DJANGO_CONTAINER_INTERNAL_PORT}
+    image: backend:leaguer
+    depends_on:
+      - postgres
+    container_name: backend_container
+    command: python manage.py runserver 0.0.0.0:${DJANGO_CONTAINER_INTERNAL_PORT}
+    environment:
+      - DATABASE_URL=postgres://${DB_USER_NM}:${DB_USER_PW}@postgres:${DB_CONTAINER_INTERNAL_PORT}/${DB_NAME}
+    #  - PIPLINE=${PIPLINE}
+networks:
+  leaguer-network:
+
+volumes:
+  postgres_data:
