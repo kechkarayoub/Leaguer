@@ -16,6 +16,12 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
+# Define the log directory path
+log_dir = os.path.join(BASE_DIR, 'logs')
+
+# Create the directory if it doesn't exist
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
 
 # Application definition
 
