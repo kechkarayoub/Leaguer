@@ -1,4 +1,10 @@
-Dans la racine du docier backend, ajouter un fichier .env qui contient:
+Install gettext:
+    Run:
+        apt install gettext
+    If not working, run:
+        sudo apt install gettext
+
+In the root directory backend, add file .env that contains:
     DB_CONTAINER_EXTERNAL_PORT=5434
     DB_CONTAINER_INTERNAL_PORT=5432
     DB_IP=postgres
@@ -10,3 +16,16 @@ Dans la racine du docier backend, ajouter un fichier .env qui contient:
     DJANGO_CONTAINER_INTERNAL_PORT=8000
     PIPLINE="development"
     DJANGO_SECRET_KEY="django-SECRET-KEY"
+
+Generate .po Files:
+    For each app:
+        Create locale directory.
+        Change working directory to the app
+        Run:
+            django-admin makemessages -l ar
+            django-admin makemessages -l en
+            django-admin makemessages -l fr
+Generate .mo files:
+    After adding translations, run:
+        django-admin compilemessages
+

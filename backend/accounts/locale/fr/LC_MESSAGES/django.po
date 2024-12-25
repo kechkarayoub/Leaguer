@@ -1,0 +1,112 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-12-25 22:27+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+#: admin.py:24
+msgid "Personal Info"
+msgstr "Informations personnelles"
+
+#: admin.py:30
+msgid "Permissions"
+msgstr "Autorisations"
+
+#: admin.py:35
+msgid "Important Dates"
+msgstr "Dates importantes"
+
+#: models.py:32
+msgid "User"
+msgstr "Utilisateur"
+
+#: models.py:33
+msgid "Users"
+msgstr "Utilisateurs"
+
+#: models.py:35
+msgid "Address"
+msgstr "Adresse"
+
+#: models.py:36
+msgid "Birthday"
+msgstr "Date de naissance"
+
+#: models.py:37
+msgid "CIN"
+msgstr "CIN"
+
+#: models.py:38
+msgid "Country"
+msgstr "Pays"
+
+#: models.py:39
+msgid "Current language"
+msgstr "Langue actuelle"
+
+#: models.py:40
+msgid "Email"
+msgstr "Email"
+
+#: models.py:41
+msgid "First name"
+msgstr "Prénom"
+
+#: models.py:42
+msgid "GENDER"
+msgstr "Genre"
+
+#: models.py:43
+msgid "Image url"
+msgstr "URL de l'image"
+
+#: models.py:44
+msgid "Is active"
+msgstr "est active"
+
+#: models.py:45
+msgid "Is deleted"
+msgstr "Est supprimé"
+
+#: models.py:46
+msgid "Last name"
+msgstr "Nom de famille"
+
+#: models.py:47
+msgid "Phone number"
+msgstr "Numéro de téléphone"
+
+#: serializers.py:28
+msgid ""
+"Phone number must start with a '+' followed by the country code and the "
+"phone number."
+msgstr "Le numéro de téléphone doit commencer par un '+' suivi de l'indicatif du pays et du numéro de téléphone."
+
+#: serializers.py:41
+msgid "The minimum age allowed for users is: "
+msgstr "L'âge minimum autorisé pour les utilisateurs est : "
+
+#: utils.py:4
+msgid "Select"
+msgstr "Sélectionner"
+
+#: utils.py:4
+msgid "Female"
+msgstr "Femme"
+
+#: utils.py:4
+msgid "Male"
+msgstr "Homme"

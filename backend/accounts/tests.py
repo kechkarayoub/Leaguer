@@ -2,7 +2,9 @@ from .models import User
 from .serializers import UserSerializer
 from .utils import GENDERS_CHOICES
 from datetime import date
+from django.conf import settings
 from django.test import TestCase
+from django.utils.translation import gettext_lazy as _
 from rest_framework.test import APITestCase
 
 
@@ -28,6 +30,7 @@ class UserModelTest(TestCase):
         self.assertEqual(self.user.birthday, date(2000, 1, 1))
         self.assertEqual(self.user.cin, "Cin test")
         self.assertEqual(self.user.country, "Testland")
+        self.assertEqual(self.user.current_language, settings.LANGUAGE_CODE)
         self.assertEqual(self.user.email, "testuser@example.com")
         self.assertEqual(self.user.first_name, "First name")
         self.assertEqual(self.user.gender, GENDERS_CHOICES[1][0])
@@ -103,6 +106,7 @@ class UserSerializerTest(APITestCase):
             'birthday': date(2000, 1, 1),
             'cin': "Cin test",
             'country': "Testland",
+            'current_language': "en",
             'email': "testuser@example.com",
             'first_name': "First name",
             'gender': GENDERS_CHOICES[1][0],
@@ -124,6 +128,7 @@ class UserSerializerTest(APITestCase):
         self.assertEqual(data['birthday'], "2000-01-01")
         self.assertEqual(data['cin'], "Cin test")
         self.assertEqual(data['country'], "Testland")
+        self.assertEqual(data['current_language'], "en")
         self.assertEqual(data['email'], "testuser@example.com")
         self.assertEqual(data['first_name'], "First name")
         self.assertEqual(data['gender'], GENDERS_CHOICES[1][0])
@@ -131,7 +136,7 @@ class UserSerializerTest(APITestCase):
         self.assertEqual(data['last_name'], "Last name")
         self.assertEqual(data['phone_number'], "+1234567890")
         self.assertEqual(data['username'], "testuser")
-        self.assertEqual(len(data.keys()), 15)
+        self.assertEqual(len(data.keys()), 16)
         self.assertIn('date_joined', data)
 
     def test_valid_serializer(self):

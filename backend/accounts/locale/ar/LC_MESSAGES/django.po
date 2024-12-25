@@ -1,0 +1,113 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-12-25 22:26+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+#: admin.py:24
+msgid "Personal Info"
+msgstr "المعلومات الشخصية"
+
+#: admin.py:30
+msgid "Permissions"
+msgstr "الأذونات"
+
+#: admin.py:35
+msgid "Important Dates"
+msgstr "التواريخ المهمة"
+
+#: models.py:32
+msgid "User"
+msgstr "المستخدم"
+
+#: models.py:33
+msgid "Users"
+msgstr "المستخدمون"
+
+#: models.py:35
+msgid "Address"
+msgstr "العنوان"
+
+#: models.py:36
+msgid "Birthday"
+msgstr "تاريخ الميلاد"
+
+#: models.py:37
+msgid "CIN"
+msgstr "رقم بطاقة التعريف الوطنية"
+
+#: models.py:38
+msgid "Country"
+msgstr "البلد"
+
+#: models.py:39
+msgid "Current language"
+msgstr "اللغة الحالية"
+
+#: models.py:40
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+#: models.py:41
+msgid "First name"
+msgstr "الاسم"
+
+#: models.py:42
+msgid "GENDER"
+msgstr "الجنس"
+
+#: models.py:43
+msgid "Image url"
+msgstr "رابط الصورة"
+
+#: models.py:44
+msgid "Is active"
+msgstr "تم التفعيل"
+
+#: models.py:45
+msgid "Is deleted"
+msgstr "تم الحذف"
+
+#: models.py:46
+msgid "Last name"
+msgstr "اللقب"
+
+#: models.py:47
+msgid "Phone number"
+msgstr "رقم الهاتف"
+
+#: serializers.py:28
+msgid ""
+"Phone number must start with a '+' followed by the country code and the "
+"phone number."
+msgstr "يجب أن يبدأ رقم الهاتف برمز '+' يليه رمز البلد ورقم الهاتف."
+
+#: serializers.py:41
+msgid "The minimum age allowed for users is: "
+msgstr "الحد الأدنى للعمر المسموح به للمستخدمين هو: "
+
+#: utils.py:4
+msgid "Select"
+msgstr "اختر"
+
+#: utils.py:4
+msgid "Female"
+msgstr "أنثى"
+
+#: utils.py:4
+msgid "Male"
+msgstr "ذكر"

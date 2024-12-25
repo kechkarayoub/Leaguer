@@ -1,6 +1,7 @@
 from .models import User
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.utils.translation import gettext_lazy as _
 
 
 class UserAdmin(BaseUserAdmin):
@@ -20,20 +21,20 @@ class UserAdmin(BaseUserAdmin):
         (None, {
             'fields': ('username', 'password')
         }),
-        ('Personal Info', {
+        (_('Personal Info'), {
             'fields': (
                 'first_name', 'last_name', 'email', 'phone_number', 'birthday', 'gender', 'address',
-                'country'
+                'country', 'current_language',
             )
         }),
-        ('Permissions', {
+        (_('Permissions'), {
             'fields': (
                 'is_active', 'is_deleted', 'is_staff', 'is_superuser', 'groups', 'user_permissions'
             )
         }),
-        ('Important Dates', {
-            'fields': ('last_login', 'date_joined')}
-        ),
+        (_('Important Dates'), {
+            'fields': ('last_login', 'date_joined')
+        }),
     )
     # Fields to use for adding a new user
     add_fieldsets = (

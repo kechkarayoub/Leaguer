@@ -30,6 +30,10 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = []
+
+
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 DB_NAME = get_secret("DB_NAME")
