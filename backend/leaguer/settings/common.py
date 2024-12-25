@@ -23,6 +23,9 @@ log_dir = os.path.join(BASE_DIR, 'logs')
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 
+
+AUTH_USER_MODEL = 'accounts.User'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -32,6 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -107,7 +112,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # LOGGING
-print(os.path.join(BASE_DIR, 'backend/logs', 'log.log'))
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -150,5 +154,7 @@ LOGGING = {
     },
 }
 
+
+MINIMUM_AGE_ALLOWED_FOR_USERS = 12
 
 

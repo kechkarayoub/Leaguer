@@ -1,5 +1,0 @@
-Dans la racine du docier backend, ajouter un fichier .env qui contient:
-    MYSQL_DATABASE=leaguer
-    MYSQL_USER=leaguer_user
-    MYSQL_PASSWORD=securepassword
-    MYSQL_ROOT_PASSWORD=root
