@@ -26,6 +26,7 @@ Generate .po Files:
             django-admin makemessages -l en
             django-admin makemessages -l fr
 Generate .mo files:
-    After adding translations, run:
-        django-admin compilemessages
+    For each app:
+        After adding translations, run:
+            django-admin compilemessages
 

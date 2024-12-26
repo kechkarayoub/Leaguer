@@ -53,11 +53,11 @@ MIDDLEWARE = [
 ]
 
 # Directory for language files
-# LOCALE_PATHS = [
-#     BASE_DIR / 'accounts/locale',
-#     BASE_DIR / 'i18n_switcher/locale',
-#     BASE_DIR / 'leaguer/locale',
-# ]
+LOCALE_PATHS = [
+    BASE_DIR / 'accounts/locale',
+    BASE_DIR / 'i18n_switcher/locale',
+    BASE_DIR / 'leaguer/locale',
+]
 
 ROOT_URLCONF = 'leaguer.urls'
 

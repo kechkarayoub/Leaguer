@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-25 22:27+0000\n"
+"POT-Creation-Date: 2024-12-26 06:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
 #: admin.py:24
 msgid "Personal Info"
 msgstr "Informations personnelles"
@@ -28,6 +29,10 @@ msgstr "Autorisations"
 #: admin.py:35
 msgid "Important Dates"
 msgstr "Dates importantes"
+
+#: apps.py:8
+msgid "Accounts"
+msgstr "Comptes"
 
 #: models.py:32
 msgid "User"
@@ -93,7 +98,9 @@ msgstr "Numéro de téléphone"
 msgid ""
 "Phone number must start with a '+' followed by the country code and the "
 "phone number."
-msgstr "Le numéro de téléphone doit commencer par un '+' suivi de l'indicatif du pays et du numéro de téléphone."
+msgstr ""
+"Le numéro de téléphone doit commencer par un '+' suivi de l'indicatif du "
+"pays et du numéro de téléphone."
 
 #: serializers.py:41
 msgid "The minimum age allowed for users is: "
