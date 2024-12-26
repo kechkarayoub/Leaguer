@@ -13,7 +13,7 @@ class UserAdmin(BaseUserAdmin):
         'id', 'username', 'email', 'last_name', 'first_name', 'is_active', 'is_deleted', 'phone_number'
     )
     # Fields to filter by in the sidebar
-    list_filter = ('is_active', 'is_deleted')
+    list_filter = ('is_active', 'is_email_validated', 'is_deleted', 'is_phone_number_validated')
     # Fields to search by
     search_fields = ('username', 'email', 'first_name', 'last_name', 'phone_number', 'cin')
     # Fields to display in the detailed edit view
@@ -29,7 +29,8 @@ class UserAdmin(BaseUserAdmin):
         }),
         (_('Permissions'), {
             'fields': (
-                'is_active', 'is_deleted', 'is_staff', 'is_superuser', 'groups', 'user_permissions'
+                'is_active', 'is_email_validated', 'is_deleted', 'is_phone_number_validated', 'is_staff',
+                'is_superuser', 'groups', 'user_permissions'
             )
         }),
         (_('Important Dates'), {

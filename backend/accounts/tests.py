@@ -38,7 +38,9 @@ class UserModelTest(TestCase):
         self.assertEqual(self.user.last_name, "Last name")
         self.assertEqual(self.user.phone_number, "1234567890")
         self.assertEqual(self.user.username, "testuser")
+        self.assertFalse(self.user.is_email_validated)
         self.assertFalse(self.user.is_deleted)
+        self.assertFalse(self.user.is_phone_number_validated)
         self.assertNotEqual(self.user.password, "testpassword123")
         self.assertTrue(self.user.is_active)
 
@@ -136,7 +138,7 @@ class UserSerializerTest(APITestCase):
         self.assertEqual(data['last_name'], "Last name")
         self.assertEqual(data['phone_number'], "+1234567890")
         self.assertEqual(data['username'], "testuser")
-        self.assertEqual(len(data.keys()), 16)
+        self.assertEqual(len(data.keys()), 18)
         self.assertIn('date_joined', data)
 
     def test_valid_serializer(self):

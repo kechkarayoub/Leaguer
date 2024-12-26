@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-26 06:53+0000\n"
+"POT-Creation-Date: 2024-12-26 07:31+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,7 +27,7 @@ msgstr "المعلومات الشخصية"
 msgid "Permissions"
 msgstr "الأذونات"
 
-#: admin.py:35
+#: admin.py:36
 msgid "Important Dates"
 msgstr "التواريخ المهمة"
 
@@ -35,73 +35,81 @@ msgstr "التواريخ المهمة"
 msgid "Accounts"
 msgstr "الحسابات"
 
-#: models.py:32
+#: models.py:34
 msgid "User"
 msgstr "المستخدم"
 
-#: models.py:33
+#: models.py:35
 msgid "Users"
 msgstr "المستخدمون"
 
-#: models.py:35
+#: models.py:37
 msgid "Address"
 msgstr "العنوان"
 
-#: models.py:36
+#: models.py:38
 msgid "Birthday"
 msgstr "تاريخ الميلاد"
 
-#: models.py:37
+#: models.py:39
 msgid "CIN"
 msgstr "رقم بطاقة التعريف الوطنية"
 
-#: models.py:38
+#: models.py:40
 msgid "Country"
 msgstr "البلد"
 
-#: models.py:39
+#: models.py:41
 msgid "Current language"
 msgstr "اللغة الحالية"
 
-#: models.py:40
+#: models.py:42
 msgid "Email"
 msgstr "البريد الإلكتروني"
 
-#: models.py:41
+#: models.py:43
 msgid "First name"
 msgstr "الاسم"
 
-#: models.py:42
+#: models.py:44
 msgid "GENDER"
 msgstr "الجنس"
 
-#: models.py:43
+#: models.py:45
 msgid "Image url"
 msgstr "رابط الصورة"
 
-#: models.py:44
+#: models.py:46
 msgid "Is active"
 msgstr "تم التفعيل"
 
-#: models.py:45
+#: models.py:47
+msgid "Is email validated"
+msgstr "تم التحقق من البريد الإلكتروني"
+
+#: models.py:48
 msgid "Is deleted"
 msgstr "تم الحذف"
 
-#: models.py:46
+#: models.py:49
+msgid "Is phone number validated"
+msgstr "هل تم التحقق من رقم الهاتف"
+
+#: models.py:50
 msgid "Last name"
 msgstr "اللقب"
 
-#: models.py:47
+#: models.py:51
 msgid "Phone number"
 msgstr "رقم الهاتف"
 
-#: serializers.py:28
+#: serializers.py:29
 msgid ""
 "Phone number must start with a '+' followed by the country code and the "
 "phone number."
 msgstr "يجب أن يبدأ رقم الهاتف برمز '+' يليه رمز البلد ورقم الهاتف."
 
-#: serializers.py:41
+#: serializers.py:42
 msgid "The minimum age allowed for users is: "
 msgstr "الحد الأدنى للعمر المسموح به للمستخدمين هو: "
 

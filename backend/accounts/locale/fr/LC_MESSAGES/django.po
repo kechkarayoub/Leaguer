@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-26 06:53+0000\n"
+"POT-Creation-Date: 2024-12-26 07:32+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgstr "Informations personnelles"
 msgid "Permissions"
 msgstr "Autorisations"
 
-#: admin.py:35
+#: admin.py:36
 msgid "Important Dates"
 msgstr "Dates importantes"
 
@@ -34,67 +34,75 @@ msgstr "Dates importantes"
 msgid "Accounts"
 msgstr "Comptes"
 
-#: models.py:32
+#: models.py:34
 msgid "User"
 msgstr "Utilisateur"
 
-#: models.py:33
+#: models.py:35
 msgid "Users"
 msgstr "Utilisateurs"
 
-#: models.py:35
+#: models.py:37
 msgid "Address"
 msgstr "Adresse"
 
-#: models.py:36
+#: models.py:38
 msgid "Birthday"
 msgstr "Date de naissance"
 
-#: models.py:37
+#: models.py:39
 msgid "CIN"
 msgstr "CIN"
 
-#: models.py:38
+#: models.py:40
 msgid "Country"
 msgstr "Pays"
 
-#: models.py:39
+#: models.py:41
 msgid "Current language"
 msgstr "Langue actuelle"
 
-#: models.py:40
+#: models.py:42
 msgid "Email"
 msgstr "Email"
 
-#: models.py:41
+#: models.py:43
 msgid "First name"
 msgstr "Prénom"
 
-#: models.py:42
+#: models.py:44
 msgid "GENDER"
 msgstr "Genre"
 
-#: models.py:43
+#: models.py:45
 msgid "Image url"
 msgstr "URL de l'image"
 
-#: models.py:44
+#: models.py:46
 msgid "Is active"
 msgstr "est active"
 
-#: models.py:45
+#: models.py:47
+msgid "Is email validated"
+msgstr "L'e-mail est-il validé"
+
+#: models.py:48
 msgid "Is deleted"
 msgstr "Est supprimé"
 
-#: models.py:46
+#: models.py:49
+msgid "Is phone number validated"
+msgstr "Le numéro de téléphone est-il validé"
+
+#: models.py:50
 msgid "Last name"
 msgstr "Nom de famille"
 
-#: models.py:47
+#: models.py:51
 msgid "Phone number"
 msgstr "Numéro de téléphone"
 
-#: serializers.py:28
+#: serializers.py:29
 msgid ""
 "Phone number must start with a '+' followed by the country code and the "
 "phone number."
@@ -102,7 +110,7 @@ msgstr ""
 "Le numéro de téléphone doit commencer par un '+' suivi de l'indicatif du "
 "pays et du numéro de téléphone."
 
-#: serializers.py:41
+#: serializers.py:42
 msgid "The minimum age allowed for users is: "
 msgstr "L'âge minimum autorisé pour les utilisateurs est : "
 
