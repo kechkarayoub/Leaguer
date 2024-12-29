@@ -16,6 +16,13 @@ In the root directory backend, add file .env that contains:
     DJANGO_CONTAINER_INTERNAL_PORT=8000
     PIPLINE="development"
     DJANGO_SECRET_KEY="django-SECRET-KEY"
+    EMAIL_HOST="smtp.gmail.com"
+    EMAIL_PORT=587
+    EMAIL_USE_TLS="true"
+    EMAIL_HOST_USER = "leaguerdev@gmail.com"
+    EMAIL_HOST_PASSWORD = "as_default_keyboard"  # Use an App Password
+    DEFAULT_FROM_EMAIL = "leaguerdev@gmail.com"
+
 
 Generate .po Files:
     For each app:

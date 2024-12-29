@@ -1,11 +1,13 @@
 from .models import User
 from .serializers import UserSerializer
 from .utils import GENDERS_CHOICES
+from .views import send_verification_email, verify_user_email
 from datetime import date
 from django.conf import settings
 from django.test import TestCase
 from django.utils.translation import gettext_lazy as _
 from rest_framework.test import APITestCase
+import json
 
 
 class UserModelTest(TestCase):
@@ -174,3 +176,49 @@ class UserSerializerTest(APITestCase):
         serializer = UserSerializer(data={**self.valid_data, 'phone_number': "123"})
         self.assertFalse(serializer.is_valid())
         self.assertIn("phone_number", serializer.errors)
+
+
+class EmailVerificationTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', email='test@example.com', password='password123')
+    #
+    # def test_send_verification_email(self):
+    #     self.assertFalse(self.user.is_email_validated)
+    #     status_code, _ = send_verification_email(self.user)
+    #     self.assertEqual(status_code, 200)
+    #     status_code, _ = send_verification_email(self.user, handle_end_email_error=True)
+    #     self.assertEqual(status_code, 500)
+    #
+    # def test_verify_user_email_valid(self):
+    #     _, (uid, token) = send_verification_email(self.user)
+    #     verified, already_verified = verify_user_email(uid, token)
+    #     self.assertTrue(verified)
+    #     self.assertFalse(already_verified)
+    #     self.user = User.objects.get(pk=self.user.id)
+    #     self.assertTrue(self.user.is_email_validated)
+    #     verified, already_verified = verify_user_email(uid, token)
+    #     self.assertTrue(verified)
+    #     self.assertTrue(already_verified)
+    #
+    # def test_verify_user_email_invalid(self):
+    #     _, (uid, token) = send_verification_email(self.user)
+    #     verified, already_verified = verify_user_email(uid, 'invalid-token')
+    #     self.assertFalse(verified)
+    #     self.assertFalse(already_verified)
+
+    def test_verify_email_view(self):
+        _, (uid, token) = send_verification_email(self.user)
+        response = self.client.get('/accounts/verify-email/', {'uid': uid, 'token': token})
+        self.assertEqual(response.status_code, 200)
+        self.user = User.objects.get(pk=self.user.id)
+        self.assertTrue(self.user.is_email_validated)
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Email verified successfully.")
+        response = self.client.get('/accounts/verify-email/', {'uid': uid, 'token': token})
+        self.assertEqual(response.status_code, 200)
+        self.user = User.objects.get(pk=self.user.id)
+        self.assertTrue(self.user.is_email_validated)
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Email already verified.")

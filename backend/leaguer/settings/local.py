@@ -56,3 +56,17 @@ DATABASES = {
 }
 
 
+# EMAIL
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = get_secret("EMAIL_HOST")
+EMAIL_PORT = get_secret("EMAIL_PORT")
+EMAIL_USE_TLS = get_secret("EMAIL_USE_TLS") == "true"
+EMAIL_HOST_USER = get_secret("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = get_secret("EMAIL_HOST_PASSWORD")  # Use an App Password
+DEFAULT_FROM_EMAIL = get_secret("DEFAULT_FROM_EMAIL")
+
+
+# Endpoints
+BACKEND_ENDPOINT = ""
+FRONTEND_ENDPOINT = "http:localhost:3000"
+

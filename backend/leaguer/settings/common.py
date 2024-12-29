@@ -66,7 +66,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(BASE_DIR, 'templates'),
-            # os.path.join(BASE_DIR, 'accounts/templates'),
+            os.path.join(BASE_DIR, 'accounts/templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -185,4 +185,10 @@ LANGUAGES = [
     ('fr', _('French')),
 ]
 
+# Endpoints
+BACKEND_ENDPOINT = ""
+FRONTEND_ENDPOINT = ""
+
+ADDRESS = "400 AV ZERKTOUNI, BOURGONE, CASABLAMNCA, MOROCCO"
+APPLICATION_NAME = "LEAGUER"
 
