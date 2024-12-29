@@ -1,3 +1,5 @@
+import datetime
+
 from .models import User
 from .serializers import UserSerializer
 from .utils import GENDERS_CHOICES
@@ -181,30 +183,44 @@ class UserSerializerTest(APITestCase):
 class EmailVerificationTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='testuser', email='test@example.com', password='password123')
-    #
-    # def test_send_verification_email(self):
-    #     self.assertFalse(self.user.is_email_validated)
-    #     status_code, _ = send_verification_email(self.user)
-    #     self.assertEqual(status_code, 200)
-    #     status_code, _ = send_verification_email(self.user, handle_end_email_error=True)
-    #     self.assertEqual(status_code, 500)
-    #
-    # def test_verify_user_email_valid(self):
-    #     _, (uid, token) = send_verification_email(self.user)
-    #     verified, already_verified = verify_user_email(uid, token)
-    #     self.assertTrue(verified)
-    #     self.assertFalse(already_verified)
-    #     self.user = User.objects.get(pk=self.user.id)
-    #     self.assertTrue(self.user.is_email_validated)
-    #     verified, already_verified = verify_user_email(uid, token)
-    #     self.assertTrue(verified)
-    #     self.assertTrue(already_verified)
-    #
-    # def test_verify_user_email_invalid(self):
-    #     _, (uid, token) = send_verification_email(self.user)
-    #     verified, already_verified = verify_user_email(uid, 'invalid-token')
-    #     self.assertFalse(verified)
-    #     self.assertFalse(already_verified)
+
+    def test_send_verification_email(self):
+        self.assertFalse(self.user.is_email_validated)
+        status_code, _ = send_verification_email(self.user)
+        self.assertEqual(status_code, 200)
+        status_code, _ = send_verification_email(self.user, handle_end_email_error=True)
+        self.assertEqual(status_code, 500)
+
+    def test_verify_user_email_valid(self):
+        _, (uid, token) = send_verification_email(self.user)
+        verified, already_verified, expired_token = verify_user_email(uid, token)
+        self.assertTrue(verified)
+        self.assertFalse(already_verified)
+        self.assertFalse(expired_token)
+        self.user = User.objects.get(pk=self.user.id)
+        self.assertTrue(self.user.is_email_validated)
+        verified, already_verified, expired_token = verify_user_email(uid, token)
+        self.assertTrue(verified)
+        self.assertTrue(already_verified)
+        self.assertFalse(expired_token)
+
+    def test_verify_user_email_invalid(self):
+        _, (uid, token) = send_verification_email(self.user)
+        verified, already_verified, expired_token = verify_user_email(uid, 'invalid-token')
+        self.assertFalse(verified)
+        self.assertFalse(already_verified)
+        self.assertFalse(expired_token)
+
+    def test_verify_user_email_expired(self):
+        _, (uid, token) = send_verification_email(self.user)
+        token_date = token.split("_*_")
+        yesterday_timestamp = (datetime.datetime.now() - datetime.timedelta(days=1)).timestamp()
+        token_date[1] = str(yesterday_timestamp)
+        token = "_*_".join(token_date)
+        verified, already_verified, expired_token = verify_user_email(uid, token)
+        self.assertFalse(verified)
+        self.assertFalse(already_verified)
+        self.assertTrue(expired_token)
 
     def test_verify_email_view(self):
         _, (uid, token) = send_verification_email(self.user)

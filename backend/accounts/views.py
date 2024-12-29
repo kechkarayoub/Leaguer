@@ -9,6 +9,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.translation import gettext_lazy as _
 from leaguer.utils import get_email_base_context
 from smtplib import SMTPException, SMTPAuthenticationError, SMTPSenderRefused, SMTPRecipientsRefused, SMTPDataError
+import datetime
 
 
 def send_verification_email(user, handle_end_email_error=False):
@@ -22,7 +23,9 @@ def send_verification_email(user, handle_end_email_error=False):
     Returns:
         tuple: A tuple containing the status code (int) and token data (tuple).
     """
-    token = default_token_generator.make_token(user)
+    token_ = default_token_generator.make_token(user)
+    timestamp_str = str(datetime.datetime.now().timestamp())
+    token = token_ + "_*_" + timestamp_str
     uid = urlsafe_base64_encode(force_bytes(user.pk))
 
     # Build the verification URL
@@ -56,28 +59,39 @@ def send_verification_email(user, handle_end_email_error=False):
     return 200, (uid, token)
 
 
-def verify_user_email(uid, token):
+def verify_user_email(uid, token_):
     """
     Verifies the email token for a user.
 
     Args:
         uid (str): Base64 encoded user ID.
-        token (str): Token for email verification.
+        token_ (str): Token for email verification.
 
     Returns:
-        tuple: ((True if verification is successful, False otherwise), (True if already verified, False otherwise)).
+        tuple: (
+            (True if verification is successful, False otherwise),
+            (True if already verified, False otherwise),
+            (True if not verified and expired, False otherwise),
+        ).
     """
+    token_date = token_.split("_*_")
+    token = token_date[0]
+    timestamp = len(token_date) == 2 and float(token_date[1])
+    date_token = timestamp and datetime.datetime.fromtimestamp(timestamp)
     uid = urlsafe_base64_decode(uid).decode()
     user = User.objects.get(pk=uid)
 
     if user.is_email_validated:
-        return True, True
+        return True, True, False
+    elif date_token and date_token.strftime("%Y-%m-%d") != datetime.datetime.now().strftime("%Y-%m-%d"):
+        send_verification_email(user)
+        return False, False, True
     if default_token_generator.check_token(user, token):
         user.is_email_validated = True
         user.save()
-        return True, False
+        return True, False, False
     else:
-        return False, False
+        return False, False, False
 
 
 def verify_email(request):
@@ -94,7 +108,7 @@ def verify_email(request):
     token = request.GET.get('token')
 
     try:
-        verified, already_verified = verify_user_email(uid, token)
+        verified, already_verified, expired_token = verify_user_email(uid, token)
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         return JsonResponse({"message": _("Invalid verification link.")}, status=400)
 
@@ -104,6 +118,11 @@ def verify_email(request):
         else:
             return JsonResponse({"message": _("Email verified successfully.")})
     else:
-        return JsonResponse({"message": _("Invalid or expired token.")}, status=400)
+        if expired_token:
+            return JsonResponse({
+                "message": _("Expired token. A new verification email will be sent to your email address.")
+            }, status=400)
+        else:
+            return JsonResponse({"message": _("Invalid token.")}, status=400)
 
 
