@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import activate, gettext_lazy as _
 from leaguer.utils import get_email_base_context
 from smtplib import SMTPException, SMTPAuthenticationError, SMTPSenderRefused, SMTPRecipientsRefused, SMTPDataError
 import datetime
@@ -59,13 +59,14 @@ def send_verification_email(user, handle_end_email_error=False):
     return 200, (uid, token)
 
 
-def verify_user_email(uid, token_):
+def verify_user_email(uid, token_, resend_verification_email=False):
     """
     Verifies the email token for a user.
 
     Args:
         uid (str): Base64 encoded user ID.
         token_ (str): Token for email verification.
+        resend_verification_email (bool): resend the verification email for the user if True.
 
     Returns:
         tuple: (
@@ -83,7 +84,7 @@ def verify_user_email(uid, token_):
 
     if user.is_email_validated:
         return True, True, False
-    elif date_token and date_token.strftime("%Y-%m-%d") != datetime.datetime.now().strftime("%Y-%m-%d"):
+    elif resend_verification_email or date_token and date_token.strftime("%Y-%m-%d") != datetime.datetime.now().strftime("%Y-%m-%d"):
         send_verification_email(user)
         return False, False, True
     if default_token_generator.check_token(user, token):
@@ -106,9 +107,13 @@ def verify_email(request):
     """
     uid = request.GET.get('uid')
     token = request.GET.get('token')
+    resend_verification_email = request.GET.get('resend_verification_email') in [True, "true"]
 
+    uid_ = urlsafe_base64_decode(uid).decode()
+    user = User.objects.get(pk=uid_)
+    activate(user.current_language)
     try:
-        verified, already_verified, expired_token = verify_user_email(uid, token)
+        verified, already_verified, expired_token = verify_user_email(uid, token, resend_verification_email=resend_verification_email)
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         return JsonResponse({"message": _("Invalid verification link.")}, status=400)
 

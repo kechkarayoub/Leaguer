@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-26 07:31+0000\n"
+"POT-Creation-Date: 2024-12-30 07:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -113,6 +113,47 @@ msgstr "يجب أن يبدأ رقم الهاتف برمز '+' يليه رمز ا
 msgid "The minimum age allowed for users is: "
 msgstr "الحد الأدنى للعمر المسموح به للمستخدمين هو: "
 
+#: templates/email_verification.html:4
+msgid "Verify Your Email"
+msgstr "التحقق من بريدك الإلكتروني"
+
+#: templates/email_verification.html:7
+#, python-format
+msgid "Welcome, %(first_name)s!"
+msgstr "مرحبًا، %(first_name)s!"
+
+#: templates/email_verification.html:8
+msgid ""
+"Thank you for registering. Please verify your email by clicking the link "
+"below:"
+msgstr "شكرًا لتسجيلك. يرجى التحقق من بريدك الإلكتروني بالنقر على الرابط أدناه:"
+
+#: templates/email_verification.html:10
+msgid "Verify Email"
+msgstr "تحقق من البريد الإلكتروني"
+
+#: templates/email_verification.html:12
+msgid ""
+"If you did not sign up for this account, you can safely ignore this email."
+msgstr "إذا لم تقم بالتسجيل للحصول على هذا الحساب، يمكنك تجاهل هذا البريد الإلكتروني بأمان."
+
+#: templates/email_verification.txt:2
+#, python-format
+msgid ""
+"\n"
+"Hello %(first_name)s,\n"
+msgstr ""
+"\n"
+"مرحبًا %(first_name)s،\n"
+"\n"
+
+#: templates/email_verification.txt:6
+msgid ""
+"\n"
+"Thank you for registering. Please verify your email by clicking the link "
+"below:\n"
+msgstr "\nشكرًا لتسجيلك. يرجى التحقق من بريدك الإلكتروني بالنقر على الرابط أدناه:"
+
 #: utils.py:4
 msgid "Select"
 msgstr "اختر"
@@ -124,3 +165,28 @@ msgstr "أنثى"
 #: utils.py:4
 msgid "Male"
 msgstr "ذكر"
+
+#: views.py:35 views.py:39
+msgid "Verify Your Email Address"
+msgstr "تحقق من عنوان بريدك الإلكتروني"
+
+#: views.py:115
+msgid "Invalid verification link."
+msgstr "رابط التحقق غير صالح."
+
+#: views.py:119
+msgid "Email already verified."
+msgstr "تم بالفعل التحقق من البريد الإلكتروني."
+
+#: views.py:121
+msgid "Email verified successfully."
+msgstr "تم التحقق من البريد الإلكتروني بنجاح."
+
+#: views.py:125
+msgid ""
+"Expired token. A new verification email will be sent to your email address."
+msgstr "انتهت صلاحية الرمز. سيتم إرسال رسالة تحقق جديدة إلى عنوان بريدك الإلكتروني."
+
+#: views.py:128
+msgid "Invalid token."
+msgstr "الرمز المميز غير صالح."

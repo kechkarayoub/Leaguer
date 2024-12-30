@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-26 07:32+0000\n"
+"POT-Creation-Date: 2024-12-30 07:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -112,6 +112,44 @@ msgstr ""
 msgid "The minimum age allowed for users is: "
 msgstr ""
 
+#: templates/email_verification.html:4
+msgid "Verify Your Email"
+msgstr ""
+
+#: templates/email_verification.html:7
+#, python-format
+msgid "Welcome, %(first_name)s!"
+msgstr ""
+
+#: templates/email_verification.html:8
+msgid ""
+"Thank you for registering. Please verify your email by clicking the link "
+"below:"
+msgstr ""
+
+#: templates/email_verification.html:10
+msgid "Verify Email"
+msgstr ""
+
+#: templates/email_verification.html:12
+msgid ""
+"If you did not sign up for this account, you can safely ignore this email."
+msgstr ""
+
+#: templates/email_verification.txt:2
+#, python-format
+msgid ""
+"\n"
+"Hello %(first_name)s,\n"
+msgstr ""
+
+#: templates/email_verification.txt:6
+msgid ""
+"\n"
+"Thank you for registering. Please verify your email by clicking the link "
+"below:\n"
+msgstr ""
+
 #: utils.py:4
 msgid "Select"
 msgstr ""
@@ -122,4 +160,29 @@ msgstr ""
 
 #: utils.py:4
 msgid "Male"
+msgstr ""
+
+#: views.py:35 views.py:39
+msgid "Verify Your Email Address"
+msgstr ""
+
+#: views.py:115
+msgid "Invalid verification link."
+msgstr ""
+
+#: views.py:119
+msgid "Email already verified."
+msgstr ""
+
+#: views.py:121
+msgid "Email verified successfully."
+msgstr ""
+
+#: views.py:125
+msgid ""
+"Expired token. A new verification email will be sent to your email address."
+msgstr ""
+
+#: views.py:128
+msgid "Invalid token."
 msgstr ""

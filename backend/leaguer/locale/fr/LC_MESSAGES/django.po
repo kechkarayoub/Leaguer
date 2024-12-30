@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-25 22:27+0000\n"
+"POT-Creation-Date: 2024-12-30 07:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,14 +17,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-#: settings/common.py:183
+
+#: settings/common.py:184
 msgid "Arabic"
 msgstr "Arabe"
 
-#: settings/common.py:184
+#: settings/common.py:185
 msgid "English"
 msgstr "Anglais"
 
-#: settings/common.py:185
+#: settings/common.py:186
 msgid "French"
 msgstr "Français"
+
+#: templates/emails/footer.html:6
+#, python-format
+msgid "%(current_year)s © %(app_name)s. All rights reserved."
+msgstr "%(current_year)s © %(app_name)s. Tous droits réservés."
