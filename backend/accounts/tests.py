@@ -282,3 +282,22 @@ class EmailVerificationTests(TestCase):
         data = json.loads(response.content.decode('utf-8'))
         message = data.get("message")
         self.assertEqual(message, "انتهت صلاحية الرمز. سيتم إرسال رسالة تحقق جديدة إلى عنوان بريدك الإلكتروني.")
+
+    def test_verify_email_view_missing_params(self):
+        response = self.client.get('/accounts/verify-email/', {})
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Paramètres requis manquants.")
+
+        response = self.client.get('/accounts/verify-email/', {'uid': "uid"})
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Paramètres requis manquants.")
+
+        response = self.client.get('/accounts/verify-email/', {'token': "token"})
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Paramètres requis manquants.")

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-30 07:08+0000\n"
+"POT-Creation-Date: 2025-01-03 07:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -135,7 +135,9 @@ msgstr "تحقق من البريد الإلكتروني"
 #: templates/email_verification.html:12
 msgid ""
 "If you did not sign up for this account, you can safely ignore this email."
-msgstr "إذا لم تقم بالتسجيل للحصول على هذا الحساب، يمكنك تجاهل هذا البريد الإلكتروني بأمان."
+msgstr ""
+"إذا لم تقم بالتسجيل للحصول على هذا الحساب، يمكنك تجاهل هذا البريد الإلكتروني "
+"بأمان."
 
 #: templates/email_verification.txt:2
 #, python-format
@@ -152,7 +154,10 @@ msgid ""
 "\n"
 "Thank you for registering. Please verify your email by clicking the link "
 "below:\n"
-msgstr "\nشكرًا لتسجيلك. يرجى التحقق من بريدك الإلكتروني بالنقر على الرابط أدناه:"
+msgstr ""
+"\n"
+"شكرًا لتسجيلك. يرجى التحقق من بريدك الإلكتروني بالنقر على الرابط أدناه:"
+"\n"
 
 #: utils.py:4
 msgid "Select"
@@ -166,27 +171,32 @@ msgstr "أنثى"
 msgid "Male"
 msgstr "ذكر"
 
-#: views.py:35 views.py:39
+#: views.py:39 views.py:44
 msgid "Verify Your Email Address"
 msgstr "تحقق من عنوان بريدك الإلكتروني"
 
-#: views.py:115
+#: views.py:126
+msgid "Missing required parameters."
+msgstr "المعلمات المطلوبة مفقودة."
+
+#: views.py:137
 msgid "Invalid verification link."
 msgstr "رابط التحقق غير صالح."
 
-#: views.py:119
+#: views.py:141
 msgid "Email already verified."
 msgstr "تم بالفعل التحقق من البريد الإلكتروني."
 
-#: views.py:121
+#: views.py:143
 msgid "Email verified successfully."
 msgstr "تم التحقق من البريد الإلكتروني بنجاح."
 
-#: views.py:125
+#: views.py:147
 msgid ""
 "Expired token. A new verification email will be sent to your email address."
-msgstr "انتهت صلاحية الرمز. سيتم إرسال رسالة تحقق جديدة إلى عنوان بريدك الإلكتروني."
+msgstr ""
+"انتهت صلاحية الرمز. سيتم إرسال رسالة تحقق جديدة إلى عنوان بريدك الإلكتروني."
 
-#: views.py:128
+#: views.py:150
 msgid "Invalid token."
 msgstr "الرمز المميز غير صالح."

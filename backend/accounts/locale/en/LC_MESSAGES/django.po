@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-30 07:08+0000\n"
+"POT-Creation-Date: 2025-01-03 07:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -162,27 +162,31 @@ msgstr ""
 msgid "Male"
 msgstr ""
 
-#: views.py:35 views.py:39
+#: views.py:39 views.py:44
 msgid "Verify Your Email Address"
 msgstr ""
 
-#: views.py:115
+#: views.py:126
+msgid "Missing required parameters."
+msgstr ""
+
+#: views.py:137
 msgid "Invalid verification link."
 msgstr ""
 
-#: views.py:119
+#: views.py:141
 msgid "Email already verified."
 msgstr ""
 
-#: views.py:121
+#: views.py:143
 msgid "Email verified successfully."
 msgstr ""
 
-#: views.py:125
+#: views.py:147
 msgid ""
 "Expired token. A new verification email will be sent to your email address."
 msgstr ""
 
-#: views.py:128
+#: views.py:150
 msgid "Invalid token."
 msgstr ""

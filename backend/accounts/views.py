@@ -121,6 +121,10 @@ def verify_email(request):
     """
     uid = request.GET.get('uid')
     token = request.GET.get('token')
+    # If uid or token aren't exists in the request, return an error message
+    if not uid or not token:
+        return JsonResponse({"message": _("Missing required parameters.")}, status=400)
+
     resend_verification_email = request.GET.get('resend_verification_email') in [True, "true"]
 
     uid_ = urlsafe_base64_decode(uid).decode()

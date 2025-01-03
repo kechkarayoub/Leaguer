@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-30 07:07+0000\n"
+"POT-Creation-Date: 2025-01-03 07:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -127,7 +127,9 @@ msgstr "Bienvenue, %(first_name)s!"
 msgid ""
 "Thank you for registering. Please verify your email by clicking the link "
 "below:"
-msgstr "Merci de vous être inscrit. Veuillez vérifier votre adresse e-mail en cliquant sur le lien ci-dessous :"
+msgstr ""
+"Merci de vous être inscrit. Veuillez vérifier votre adresse e-mail en "
+"cliquant sur le lien ci-dessous :"
 
 #: templates/email_verification.html:10
 msgid "Verify Email"
@@ -136,7 +138,9 @@ msgstr "Vérifier l'adresse e-mail"
 #: templates/email_verification.html:12
 msgid ""
 "If you did not sign up for this account, you can safely ignore this email."
-msgstr "Si vous n'avez pas créé ce compte, vous pouvez ignorer cet e-mail en toute sécurité."
+msgstr ""
+"Si vous n'avez pas créé ce compte, vous pouvez ignorer cet e-mail en toute "
+"sécurité."
 
 #: templates/email_verification.txt:2
 #, python-format
@@ -154,7 +158,8 @@ msgid ""
 "below:\n"
 msgstr ""
 "\n"
-"Merci de vous être inscrit. Veuillez vérifier votre adresse e-mail en cliquant sur le lien ci-dessous :\n"
+"Merci de vous être inscrit. Veuillez vérifier votre adresse e-mail en "
+"cliquant sur le lien ci-dessous :\n"
 "\n"
 
 #: utils.py:4
@@ -169,27 +174,33 @@ msgstr "Femme"
 msgid "Male"
 msgstr "Homme"
 
-#: views.py:35 views.py:39
+#: views.py:39 views.py:44
 msgid "Verify Your Email Address"
 msgstr "Vérifiez votre adresse e-mail"
 
-#: views.py:115
+#: views.py:126
+msgid "Missing required parameters."
+msgstr "Paramètres requis manquants."
+
+#: views.py:137
 msgid "Invalid verification link."
 msgstr "Lien de vérification invalide."
 
-#: views.py:119
+#: views.py:141
 msgid "Email already verified."
 msgstr "L'email a déjà été vérifié."
 
-#: views.py:121
+#: views.py:143
 msgid "Email verified successfully."
 msgstr "L'email a été vérifié avec succès."
 
-#: views.py:125
+#: views.py:147
 msgid ""
 "Expired token. A new verification email will be sent to your email address."
-msgstr "Jeton expiré. Un nouvel e-mail de vérification sera envoyé à votre adresse e-mail."
+msgstr ""
+"Jeton expiré. Un nouvel e-mail de vérification sera envoyé à votre adresse e-"
+"mail."
 
-#: views.py:128
+#: views.py:150
 msgid "Invalid token."
 msgstr "Jeton non valide."
