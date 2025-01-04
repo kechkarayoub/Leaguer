@@ -33,7 +33,7 @@ def send_verification_email(user, handle_end_email_error=False):
     uid = urlsafe_base64_encode(force_bytes(user.pk))
 
     # Build the verification URL
-    verification_url = f"{settings.FRONTEND_ENDPOINT}/verify-email?uid={uid}&token={token}"
+    verification_url = f"{settings.FRONTEND_ENDPOINT}/accounts/verify-email/?uid={uid}&token={token}"
 
     # Render the email content
     subject = _("Verify Your Email Address")
