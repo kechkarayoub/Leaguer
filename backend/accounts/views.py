@@ -33,7 +33,8 @@ def send_verification_email(user, handle_end_email_error=False):
     uid = urlsafe_base64_encode(force_bytes(user.pk))
 
     # Build the verification URL
-    verification_url = f"{settings.FRONTEND_ENDPOINT}/accounts/verify-email/?uid={uid}&token={token}"
+    # This url is for frontend and it not the backend url: accounts/verify-email
+    verification_url = f"{settings.FRONTEND_ENDPOINT}/verify-email?uid={uid}&token={token}"
 
     # Render the email content
     subject = _("Verify Your Email Address")
@@ -48,8 +49,9 @@ def send_verification_email(user, handle_end_email_error=False):
 
     # Send the email
     try:
-        print("html_content")
-        print(html_content)
+        if settings.DEBUG:
+            print("html_content")
+            print(html_content)
         # This is for testing send email's error from third party
         if handle_end_email_error:
             err = int("text")
