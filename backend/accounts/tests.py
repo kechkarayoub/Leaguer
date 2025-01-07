@@ -1,14 +1,14 @@
-import datetime
-
 from .models import User
 from .serializers import UserSerializer
 from .utils import GENDERS_CHOICES
 from .views import send_verification_email, verify_user_email
 from datetime import date
 from django.conf import settings
+from django.core.management import call_command
 from django.test import TestCase
-from django.utils.translation import gettext_lazy as _
+from io import StringIO
 from rest_framework.test import APITestCase
+import datetime
 import json
 
 
@@ -28,6 +28,40 @@ class UserModelTest(TestCase):
             phone_number="1234567890",
             username="testuser",
         )
+
+    def test_send_emails_verifications_links(self):
+        user2 = User.objects.create_user(
+            email="testuser2@example.com",
+            first_name="First name2",
+            last_name="Last name2",
+            password="testpassword123",
+            username="testuser2",
+        )
+        user3 = User.objects.create_user(
+            email="testuser3@example.com",
+            first_name="First name3",
+            last_name="Last name3",
+            password="testpassword123",
+            username="testuser3",
+        )
+        result = User.send_emails_verifications_links(email="noemailuser@example.com")
+        self.assertEqual(result, "There is any user with this email: noemailuser@example.com, or it is already verified!")
+        result = User.send_emails_verifications_links(email="testuser3@example.com")
+        self.assertEqual(result, "1 verification email are sent, 0 are not.")
+        result = User.send_emails_verifications_links()
+        self.assertEqual(result, "3 verification email are sent, 0 are not.")
+        user3.is_email_validated = True
+        user3.save()
+        result = User.send_emails_verifications_links(email="testuser3@example.com")
+        self.assertEqual(result, "There is any user with this email: testuser3@example.com, or it is already verified!")
+        result = User.send_emails_verifications_links()
+        self.assertEqual(result, "2 verification email are sent, 0 are not.")
+        user2.is_email_validated = True
+        user2.save()
+        self.user.is_email_validated = True
+        self.user.save()
+        result = User.send_emails_verifications_links()
+        self.assertEqual(result, "There is no user with not email verified yet!")
 
     def test_user_creation(self):
         self.assertEqual(self.user.address, "123 Test Street")
@@ -301,3 +335,46 @@ class EmailVerificationTests(TestCase):
         data = json.loads(response.content.decode('utf-8'))
         message = data.get("message")
         self.assertEqual(message, "Paramètres requis manquants.")
+
+
+class SendEmailVerificationsLinksCommandTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', email='test@example.com', password='password123')
+        self.user2 = User.objects.create_user(username='testuser2', email='test2@example.com', password='password123', current_language='ar')
+
+    def test_command_without_arguments(self):
+        out = StringIO()
+        call_command('send_emails_verifications_links', stdout=out)
+        self.assertIn('2 verification email are sent, 0 are not.', out.getvalue())
+
+    def test_command_without_arguments_with_all_email_verified(self):
+        out = StringIO()
+        self.user.is_email_validated = True
+        self.user.save()
+        self.user2.is_email_validated = True
+        self.user2.save()
+        call_command('send_emails_verifications_links', stdout=out)
+        self.assertIn('There is no user with not email verified yet!', out.getvalue())
+
+    def test_command_without_no_valid_email_argument(self):
+        out = StringIO()
+        call_command('send_emails_verifications_links', '--email', 'novalidemail', stdout=out)
+        self.assertIn('Command not executed due to invalid email parameter: novalidemail.', out.getvalue())
+
+    def test_command_without_no_exists_email_argument(self):
+        out = StringIO()
+        call_command('send_emails_verifications_links', '--email', 'noexistsmail@yopmail.com', stdout=out)
+        self.assertIn('There is any user with this email: noexistsmail@yopmail.com, or it is already verified!', out.getvalue())
+
+    def test_command_without_exists_email_argument(self):
+        out = StringIO()
+        call_command('send_emails_verifications_links', '--email', 'test2@example.com', stdout=out)
+        self.assertIn('1 verification email are sent, 0 are not.', out.getvalue())
+
+    def test_command_without_exists_email_but_already_verified_argument(self):
+        out = StringIO()
+        self.user2.is_email_validated = True
+        self.user2.save()
+        call_command('send_emails_verifications_links', '--email', 'test2@example.com', stdout=out)
+        self.assertIn('There is any user with this email: test2@example.com, or it is already verified!', out.getvalue())
+

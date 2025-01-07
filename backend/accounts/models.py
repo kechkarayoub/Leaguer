@@ -1,4 +1,4 @@
-from .utils import GENDERS_CHOICES
+from .utils import GENDERS_CHOICES, send_verification_email
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -57,3 +57,29 @@ class User(AbstractUser):
         """
         return self.username
 
+    @classmethod
+    def send_emails_verifications_links(cls, email=None):
+        """
+        This function send emails verification links to unverified users emails
+        :param email: Not required, but used if you need to send email to a specific user
+        :return: A message describe what happen in the functions
+        """
+        kwargs = {'is_active': True, 'is_email_validated': False, }
+        if email:
+            kwargs['email'] = email
+        nbr_verifications_emails_links_sent = 0
+        nbr_verifications_emails_links_not_sent = 0
+        for user in cls.objects.filter(**kwargs):
+            status, items = send_verification_email(user)
+            if status == 200:
+                nbr_verifications_emails_links_sent += 1
+                print(f'Verification email sent to: {user.email}.')
+            else:
+                nbr_verifications_emails_links_not_sent += 1
+                print(f'An error has occurred, the verification email isn\'t sent to: {user.email}!')
+        if email and nbr_verifications_emails_links_sent == 0 and nbr_verifications_emails_links_not_sent == 0:
+            return f'There is any user with this email: {email}, or it is already verified!'
+        elif nbr_verifications_emails_links_sent == 0 and nbr_verifications_emails_links_not_sent == 0:
+            return f'There is no user with not email verified yet!'
+        else:
+            return f'{nbr_verifications_emails_links_sent} verification email are sent, {nbr_verifications_emails_links_not_sent} are not.'
