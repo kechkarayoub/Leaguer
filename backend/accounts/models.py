@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from leaguer.utils import PHONE_NUMBER_VERIFICATION_METHOD
 
 
 class User(AbstractUser):
@@ -26,6 +27,8 @@ class User(AbstractUser):
         is_phone_number_validated (BooleanField): Indicates whether the phone number is validated.
         last_name (CharField): Required. Stores the user's last name.
         phone_number (CharField): Optional. Stores the user's phone number (unique).
+        phone_number_to_verify (CharField): Optional. Stores the user's phone number to verify.
+        phone_number_verified_by (CharField): Optional. Stores the user's phone number verification method (google, facebook, sms, whatsapp, ...).
     """
 
     class Meta(object):
@@ -49,6 +52,8 @@ class User(AbstractUser):
     is_phone_number_validated = models.BooleanField(db_index=True, default=False, verbose_name=_("Is phone number validated"))
     last_name = models.CharField(db_index=True, max_length=150, verbose_name=_("Last name"))
     phone_number = models.CharField(db_index=True, blank=True, max_length=15, null=True, verbose_name=_("Phone number"), unique=True)
+    phone_number_to_verify = models.CharField(db_index=True, blank=True, max_length=15, null=True, verbose_name=_("Phone number to verify"))
+    phone_number_verified_by = models.CharField(blank=True, choices=PHONE_NUMBER_VERIFICATION_METHOD, default="", max_length=10, verbose_name=_("Phone number verified by"))
 
     def __str__(self):
         """

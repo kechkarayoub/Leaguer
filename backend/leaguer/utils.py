@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.utils.translation import gettext_lazy as _
 import datetime
 
 
@@ -19,3 +20,9 @@ def get_email_base_context(selected_language="fr"):
         'from_email': settings.DEFAULT_FROM_EMAIL,
     }
     return context
+
+
+PHONE_NUMBER_VERIFICATION_METHOD = [
+    ("", _("Select")), ("apple", _("Apple")), ("facebook", _("Facebook")), ("google", _("Google")),
+    ("sms", _("Sms")), ("yahoo", _("Yahoo")), ("whatsapp", _("Whatsapp")), ("x", _("X")),
+]

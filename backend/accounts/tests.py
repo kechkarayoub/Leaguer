@@ -26,6 +26,8 @@ class UserModelTest(TestCase):
             last_name="Last name",
             password="testpassword123",
             phone_number="1234567890",
+            phone_number_to_verify="1234567890",
+            phone_number_verified_by="sms",
             username="testuser",
         )
 
@@ -74,7 +76,9 @@ class UserModelTest(TestCase):
         self.assertEqual(self.user.gender, GENDERS_CHOICES[1][0])
         self.assertEqual(self.user.image_url, "https://www.s3.com/image_url")
         self.assertEqual(self.user.last_name, "Last name")
-        self.assertEqual(self.user.phone_number, "1234567890")
+        self.assertEqual(self.user.phone_number, "+2121234567890")
+        self.assertEqual(self.user.phone_number_to_verify, "+2121234567890")
+        self.assertEqual(self.user.phone_number_verified_by, "sms")
         self.assertEqual(self.user.username, "testuser")
         self.assertFalse(self.user.is_email_validated)
         self.assertFalse(self.user.is_deleted)
@@ -153,7 +157,9 @@ class UserSerializerTest(APITestCase):
             'image_url': "https://www.s3.com/image_url",
             'last_name': "Last name",
             'password': "testpassword123",
-            'phone_number': "+1234567890",
+            'phone_number': "+212623456789",
+            'phone_number_to_verify': "+212623456789",
+            'phone_number_verified_by': "",
             'username': "testuser",
         }
 
@@ -174,9 +180,11 @@ class UserSerializerTest(APITestCase):
         self.assertEqual(data['gender'], GENDERS_CHOICES[1][0])
         self.assertEqual(data['image_url'], "https://www.s3.com/image_url")
         self.assertEqual(data['last_name'], "Last name")
-        self.assertEqual(data['phone_number'], "+1234567890")
+        self.assertEqual(data['phone_number'], "+212623456789")
+        self.assertEqual(data['phone_number_to_verify'], "+212623456789")
+        self.assertEqual(data['phone_number_verified_by'], "")
         self.assertEqual(data['username'], "testuser")
-        self.assertEqual(len(data.keys()), 18)
+        self.assertEqual(len(data.keys()), 20)
         self.assertIn('date_joined', data)
 
     def test_valid_serializer(self):
@@ -212,6 +220,15 @@ class UserSerializerTest(APITestCase):
         serializer = UserSerializer(data={**self.valid_data, 'phone_number': "123"})
         self.assertFalse(serializer.is_valid())
         self.assertIn("phone_number", serializer.errors)
+
+    def test_invalid_phone_number_to_verify(self):
+        """Test serializer with an invalid phone number."""
+        serializer = UserSerializer(data={**self.valid_data, 'phone_number_to_verify': "invalid phone number"})
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("phone_number_to_verify", serializer.errors)
+        serializer = UserSerializer(data={**self.valid_data, 'phone_number_to_verify': "123"})
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("phone_number_to_verify", serializer.errors)
 
 
 class EmailVerificationTests(TestCase):

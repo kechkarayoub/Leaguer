@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-03 07:38+0000\n"
+"POT-Creation-Date: 2025-01-09 07:13+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,75 +34,87 @@ msgstr "Dates importantes"
 msgid "Accounts"
 msgstr "Comptes"
 
-#: models.py:34
+#: models.py:37
 msgid "User"
 msgstr "Utilisateur"
 
-#: models.py:35
+#: models.py:38
 msgid "Users"
 msgstr "Utilisateurs"
 
-#: models.py:37
+#: models.py:40
 msgid "Address"
 msgstr "Adresse"
 
-#: models.py:38
+#: models.py:41
 msgid "Birthday"
 msgstr "Date de naissance"
 
-#: models.py:39
+#: models.py:42
 msgid "CIN"
 msgstr "CIN"
 
-#: models.py:40
+#: models.py:43
 msgid "Country"
 msgstr "Pays"
 
-#: models.py:41
+#: models.py:44
 msgid "Current language"
 msgstr "Langue actuelle"
 
-#: models.py:42
+#: models.py:45
 msgid "Email"
 msgstr "Email"
 
-#: models.py:43
+#: models.py:46
 msgid "First name"
 msgstr "Prénom"
 
-#: models.py:44
+#: models.py:47
 msgid "GENDER"
 msgstr "Genre"
 
-#: models.py:45
+#: models.py:48
 msgid "Image url"
 msgstr "URL de l'image"
 
-#: models.py:46
+#: models.py:49
 msgid "Is active"
 msgstr "est active"
 
-#: models.py:47
+#: models.py:50
 msgid "Is email validated"
 msgstr "L'e-mail est-il validé"
 
-#: models.py:48
+#: models.py:51
 msgid "Is deleted"
 msgstr "Est supprimé"
 
-#: models.py:49
+#: models.py:52
 msgid "Is phone number validated"
 msgstr "Le numéro de téléphone est-il validé"
 
-#: models.py:50
+#: models.py:53
 msgid "Last name"
 msgstr "Nom de famille"
 
-#: models.py:51
+#: models.py:54
 msgid "Phone number"
 msgstr "Numéro de téléphone"
 
-#: serializers.py:29
+#: models.py:55
+msgid "Phone number to verify"
+msgstr "Numéro de téléphone à vérifier"
+
+#: models.py:56
+msgid "Phone number verified by"
+msgstr "Numéro de téléphone vérifié par"
+
+#: serializers.py:35 serializers.py:54
+msgid "Invalid phone number."
+msgstr "Numéro de téléphone invalide."
+
+#: serializers.py:39 serializers.py:58
 msgid ""
 "Phone number must start with a '+' followed by the country code and the "
 "phone number."
@@ -110,7 +122,7 @@ msgstr ""
 "Le numéro de téléphone doit commencer par un '+' suivi de l'indicatif du "
 "pays et du numéro de téléphone."
 
-#: serializers.py:42
+#: serializers.py:70
 msgid "The minimum age allowed for users is: "
 msgstr "L'âge minimum autorisé pour les utilisateurs est : "
 
@@ -162,45 +174,45 @@ msgstr ""
 "cliquant sur le lien ci-dessous :\n"
 "\n"
 
-#: utils.py:4
+#: utils.py:16
 msgid "Select"
 msgstr "Sélectionner"
 
-#: utils.py:4
+#: utils.py:16
 msgid "Female"
 msgstr "Femme"
 
-#: utils.py:4
+#: utils.py:16
 msgid "Male"
 msgstr "Homme"
 
-#: views.py:39 views.py:44
+#: utils.py:44 utils.py:49
 msgid "Verify Your Email Address"
 msgstr "Vérifiez votre adresse e-mail"
 
-#: views.py:126
+#: views.py:72
 msgid "Missing required parameters."
 msgstr "Paramètres requis manquants."
 
-#: views.py:137
+#: views.py:85
 msgid "Invalid verification link."
 msgstr "Lien de vérification invalide."
 
-#: views.py:141
+#: views.py:89
 msgid "Email already verified."
 msgstr "L'email a déjà été vérifié."
 
-#: views.py:143
+#: views.py:91
 msgid "Email verified successfully."
 msgstr "L'email a été vérifié avec succès."
 
-#: views.py:147
+#: views.py:95
 msgid ""
 "Expired token. A new verification email will be sent to your email address."
 msgstr ""
 "Jeton expiré. Un nouvel e-mail de vérification sera envoyé à votre adresse e-"
 "mail."
 
-#: views.py:150
+#: views.py:98
 msgid "Invalid token."
 msgstr "Jeton non valide."

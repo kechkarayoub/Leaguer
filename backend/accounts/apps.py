@@ -6,3 +6,7 @@ class AccountsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'accounts'
     verbose_name = _("Accounts")
+
+    # noinspection PyMethodMayBeStatic
+    def ready(self):
+        import accounts.signals  # Import the signals
