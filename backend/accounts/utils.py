@@ -9,11 +9,32 @@ from leaguer.utils import get_email_base_context
 from smtplib import SMTPException, SMTPAuthenticationError, SMTPSenderRefused, SMTPRecipientsRefused, SMTPDataError
 import datetime
 import logging
+import phonenumbers
 
 # Get a logger instance
 logger = logging.getLogger(__name__)
 
 GENDERS_CHOICES = [("", _("Select")), ("female", _("Female")), ("male", _("Male"))]
+
+
+def format_phone_number(phone_number):
+    """
+        Convert phone_number to a standard format
+
+        Args:
+            phone_number (String): the phone number.
+
+        Returns:
+            phone_number: formatted phone number.
+    """
+    try:
+        parsed_number = phonenumbers.parse(phone_number, settings.DEFAULT_PHONE_NUMBER_COUNTRY_CODE)
+        phone_number = phonenumbers.format_number(
+            parsed_number, phonenumbers.PhoneNumberFormat.E164
+        )
+    except phonenumbers.NumberParseException:
+        pass
+    return phone_number
 
 
 def send_verification_email(user, handle_end_email_error=False):

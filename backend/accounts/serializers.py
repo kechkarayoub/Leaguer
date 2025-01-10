@@ -27,7 +27,7 @@ class UserSerializer(serializers.ModelSerializer):
             return value
         try:
             # Parse and format the phone number
-            parsed_number = phonenumbers.parse(value, "MA")  # Change "MA" to your default country code
+            parsed_number = phonenumbers.parse(value, settings.DEFAULT_PHONE_NUMBER_COUNTRY_CODE)
             if phonenumbers.is_valid_number(parsed_number):
                 return phonenumbers.format_number(parsed_number, phonenumbers.PhoneNumberFormat.E164)
             else:
@@ -46,7 +46,7 @@ class UserSerializer(serializers.ModelSerializer):
             return value
         try:
             # Parse and format the phone number
-            parsed_number = phonenumbers.parse(value, "MA")  # Change "MA" to your default country code
+            parsed_number = phonenumbers.parse(value, settings.DEFAULT_PHONE_NUMBER_COUNTRY_CODE)
             if phonenumbers.is_valid_number(parsed_number):
                 return phonenumbers.format_number(parsed_number, phonenumbers.PhoneNumberFormat.E164)
             else:

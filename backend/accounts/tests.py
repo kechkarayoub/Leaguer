@@ -1,6 +1,6 @@
 from .models import User
 from .serializers import UserSerializer
-from .utils import GENDERS_CHOICES
+from .utils import format_phone_number, GENDERS_CHOICES
 from .views import send_verification_email, verify_user_email
 from datetime import date
 from django.conf import settings
@@ -29,6 +29,24 @@ class UserModelTest(TestCase):
             phone_number_to_verify="1234567890",
             phone_number_verified_by="sms",
             username="testuser",
+        )
+        self.user_verified_phone_number = User.objects.create_user(
+            address="123 Test Street",
+            birthday=date(2000, 1, 1),
+            cin="Cin test vnp",
+            country="Testland",
+            email="testuservpn@example.com",
+            first_name="First name",
+            gender=GENDERS_CHOICES[1][0],
+            image_url="https://www.s3.com/image_url",
+            is_email_validated=True,
+            is_phone_number_validated=True,
+            last_name="Last name",
+            password="testpassword123",
+            phone_number="12 34-567899",
+            phone_number_to_verify="1234567899",
+            phone_number_verified_by="google",
+            username="testuservpn",
         )
 
     def test_send_emails_verifications_links(self):
@@ -76,15 +94,17 @@ class UserModelTest(TestCase):
         self.assertEqual(self.user.gender, GENDERS_CHOICES[1][0])
         self.assertEqual(self.user.image_url, "https://www.s3.com/image_url")
         self.assertEqual(self.user.last_name, "Last name")
-        self.assertEqual(self.user.phone_number, "+2121234567890")
         self.assertEqual(self.user.phone_number_to_verify, "+2121234567890")
         self.assertEqual(self.user.phone_number_verified_by, "sms")
         self.assertEqual(self.user.username, "testuser")
         self.assertFalse(self.user.is_email_validated)
         self.assertFalse(self.user.is_deleted)
         self.assertFalse(self.user.is_phone_number_validated)
+        self.assertIsNone(self.user.phone_number)
         self.assertNotEqual(self.user.password, "testpassword123")
         self.assertTrue(self.user.is_active)
+        self.assertEqual(self.user_verified_phone_number.phone_number, "+2121234567899")
+        self.assertTrue(self.user_verified_phone_number.is_phone_number_validated)
 
     def test_str_representation(self):
         self.assertEqual(str(self.user), "testuser")
@@ -129,6 +149,7 @@ class UserModelTest(TestCase):
         user_data = {
             'cin': "cin2",
             'email': "testuser2@example.com",
+            'is_phone_number_validated': True,
             'password': "testpassword123",
             'phone_number': "12345678902",
             'username': "testuser2",
@@ -137,10 +158,30 @@ class UserModelTest(TestCase):
         with self.assertRaises(Exception):  # IntegrityError for SQLite, ValidationError otherwise
             User.objects.create(
                 email="testuser3@example.com",
+                is_phone_number_validated=True,
                 password="testpassword123",
                 phone_number="12345678902",
                 username="testuser3",
             )
+
+
+class UserUtilsTest(TestCase):
+    def setUp(self):
+        pass
+
+    def test_format_phone_number(self):
+        formatted_phone_number = format_phone_number("0612505252")
+        self.assertEqual(formatted_phone_number, "+212612505252")
+        formatted_phone_number = format_phone_number("06 12-505 252")
+        self.assertEqual(formatted_phone_number, "+212612505252")
+        formatted_phone_number = format_phone_number("+212612505252")
+        self.assertEqual(formatted_phone_number, "+212612505252")
+        formatted_phone_number = format_phone_number("+212 6 12 5052.52")
+        self.assertEqual(formatted_phone_number, "+212612505252")
+        formatted_phone_number = format_phone_number("+kjmnj")
+        self.assertEqual(formatted_phone_number, "+kjmnj")
+        formatted_phone_number = format_phone_number("+123")
+        self.assertEqual(formatted_phone_number, "+123")
 
 
 class UserSerializerTest(APITestCase):
@@ -162,6 +203,24 @@ class UserSerializerTest(APITestCase):
             'phone_number_verified_by': "",
             'username': "testuser",
         }
+        self.valid_data2 = {
+            'address': "123 Test Street",
+            'birthday': date(2000, 1, 1),
+            'cin': "Cin test2",
+            'country': "Testland",
+            'current_language': "en",
+            'email': "testuser2@example.com",
+            'first_name': "First name",
+            'gender': GENDERS_CHOICES[1][0],
+            'image_url': "https://www.s3.com/image_url",
+            'is_phone_number_validated': True,
+            'last_name': "Last name",
+            'password': "testpassword123",
+            'phone_number': "+2126-234 56709",
+            'phone_number_to_verify': "+212623456709",
+            'phone_number_verified_by': "google",
+            'username': "testuser2",
+        }
 
     def test_serializer_fields(self):
 
@@ -180,12 +239,33 @@ class UserSerializerTest(APITestCase):
         self.assertEqual(data['gender'], GENDERS_CHOICES[1][0])
         self.assertEqual(data['image_url'], "https://www.s3.com/image_url")
         self.assertEqual(data['last_name'], "Last name")
-        self.assertEqual(data['phone_number'], "+212623456789")
         self.assertEqual(data['phone_number_to_verify'], "+212623456789")
         self.assertEqual(data['phone_number_verified_by'], "")
         self.assertEqual(data['username'], "testuser")
         self.assertEqual(len(data.keys()), 20)
         self.assertIn('date_joined', data)
+        self.assertIsNone(data['phone_number'])
+        user2 = User.objects.create_user(
+            **self.valid_data2
+        )
+        serializer = UserSerializer(instance=user2)
+        data2 = serializer.data
+        self.assertEqual(data2['address'], "123 Test Street")
+        self.assertEqual(data2['birthday'], "2000-01-01")
+        self.assertEqual(data2['cin'], "Cin test2")
+        self.assertEqual(data2['country'], "Testland")
+        self.assertEqual(data2['current_language'], "en")
+        self.assertEqual(data2['email'], "testuser2@example.com")
+        self.assertEqual(data2['first_name'], "First name")
+        self.assertEqual(data2['gender'], GENDERS_CHOICES[1][0])
+        self.assertEqual(data2['image_url'], "https://www.s3.com/image_url")
+        self.assertEqual(data2['last_name'], "Last name")
+        self.assertEqual(data2['phone_number'], "+212623456709")
+        self.assertEqual(data2['phone_number_to_verify'], "+212623456709")
+        self.assertEqual(data2['phone_number_verified_by'], "google")
+        self.assertEqual(data2['username'], "testuser2")
+        self.assertEqual(len(data2.keys()), 20)
+        self.assertIn('date_joined', data2)
 
     def test_valid_serializer(self):
         """Test serializer with valid data."""
