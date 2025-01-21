@@ -30,11 +30,12 @@ class UserAdmin(BaseUserAdmin):
         (_('Permissions'), {
             'fields': (
                 'is_active', 'is_email_validated', 'is_deleted', 'is_phone_number_validated', 'is_staff',
-                'is_superuser', 'groups', 'user_permissions'
+                'is_superuser', 'groups', 'user_permissions', 'phone_number_verification_code',
+                'nbr_phone_number_verification_code_used',
             )
         }),
         (_('Important Dates'), {
-            'fields': ('last_login', 'date_joined')
+            'fields': ('last_login', 'date_joined', 'phone_number_verification_code_generated_at')
         }),
     )
     # Fields to use for adding a new user

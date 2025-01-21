@@ -70,3 +70,14 @@ DEFAULT_FROM_EMAIL = get_secret("DEFAULT_FROM_EMAIL")
 BACKEND_ENDPOINT = ""
 FRONTEND_ENDPOINT = "http:localhost:3000"
 
+
+# Technical service email
+TECHNICAL_SERVICE_EMAIL = "technical.problems.leaguer@gmail.com"
+
+# Environment
+ENVIRONMENT = "development"
+
+# Whatsapp config
+WHATSAPP_INSTANCE_ID = get_secret("WHATSAPP_INSTANCE_ID")
+WHATSAPP_INSTANCE_TOKEN = get_secret("WHATSAPP_INSTANCE_TOKEN")
+WHATSAPP_INSTANCE_URL = get_secret("WHATSAPP_INSTANCE_URL")

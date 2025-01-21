@@ -22,6 +22,9 @@ In the root directory backend, add file .env that contains:
     EMAIL_HOST_USER = "leaguerdev@gmail.com"
     EMAIL_HOST_PASSWORD = "as_default_keyboard"  # Use an App Password
     DEFAULT_FROM_EMAIL = "leaguerdev@gmail.com"
+    WHATSAPP_INSTANCE_ID="id_xxxx"
+    WHATSAPP_INSTANCE_TOKEN="xxxx"
+    WHATSAPP_INSTANCE_URL="https://waapi.app/api/v1/instances/id_xxxx/client/action/send-message"
 
 
 Generate .po Files:

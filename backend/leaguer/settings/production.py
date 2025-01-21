@@ -59,3 +59,11 @@ EMAIL_USE_TLS = get_secret("EMAIL_USE_TLS") == "true"
 EMAIL_HOST_USER = get_secret("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = get_secret("EMAIL_HOST_PASSWORD")  # Use an App Password
 DEFAULT_FROM_EMAIL = get_secret("DEFAULT_FROM_EMAIL")
+
+# Environment
+ENVIRONMENT = "production"
+
+# Whatsapp config
+WHATSAPP_INSTANCE_ID = get_secret("WHATSAPP_INSTANCE_ID")
+WHATSAPP_INSTANCE_TOKEN = get_secret("WHATSAPP_INSTANCE_TOKEN")
+WHATSAPP_INSTANCE_URL = get_secret("WHATSAPP_INSTANCE_URL")

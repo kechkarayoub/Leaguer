@@ -26,7 +26,10 @@ class User(AbstractUser):
         is_email_validated (BooleanField): Indicates whether the email is validated.
         is_phone_number_validated (BooleanField): Indicates whether the phone number is validated.
         last_name (CharField): Required. Stores the user's last name.
+        nbr_phone_number_verification_code_used (IntegerField): Optional. Stores the user's number of phone number verification code used.
         phone_number (CharField): Optional. Stores the user's phone number (unique).
+        phone_number_verification_code (CharField): Optional. Stores the user's phone number verification code.
+        phone_number_verification_code_generated_at (DateTimeField): Optional. Stores the user's phone number verification code's dqte creation.
         phone_number_to_verify (CharField): Optional. Stores the user's phone number to verify.
         phone_number_verified_by (CharField): Optional. Stores the user's phone number verification method (google, facebook, sms, whatsapp, ...).
     """
@@ -51,7 +54,10 @@ class User(AbstractUser):
     is_deleted = models.BooleanField(db_index=True, default=False, verbose_name=_("Is deleted"))
     is_phone_number_validated = models.BooleanField(db_index=True, default=False, verbose_name=_("Is phone number validated"))
     last_name = models.CharField(db_index=True, max_length=150, verbose_name=_("Last name"))
+    nbr_phone_number_verification_code_used = models.IntegerField(default=0, verbose_name=_("Number of phone number's verification code used"))
     phone_number = models.CharField(db_index=True, blank=True, max_length=15, null=True, verbose_name=_("Phone number"), unique=True)
+    phone_number_verification_code = models.CharField(blank=True, max_length=6, null=True, verbose_name=_("Phone number's verification code"))
+    phone_number_verification_code_generated_at = models.DateTimeField(blank=True, null=True, verbose_name=_("Phone number's verification code generation date"))
     phone_number_to_verify = models.CharField(db_index=True, blank=True, max_length=15, null=True, verbose_name=_("Phone number to verify"))
     phone_number_verified_by = models.CharField(blank=True, choices=PHONE_NUMBER_VERIFICATION_METHOD, default="", max_length=10, verbose_name=_("Phone number verified by"))
 

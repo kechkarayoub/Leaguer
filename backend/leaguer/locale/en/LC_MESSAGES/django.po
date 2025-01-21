@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-09 07:13+0000\n"
+"POT-Creation-Date: 2025-01-21 07:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,34 +35,34 @@ msgstr ""
 msgid "%(current_year)s © %(app_name)s. All rights reserved."
 msgstr ""
 
-#: utils.py:26
+#: utils.py:73
 msgid "Select"
 msgstr ""
 
-#: utils.py:26
+#: utils.py:73
 msgid "Apple"
 msgstr ""
 
-#: utils.py:26
+#: utils.py:73
 msgid "Facebook"
 msgstr ""
 
-#: utils.py:26
+#: utils.py:73
 msgid "Google"
 msgstr ""
 
-#: utils.py:27
+#: utils.py:74
 msgid "Sms"
 msgstr ""
 
-#: utils.py:27
+#: utils.py:74
 msgid "Yahoo"
 msgstr ""
 
-#: utils.py:27
+#: utils.py:74
 msgid "Whatsapp"
 msgstr ""
 
-#: utils.py:27
+#: utils.py:74
 msgid "X"
 msgstr ""

@@ -13,10 +13,10 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             "address", "birthday", "cin", "country", "current_language", "date_joined", "email",
-            "first_name", "gender",
+            "first_name", "gender", "phone_number_verification_code", "phone_number_verification_code_generated_at",
             "id", "image_url", "is_active", "is_email_validated", "is_deleted", "is_phone_number_validated",
             "last_name", "phone_number", "phone_number_to_verify", "phone_number_verified_by",
-            "username",
+            "username", "nbr_phone_number_verification_code_used",
         ]
         read_only_fields = ["id", "date_joined"]
 

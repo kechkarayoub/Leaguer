@@ -1,11 +1,12 @@
 from .models import User
 from .serializers import UserSerializer
-from .utils import format_phone_number, GENDERS_CHOICES
-from .views import send_verification_email, verify_user_email
+from .utils import format_phone_number, GENDERS_CHOICES, send_phone_number_verification_code
+from .views import send_verification_email, verify_user_email, verify_user_phone_number
 from datetime import date
 from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
+from django.utils.timezone import now
 from io import StringIO
 from rest_framework.test import APITestCase
 import datetime
@@ -167,7 +168,21 @@ class UserModelTest(TestCase):
 
 class UserUtilsTest(TestCase):
     def setUp(self):
-        pass
+        self.user = User.objects.create_user(
+            address="123 Test Street",
+            birthday=date(2000, 1, 1),
+            cin="Cin test",
+            country="Testland",
+            email="testuser@example.com",
+            first_name="First name",
+            gender=GENDERS_CHOICES[1][0],
+            image_url="https://www.s3.com/image_url",
+            last_name="Last name",
+            password="testpassword123",
+            phone_number_to_verify="+212612505257",
+            phone_number_verified_by="sms",
+            username="testuser",
+        )
 
     def test_format_phone_number(self):
         formatted_phone_number = format_phone_number("0612505252")
@@ -182,6 +197,17 @@ class UserUtilsTest(TestCase):
         self.assertEqual(formatted_phone_number, "+kjmnj")
         formatted_phone_number = format_phone_number("+123")
         self.assertEqual(formatted_phone_number, "+123")
+
+    def test_send_phone_number_verification_code(self):
+        self.assertIsNone(self.user.phone_number_verification_code)
+        status_code, _ = send_phone_number_verification_code(self.user, handle_send_phone_number_verification_sms_error=True, mock_api=True)
+        self.user = User.objects.get(pk=self.user.id)
+        self.assertEqual(status_code, 500)
+        self.assertIsNone(self.user.phone_number_verification_code)
+        status_code, (uid, verification_code) = send_phone_number_verification_code(self.user, mock_api=True)
+        self.user = User.objects.get(pk=self.user.id)
+        self.assertEqual(status_code, 200)
+        self.assertEqual(self.user.phone_number_verification_code, verification_code)
 
 
 class UserSerializerTest(APITestCase):
@@ -242,7 +268,7 @@ class UserSerializerTest(APITestCase):
         self.assertEqual(data['phone_number_to_verify'], "+212623456789")
         self.assertEqual(data['phone_number_verified_by'], "")
         self.assertEqual(data['username'], "testuser")
-        self.assertEqual(len(data.keys()), 20)
+        self.assertEqual(len(data.keys()), 23)
         self.assertIn('date_joined', data)
         self.assertIsNone(data['phone_number'])
         user2 = User.objects.create_user(
@@ -264,7 +290,7 @@ class UserSerializerTest(APITestCase):
         self.assertEqual(data2['phone_number_to_verify'], "+212623456709")
         self.assertEqual(data2['phone_number_verified_by'], "google")
         self.assertEqual(data2['username'], "testuser2")
-        self.assertEqual(len(data2.keys()), 20)
+        self.assertEqual(len(data2.keys()), 23)
         self.assertIn('date_joined', data2)
 
     def test_valid_serializer(self):
@@ -321,7 +347,7 @@ class EmailVerificationTests(TestCase):
         self.assertFalse(self.user.is_email_validated)
         status_code, _ = send_verification_email(self.user)
         self.assertEqual(status_code, 200)
-        status_code, _ = send_verification_email(self.user, handle_end_email_error=True)
+        status_code, _ = send_verification_email(self.user, handle_send_email_error=True)
         self.assertEqual(status_code, 500)
 
     def test_verify_user_email_valid(self):
@@ -347,7 +373,7 @@ class EmailVerificationTests(TestCase):
     def test_verify_user_email_expired(self):
         _, (uid, token) = send_verification_email(self.user)
         token_date = token.split("_*_")
-        yesterday_timestamp = (datetime.datetime.now() - datetime.timedelta(days=1)).timestamp()
+        yesterday_timestamp = (now() - datetime.timedelta(days=1)).timestamp()
         token_date[1] = str(yesterday_timestamp)
         token = "_*_".join(token_date)
         verified, already_verified, expired_token = verify_user_email(uid, token)
@@ -428,6 +454,184 @@ class EmailVerificationTests(TestCase):
         self.assertEqual(message, "Paramètres requis manquants.")
 
         response = self.client.get('/accounts/verify-email/', {'token': "token"})
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Paramètres requis manquants.")
+
+
+class PhoneNumberVerificationTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', email='test@example.com', password='password123', phone_number_to_verify='+212612505257')
+        self.user_ar = User.objects.create_user(username='testuser_ar', email='test_ar@example.com', password='password123', current_language='ar', phone_number_to_verify='+212612505257')
+        self.user_en = User.objects.create_user(username='testuser_en', email='test_en@example.com', password='password123', current_language='en', phone_number_to_verify='+212612505257')
+        self.user_fr = User.objects.create_user(username='testuser_fr', email='test_fr@example.com', password='password123', current_language='fr', phone_number_to_verify='+212612505257')
+
+    def test_verify_user_phone_number_valid(self):
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user)
+        verified, already_verified, expired_verification_code, quota_exceeded = verify_user_phone_number(uid, verification_code)
+        self.assertTrue(verified)
+        self.assertFalse(already_verified)
+        self.assertFalse(expired_verification_code)
+        self.assertFalse(quota_exceeded)
+        self.user = User.objects.get(pk=self.user.id)
+        self.assertTrue(self.user.is_phone_number_validated)
+        self.assertEqual(self.user.phone_number, self.user.phone_number_to_verify)
+        self.assertEqual(self.user.nbr_phone_number_verification_code_used, 1)
+        verified, already_verified, expired_verification_code, quota_exceeded = verify_user_phone_number(uid, verification_code)
+        self.assertTrue(verified)
+        self.assertTrue(already_verified)
+        self.assertFalse(expired_verification_code)
+        self.assertFalse(quota_exceeded)
+
+    def test_verify_user_phone_number_invalid(self):
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user, mock_api=True)
+        self.user.phone_number = None
+        self.user.is_phone_number_validated = False
+        self.user.save()
+        self.user = User.objects.get(pk=self.user.id)
+        verified, already_verified, expired_verification_code, quota_exceeded = verify_user_phone_number(uid, "verification_code")
+        self.assertFalse(verified)
+        self.assertFalse(already_verified)
+        self.assertFalse(expired_verification_code)
+        self.assertFalse(quota_exceeded)
+
+    def test_verify_user_phone_number_expired(self):
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user, mock_api=True)
+        self.user = User.objects.get(pk=self.user.id)
+        self.user.phone_number = None
+        self.user.is_phone_number_validated = False
+        self.user.phone_number_verification_code_generated_at = (self.user.phone_number_verification_code_generated_at - datetime.timedelta(minutes=settings.NUMBER_MINUTES_BEFORE_PHONE_NUMBER_VERIFICATION_CODE_EXPIRATION + 2))
+        self.user.save()
+        verified, already_verified, expired_verification_code, quota_exceeded = verify_user_phone_number(uid, verification_code)
+        self.assertFalse(verified)
+        self.assertFalse(already_verified)
+        self.assertTrue(expired_verification_code)
+        self.assertFalse(quota_exceeded)
+
+    def test_verify_user_phone_number_quota_exceeded(self):
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user, mock_api=True)
+        self.user = User.objects.get(pk=self.user.id)
+        self.user.phone_number = None
+        self.user.is_phone_number_validated = False
+        self.user.save()
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user, mock_api=True)
+        verified, already_verified, expired_verification_code, quota_exceeded = verify_user_phone_number(uid, 'verification_code', resend_verification_phone_number_code=True)
+        self.assertFalse(verified)
+        self.assertFalse(already_verified)
+        self.assertFalse(expired_verification_code)
+        self.assertFalse(quota_exceeded)
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user, mock_api=True)
+        verified, already_verified, expired_verification_code, quota_exceeded = verify_user_phone_number(uid, 'verification_code', resend_verification_phone_number_code=True)
+        self.assertFalse(verified)
+        self.assertFalse(already_verified)
+        self.assertFalse(expired_verification_code)
+        self.assertTrue(quota_exceeded)
+
+    def test_verify_phone_number_view(self):
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user_fr, mock_api=True)
+        response = self.client.get('/accounts/verify-phone-number/', {'uid': uid, 'verification_code': verification_code})
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Numéro de téléphone vérifié avec succès.")
+        response = self.client.get('/accounts/verify-phone-number/', {'uid': uid, 'verification_code': verification_code})
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Numéro de téléphone déjà vérifié.")
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user_fr, mock_api=True)
+        User.objects.filter(pk=self.user_fr.id).update(
+            phone_number=None, is_phone_number_validated=False,
+            phone_number_verification_code_generated_at=(self.user_fr.phone_number_verification_code_generated_at - datetime.timedelta(minutes=settings.NUMBER_MINUTES_BEFORE_PHONE_NUMBER_VERIFICATION_CODE_EXPIRATION + 2))
+        )
+        response = self.client.get('/accounts/verify-phone-number/', {'uid': uid, 'verification_code': verification_code})
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Code de vérification expiré.")
+        response = self.client.get('/accounts/verify-phone-number/', {'uid': uid, 'verification_code': verification_code, 'resend_verification_phone_number_code': "true"})
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Un nouveau code de vérification sera envoyé à votre numéro de téléphone.")
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user_fr, mock_api=True)
+        response = self.client.get('/accounts/verify-phone-number/', {'uid': uid, 'verification_code': 'verification_code'})
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Code invalide.")
+
+    def test_verify_phone_number_view_en(self):
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user_en, mock_api=True)
+        response = self.client.get('/accounts/verify-phone-number/', {'uid': uid, 'verification_code': verification_code})
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Phone number verified successfully.")
+        response = self.client.get('/accounts/verify-phone-number/', {'uid': uid, 'verification_code': verification_code})
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Phone number already verified.")
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user_en, mock_api=True)
+        User.objects.filter(pk=self.user_en.id).update(
+            phone_number=None, is_phone_number_validated=False,
+            phone_number_verification_code_generated_at=(self.user_en.phone_number_verification_code_generated_at - datetime.timedelta(minutes=settings.NUMBER_MINUTES_BEFORE_PHONE_NUMBER_VERIFICATION_CODE_EXPIRATION + 2))
+        )
+        response = self.client.get('/accounts/verify-phone-number/', {'uid': uid, 'verification_code': verification_code})
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Expired verification code.")
+        response = self.client.get('/accounts/verify-phone-number/', {'uid': uid, 'verification_code': verification_code, 'resend_verification_phone_number_code': "true"})
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "A new verification code will be sent to your phone number.")
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user_en, mock_api=True)
+        response = self.client.get('/accounts/verify-phone-number/', {'uid': uid, 'verification_code': 'verification_code'})
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Invalid code.")
+
+    def test_verify_phone_number_view_ar(self):
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user_ar, mock_api=True)
+        response = self.client.get('/accounts/verify-phone-number/', {'uid': uid, 'verification_code': verification_code})
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "تم التحقق من رقم الهاتف بنجاح.")
+        response = self.client.get('/accounts/verify-phone-number/', {'uid': uid, 'verification_code': verification_code})
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "رقم الهاتف تم التحقق منه بالفعل.")
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user_ar, mock_api=True)
+        User.objects.filter(pk=self.user_ar.id).update(
+            phone_number=None, is_phone_number_validated=False,
+            phone_number_verification_code_generated_at=(self.user_ar.phone_number_verification_code_generated_at - datetime.timedelta(minutes=settings.NUMBER_MINUTES_BEFORE_PHONE_NUMBER_VERIFICATION_CODE_EXPIRATION + 2))
+        )
+        response = self.client.get('/accounts/verify-phone-number/', {'uid': uid, 'verification_code': verification_code})
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "رمز التحقق منتهي الصلاحية.")
+        response = self.client.get('/accounts/verify-phone-number/', {'uid': uid, 'verification_code': verification_code, 'resend_verification_phone_number_code': "true"})
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "سيتم إرسال رمز تحقق جديد إلى رقم هاتفك.")
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user_ar, mock_api=True)
+        response = self.client.get('/accounts/verify-phone-number/', {'uid': uid, 'verification_code': 'verification_code'})
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "رمز غير صالح.")
+
+    def test_verify_phone_number_view_missing_params(self):
+        response = self.client.get('/accounts/verify-phone-number/', {})
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Paramètres requis manquants.")
+
+        response = self.client.get('/accounts/verify-phone-number/', {'uid': "uid"})
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Paramètres requis manquants.")
+
+        response = self.client.get('/accounts/verify-phone-number/', {'verification_code': "verification_code"})
         self.assertEqual(response.status_code, 400)
         data = json.loads(response.content.decode('utf-8'))
         message = data.get("message")

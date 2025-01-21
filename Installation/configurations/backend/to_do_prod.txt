@@ -1,3 +1,9 @@
+Settings updates:
+    Changes those settings variables:
+        NUMBER_MINUTES_BEFORE_PHONE_NUMBER_VERIFICATION_CODE_EXPIRATION, TECHNICAL_SERVICE_EMAIL,
+        DEFAULT_PHONE_NUMBER_COUNTRY_CODE, APPLICATION_NAME, ADDRESS, FRONTEND_ENDPOINT, BACKEND_ENDPOINT,
+        CORS_ORIGIN_WHITELIST, CORS_ORIGIN_ALLOW_ALL, PHONE_NUMBER_VERIFICATION_CODE_QUOTA
+
 Email smtp:
     Create gmail account for prod and set params in .env file:
         EMAIL_HOST_USER=""
@@ -10,3 +16,6 @@ Email smtp:
         EMAIL_HOST_USER=""
         EMAIL_HOST_PASSWORD=""
         DEFAULT_FROM_EMAIL=""
+
+Whatsapp:
+    May be good solution: https://waapi.app/user/api-tokens

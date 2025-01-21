@@ -196,3 +196,16 @@ APPLICATION_NAME = "LEAGUER"
 # Replace with your default country code
 DEFAULT_PHONE_NUMBER_COUNTRY_CODE = "MA"
 
+# Phone number verification required
+PHONE_NUMBER_VERIFICATION_REQUIRED = True
+
+# Number of minute that the phone number verification code still valid
+NUMBER_MINUTES_BEFORE_PHONE_NUMBER_VERIFICATION_CODE_EXPIRATION = 60
+
+# Phone number verification code's quota
+PHONE_NUMBER_VERIFICATION_CODE_QUOTA = 3
+
+
+# Technical service email
+TECHNICAL_SERVICE_EMAIL = ""
+
