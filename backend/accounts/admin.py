@@ -10,12 +10,12 @@ class UserAdmin(BaseUserAdmin):
     """
     # Fields to display in the admin list view
     list_display = (
-        'id', 'username', 'email', 'last_name', 'first_name', 'is_active', 'is_deleted', 'phone_number'
+        'id', 'username', 'email', 'last_name', 'first_name', 'is_active', 'is_user_deleted', 'user_phone_number'
     )
     # Fields to filter by in the sidebar
-    list_filter = ('is_active', 'is_email_validated', 'is_deleted', 'is_phone_number_validated')
+    list_filter = ('is_active', 'is_user_email_validated', 'is_user_deleted', 'is_user_phone_number_validated')
     # Fields to search by
-    search_fields = ('username', 'email', 'first_name', 'last_name', 'phone_number', 'cin')
+    search_fields = ('username', 'email', 'first_name', 'last_name', 'user_phone_number', 'user_phone_number_to_verify', 'user_cin')
     # Fields to display in the detailed edit view
     fieldsets = (
         (None, {
@@ -23,19 +23,19 @@ class UserAdmin(BaseUserAdmin):
         }),
         (_('Personal Info'), {
             'fields': (
-                'first_name', 'last_name', 'email', 'phone_number', 'birthday', 'gender', 'address',
-                'country', 'current_language', 'phone_number_to_verify', 'phone_number_verified_by'
+                'first_name', 'last_name', 'email', 'user_phone_number', 'user_birthday', 'user_gender', 'user_address',
+                'user_country', 'current_language', 'user_phone_number_to_verify', 'user_phone_number_verified_by'
             )
         }),
         (_('Permissions'), {
             'fields': (
-                'is_active', 'is_email_validated', 'is_deleted', 'is_phone_number_validated', 'is_staff',
-                'is_superuser', 'groups', 'user_permissions', 'phone_number_verification_code',
+                'is_active', 'is_user_email_validated', 'is_user_deleted', 'is_user_phone_number_validated', 'is_staff',
+                'is_superuser', 'groups', 'user_permissions', 'user_phone_number_verification_code',
                 'nbr_phone_number_verification_code_used',
             )
         }),
         (_('Important Dates'), {
-            'fields': ('last_login', 'date_joined', 'phone_number_verification_code_generated_at')
+            'fields': ('last_login', 'date_joined', 'user_phone_number_verification_code_generated_at')
         }),
     )
     # Fields to use for adding a new user

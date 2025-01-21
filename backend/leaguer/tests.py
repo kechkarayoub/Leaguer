@@ -1,4 +1,4 @@
-from .utils import execute_native_query, generate_random_code, send_whatsapp
+from .utils import execute_native_query, generate_random_code, send_whatsapp, send_phone_message
 from accounts.models import User
 from django.test import TestCase
 
@@ -10,7 +10,7 @@ class LeaguerUtilsTest(TestCase):
             first_name="First name",
             last_name="Last name",
             password="testpassword123",
-            phone_number_to_verify="+212612505257",
+            user_phone_number_to_verify="+212612505257",
             username="testuser",
         )
 
@@ -23,8 +23,8 @@ class LeaguerUtilsTest(TestCase):
         query_set_user = """
             INSERT INTO leaguer_user (email, first_name, is_active, last_name, username, password, is_superuser, 
                 is_staff, date_joined, nbr_phone_number_verification_code_used,
-                gender, is_deleted, current_language, is_email_validated, is_phone_number_validated,
-                phone_number_verified_by)
+                user_gender, is_user_deleted, current_language, is_user_email_validated, is_user_phone_number_validated,
+                user_phone_number_verified_by)
             VALUES ('email2@yopmail.com', 'first_name', True, 'last_name', 'username2', 'password', False, False, NOW(),
                 0, '', False, 'fr', False, False, ''),
                 ('email3@yopmail.com', 'first_name', True, 'last_name', 'username3', 'password', False, False, NOW(), 
@@ -71,6 +71,24 @@ class LeaguerUtilsTest(TestCase):
         self.assertEqual(len(custom_random_code), 8)
         self.assertTrue(0 <= int(custom_random_code) <= 99999999)
 
+    def test_send_phone_message(self):
+        self.assertEqual(self.user.nbr_phone_number_verification_code_used, 0)
+        response = send_phone_message("test", ["+212612505257"])
+        self.assertEqual(response.get('nbr_verification_codes_sent'), 1)
+        self.assertTrue(response.get('all_verification_codes_sent'))
+        self.user = User.objects.get(pk=self.user.id)
+        self.assertEqual(self.user.nbr_phone_number_verification_code_used, 0)
+        response = send_phone_message("test", ["+212612505257", "+212612505257"], mock_api=True)
+        self.assertEqual(response.get('nbr_verification_codes_sent'), 2)
+        self.assertTrue(response.get('all_verification_codes_sent'))
+        self.user = User.objects.get(pk=self.user.id)
+        self.assertEqual(self.user.nbr_phone_number_verification_code_used, 0)
+        response = send_phone_message("test", ["+212612505257"], handle_error=True, mock_api=True)
+        self.assertEqual(response.get('nbr_verification_codes_sent'), 0)
+        self.assertFalse(response.get('all_verification_codes_sent'))
+        self.user = User.objects.get(pk=self.user.id)
+        self.assertEqual(self.user.nbr_phone_number_verification_code_used, 0)
+
     def test_send_whatsapp(self):
         self.assertEqual(self.user.nbr_phone_number_verification_code_used, 0)
         response = send_whatsapp("test", ["+212612505257"])
@@ -78,12 +96,12 @@ class LeaguerUtilsTest(TestCase):
         self.assertTrue(response.get('all_verification_codes_sent'))
         self.user = User.objects.get(pk=self.user.id)
         self.assertEqual(self.user.nbr_phone_number_verification_code_used, 0)
-        response = send_whatsapp("test", ["+212612505257", "+212612505257"])
+        response = send_whatsapp("test", ["+212612505257", "+212612505257"], mock_api=True)
         self.assertEqual(response.get('nbr_verification_codes_sent'), 2)
         self.assertTrue(response.get('all_verification_codes_sent'))
         self.user = User.objects.get(pk=self.user.id)
         self.assertEqual(self.user.nbr_phone_number_verification_code_used, 0)
-        response = send_whatsapp("test", ["+212612505257"], handle_error=True)
+        response = send_whatsapp("test", ["+212612505257"], handle_error=True, mock_api=True)
         self.assertEqual(response.get('nbr_verification_codes_sent'), 0)
         self.assertFalse(response.get('all_verification_codes_sent'))
         self.user = User.objects.get(pk=self.user.id)

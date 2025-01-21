@@ -60,7 +60,7 @@ def get_email_base_context(selected_language="fr"):
         Dict: A dictionary that contains common params used in emails.
     """
     context = {
-        'address': settings.ADDRESS,
+        'company_address': settings.COMPANY_ADDRESS,
         'app_name': settings.APPLICATION_NAME,
         'current_year': now().year,
         'direction': "rtl" if selected_language == "ar" else "ltr",
@@ -75,11 +75,27 @@ PHONE_NUMBER_VERIFICATION_METHOD = [
 ]
 
 
-def send_sms(sms_content, receivers_numbers):
+def send_phone_message(content, receivers_numbers, as_sms=False, handle_error=False, mock_api=False):
+    """
+    Send content to receivers_numbers.
+    :param content: (str) text content.
+    :param receivers_numbers: (list) List of phone numbers receivers.
+    :param as_sms: (bool) By default we sent content by whatsapp, if as_sms is true, we sent it as sms.
+    :param handle_error: (bool) To handle error for testing purpose.
+    :param mock_api: (bool) Flag to mock api for testing.
+    :return: function execution
+    """
+    if as_sms:
+        return send_sms(sms_content=content, receivers_numbers=receivers_numbers, mock_api=mock_api)
+    return send_whatsapp(whatsapp_content=content, receivers_numbers=receivers_numbers, handle_error=handle_error, mock_api=mock_api)
+
+
+def send_sms(sms_content, receivers_numbers, mock_api=False):
     """
     Send sms_content to receivers_numbers.
     :param sms_content: (str) SMS text content.
     :param receivers_numbers: (list) List of phone numbers receivers.
+    :param mock_api: (bool) Flag to mock api for testing.
     :return:
     """
     if settings.ENVIRONMENT == "development":
@@ -90,13 +106,14 @@ def send_sms(sms_content, receivers_numbers):
         pass
 
 
-def send_whatsapp(whatsapp_content, receivers_numbers, handle_error=False):
+def send_whatsapp(whatsapp_content, receivers_numbers, handle_error=False, mock_api=False):
     """
     Send sms_content to receivers_numbers.
     :param whatsapp_content: (str) SMS text content.
     :param receivers_numbers: (list) List of phone numbers receivers.
     :param handle_error: (bool) To handle error for testing purpose.
     :return: response_data: (dict) A dictionary that contains nbr_verification_codes_sent and all_verification_codes_sent
+    :param mock_api: (bool) Flag to mock api for testing.
     """
     if settings.ENVIRONMENT == "development":
         logger.info("whatsapp_content: " + whatsapp_content)
@@ -108,6 +125,18 @@ def send_whatsapp(whatsapp_content, receivers_numbers, handle_error=False):
     response_data = {
         'nbr_verification_codes_sent': 0,
     }
+
+    if mock_api:
+        response_data = {
+            'nbr_verification_codes_sent': len(receivers_numbers),
+            'all_verification_codes_sent': True,
+        }
+        if handle_error:
+            response_data = {
+                'nbr_verification_codes_sent': 0,
+                'all_verification_codes_sent': False,
+            }
+        return response_data
 
     url = settings.WHATSAPP_INSTANCE_URL
     for receiver_number in receivers_numbers:

@@ -7,22 +7,22 @@ import phonenumbers
 
 @receiver(pre_save, sender=User)
 def format_phone_numbers(sender, instance, **kwargs):
-    if instance.phone_number:
-        if not instance.is_phone_number_validated:
-            instance.phone_number = None
+    if instance.user_phone_number:
+        if not instance.is_user_phone_number_validated:
+            instance.user_phone_number = None
         else:
             try:
-                parsed_number = phonenumbers.parse(instance.phone_number, settings.DEFAULT_PHONE_NUMBER_COUNTRY_CODE)
-                instance.phone_number = phonenumbers.format_number(
+                parsed_number = phonenumbers.parse(instance.user_phone_number, settings.DEFAULT_PHONE_NUMBER_COUNTRY_CODE)
+                instance.user_phone_number = phonenumbers.format_number(
                     parsed_number, phonenumbers.PhoneNumberFormat.E164
                 )
             except phonenumbers.NumberParseException:
-                instance.phone_number = None
-    if instance.phone_number_to_verify:
+                instance.user_phone_number = None
+    if instance.user_phone_number_to_verify:
         try:
-            parsed_number = phonenumbers.parse(instance.phone_number_to_verify, settings.DEFAULT_PHONE_NUMBER_COUNTRY_CODE)
-            instance.phone_number_to_verify = phonenumbers.format_number(
+            parsed_number = phonenumbers.parse(instance.user_phone_number_to_verify, settings.DEFAULT_PHONE_NUMBER_COUNTRY_CODE)
+            instance.user_phone_number_to_verify = phonenumbers.format_number(
                 parsed_number, phonenumbers.PhoneNumberFormat.E164
             )
         except phonenumbers.NumberParseException:
-            instance.phone_number_to_verify = None
+            instance.user_phone_number_to_verify = None

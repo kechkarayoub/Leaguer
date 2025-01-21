@@ -12,16 +12,16 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            "address", "birthday", "cin", "country", "current_language", "date_joined", "email",
-            "first_name", "gender", "phone_number_verification_code", "phone_number_verification_code_generated_at",
-            "id", "image_url", "is_active", "is_email_validated", "is_deleted", "is_phone_number_validated",
-            "last_name", "phone_number", "phone_number_to_verify", "phone_number_verified_by",
+            "user_address", "user_birthday", "user_cin", "user_country", "current_language", "date_joined", "email",
+            "first_name", "user_gender", "user_phone_number_verification_code", "user_phone_number_verification_code_generated_at",
+            "id", "user_image_url", "is_active", "is_user_email_validated", "is_user_deleted", "is_user_phone_number_validated",
+            "last_name", "user_phone_number", "user_phone_number_to_verify", "user_phone_number_verified_by",
             "username", "nbr_phone_number_verification_code_used",
         ]
         read_only_fields = ["id", "date_joined"]
 
     # noinspection PyMethodMayBeStatic
-    def validate_phone_number(self, value):
+    def validate_user_phone_number(self, value):
         """Validate phone number starts with +, country code, and contains only digits."""
         if value is None or value == "":
             return value
@@ -40,7 +40,7 @@ class UserSerializer(serializers.ModelSerializer):
             )
 
     # noinspection PyMethodMayBeStatic
-    def validate_phone_number_to_verify(self, value):
+    def validate_user_phone_number_to_verify(self, value):
         """Validate phone number to verify starts with +, country code, and contains only digits."""
         if value is None or value == "":
             return value
@@ -59,8 +59,8 @@ class UserSerializer(serializers.ModelSerializer):
             )
 
     # noinspection PyMethodMayBeStatic
-    def validate_birthday(self, value):
-        """Validate birthday is at least MINIMUM_AGE_ALLOWED_FOR_USERS years before today."""
+    def validate_user_birthday(self, value):
+        """Validate user_birthday is at least MINIMUM_AGE_ALLOWED_FOR_USERS years before today."""
         if value is None:
             return None
         today = date.today()

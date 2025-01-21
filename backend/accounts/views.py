@@ -35,12 +35,12 @@ def verify_phone_number(request):
     user = User.objects.get(pk=uid_)
     # Activate user's current language for translations
     activate(user.current_language)
-    if not user.is_phone_number_validated and not user.phone_number_to_verify:
+    if not user.is_user_phone_number_validated and not user.user_phone_number_to_verify:
         return JsonResponse({
             "message": _(f"You should add a phone number before validate it!")
         }, status=400)
-    if not user.is_phone_number_validated and user.phone_number_to_verify and User.objects.filter(
-        is_phone_number_validated=True, phone_number=user.phone_number_to_verify
+    if not user.is_user_phone_number_validated and user.user_phone_number_to_verify and User.objects.filter(
+        is_user_phone_number_validated=True, user_phone_number=user.user_phone_number_to_verify
     ).exists():
         return JsonResponse({
             "message": _("This phone number already verified for another user. Please contact the technical service at {technical_service_email} to resolve your problem.").format(technical_service_email=settings.TECHNICAL_SERVICE_EMAIL)
@@ -79,7 +79,7 @@ def verify_user_phone_number(uid, verification_code_, resend_verification_phone_
 
     Args:
         uid (str): Base64 encoded user ID.
-        verification_code_ (str): Code for phone_number verification.
+        verification_code_ (str): Code for user_phone_number verification.
         resend_verification_phone_number_code (bool): resend the phone number verification code for the user if True.
 
     Returns:
@@ -95,10 +95,10 @@ def verify_user_phone_number(uid, verification_code_, resend_verification_phone_
     user = User.objects.get(pk=uid)
 
     # The email is already validated
-    if user.is_phone_number_validated:
+    if user.is_user_phone_number_validated:
         return True, True, False, False
     # the verification_code is expired (not the same day)
-    elif user.phone_number_verification_code_generated_at and (user.phone_number_verification_code_generated_at + datetime.timedelta(minutes=settings.NUMBER_MINUTES_BEFORE_PHONE_NUMBER_VERIFICATION_CODE_EXPIRATION)) < now():
+    elif user.user_phone_number_verification_code_generated_at and (user.user_phone_number_verification_code_generated_at + datetime.timedelta(minutes=settings.NUMBER_MINUTES_BEFORE_PHONE_NUMBER_VERIFICATION_CODE_EXPIRATION)) < now():
         return False, False, True, False
     # The resend_verification_phone_number_code is True
     elif resend_verification_phone_number_code:
@@ -106,9 +106,9 @@ def verify_user_phone_number(uid, verification_code_, resend_verification_phone_
             return False, False, False, True
         send_phone_number_verification_code(user)
     # If the token is valid, the email address will be validated
-    if user.phone_number_verification_code == verification_code_:
-        user.is_phone_number_validated = True
-        user.phone_number = user.phone_number_to_verify
+    if user.user_phone_number_verification_code == verification_code_:
+        user.is_user_phone_number_validated = True
+        user.user_phone_number = user.user_phone_number_to_verify
         user.save()
         return True, False, False, False
     # If the token is not valid, the email address will not be validated
@@ -144,7 +144,7 @@ def verify_user_email(uid, token_, resend_verification_email=False):
     user = User.objects.get(pk=uid)
 
     # The email is already validated
-    if user.is_email_validated:
+    if user.is_user_email_validated:
         return True, True, False
     # The resend_verification_email is True or the token is expired (not the same day)
     elif resend_verification_email or date_token and date_token.strftime("%Y-%m-%d") != now().strftime("%Y-%m-%d"):
@@ -152,7 +152,7 @@ def verify_user_email(uid, token_, resend_verification_email=False):
         return False, False, True
     # If the token is valid, the email address will be validated
     if default_token_generator.check_token(user, token):
-        user.is_email_validated = True
+        user.is_user_email_validated = True
         user.save()
         return True, False, False
     # If the token is not valid, the email address will not be validated

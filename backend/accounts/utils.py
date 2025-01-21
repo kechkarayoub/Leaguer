@@ -6,7 +6,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.timezone import now
 from django.utils.translation import activate, gettext_lazy as _
-from leaguer.utils import generate_random_code, get_email_base_context, send_sms, send_whatsapp
+from leaguer.utils import generate_random_code, get_email_base_context, send_phone_message
 from smtplib import SMTPException, SMTPAuthenticationError, SMTPSenderRefused, SMTPRecipientsRefused, SMTPDataError
 import datetime
 import logging
@@ -18,24 +18,24 @@ logger = logging.getLogger(__name__)
 GENDERS_CHOICES = [("", _("Select")), ("female", _("Female")), ("male", _("Male"))]
 
 
-def format_phone_number(phone_number):
+def format_phone_number(user_phone_number):
     """
-        Convert phone_number to a standard format
+        Convert user_phone_number to a standard format
 
         Args:
-            phone_number (String): the phone number.
+            user_phone_number (String): the phone number.
 
         Returns:
-            phone_number: formatted phone number.
+            user_phone_number: formatted phone number.
     """
     try:
-        parsed_number = phonenumbers.parse(phone_number, settings.DEFAULT_PHONE_NUMBER_COUNTRY_CODE)
-        phone_number = phonenumbers.format_number(
+        parsed_number = phonenumbers.parse(user_phone_number, settings.DEFAULT_PHONE_NUMBER_COUNTRY_CODE)
+        user_phone_number = phonenumbers.format_number(
             parsed_number, phonenumbers.PhoneNumberFormat.E164
         )
     except phonenumbers.NumberParseException:
         pass
-    return phone_number
+    return user_phone_number
 
 
 def send_verification_email(user, handle_send_email_error=False):
@@ -124,11 +124,11 @@ def send_phone_number_verification_code(user, handle_send_phone_number_verificat
         # This is for testing send sms error from third party
         if handle_send_phone_number_verification_sms_error:
             err = int("text")
-        receivers_numbers = [user.phone_number_to_verify]
+        receivers_numbers = [user.user_phone_number_to_verify]
         if mock_api:
             response = {'all_verification_codes_sent': True}
         else:
-            response = send_whatsapp(message_content, receivers_numbers)
+            response = send_phone_message(message_content, receivers_numbers)
         if not response.get('all_verification_codes_sent'):
             return 500, (uid, verification_code)
     except (
@@ -139,8 +139,8 @@ def send_phone_number_verification_code(user, handle_send_phone_number_verificat
         return 500, (uid, verification_code)
 
     # Save verification code && generation date to user
-    user.phone_number_verification_code = verification_code
-    user.phone_number_verification_code_generated_at = now()
+    user.user_phone_number_verification_code = verification_code
+    user.user_phone_number_verification_code_generated_at = now()
     # If whatsapp message sent, we're updating nbr_phone_number_verification_code_used values of users with the receiver_number's number
     user.nbr_phone_number_verification_code_used += 1
     user.save()
