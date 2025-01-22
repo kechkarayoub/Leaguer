@@ -66,6 +66,9 @@ class UserModelTest(TestCase):
             username="testuser3",
         )
         result = User.send_emails_verifications_links(email="noemailuser@example.com")
+        if settings.ENABLE_EMAIL_VERIFICATION is False:
+            self.assertEqual(result, "ENABLE_EMAIL_VERIFICATION is False!!.")
+            return
         self.assertEqual(result, "There is any user with this email: noemailuser@example.com, or it is already verified!")
         result = User.send_emails_verifications_links(email="testuser3@example.com")
         self.assertEqual(result, "1 verification email are sent, 0 are not.")
@@ -96,12 +99,22 @@ class UserModelTest(TestCase):
         self.assertEqual(self.user.user_image_url, "https://www.s3.com/image_url")
         self.assertEqual(self.user.last_name, "Last name")
         self.assertEqual(self.user.user_phone_number_to_verify, "+2121234567890")
-        self.assertEqual(self.user.user_phone_number_verified_by, "sms")
+        if settings.ENABLE_PHONE_NUMBER_VERIFICATION:
+            self.assertEqual(self.user.user_phone_number_verified_by, "sms")
+        else:
+            self.assertEqual(self.user.user_phone_number_verified_by, "sms")
         self.assertEqual(self.user.username, "testuser")
-        self.assertFalse(self.user.is_user_email_validated)
+        if settings.ENABLE_EMAIL_VERIFICATION:
+            self.assertFalse(self.user.is_user_email_validated)
+        else:
+            self.assertTrue(self.user.is_user_email_validated)
         self.assertFalse(self.user.is_user_deleted)
-        self.assertFalse(self.user.is_user_phone_number_validated)
-        self.assertIsNone(self.user.user_phone_number)
+        if settings.ENABLE_PHONE_NUMBER_VERIFICATION:
+            self.assertFalse(self.user.is_user_phone_number_validated)
+            self.assertIsNone(self.user.user_phone_number)
+        else:
+            self.assertTrue(self.user.is_user_phone_number_validated)
+            self.assertEqual(self.user.user_phone_number, "+2121234567890")
         self.assertNotEqual(self.user.password, "testpassword123")
         self.assertTrue(self.user.is_active)
         self.assertEqual(self.user_verified_phone_number.user_phone_number, "+2121234567899")
@@ -199,15 +212,18 @@ class UserUtilsTest(TestCase):
         self.assertEqual(formatted_phone_number, "+123")
 
     def test_send_phone_number_verification_code(self):
-        self.assertIsNone(self.user.user_phone_number_verification_code)
-        status_code, _ = send_phone_number_verification_code(self.user, handle_send_phone_number_verification_sms_error=True, mock_api=True)
-        self.user = User.objects.get(pk=self.user.id)
-        self.assertEqual(status_code, 500)
-        self.assertIsNone(self.user.user_phone_number_verification_code)
-        status_code, (uid, verification_code) = send_phone_number_verification_code(self.user, mock_api=True)
-        self.user = User.objects.get(pk=self.user.id)
-        self.assertEqual(status_code, 200)
-        self.assertEqual(self.user.user_phone_number_verification_code, verification_code)
+        if settings.ENABLE_PHONE_NUMBER_VERIFICATION:
+            self.assertIsNone(self.user.user_phone_number_verification_code)
+            status_code, _ = send_phone_number_verification_code(self.user, handle_send_phone_number_verification_sms_error=True, do_not_mock_api=False)
+            self.user = User.objects.get(pk=self.user.id)
+            self.assertEqual(status_code, 500)
+            self.assertIsNone(self.user.user_phone_number_verification_code)
+            status_code, (uid, verification_code) = send_phone_number_verification_code(self.user)
+            self.user = User.objects.get(pk=self.user.id)
+            self.assertEqual(status_code, 200)
+            self.assertEqual(self.user.user_phone_number_verification_code, verification_code)
+        else:
+            self.assertTrue(True)
 
 
 class UserSerializerTest(APITestCase):
@@ -266,11 +282,15 @@ class UserSerializerTest(APITestCase):
         self.assertEqual(data['user_image_url'], "https://www.s3.com/image_url")
         self.assertEqual(data['last_name'], "Last name")
         self.assertEqual(data['user_phone_number_to_verify'], "+212623456789")
-        self.assertEqual(data['user_phone_number_verified_by'], "")
+        if settings.ENABLE_PHONE_NUMBER_VERIFICATION:
+            self.assertEqual(data['user_phone_number_verified_by'], "")
+            self.assertIsNone(data['user_phone_number'])
+        else:
+            self.assertEqual(data['user_phone_number_verified_by'], "default")
+            self.assertEqual(data['user_phone_number'], "+212623456789")
         self.assertEqual(data['username'], "testuser")
         self.assertEqual(len(data.keys()), 23)
         self.assertIn('date_joined', data)
-        self.assertIsNone(data['user_phone_number'])
         user2 = User.objects.create_user(
             **self.valid_data2
         )
@@ -344,6 +364,9 @@ class EmailVerificationTests(TestCase):
         self.user_en = User.objects.create_user(username='testuser_en', email='test_en@example.com', password='password123', current_language='en')
 
     def test_send_verification_email(self):
+        if settings.ENABLE_EMAIL_VERIFICATION is False:
+            self.assertTrue(True)
+            return
         self.assertFalse(self.user.is_user_email_validated)
         status_code, _ = send_verification_email(self.user)
         self.assertEqual(status_code, 200)
@@ -351,6 +374,9 @@ class EmailVerificationTests(TestCase):
         self.assertEqual(status_code, 500)
 
     def test_verify_user_email_valid(self):
+        if settings.ENABLE_EMAIL_VERIFICATION is False:
+            self.assertTrue(True)
+            return
         _, (uid, token) = send_verification_email(self.user)
         verified, already_verified, expired_token = verify_user_email(uid, token)
         self.assertTrue(verified)
@@ -364,6 +390,9 @@ class EmailVerificationTests(TestCase):
         self.assertFalse(expired_token)
 
     def test_verify_user_email_invalid(self):
+        if settings.ENABLE_EMAIL_VERIFICATION is False:
+            self.assertTrue(True)
+            return
         _, (uid, token) = send_verification_email(self.user)
         verified, already_verified, expired_token = verify_user_email(uid, 'invalid-token')
         self.assertFalse(verified)
@@ -371,6 +400,9 @@ class EmailVerificationTests(TestCase):
         self.assertFalse(expired_token)
 
     def test_verify_user_email_expired(self):
+        if settings.ENABLE_EMAIL_VERIFICATION is False:
+            self.assertTrue(True)
+            return
         _, (uid, token) = send_verification_email(self.user)
         token_date = token.split("_*_")
         yesterday_timestamp = (now() - datetime.timedelta(days=1)).timestamp()
@@ -382,6 +414,9 @@ class EmailVerificationTests(TestCase):
         self.assertTrue(expired_token)
 
     def test_verify_email_view(self):
+        if settings.ENABLE_EMAIL_VERIFICATION is False:
+            self.assertTrue(True)
+            return
         _, (uid, token) = send_verification_email(self.user)
         response = self.client.get('/accounts/verify-email/', {'uid': uid, 'token': token})
         self.assertEqual(response.status_code, 200)
@@ -407,6 +442,9 @@ class EmailVerificationTests(TestCase):
         self.assertEqual(message, "Jeton expiré. Un nouvel e-mail de vérification sera envoyé à votre adresse e-mail.")
 
     def test_verify_email_view_en(self):
+        if settings.ENABLE_EMAIL_VERIFICATION is False:
+            self.assertTrue(True)
+            return
         _, (uid, token) = send_verification_email(self.user_en)
         response = self.client.get('/accounts/verify-email/', {'uid': uid, 'token': token})
         self.assertEqual(response.status_code, 200)
@@ -424,6 +462,9 @@ class EmailVerificationTests(TestCase):
         self.assertEqual(message, "Expired token. A new verification email will be sent to your email address.")
 
     def test_verify_email_view_ar(self):
+        if settings.ENABLE_EMAIL_VERIFICATION is False:
+            self.assertTrue(True)
+            return
         _, (uid, token) = send_verification_email(self.user_ar)
         response = self.client.get('/accounts/verify-email/', {'uid': uid, 'token': token})
         self.assertEqual(response.status_code, 200)
@@ -441,6 +482,9 @@ class EmailVerificationTests(TestCase):
         self.assertEqual(message, "انتهت صلاحية الرمز. سيتم إرسال رسالة تحقق جديدة إلى عنوان بريدك الإلكتروني.")
 
     def test_verify_email_view_missing_params(self):
+        if settings.ENABLE_EMAIL_VERIFICATION is False:
+            self.assertTrue(True)
+            return
         response = self.client.get('/accounts/verify-email/', {})
         self.assertEqual(response.status_code, 400)
         data = json.loads(response.content.decode('utf-8'))
@@ -463,11 +507,16 @@ class EmailVerificationTests(TestCase):
 class PhoneNumberVerificationTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='testuser', email='test@example.com', password='password123', user_phone_number_to_verify='+212612505257')
+        if settings.ENABLE_PHONE_NUMBER_VERIFICATION is False:
+            return
         self.user_ar = User.objects.create_user(username='testuser_ar', email='test_ar@example.com', password='password123', current_language='ar', user_phone_number_to_verify='+212612505257')
         self.user_en = User.objects.create_user(username='testuser_en', email='test_en@example.com', password='password123', current_language='en', user_phone_number_to_verify='+212612505257')
         self.user_fr = User.objects.create_user(username='testuser_fr', email='test_fr@example.com', password='password123', current_language='fr', user_phone_number_to_verify='+212612505257')
 
     def test_verify_user_phone_number_valid(self):
+        if settings.ENABLE_PHONE_NUMBER_VERIFICATION is False:
+            self.assertTrue(True)
+            return
         _, (uid, verification_code) = send_phone_number_verification_code(self.user)
         verified, already_verified, expired_verification_code, quota_exceeded = verify_user_phone_number(uid, verification_code)
         self.assertTrue(verified)
@@ -485,7 +534,10 @@ class PhoneNumberVerificationTests(TestCase):
         self.assertFalse(quota_exceeded)
 
     def test_verify_user_phone_number_invalid(self):
-        _, (uid, verification_code) = send_phone_number_verification_code(self.user, mock_api=True)
+        if settings.ENABLE_PHONE_NUMBER_VERIFICATION is False:
+            self.assertTrue(True)
+            return
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user)
         self.user.user_phone_number = None
         self.user.is_user_phone_number_validated = False
         self.user.save()
@@ -497,7 +549,10 @@ class PhoneNumberVerificationTests(TestCase):
         self.assertFalse(quota_exceeded)
 
     def test_verify_user_phone_number_expired(self):
-        _, (uid, verification_code) = send_phone_number_verification_code(self.user, mock_api=True)
+        if settings.ENABLE_PHONE_NUMBER_VERIFICATION is False:
+            self.assertTrue(True)
+            return
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user)
         self.user = User.objects.get(pk=self.user.id)
         self.user.user_phone_number = None
         self.user.is_user_phone_number_validated = False
@@ -510,18 +565,21 @@ class PhoneNumberVerificationTests(TestCase):
         self.assertFalse(quota_exceeded)
 
     def test_verify_user_phone_number_quota_exceeded(self):
-        _, (uid, verification_code) = send_phone_number_verification_code(self.user, mock_api=True)
+        if settings.ENABLE_PHONE_NUMBER_VERIFICATION is False:
+            self.assertTrue(True)
+            return
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user)
         self.user = User.objects.get(pk=self.user.id)
         self.user.user_phone_number = None
         self.user.is_user_phone_number_validated = False
         self.user.save()
-        _, (uid, verification_code) = send_phone_number_verification_code(self.user, mock_api=True)
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user)
         verified, already_verified, expired_verification_code, quota_exceeded = verify_user_phone_number(uid, 'verification_code', resend_verification_phone_number_code=True)
         self.assertFalse(verified)
         self.assertFalse(already_verified)
         self.assertFalse(expired_verification_code)
         self.assertFalse(quota_exceeded)
-        _, (uid, verification_code) = send_phone_number_verification_code(self.user, mock_api=True)
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user)
         verified, already_verified, expired_verification_code, quota_exceeded = verify_user_phone_number(uid, 'verification_code', resend_verification_phone_number_code=True)
         self.assertFalse(verified)
         self.assertFalse(already_verified)
@@ -529,7 +587,10 @@ class PhoneNumberVerificationTests(TestCase):
         self.assertTrue(quota_exceeded)
 
     def test_verify_phone_number_view(self):
-        _, (uid, verification_code) = send_phone_number_verification_code(self.user_fr, mock_api=True)
+        if settings.ENABLE_PHONE_NUMBER_VERIFICATION is False:
+            self.assertTrue(True)
+            return
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user_fr)
         response = self.client.get('/accounts/verify-phone-number/', {'uid': uid, 'verification_code': verification_code})
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content.decode('utf-8'))
@@ -539,7 +600,7 @@ class PhoneNumberVerificationTests(TestCase):
         data = json.loads(response.content.decode('utf-8'))
         message = data.get("message")
         self.assertEqual(message, "Numéro de téléphone déjà vérifié.")
-        _, (uid, verification_code) = send_phone_number_verification_code(self.user_fr, mock_api=True)
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user_fr)
         User.objects.filter(pk=self.user_fr.id).update(
             user_phone_number=None, is_user_phone_number_validated=False,
             user_phone_number_verification_code_generated_at=(self.user_fr.user_phone_number_verification_code_generated_at - datetime.timedelta(minutes=settings.NUMBER_MINUTES_BEFORE_PHONE_NUMBER_VERIFICATION_CODE_EXPIRATION + 2))
@@ -552,14 +613,17 @@ class PhoneNumberVerificationTests(TestCase):
         data = json.loads(response.content.decode('utf-8'))
         message = data.get("message")
         self.assertEqual(message, "Un nouveau code de vérification sera envoyé à votre numéro de téléphone.")
-        _, (uid, verification_code) = send_phone_number_verification_code(self.user_fr, mock_api=True)
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user_fr)
         response = self.client.get('/accounts/verify-phone-number/', {'uid': uid, 'verification_code': 'verification_code'})
         data = json.loads(response.content.decode('utf-8'))
         message = data.get("message")
         self.assertEqual(message, "Code invalide.")
 
     def test_verify_phone_number_view_en(self):
-        _, (uid, verification_code) = send_phone_number_verification_code(self.user_en, mock_api=True)
+        if settings.ENABLE_PHONE_NUMBER_VERIFICATION is False:
+            self.assertTrue(True)
+            return
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user_en)
         response = self.client.get('/accounts/verify-phone-number/', {'uid': uid, 'verification_code': verification_code})
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content.decode('utf-8'))
@@ -569,7 +633,7 @@ class PhoneNumberVerificationTests(TestCase):
         data = json.loads(response.content.decode('utf-8'))
         message = data.get("message")
         self.assertEqual(message, "Phone number already verified.")
-        _, (uid, verification_code) = send_phone_number_verification_code(self.user_en, mock_api=True)
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user_en)
         User.objects.filter(pk=self.user_en.id).update(
             user_phone_number=None, is_user_phone_number_validated=False,
             user_phone_number_verification_code_generated_at=(self.user_en.user_phone_number_verification_code_generated_at - datetime.timedelta(minutes=settings.NUMBER_MINUTES_BEFORE_PHONE_NUMBER_VERIFICATION_CODE_EXPIRATION + 2))
@@ -582,14 +646,17 @@ class PhoneNumberVerificationTests(TestCase):
         data = json.loads(response.content.decode('utf-8'))
         message = data.get("message")
         self.assertEqual(message, "A new verification code will be sent to your phone number.")
-        _, (uid, verification_code) = send_phone_number_verification_code(self.user_en, mock_api=True)
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user_en)
         response = self.client.get('/accounts/verify-phone-number/', {'uid': uid, 'verification_code': 'verification_code'})
         data = json.loads(response.content.decode('utf-8'))
         message = data.get("message")
         self.assertEqual(message, "Invalid code.")
 
     def test_verify_phone_number_view_ar(self):
-        _, (uid, verification_code) = send_phone_number_verification_code(self.user_ar, mock_api=True)
+        if settings.ENABLE_PHONE_NUMBER_VERIFICATION is False:
+            self.assertTrue(True)
+            return
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user_ar)
         response = self.client.get('/accounts/verify-phone-number/', {'uid': uid, 'verification_code': verification_code})
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content.decode('utf-8'))
@@ -599,7 +666,7 @@ class PhoneNumberVerificationTests(TestCase):
         data = json.loads(response.content.decode('utf-8'))
         message = data.get("message")
         self.assertEqual(message, "رقم الهاتف تم التحقق منه بالفعل.")
-        _, (uid, verification_code) = send_phone_number_verification_code(self.user_ar, mock_api=True)
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user_ar)
         User.objects.filter(pk=self.user_ar.id).update(
             user_phone_number=None, is_user_phone_number_validated=False,
             user_phone_number_verification_code_generated_at=(self.user_ar.user_phone_number_verification_code_generated_at - datetime.timedelta(minutes=settings.NUMBER_MINUTES_BEFORE_PHONE_NUMBER_VERIFICATION_CODE_EXPIRATION + 2))
@@ -612,13 +679,16 @@ class PhoneNumberVerificationTests(TestCase):
         data = json.loads(response.content.decode('utf-8'))
         message = data.get("message")
         self.assertEqual(message, "سيتم إرسال رمز تحقق جديد إلى رقم هاتفك.")
-        _, (uid, verification_code) = send_phone_number_verification_code(self.user_ar, mock_api=True)
+        _, (uid, verification_code) = send_phone_number_verification_code(self.user_ar)
         response = self.client.get('/accounts/verify-phone-number/', {'uid': uid, 'verification_code': 'verification_code'})
         data = json.loads(response.content.decode('utf-8'))
         message = data.get("message")
         self.assertEqual(message, "رمز غير صالح.")
 
     def test_verify_phone_number_view_missing_params(self):
+        if settings.ENABLE_PHONE_NUMBER_VERIFICATION is False:
+            self.assertTrue(True)
+            return
         response = self.client.get('/accounts/verify-phone-number/', {})
         self.assertEqual(response.status_code, 400)
         data = json.loads(response.content.decode('utf-8'))
@@ -646,6 +716,9 @@ class SendEmailVerificationsLinksCommandTests(TestCase):
     def test_command_without_arguments(self):
         out = StringIO()
         call_command('send_emails_verifications_links', stdout=out)
+        if settings.ENABLE_EMAIL_VERIFICATION is False:
+            self.assertIn('ENABLE_EMAIL_VERIFICATION is False!!.', out.getvalue())
+            return
         self.assertIn('2 verification email are sent, 0 are not.', out.getvalue())
 
     def test_command_without_arguments_with_all_email_verified(self):
@@ -655,6 +728,9 @@ class SendEmailVerificationsLinksCommandTests(TestCase):
         self.user2.is_user_email_validated = True
         self.user2.save()
         call_command('send_emails_verifications_links', stdout=out)
+        if settings.ENABLE_EMAIL_VERIFICATION is False:
+            self.assertIn('ENABLE_EMAIL_VERIFICATION is False!!.', out.getvalue())
+            return
         self.assertIn('There is no user with not email verified yet!', out.getvalue())
 
     def test_command_without_no_valid_email_argument(self):
@@ -665,17 +741,26 @@ class SendEmailVerificationsLinksCommandTests(TestCase):
     def test_command_without_no_exists_email_argument(self):
         out = StringIO()
         call_command('send_emails_verifications_links', '--email', 'noexistsmail@yopmail.com', stdout=out)
+        if settings.ENABLE_EMAIL_VERIFICATION is False:
+            self.assertIn('ENABLE_EMAIL_VERIFICATION is False!!.', out.getvalue())
+            return
         self.assertIn('There is any user with this email: noexistsmail@yopmail.com, or it is already verified!', out.getvalue())
 
-    def test_command_without_exists_email_argument(self):
+    def test_command_with_exists_email_argument(self):
         out = StringIO()
         call_command('send_emails_verifications_links', '--email', 'test2@example.com', stdout=out)
+        if settings.ENABLE_EMAIL_VERIFICATION is False:
+            self.assertIn('ENABLE_EMAIL_VERIFICATION is False!!.', out.getvalue())
+            return
         self.assertIn('1 verification email are sent, 0 are not.', out.getvalue())
 
-    def test_command_without_exists_email_but_already_verified_argument(self):
+    def test_command_with_exists_email_but_already_verified_argument(self):
         out = StringIO()
         self.user2.is_user_email_validated = True
         self.user2.save()
         call_command('send_emails_verifications_links', '--email', 'test2@example.com', stdout=out)
+        if settings.ENABLE_EMAIL_VERIFICATION is False:
+            self.assertIn('ENABLE_EMAIL_VERIFICATION is False!!.', out.getvalue())
+            return
         self.assertIn('There is any user with this email: test2@example.com, or it is already verified!', out.getvalue())
 

@@ -9,10 +9,19 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+from decouple import config
 from django.utils.translation import gettext_lazy as _
 from pathlib import Path
 import os
+import sys
+
+
+def get_secret(secret_id, backup=None):
+    return config(secret_id) or backup
+
+
+TEST = 'test' in sys.argv
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -23,6 +32,10 @@ log_dir = os.path.join(BASE_DIR, 'logs')
 # Create the directory if it doesn't exist
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
+
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = get_secret("DJANGO_SECRET_KEY")
 
 
 AUTH_USER_MODEL = 'accounts.User'
@@ -209,3 +222,8 @@ PHONE_NUMBER_VERIFICATION_CODE_QUOTA = 3
 # Technical service email
 TECHNICAL_SERVICE_EMAIL = ""
 
+# Activate or deactivate email verification
+ENABLE_EMAIL_VERIFICATION = get_secret("ENABLE_EMAIL_VERIFICATION", False) in [True, "true"]
+
+# Activate or deactivate phone number verification
+ENABLE_PHONE_NUMBER_VERIFICATION = get_secret("ENABLE_PHONE_NUMBER_VERIFICATION", False) in [True, "true"]

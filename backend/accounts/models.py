@@ -75,6 +75,8 @@ class User(AbstractUser):
         :param email: Not required, but used if you need to send email to a specific user
         :return: A message describe what happen in the functions
         """
+        if settings.ENABLE_EMAIL_VERIFICATION is False:
+            return f'ENABLE_EMAIL_VERIFICATION is False!!.'
         kwargs = {'is_active': True, 'is_user_email_validated': False, }
         if email:
             kwargs['email'] = email

@@ -38,13 +38,14 @@ def format_phone_number(user_phone_number):
     return user_phone_number
 
 
-def send_verification_email(user, handle_send_email_error=False):
+def send_verification_email(user, handle_send_email_error=False, do_not_mock_api=False):
     """
     Sends a verification email to the user.
 
     Args:
         user (User): The user object to send the email to.
         handle_send_email_error (bool): Flag to simulate an intentional error for testing.
+        do_not_mock_api (bool): Flag to run api even if it is for testing.
 
     Returns:
         tuple: A tuple containing the status code (int) and token data (tuple).
@@ -81,6 +82,8 @@ def send_verification_email(user, handle_send_email_error=False):
         # This is for testing send email's error from third party
         if handle_send_email_error:
             err = int("text")
+        if settings.TEST and do_not_mock_api is False:
+            return 200, (uid, token)
         email = EmailMultiAlternatives(subject, text_content, context.get('from_email'), [user.email])
         email.attach_alternative(html_content, "text/html")
         email.send()
@@ -95,14 +98,13 @@ def send_verification_email(user, handle_send_email_error=False):
     return 200, (uid, token)
 
 
-def send_phone_number_verification_code(user, handle_send_phone_number_verification_sms_error=False, mock_api=False):
+def send_phone_number_verification_code(user, handle_send_phone_number_verification_sms_error=False):
     """
     Sends a phone number verification code to the user.
 
     Args:
         user (User): The user object to send the email to.
         handle_send_phone_number_verification_sms_error (bool): Flag to simulate an intentional error for testing.
-        mock_api (bool): Flag to mock api for testing.
 
     Returns:
         tuple: A tuple containing the status code (int) and code verification data (tuple).
@@ -125,10 +127,7 @@ def send_phone_number_verification_code(user, handle_send_phone_number_verificat
         if handle_send_phone_number_verification_sms_error:
             err = int("text")
         receivers_numbers = [user.user_phone_number_to_verify]
-        if mock_api:
-            response = {'all_verification_codes_sent': True}
-        else:
-            response = send_phone_message(message_content, receivers_numbers)
+        response = send_phone_message(message_content, receivers_numbers)
         if not response.get('all_verification_codes_sent'):
             return 500, (uid, verification_code)
     except (

@@ -5,6 +5,8 @@ Install gettext:
         sudo apt install gettext
 
 In the root directory backend, add file .env that contains:
+    ENABLE_EMAIL_VERIFICATION="false"
+    ENABLE_PHONE_NUMBER_VERIFICATION="false"
     DB_CONTAINER_EXTERNAL_PORT=5434
     DB_CONTAINER_INTERNAL_PORT=5432
     DB_IP=postgres

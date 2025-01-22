@@ -8,7 +8,7 @@ import phonenumbers
 @receiver(pre_save, sender=User)
 def format_phone_numbers(sender, instance, **kwargs):
     if instance.user_phone_number:
-        if not instance.is_user_phone_number_validated:
+        if not instance.is_user_phone_number_validated and settings.ENABLE_PHONE_NUMBER_VERIFICATION:
             instance.user_phone_number = None
         else:
             try:
@@ -26,3 +26,13 @@ def format_phone_numbers(sender, instance, **kwargs):
             )
         except phonenumbers.NumberParseException:
             instance.user_phone_number_to_verify = None
+    if settings.ENABLE_PHONE_NUMBER_VERIFICATION is False:
+        if not instance.is_user_phone_number_validated:
+            instance.is_user_phone_number_validated = True
+        if not instance.user_phone_number_verified_by:
+            instance.user_phone_number_verified_by = "default"
+        if instance.user_phone_number_to_verify and not instance.user_phone_number:
+            instance.user_phone_number = instance.user_phone_number_to_verify
+    if settings.ENABLE_EMAIL_VERIFICATION is False:
+        if not instance.is_user_email_validated:
+            instance.is_user_email_validated = True

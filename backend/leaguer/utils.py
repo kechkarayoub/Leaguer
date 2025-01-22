@@ -70,32 +70,32 @@ def get_email_base_context(selected_language="fr"):
 
 
 PHONE_NUMBER_VERIFICATION_METHOD = [
-    ("", _("Select")), ("apple", _("Apple")), ("facebook", _("Facebook")), ("google", _("Google")),
+    ("", _("Select")), ("apple", _("Apple")), ("default", _("Default")), ("facebook", _("Facebook")), ("google", _("Google")),
     ("sms", _("Sms")), ("yahoo", _("Yahoo")), ("whatsapp", _("Whatsapp")), ("x", _("X")),
 ]
 
 
-def send_phone_message(content, receivers_numbers, as_sms=False, handle_error=False, mock_api=False):
+def send_phone_message(content, receivers_numbers, as_sms=False, handle_error=False, do_not_mock_api=False):
     """
     Send content to receivers_numbers.
     :param content: (str) text content.
     :param receivers_numbers: (list) List of phone numbers receivers.
     :param as_sms: (bool) By default we sent content by whatsapp, if as_sms is true, we sent it as sms.
     :param handle_error: (bool) To handle error for testing purpose.
-    :param mock_api: (bool) Flag to mock api for testing.
+    :param do_not_mock_api: (bool) Flag to run api for even if it is for testing.
     :return: function execution
     """
     if as_sms:
-        return send_sms(sms_content=content, receivers_numbers=receivers_numbers, mock_api=mock_api)
-    return send_whatsapp(whatsapp_content=content, receivers_numbers=receivers_numbers, handle_error=handle_error, mock_api=mock_api)
+        return send_sms(sms_content=content, receivers_numbers=receivers_numbers, do_not_mock_api=do_not_mock_api)
+    return send_whatsapp(whatsapp_content=content, receivers_numbers=receivers_numbers, handle_error=handle_error, do_not_mock_api=do_not_mock_api)
 
 
-def send_sms(sms_content, receivers_numbers, mock_api=False):
+def send_sms(sms_content, receivers_numbers, do_not_mock_api=False):
     """
     Send sms_content to receivers_numbers.
     :param sms_content: (str) SMS text content.
     :param receivers_numbers: (list) List of phone numbers receivers.
-    :param mock_api: (bool) Flag to mock api for testing.
+    :param do_not_mock_api: (bool) Flag to run api even if it is for testing.
     :return:
     """
     if settings.ENVIRONMENT == "development":
@@ -106,14 +106,14 @@ def send_sms(sms_content, receivers_numbers, mock_api=False):
         pass
 
 
-def send_whatsapp(whatsapp_content, receivers_numbers, handle_error=False, mock_api=False):
+def send_whatsapp(whatsapp_content, receivers_numbers, handle_error=False, do_not_mock_api=False):
     """
     Send sms_content to receivers_numbers.
     :param whatsapp_content: (str) SMS text content.
     :param receivers_numbers: (list) List of phone numbers receivers.
     :param handle_error: (bool) To handle error for testing purpose.
     :return: response_data: (dict) A dictionary that contains nbr_verification_codes_sent and all_verification_codes_sent
-    :param mock_api: (bool) Flag to mock api for testing.
+    :param do_not_mock_api: (bool) Flag to run api even if it is for testing.
     """
     if settings.ENVIRONMENT == "development":
         logger.info("whatsapp_content: " + whatsapp_content)
@@ -126,7 +126,7 @@ def send_whatsapp(whatsapp_content, receivers_numbers, handle_error=False, mock_
         'nbr_verification_codes_sent': 0,
     }
 
-    if mock_api:
+    if settings.TEST and do_not_mock_api is False:
         response_data = {
             'nbr_verification_codes_sent': len(receivers_numbers),
             'all_verification_codes_sent': True,
