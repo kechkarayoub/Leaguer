@@ -98,13 +98,14 @@ def send_verification_email(user, handle_send_email_error=False, do_not_mock_api
     return 200, (uid, token)
 
 
-def send_phone_number_verification_code(user, handle_send_phone_number_verification_sms_error=False):
+def send_phone_number_verification_code(user, handle_send_phone_number_verification_sms_error=False, do_not_mock_api=False):
     """
     Sends a phone number verification code to the user.
 
     Args:
         user (User): The user object to send the email to.
         handle_send_phone_number_verification_sms_error (bool): Flag to simulate an intentional error for testing.
+        do_not_mock_api (bool): Flag to api even if it is for testing.
 
     Returns:
         tuple: A tuple containing the status code (int) and code verification data (tuple).
@@ -127,7 +128,7 @@ def send_phone_number_verification_code(user, handle_send_phone_number_verificat
         if handle_send_phone_number_verification_sms_error:
             err = int("text")
         receivers_numbers = [user.user_phone_number_to_verify]
-        response = send_phone_message(message_content, receivers_numbers)
+        response = send_phone_message(message_content, receivers_numbers, do_not_mock_api=do_not_mock_api)
         if not response.get('all_verification_codes_sent'):
             return 500, (uid, verification_code)
     except (
