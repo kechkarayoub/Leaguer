@@ -71,12 +71,13 @@ def send_verification_email(user, handle_send_email_error=False, do_not_mock_api
     context.update({
         "email_title": _("Verify Your Email Address"), "user": user, "verification_url": verification_url,
     })
+    # context['logo_url'] = "https://kkmediafilesprod.s3.amazonaws.com/assets/thumbs/mohamed2_1699526271550_16995262403696774211444867641754.jpg"
     text_content = render_to_string("email_verification.txt", context)  # Plain text fallback
     html_content = render_to_string("email_verification.html", context)  # HTML content
 
     # Send the email
     try:
-        if settings.DEBUG:
+        if settings.DEBUG or settings.TEST:
             print("html_content")
             print(html_content)
         # This is for testing send email's error from third party

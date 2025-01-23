@@ -22,4 +22,5 @@ Whatsapp:
 
 
 Add or change logo image and icon:
+    To check sent logo in email
     Logo: backend/static/images/logo.pmg

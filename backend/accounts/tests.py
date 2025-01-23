@@ -359,7 +359,7 @@ class UserSerializerTest(APITestCase):
 
 class EmailVerificationTests(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username='testuser', email='test@example.com', password='password123')
+        self.user = User.objects.create_user(username='testuser', email='kechkarayoub@gmail.com', password='password123')
         self.user_ar = User.objects.create_user(username='testuser_ar', email='test_ar@example.com', password='password123', current_language='ar')
         self.user_en = User.objects.create_user(username='testuser_en', email='test_en@example.com', password='password123', current_language='en')
 
