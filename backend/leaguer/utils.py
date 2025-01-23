@@ -65,6 +65,7 @@ def get_email_base_context(selected_language="fr"):
         'current_year': now().year,
         'direction': "rtl" if selected_language == "ar" else "ltr",
         'from_email': settings.DEFAULT_FROM_EMAIL,
+        'frontend_endpoint': settings.FRONTEND_ENDPOINT,
     }
     return context
 

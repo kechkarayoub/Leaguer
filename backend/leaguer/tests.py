@@ -1,6 +1,8 @@
-from .utils import execute_native_query, generate_random_code, send_whatsapp, send_phone_message
+from .utils import execute_native_query, generate_random_code, get_email_base_context, send_whatsapp, send_phone_message
 from accounts.models import User
+from django.conf import settings
 from django.test import TestCase
+from django.utils.timezone import now
 
 
 class LeaguerUtilsTest(TestCase):
@@ -70,6 +72,20 @@ class LeaguerUtilsTest(TestCase):
         custom_random_code = generate_random_code(nbr_digit=8)
         self.assertEqual(len(custom_random_code), 8)
         self.assertTrue(0 <= int(custom_random_code) <= 99999999)
+
+    def test_get_email_base_context(self):
+        email_base_context = get_email_base_context()
+        self.assertEqual(len(email_base_context.keys()), 6)
+        self.assertEqual(email_base_context['company_address'], settings.COMPANY_ADDRESS)
+        self.assertEqual(email_base_context['app_name'], settings.APPLICATION_NAME)
+        self.assertEqual(email_base_context['current_year'], now().year)
+        self.assertEqual(email_base_context['direction'], "ltr")
+        self.assertEqual(email_base_context['from_email'], settings.DEFAULT_FROM_EMAIL)
+        self.assertEqual(email_base_context['frontend_endpoint'], settings.FRONTEND_ENDPOINT)
+        email_base_context_rtl = get_email_base_context(selected_language="ar")
+        self.assertEqual(email_base_context_rtl['direction'], "rtl")
+        email_base_context_ltr = get_email_base_context(selected_language="en")
+        self.assertEqual(email_base_context_ltr['direction'], "ltr")
 
     def test_send_phone_message(self):
         self.assertEqual(self.user.nbr_phone_number_verification_code_used, 0)

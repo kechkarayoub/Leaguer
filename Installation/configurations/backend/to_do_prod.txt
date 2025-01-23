@@ -19,3 +19,7 @@ Email smtp:
 
 Whatsapp:
     May be good solution: https://waapi.app/user/api-tokens
+
+
+Add or change logo image and icon:
+    Logo: backend/static/images/logo.pmg
