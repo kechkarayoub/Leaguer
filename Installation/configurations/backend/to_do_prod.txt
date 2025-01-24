@@ -1,8 +1,11 @@
 Settings updates:
-    Changes those settings variables:
+    Change those settings variables:
         NUMBER_MINUTES_BEFORE_PHONE_NUMBER_VERIFICATION_CODE_EXPIRATION, TECHNICAL_SERVICE_EMAIL,
         DEFAULT_PHONE_NUMBER_COUNTRY_CODE, APPLICATION_NAME, ADDRESS, FRONTEND_ENDPOINT, BACKEND_ENDPOINT,
         CORS_ORIGIN_WHITELIST, CORS_ORIGIN_ALLOW_ALL, PHONE_NUMBER_VERIFICATION_CODE_QUOTA
+Files structure:
+    Change root folder name from Leaguer to the application name.
+    Change backend/leaguer folder name from leaguer to the application name.
 
 Email smtp:
     Create gmail account for prod and set params in .env file:
