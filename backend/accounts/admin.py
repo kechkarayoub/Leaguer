@@ -24,7 +24,8 @@ class UserAdmin(BaseUserAdmin):
         (_('Personal Info'), {
             'fields': (
                 'first_name', 'last_name', 'email', 'user_phone_number', 'user_birthday', 'user_gender', 'user_address',
-                'user_country', 'current_language', 'user_phone_number_to_verify', 'user_phone_number_verified_by'
+                'user_country', 'current_language', 'user_phone_number_to_verify', 'user_phone_number_verified_by',
+                'user_timezone'
             )
         }),
         (_('Permissions'), {

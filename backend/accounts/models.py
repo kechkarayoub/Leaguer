@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from leaguer.utils import PHONE_NUMBER_VERIFICATION_METHOD
+from leaguer.utils import get_all_timezones, PHONE_NUMBER_VERIFICATION_METHOD
 
 
 class User(AbstractUser):
@@ -32,6 +32,7 @@ class User(AbstractUser):
         user_phone_number_verification_code_generated_at (DateTimeField): Optional. Stores the user's phone number verification code's dqte creation.
         user_phone_number_to_verify (CharField): Optional. Stores the user's phone number to verify.
         user_phone_number_verified_by (CharField): Optional. Stores the user's phone number verification method (google, facebook, sms, whatsapp, ...).
+        user_timezone (CharField): Required. Stores the user's timezone.
     """
 
     class Meta(object):
@@ -60,6 +61,7 @@ class User(AbstractUser):
     user_phone_number_verification_code_generated_at = models.DateTimeField(blank=True, null=True, verbose_name=_("Phone number's verification code generation date"))
     user_phone_number_to_verify = models.CharField(db_index=True, blank=True, max_length=15, null=True, verbose_name=_("Phone number to verify"))
     user_phone_number_verified_by = models.CharField(blank=True, choices=PHONE_NUMBER_VERIFICATION_METHOD, default="", max_length=10, verbose_name=_("Phone number verified by"))
+    user_timezone = models.CharField(choices=get_all_timezones(), default=settings.TIME_ZONE, max_length=100, verbose_name=_("Time zone"),)
 
     def __str__(self):
         """
@@ -67,6 +69,10 @@ class User(AbstractUser):
             str: The username of the user as the string representation.
         """
         return self.username
+
+    # noinspection PyMethodMayBeStatic
+    def get_user_timezone(self):
+        return getattr(self, 'user_timezone', settings.TIME_ZONE)
 
     @classmethod
     def send_emails_verifications_links(cls, email=None):

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-21 07:25+0000\n"
+"POT-Creation-Date: 2025-01-23 22:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,11 +23,11 @@ msgstr ""
 msgid "Personal Info"
 msgstr "المعلومات الشخصية"
 
-#: admin.py:30
+#: admin.py:31
 msgid "Permissions"
 msgstr "الأذونات"
 
-#: admin.py:37
+#: admin.py:38
 msgid "Important Dates"
 msgstr "التواريخ المهمة"
 
@@ -35,93 +35,97 @@ msgstr "التواريخ المهمة"
 msgid "Accounts"
 msgstr "الحسابات"
 
-#: models.py:40
+#: models.py:41
 msgid "User"
 msgstr "المستخدم"
 
-#: models.py:41
+#: models.py:42
 msgid "Users"
 msgstr "المستخدمون"
 
-#: models.py:43
-msgid "Address"
-msgstr "العنوان"
-
 #: models.py:44
-msgid "Birthday"
-msgstr "تاريخ الميلاد"
-
-#: models.py:45
-msgid "CIN"
-msgstr "رقم بطاقة التعريف الوطنية"
-
-#: models.py:46
-msgid "Country"
-msgstr "البلد"
-
-#: models.py:47
 msgid "Current language"
 msgstr "اللغة الحالية"
 
-#: models.py:48
+#: models.py:45
 msgid "Email"
 msgstr "البريد الإلكتروني"
 
-#: models.py:49
+#: models.py:46
 msgid "First name"
 msgstr "الاسم"
 
-#: models.py:50
-msgid "GENDER"
-msgstr "الجنس"
-
-#: models.py:51
-msgid "Image url"
-msgstr "رابط الصورة"
-
-#: models.py:52
+#: models.py:47
 msgid "Is active"
 msgstr "تم التفعيل"
 
-#: models.py:53
+#: models.py:48
 msgid "Is email validated"
 msgstr "تم التحقق من البريد الإلكتروني"
 
-#: models.py:54
+#: models.py:49
 msgid "Is deleted"
 msgstr "تم الحذف"
 
-#: models.py:55
+#: models.py:50
 msgid "Is phone number validated"
 msgstr "هل تم التحقق من رقم الهاتف"
 
-#: models.py:56
+#: models.py:51
 msgid "Last name"
 msgstr "اللقب"
 
-#: models.py:57
+#: models.py:52
 msgid "Number of phone number's verification code used"
 msgstr "عدد رموز التحقق من رقم الهاتف المستخدمة"
 
+#: models.py:53
+msgid "Address"
+msgstr "العنوان"
+
+#: models.py:54
+msgid "Birthday"
+msgstr "تاريخ الميلاد"
+
+#: models.py:55
+msgid "CIN"
+msgstr "رقم بطاقة التعريف الوطنية"
+
+#: models.py:56
+msgid "Country"
+msgstr "البلد"
+
+#: models.py:57
+msgid "GENDER"
+msgstr "الجنس"
+
 #: models.py:58
+msgid "Image url"
+msgstr "رابط الصورة"
+
+#: models.py:59
 msgid "Phone number"
 msgstr "رقم الهاتف"
 
-#: models.py:59
+#: models.py:60
 msgid "Phone number's verification code"
 msgstr "رمز التحقق من رقم الهاتف"
 
-#: models.py:60
+#: models.py:61
 msgid "Phone number's verification code generation date"
 msgstr "تاريخ إنشاء رمز التحقق من رقم الهاتف"
 
-#: models.py:61
+#: models.py:62
 msgid "Phone number to verify"
 msgstr "رقم الهاتف للتحقق"
 
-#: models.py:62
+#: models.py:63
 msgid "Phone number verified by"
 msgstr "تم التحقق من رقم الهاتف بواسطة"
+
+#: models.py:64
+msgid "Time zone"
+msgstr "المنطقة الزمنية"
 
 #: serializers.py:35 serializers.py:54
 msgid "Invalid phone number."
@@ -187,7 +191,9 @@ msgstr ""
 msgid ""
 "Your verification code is %(verification_code)s. Please use it to confirm "
 "your number. Thank you."
-msgstr "رمز التحقق الخاص بك هو %(verification_code)s. يرجى استخدامه لتأكيد رقمك. شكرًا لك."
+msgstr ""
+"رمز التحقق الخاص بك هو %(verification_code)s. يرجى استخدامه لتأكيد رقمك. "
+"شكرًا لك."
 
 #: utils.py:18
 msgid "Select"
@@ -201,11 +207,11 @@ msgstr "أنثى"
 msgid "Male"
 msgstr "ذكر"
 
-#: utils.py:66 utils.py:71
+#: utils.py:67 utils.py:72
 msgid "Verify Your Email Address"
 msgstr "تحقق من عنوان بريدك الإلكتروني"
 
-#: views.py:30 views.py:176
+#: views.py:30 views.py:177
 msgid "Missing required parameters."
 msgstr "المعلمات المطلوبة مفقودة."
 
@@ -216,8 +222,11 @@ msgstr "يجب عليك إضافة رقم هاتف قبل التحقق منه!"
 #: views.py:46
 #, python-brace-format
 msgid ""
-"This phone number already verified for another user. Please contact the technical service at {technical_service_email} to resolve your problem."
-msgstr "رقم الهاتف هذا تم التحقق منه بالفعل لمستخدم آخر. يرجى الاتصال بالخدمة التقنية على {technical_service_email} لحل مشكلتك."
+"This phone number already verified for another user. Please contact the "
+"technical service at {technical_service_email} to resolve your problem."
+msgstr ""
+"رقم الهاتف هذا تم التحقق منه بالفعل لمستخدم آخر. يرجى الاتصال بالخدمة "
+"التقنية على {technical_service_email} لحل مشكلتك."
 
 #: views.py:53
 msgid "Invalid verification code."
@@ -242,31 +251,34 @@ msgstr "رمز التحقق منتهي الصلاحية."
 #: views.py:70
 #, python-brace-format
 msgid ""
-"Your sms verification code quota has been exceeded. Please contact the technical service at {technical_service_email} to resolve your problem."
-msgstr "تم تجاوز حصتك من رموز التحقق عبر الرسائل القصيرة. يرجى الاتصال بالخدمة التقنية على {technical_service_email} لحل مشكلتك."
+"Your sms verification code quota has been exceeded. Please contact the "
+"technical service at {technical_service_email} to resolve your problem."
+msgstr ""
+"تم تجاوز حصتك من رموز التحقق عبر الرسائل القصيرة. يرجى الاتصال بالخدمة "
+"التقنية على {technical_service_email} لحل مشكلتك."
 
 #: views.py:73
 msgid "Invalid code."
 msgstr "رمز غير صالح."
 
-#: views.py:189
+#: views.py:190
 msgid "Invalid verification link."
 msgstr "رابط التحقق غير صالح."
 
-#: views.py:193
+#: views.py:194
 msgid "Email already verified."
 msgstr "تم بالفعل التحقق من البريد الإلكتروني."
 
-#: views.py:195
+#: views.py:196
 msgid "Email verified successfully."
 msgstr "تم التحقق من البريد الإلكتروني بنجاح."
 
-#: views.py:199
+#: views.py:200
 msgid ""
 "Expired token. A new verification email will be sent to your email address."
 msgstr ""
 "انتهت صلاحية الرمز. سيتم إرسال رسالة تحقق جديدة إلى عنوان بريدك الإلكتروني."
 
-#: views.py:202
+#: views.py:203
 msgid "Invalid token."
 msgstr "الرمز المميز غير صالح."

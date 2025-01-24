@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-21 07:25+0000\n"
+"POT-Creation-Date: 2025-01-23 22:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,11 +22,11 @@ msgstr ""
 msgid "Personal Info"
 msgstr "Informations personnelles"
 
-#: admin.py:30
+#: admin.py:31
 msgid "Permissions"
 msgstr "Autorisations"
 
-#: admin.py:37
+#: admin.py:38
 msgid "Important Dates"
 msgstr "Dates importantes"
 
@@ -34,93 +34,97 @@ msgstr "Dates importantes"
 msgid "Accounts"
 msgstr "Comptes"
 
-#: models.py:40
+#: models.py:41
 msgid "User"
 msgstr "Utilisateur"
 
-#: models.py:41
+#: models.py:42
 msgid "Users"
 msgstr "Utilisateurs"
 
-#: models.py:43
-msgid "Address"
-msgstr "Adresse"
-
 #: models.py:44
-msgid "Birthday"
-msgstr "Date de naissance"
-
-#: models.py:45
-msgid "CIN"
-msgstr "CIN"
-
-#: models.py:46
-msgid "Country"
-msgstr "Pays"
-
-#: models.py:47
 msgid "Current language"
 msgstr "Langue actuelle"
 
-#: models.py:48
+#: models.py:45
 msgid "Email"
 msgstr "Email"
 
-#: models.py:49
+#: models.py:46
 msgid "First name"
 msgstr "Prénom"
 
-#: models.py:50
-msgid "GENDER"
-msgstr "Genre"
-
-#: models.py:51
-msgid "Image url"
-msgstr "URL de l'image"
-
-#: models.py:52
+#: models.py:47
 msgid "Is active"
 msgstr "est active"
 
-#: models.py:53
+#: models.py:48
 msgid "Is email validated"
 msgstr "L'e-mail est-il validé"
 
-#: models.py:54
+#: models.py:49
 msgid "Is deleted"
 msgstr "Est supprimé"
 
-#: models.py:55
+#: models.py:50
 msgid "Is phone number validated"
 msgstr "Le numéro de téléphone est-il validé"
 
-#: models.py:56
+#: models.py:51
 msgid "Last name"
 msgstr "Nom de famille"
 
-#: models.py:57
+#: models.py:52
 msgid "Number of phone number's verification code used"
 msgstr "Nombre de codes de vérification du numéro de téléphone utilisés"
 
+#: models.py:53
+msgid "Address"
+msgstr "Adresse"
+
+#: models.py:54
+msgid "Birthday"
+msgstr "Date de naissance"
+
+#: models.py:55
+msgid "CIN"
+msgstr "CIN"
+
+#: models.py:56
+msgid "Country"
+msgstr "Pays"
+
+#: models.py:57
+msgid "GENDER"
+msgstr "Genre"
+
 #: models.py:58
+msgid "Image url"
+msgstr "URL de l'image"
+
+#: models.py:59
 msgid "Phone number"
 msgstr "Numéro de téléphone"
 
-#: models.py:59
+#: models.py:60
 msgid "Phone number's verification code"
 msgstr "Code de vérification du numéro de téléphone"
 
-#: models.py:60
+#: models.py:61
 msgid "Phone number's verification code generation date"
 msgstr "Date de génération du code de vérification du numéro de téléphone"
 
-#: models.py:61
+#: models.py:62
 msgid "Phone number to verify"
 msgstr "Numéro de téléphone à vérifier"
 
-#: models.py:62
+#: models.py:63
 msgid "Phone number verified by"
 msgstr "Numéro de téléphone vérifié par"
+
+#: models.py:64
+msgid "Time zone"
+msgstr "Fuseau horaire"
 
 #: serializers.py:35 serializers.py:54
 msgid "Invalid phone number."
@@ -191,7 +195,9 @@ msgstr ""
 msgid ""
 "Your verification code is %(verification_code)s. Please use it to confirm "
 "your number. Thank you."
-msgstr "Votre code de vérification est %(verification_code)s. Veuillez l'utiliser pour confirmer votre numéro. Merci."
+msgstr ""
+"Votre code de vérification est %(verification_code)s. Veuillez l'utiliser "
+"pour confirmer votre numéro. Merci."
 
 #: utils.py:18
 msgid "Select"
@@ -205,11 +211,11 @@ msgstr "Femme"
 msgid "Male"
 msgstr "Homme"
 
-#: utils.py:66 utils.py:71
+#: utils.py:67 utils.py:72
 msgid "Verify Your Email Address"
 msgstr "Vérifiez votre adresse e-mail"
 
-#: views.py:30 views.py:176
+#: views.py:30 views.py:177
 msgid "Missing required parameters."
 msgstr "Paramètres requis manquants."
 
@@ -220,8 +226,12 @@ msgstr "Vous devez ajouter un numéro de téléphone avant de le valider !"
 #: views.py:46
 #, python-brace-format
 msgid ""
-"This phone number already verified for another user. Please contact the technical service at {technical_service_email} to resolve your problem."
-msgstr "Ce numéro de téléphone est déjà vérifié pour un autre utilisateur. Veuillez contacter le service technique à {technical_service_email} pour résoudre votre problème."
+"This phone number already verified for another user. Please contact the "
+"technical service at {technical_service_email} to resolve your problem."
+msgstr ""
+"Ce numéro de téléphone est déjà vérifié pour un autre utilisateur. Veuillez "
+"contacter le service technique à {technical_service_email} pour résoudre "
+"votre problème."
 
 #: views.py:53
 msgid "Invalid verification code."
@@ -247,32 +257,36 @@ msgstr "Code de vérification expiré."
 #: views.py:70
 #, python-brace-format
 msgid ""
-"Your sms verification code quota has been exceeded. Please contact the technical service at {technical_service_email} to resolve your problem."
-msgstr "Votre quota de codes de vérification par SMS a été dépassé. Veuillez contacter le service technique à {technical_service_email} pour résoudre votre problème."
+"Your sms verification code quota has been exceeded. Please contact the "
+"technical service at {technical_service_email} to resolve your problem."
+msgstr ""
+"Votre quota de codes de vérification par SMS a été dépassé. Veuillez "
+"contacter le service technique à {technical_service_email} pour résoudre "
+"votre problème."
 
 #: views.py:73
 msgid "Invalid code."
 msgstr "Code invalide."
 
-#: views.py:189
+#: views.py:190
 msgid "Invalid verification link."
 msgstr "Lien de vérification invalide."
 
-#: views.py:193
+#: views.py:194
 msgid "Email already verified."
 msgstr "L'email a déjà été vérifié."
 
-#: views.py:195
+#: views.py:196
 msgid "Email verified successfully."
 msgstr "L'email a été vérifié avec succès."
 
-#: views.py:199
+#: views.py:200
 msgid ""
 "Expired token. A new verification email will be sent to your email address."
 msgstr ""
 "Jeton expiré. Un nouvel e-mail de vérification sera envoyé à votre adresse e-"
 "mail."
 
-#: views.py:202
+#: views.py:203
 msgid "Invalid token."
 msgstr "Jeton non valide."

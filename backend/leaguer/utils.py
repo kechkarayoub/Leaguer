@@ -1,9 +1,9 @@
 
 from django.conf import settings
 from django.db import connection
-from django.utils.timezone import now
+from django.utils.timezone import localtime, now
 from django.utils.translation import gettext_lazy as _
-import datetime
+from zoneinfo import available_timezones, ZoneInfo
 import json
 import logging
 import random
@@ -48,6 +48,26 @@ def generate_random_code(nbr_digit=6):
     min_number = 10 ** (nbr_digit - 1)
     max_number = 10 ** nbr_digit - 1
     return f"{random.randint(min_number, max_number)}"
+
+
+def get_all_timezones(as_list=False):
+    all_timezones = available_timezones()
+    default_value = ["", _("Select")]
+    if as_list:
+        return [default_value] + [[timezone, timezone] for timezone in sorted(all_timezones)]
+    return [tuple(default_value)] + [(timezone, timezone) for timezone in sorted(all_timezones)]
+
+
+def get_local_datetime(datetime_to_localize, custom_timezone):
+    """
+    Convert a UTC time to the user's local time based on their timezone.
+
+    :param datetime_to_localize: The datetime to localize.
+    :param custom_timezone: The timezone to convert to.
+    :return: The datetime object in the custom timezone.
+    """
+    timezone_object = ZoneInfo(custom_timezone)
+    return localtime(datetime_to_localize, timezone=timezone_object)
 
 
 def get_email_base_context(selected_language="fr"):

@@ -1,16 +1,93 @@
+from .middleware import TimezoneMiddleware
 from .models import User
 from .serializers import UserSerializer
 from .utils import format_phone_number, GENDERS_CHOICES, send_phone_number_verification_code
 from .views import send_verification_email, verify_user_email, verify_user_phone_number
 from datetime import date
 from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
 from django.core.management import call_command
-from django.test import TestCase
-from django.utils.timezone import now
+from django.test import RequestFactory, TestCase
+from django.utils.timezone import get_current_timezone, now
 from io import StringIO
 from rest_framework.test import APITestCase
 import datetime
 import json
+from zoneinfo import ZoneInfo
+
+
+class TimezoneMiddlewareTestCase(TestCase):
+    def setUp(self):
+        """
+            Set up the test environment with a RequestFactory and sample users.
+        """
+        self.factory = RequestFactory()
+        self.middleware = TimezoneMiddleware(get_response=lambda x: x)
+        self.default_timezone_user = User.objects.create_user(
+            email="default_timezone_user@example.com",
+            first_name="First name2",
+            last_name="Last name2",
+            password="testpassword123",
+            username="default_timezone_user",
+        )
+        # setattr(self.default_timezone_user, "is_authenticated", True)
+        self.timezone_user = User.objects.create_user(
+            email="timezone_user@example.com",
+            first_name="First name2",
+            last_name="Last name2",
+            password="testpassword123",
+            user_timezone="America/New_York",
+            username="timezone_user",
+        )
+        # setattr(self.timezone_user, "is_authenticated", True)
+        self.invalid_timezone_user = User.objects.create_user(
+            email="invalid_timezone_user@example.com",
+            first_name="First name3",
+            last_name="Last name3",
+            password="testpassword123",
+            user_timezone="Invalid/Timezone",
+            username="invalid_timezone_user",
+        )
+        # setattr(self.invalid_timezone_user, "is_authenticated", True)
+
+    def test_authenticated_user_with_default_timezone(self):
+        """
+            Test if the middleware correctly sets the timezone for an authenticated user with a default timezone.
+        """
+        self.client.login(username='default_timezone_user', password='testpassword123')
+        request = self.factory.get('/')
+        request.user = self.default_timezone_user
+        self.middleware(request)
+        self.assertEqual(get_current_timezone(), ZoneInfo(settings.TIME_ZONE))
+
+    def test_authenticated_user_with_valid_timezone(self):
+        """
+            Test if the middleware correctly sets the timezone for an authenticated user with a valid timezone.
+        """
+        self.client.login(username='timezone_user', password='testpassword123')
+        request = self.factory.get('/')
+        request.user = self.timezone_user
+        self.middleware(request)
+        self.assertEqual(get_current_timezone(), ZoneInfo("America/New_York"))
+
+    def test_authenticated_user_with_invalid_timezone(self):
+        """
+            Test if the middleware falls back to settings.TIME_ZONE for an authenticated user with an invalid timezone.
+        """
+        self.client.login(username='invalid_timezone_user', password='testpassword123')
+        request = self.factory.get('/')
+        request.user = self.invalid_timezone_user
+        self.middleware(request)
+        self.assertEqual(get_current_timezone(), ZoneInfo(settings.TIME_ZONE))
+
+    def test_unauthenticated_user(self):
+        """
+        Test if the middleware sets settings.TIME_ZONE as the timezone for an unauthenticated user.
+        """
+        request = self.factory.get('/')
+        request.user = AnonymousUser()
+        self.middleware(request)
+        self.assertEqual(get_current_timezone(), ZoneInfo(settings.TIME_ZONE))
 
 
 class UserModelTest(TestCase):
@@ -44,6 +121,7 @@ class UserModelTest(TestCase):
             is_user_phone_number_validated=True,
             last_name="Last name",
             password="testpassword123",
+            user_timezone="America/New_York",
             user_phone_number="12 34-567899",
             user_phone_number_to_verify="1234567899",
             user_phone_number_verified_by="google",
@@ -87,6 +165,10 @@ class UserModelTest(TestCase):
         result = User.send_emails_verifications_links()
         self.assertEqual(result, "There is no user with not email verified yet!")
 
+    def test_get_user_timezone(self):
+        self.assertEqual(self.user.user_timezone, settings.TIME_ZONE)
+        self.assertEqual(self.user_verified_phone_number.user_timezone, "America/New_York")
+
     def test_user_creation(self):
         self.assertEqual(self.user.user_address, "123 Test Street")
         self.assertEqual(self.user.user_birthday, date(2000, 1, 1))
@@ -103,6 +185,7 @@ class UserModelTest(TestCase):
             self.assertEqual(self.user.user_phone_number_verified_by, "sms")
         else:
             self.assertEqual(self.user.user_phone_number_verified_by, "sms")
+        self.assertEqual(self.user.user_timezone, settings.TIME_ZONE)
         self.assertEqual(self.user.username, "testuser")
         if settings.ENABLE_EMAIL_VERIFICATION:
             self.assertFalse(self.user.is_user_email_validated)
@@ -261,6 +344,7 @@ class UserSerializerTest(APITestCase):
             'user_phone_number': "+2126-234 56709",
             'user_phone_number_to_verify': "+212623456709",
             'user_phone_number_verified_by': "google",
+            'user_timezone': "",
             'username': "testuser2",
         }
 
@@ -288,8 +372,9 @@ class UserSerializerTest(APITestCase):
         else:
             self.assertEqual(data['user_phone_number_verified_by'], "default")
             self.assertEqual(data['user_phone_number'], "+212623456789")
+        self.assertEqual(data['user_timezone'], settings.TIME_ZONE)
         self.assertEqual(data['username'], "testuser")
-        self.assertEqual(len(data.keys()), 23)
+        self.assertEqual(len(data.keys()), 24)
         self.assertIn('date_joined', data)
         user2 = User.objects.create_user(
             **self.valid_data2
@@ -309,8 +394,9 @@ class UserSerializerTest(APITestCase):
         self.assertEqual(data2['user_phone_number'], "+212623456709")
         self.assertEqual(data2['user_phone_number_to_verify'], "+212623456709")
         self.assertEqual(data2['user_phone_number_verified_by'], "google")
+        self.assertEqual(data2['user_timezone'], "")
         self.assertEqual(data2['username'], "testuser2")
-        self.assertEqual(len(data2.keys()), 23)
+        self.assertEqual(len(data2.keys()), 24)
         self.assertIn('date_joined', data2)
 
     def test_valid_serializer(self):

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-21 07:26+0000\n"
+"POT-Creation-Date: 2025-01-23 22:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,15 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: settings/common.py:184
+#: settings/common.py:198
 msgid "Arabic"
 msgstr ""
 
-#: settings/common.py:185
+#: settings/common.py:199
 msgid "English"
 msgstr ""
 
-#: settings/common.py:186
+#: settings/common.py:200
 msgid "French"
 msgstr ""
 
@@ -35,34 +35,38 @@ msgstr ""
 msgid "%(current_year)s © %(app_name)s. All rights reserved."
 msgstr ""
 
-#: utils.py:73
+#: utils.py:55 utils.py:94
 msgid "Select"
 msgstr ""
 
-#: utils.py:73
+#: utils.py:94
 msgid "Apple"
 msgstr ""
 
-#: utils.py:73
+#: utils.py:94
+msgid "Default"
+msgstr ""
+
+#: utils.py:94
 msgid "Facebook"
 msgstr ""
 
-#: utils.py:73
+#: utils.py:94
 msgid "Google"
 msgstr ""
 
-#: utils.py:74
+#: utils.py:95
 msgid "Sms"
 msgstr ""
 
-#: utils.py:74
+#: utils.py:95
 msgid "Yahoo"
 msgstr ""
 
-#: utils.py:74
+#: utils.py:95
 msgid "Whatsapp"
 msgstr ""
 
-#: utils.py:74
+#: utils.py:95
 msgid "X"
 msgstr ""

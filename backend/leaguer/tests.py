@@ -1,8 +1,10 @@
-from .utils import execute_native_query, generate_random_code, get_email_base_context, send_whatsapp, send_phone_message
+from .utils import execute_native_query, generate_random_code, get_all_timezones, get_email_base_context, get_local_datetime, send_whatsapp, send_phone_message
 from accounts.models import User
+from datetime import datetime, timezone
 from django.conf import settings
 from django.test import TestCase
 from django.utils.timezone import now
+from zoneinfo import ZoneInfo
 
 
 class LeaguerUtilsTest(TestCase):
@@ -26,11 +28,11 @@ class LeaguerUtilsTest(TestCase):
             INSERT INTO leaguer_user (email, first_name, is_active, last_name, username, password, is_superuser, 
                 is_staff, date_joined, nbr_phone_number_verification_code_used,
                 user_gender, is_user_deleted, current_language, is_user_email_validated, is_user_phone_number_validated,
-                user_phone_number_verified_by)
+                user_phone_number_verified_by, user_timezone)
             VALUES ('email2@yopmail.com', 'first_name', True, 'last_name', 'username2', 'password', False, False, NOW(),
-                0, '', False, 'fr', False, False, ''),
+                0, '', False, 'fr', False, False, '', 'UTC'),
                 ('email3@yopmail.com', 'first_name', True, 'last_name', 'username3', 'password', False, False, NOW(), 
-                0, '', False, 'ar', False, False, '');
+                0, '', False, 'ar', False, False, '', 'Africa/Casablanca');
         """
         result = execute_native_query(query_set_user, is_get=False)
         self.assertIsNone(result)
@@ -72,6 +74,55 @@ class LeaguerUtilsTest(TestCase):
         custom_random_code = generate_random_code(nbr_digit=8)
         self.assertEqual(len(custom_random_code), 8)
         self.assertTrue(0 <= int(custom_random_code) <= 99999999)
+
+    def test_get_all_timezones(self):
+        """
+        Test the `get_all_timezones` function when `as_list=True`.
+        """
+        timezones = get_all_timezones(as_list=True)
+        # Check that the default option is included
+        self.assertEqual(timezones[0], ["", "Sélectionner"])
+        # Ensure the timezones are sorted and that they match the expected format
+        self.assertTrue(all(isinstance(item, list) and len(item) == 2 for item in timezones[1:]))
+        self.assertTrue(all(isinstance(item[0], str) for item in timezones[1:]))
+        self.assertTrue(all(isinstance(item[1], str) for item in timezones[1:]))
+        """
+        Test the `get_all_timezones` function when `as_list=False`.
+        """
+        timezones = get_all_timezones(as_list=False)
+        # Check that the default option is included
+        self.assertEqual(timezones[0], ("", "Sélectionner"))
+        # Ensure the timezones are sorted and that they match the expected format
+        self.assertTrue(all(isinstance(item, tuple) and len(item) == 2 for item in timezones[1:]))
+        self.assertTrue(all(isinstance(item[0], str) for item in timezones[1:]))
+        self.assertTrue(all(isinstance(item[1], str) for item in timezones[1:]))
+
+    def test_get_local_datetime(self):
+        """
+        Test the `get_local_datetime` function with a valid timezone.
+        """
+        utc_time = datetime.now(timezone.utc)
+        custom_timezone = "America/New_York"
+        localized_time = get_local_datetime(utc_time, custom_timezone)
+        # Check that the time is localized correctly
+        self.assertEqual(localized_time.tzinfo, ZoneInfo("America/New_York"))
+        self.assertTrue(localized_time.strftime("%Y-%m-%d %H:%M") < utc_time.strftime("%Y-%m-%d %H:%M"))  # Since New York is UTC-5, localized time should be later.
+        """
+        Test the `get_local_datetime` function with an invalid timezone.
+        """
+        utc_time = datetime.now(timezone.utc)
+        custom_timezone = "Invalid/Timezone"  # Invalid timezone
+        with self.assertRaises(KeyError):
+            get_local_datetime(utc_time, custom_timezone)
+        """
+        Test the `get_local_datetime` function with UTC as the timezone.
+        """
+        utc_time = datetime.now(timezone.utc)
+        custom_timezone = "UTC"
+        localized_time = get_local_datetime(utc_time, custom_timezone)
+        # Check that the time is still UTC
+        self.assertEqual(localized_time.tzinfo, ZoneInfo("UTC"))
+        self.assertEqual(localized_time.strftime("%Y-%m-%d %H:%M"), utc_time.strftime("%Y-%m-%d %H:%M"))  # Time should be the same
 
     def test_get_email_base_context(self):
         email_base_context = get_email_base_context()

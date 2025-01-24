@@ -16,7 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
             "first_name", "user_gender", "user_phone_number_verification_code", "user_phone_number_verification_code_generated_at",
             "id", "user_image_url", "is_active", "is_user_email_validated", "is_user_deleted", "is_user_phone_number_validated",
             "last_name", "user_phone_number", "user_phone_number_to_verify", "user_phone_number_verified_by",
-            "username", "nbr_phone_number_verification_code_used",
+            "username", "nbr_phone_number_verification_code_used", "user_timezone",
         ]
         read_only_fields = ["id", "date_joined"]
 
