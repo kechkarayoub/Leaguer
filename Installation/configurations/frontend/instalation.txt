@@ -1,1 +1,2 @@
 1) Install flutter.
+2) Run flutter pub get.

@@ -175,7 +175,7 @@ pip-wheel-metadata/
 # not to ignore:
 !hquality_backend/dev_keys/hqualitydev_drive_storage.json
 
-
+!frontend/lib/
 
 # Dossiers générés par Django
 media/
