@@ -12,8 +12,14 @@ class InitialsAvatar extends StatelessWidget {
 
   final String initials;
   final String initialsBgColors;
+  final double height;
+  final double width;
+  final Color textColor;
+  final TextStyle? textStyle;
+  final BoxShape shape;
 
-  const InitialsAvatar({super.key, required this.initials, required this.initialsBgColors});
+
+  const InitialsAvatar({super.key, required this.initials, required this.initialsBgColors, this.width = 100, this.height = 100, this.textColor = Colors.white, this.shape = BoxShape.circle, this.textStyle});
 
   @override
   Widget build(BuildContext context) {
@@ -24,17 +30,17 @@ class InitialsAvatar extends StatelessWidget {
 
     
     return Container(
-      width: 100,
-      height: 100,
+      width: width,
+      height: height,
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
+        shape: shape,
         color: hexToColor(initialsBgColors),
       ),
       child: Center(
         child: Text(
           initials.toUpperCase(),
-          style: TextStyle(
-            color: Colors.white,
+          style: textStyle ?? TextStyle(
+            color: textColor,
             fontSize: 40,
             fontWeight: FontWeight.bold,
           ),
