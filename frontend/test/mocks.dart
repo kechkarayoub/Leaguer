@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:frontend/l10n/l10n.dart';
+// import 'package:frontend/l10n/l10n.dart';
 import 'package:mockito/annotations.dart';
 
 // Annotate the Dio class to generate a mock

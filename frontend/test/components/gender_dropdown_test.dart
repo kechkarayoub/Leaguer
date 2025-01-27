@@ -51,7 +51,6 @@ void main() {
 
     testWidgets('Renders correctly with initial value', (WidgetTester tester) async {
       // Arrange
-      String? selectedValue;
       
       // Act
       await tester.pumpWidget(
@@ -60,7 +59,6 @@ void main() {
             body: GenderDropdown(
               l10n: mockL10n,
               onChanged: (String? gender) {
-                selectedValue = gender;
               },
               initialGender: 'm',
             ),
