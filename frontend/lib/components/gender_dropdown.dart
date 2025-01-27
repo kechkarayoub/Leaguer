@@ -15,7 +15,7 @@ class GenderDropdown extends StatelessWidget {
   final String? initialGender;
   final L10n l10n;
 
-  GenderDropdown({required this.l10n, required this.onChanged, this.initialGender});
+  const GenderDropdown({super.key, required this.l10n, required this.onChanged, this.initialGender});
 
   @override
   Widget build(BuildContext context) {
