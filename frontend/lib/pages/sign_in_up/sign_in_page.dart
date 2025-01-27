@@ -169,7 +169,7 @@ class SignInPageState extends State<SignInPage> {
           _errorMessage = response["message"];  // Set the error message on unsuccessful sign-in
           _isSignInApiSent = false;
         });
-        print('Sign-in error: ${response["message"]}');
+        logInfo('Sign-in error: ${response["message"]}');
       }
       else{
         setState(() {
@@ -183,7 +183,7 @@ class SignInPageState extends State<SignInPage> {
           _isSignInApiSent = false;
       });
       // Handle any errors that occurred during the HTTP request
-      print('Sign-in error: $e');
+      logInfo('Sign-in error: $e');
     }
   }
 

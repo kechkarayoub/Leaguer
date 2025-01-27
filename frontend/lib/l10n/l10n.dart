@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:frontend/utils/utils.dart';
 
 class L10n {
 
@@ -32,7 +33,7 @@ class L10n {
         return translationsForKey[locale]!;
       }
       else{
-        print("Needed translation for the key: $key");
+        logInfo("Needed translation for the key: $key");
       }
     }
     // If translation not found, return the key itself

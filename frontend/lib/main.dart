@@ -33,18 +33,20 @@ class MyApp extends StatelessWidget {
     return ValueListenableBuilder<dynamic>(
       valueListenable: storageService.storageNotifier,
       builder: (context, storage, _) {
-        print(storage);
+        logInfo(storage);
         dynamic userSession = storage['user_session'];
         String currentLanguage = storage['current_language'] ?? defaultLanguage;
+        String appName = dotenv.env['APP_NAME'] ?? 'App';
         return MaterialApp(
           builder: (context, child) {
             return Scaffold(
               appBar: AppBar(
-                title: Text('Auth App'),
+                title: Text(appName),
               ),
               body: child,
             );
           },
+          debugShowCheckedModeBanner: dotenv.env['PIPLINE'] == "development", // Supprimer la bannière DEBUG
           locale: Locale(currentLanguage), // Default language
           localizationsDelegates: [
             GlobalMaterialLocalizations.delegate,
@@ -52,7 +54,7 @@ class MyApp extends StatelessWidget {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: l10n.supportedLocales,
-          title: 'Auth App',
+          title: appName,
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),

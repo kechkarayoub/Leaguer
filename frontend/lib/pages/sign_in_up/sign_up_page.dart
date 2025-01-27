@@ -1,4 +1,5 @@
 import 'dart:io'; // For File
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:frontend/api/backend.dart';
 import 'package:frontend/components/gender_dropdown.dart';
@@ -49,9 +50,9 @@ class SignUpPageState extends State<SignUpPage> {
       locale: Localizations.localeOf(context), // Add localization
     );
     if (picked != null) {
-      print("picked");
-      print(picked);
-      print(picked.toString());
+      logInfo("picked");
+      logInfo(picked);
+      logInfo(picked.toString());
       setState(() {
         _birthdayController.text = _dateFormat.format(picked);
       });
@@ -303,11 +304,11 @@ class SignUpPageState extends State<SignUpPage> {
         data["image_url"] = imageUrl;
       }
       catch(er){
-        print(er);
+        logInfo(er);
       }
     }
-    print("data:");
-    print(data);
+    logInfo("data:");
+    logInfo(data);
 
     dio ??= Dio(); // Use default client if none is provided
     try {
@@ -326,7 +327,7 @@ class SignUpPageState extends State<SignUpPage> {
           _errorMessage = response["message"];  // Set the error message on unsuccessful sign-in
           _isSignUpApiSent = false;
         });
-        print('Sign-in error: ${response["message"]}');
+        logInfo('Sign-in error: ${response["message"]}');
       }
       else{
         setState(() {
@@ -340,7 +341,7 @@ class SignUpPageState extends State<SignUpPage> {
           _isSignUpApiSent = false;
       });
       // Handle any errors that occurred during the HTTP request
-      print('Sign-in error: $e');
+      logInfo('Sign-in error: $e');
     }
     // Here you would send the data to your backend server
   }

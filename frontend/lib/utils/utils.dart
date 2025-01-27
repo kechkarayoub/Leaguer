@@ -77,6 +77,20 @@ void logout(StorageService storageService, BuildContext context) {
   //Navigator.pushReplacementNamed(context, '/sign-in');
 }
 
+
+void logInfo(dynamic message, [String? title]) {
+  /// Log the info.
+  /// This function log the nessage in users concole if it is developpment mode.
+  /// [messave] - The message to print.
+  title = title ?? "";
+  if((dotenv.env['PIPLINE'] ?? 'production') == "development"){
+    if(title.isNotEmpty){
+      print('$title:');
+    }
+    print('$message');
+  }
+}
+
 /// Ensures the user is authenticated with Firebase.
 Future<void> ensureUserIsAuthenticated() async {
   User? user = FirebaseAuth.instance.currentUser;
@@ -91,7 +105,7 @@ Future<void> ensureUserIsAuthenticated() async {
       user = userCredential.user;
     } catch (e) {
       // Handle sign-in error
-      print('Sign-in error: $e');
+      logInfo('Sign-in error: $e');
     }
   }
 }
@@ -127,20 +141,21 @@ Future<String> uploadImage(XFile image) async {
   final metadata = SettableMetadata(contentType: mimeType);
   // Create a reference to the location you want to upload the image
   Reference storageReference = FirebaseStorage.instance
-      .ref()
-      .child('images/${DateTime.now().millisecondsSinceEpoch.toString()}');
+    .ref()
+    .child('images/${DateTime.now().millisecondsSinceEpoch.toString()}');
 
   if (kIsWeb) {
-      // Upload for Web
-      Uint8List imageBytes = await image.readAsBytes();
-      UploadTask uploadTask = storageReference.putData(imageBytes, metadata);
-      TaskSnapshot taskSnapshot = await uploadTask;
-      return await taskSnapshot.ref.getDownloadURL();
-    } else {
-      // Upload for Mobile and Desktop
-      File file = File(image.path);
-      UploadTask uploadTask = storageReference.putFile(file, metadata);
-      TaskSnapshot taskSnapshot = await uploadTask;
-      return await taskSnapshot.ref.getDownloadURL();
-    }
+    // Upload for Web
+    Uint8List imageBytes = await image.readAsBytes();
+    UploadTask uploadTask = storageReference.putData(imageBytes, metadata);
+    TaskSnapshot taskSnapshot = await uploadTask;
+    return await taskSnapshot.ref.getDownloadURL();
+  } 
+  else {
+    // Upload for Mobile and Desktop
+    File file = File(image.path);
+    UploadTask uploadTask = storageReference.putFile(file, metadata);
+    TaskSnapshot taskSnapshot = await uploadTask;
+    return await taskSnapshot.ref.getDownloadURL();
+  }
 }
