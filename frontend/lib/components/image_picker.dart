@@ -9,16 +9,27 @@ class ImagePickerWidget extends StatefulWidget {
   final String initials;  // Initials to display if no image is selected
   final String initialsBgColor;  // Background color for the initials avatar
   final String labelText;  // Label text for the image picker button
-  final String labelTextCamera;  // Label text for the image picker button
+  final String labelTextCamera;  // Label text for the camera picker button
   final String? initialImageUrl;  // Initial image URL if there's an existing image
+  final double height;  // Height of image
+  final double width;  // Width of image
+  final double borderRadius;  // The border radius
+  final double removeIconSize;  // The remove icon's size
+  final ImagePicker? imagePicker; // The imagePicker instance
 
-  ImagePickerWidget({
+  const ImagePickerWidget({
+    super.key,
     required this.initials,
     required this.initialsBgColor,
     required this.labelText,
     required this.labelTextCamera,
     required this.onImageSelected,
     this.initialImageUrl,
+    this.height = 100,
+    this.width = 100,
+    this.borderRadius = 50,
+    this.removeIconSize = 24,
+    this.imagePicker,
   });
 
   @override
@@ -28,7 +39,8 @@ class ImagePickerWidget extends StatefulWidget {
 class ImagePickerWidgetState extends State<ImagePickerWidget> {
   XFile? _selectedImage;  // File object for the selected image
   String? _webImageUrl;
-
+  bool isPicking = false;
+  
   @override
   void initState() {
     super.initState();
@@ -36,16 +48,23 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
 
   // Method to pick an image from the gallery
   Future<void> _pickImage(ImageSource source) async {
-    final pickedFile = await ImagePicker().pickImage(source: source);
-    if (pickedFile != null) {
-      setState(() {
-        if (kIsWeb) {
-          _webImageUrl = pickedFile.path; // Using the path as URL for web
-          _selectedImage = XFile(pickedFile.path);
-        }
-        _selectedImage = XFile(pickedFile.path);  // Update the selected image file
-      });
-      widget.onImageSelected(_selectedImage);  // Call the callback function with the selected image
+    if (isPicking) return; // Prevent rapid consecutive calls
+    isPicking = true;
+    try {
+      final pickedFile = await (widget.imagePicker ?? ImagePicker()).pickImage(source: source);
+      if (pickedFile != null) {
+        setState(() {
+          if (kIsWeb) {
+            _webImageUrl = pickedFile.path; // Using the path as URL for web
+          }
+          _selectedImage = XFile(pickedFile.path);  // Update the selected image file
+        });
+        widget.onImageSelected(_selectedImage);  // Call the callback function with the selected image
+      }
+    } catch (e) {
+      debugPrint('Error picking image: $e');
+    } finally {
+      isPicking = false;
     }
   }
 
@@ -65,6 +84,19 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
     });
   }
 
+  Widget _buildErrorPlaceholder() {
+  return Container(
+    height: widget.height,
+    width: widget.width,
+    color: Colors.grey[300],
+    child: Icon(
+      Icons.error,
+      color: Colors.red,
+      size: widget.height * 0.5,
+    ),
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -74,18 +106,32 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
           Stack(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(50),  // Circular shape for the image
+                borderRadius: BorderRadius.circular(widget.borderRadius),  // Circular shape for the image
                 child: kIsWeb
                   ? Image.network(
                       _webImageUrl!,
-                      height: 100,
-                      width: 100,
+                      height: widget.height,
+                      width: widget.width,
                       fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return _buildErrorPlaceholder(); // Fallback on load error
+                      },
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        );
+                      },
                     )
                   : Image.file(
                       File(_selectedImage!.path),
-                      height: 100,
-                      width: 100,
+                      height: widget.height,
+                      width: widget.width,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -96,7 +142,7 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
                   child: Icon(
                     Icons.cancel,
                     color: Colors.red,
-                    size: 24,
+                    size: widget.removeIconSize,
                   ),
                 ),
               ),
@@ -107,11 +153,11 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
           Stack(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(50),    // Circular shape for the image
+                borderRadius: BorderRadius.circular(widget.borderRadius),    // Circular shape for the image
                   child: Image.network(
                   widget.initialImageUrl!,
-                  height: 100,
-                  width: 100,
+                  height: widget.height,
+                  width: widget.width,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -122,7 +168,7 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
                   child: Icon(
                     Icons.cancel,
                     color: Colors.red,
-                    size: 24,
+                    size: widget.removeIconSize,
                   ),
                 ),
               ),
@@ -136,11 +182,11 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
           Stack(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(50),   // Circular shape for the image
+                borderRadius: BorderRadius.circular(widget.borderRadius),   // Circular shape for the image
                 child: Image.asset(
                   'assets/images/unknown_user.png',
-                  height: 100,
-                  width: 100,
+                  height: widget.height,
+                  width: widget.width,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -149,15 +195,28 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextButton(
-              onPressed: () => _pickImage(ImageSource.gallery),
-              child: Text(widget.labelText),
-            ),
-            if (!kIsWeb && (Platform.isAndroid || Platform.isIOS))
-              TextButton(
-                onPressed: () => _pickImage(ImageSource.camera),
-                child: Text(widget.labelTextCamera),
+            Container(
+              margin: const EdgeInsets.only(top: 10), // Adds a top margin of 10 pixels
+              child: Row(
+                children: [
+                  Semantics(
+                    label: widget.labelText,
+                    child: TextButton(
+                      onPressed: () => _pickImage(ImageSource.gallery),
+                      child: Text(widget.labelText),
+                    ),
+                  ),
+                  if (!kIsWeb && (Platform.isAndroid || Platform.isIOS))
+                    Semantics(
+                      label: widget.labelTextCamera,
+                      child: TextButton(
+                        onPressed: () => _pickImage(ImageSource.camera),
+                        child: Text(widget.labelTextCamera),
+                      ),
+                    ),
+                ],
               ),
+            ),
           ],
         ),
       ],
