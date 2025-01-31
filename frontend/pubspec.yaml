@@ -52,6 +52,8 @@ dependencies:
 
 dev_dependencies:
   build_runner: ^2.4.14
+  http_mock_adapter: ^0.4.3
+  image_picker_platform_interface: ^2.10.1
   flutter_test:
     sdk: flutter
   mockito: ^5.4.5
@@ -71,6 +73,7 @@ dev_dependencies:
 flutter:
 
   assets:
+    - assets/images/test/test_image.png
     - assets/images/unknown_user.png
     - lib/l10n/translations.json
     - .env
