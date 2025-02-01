@@ -1,83 +1,13 @@
-import 'dart:async';
-
+import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:frontend/components/image_picker.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:frontend/components/image_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
-import 'package:cross_file/cross_file.dart'; // Import XFile
-import 'dart:convert';
-import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:mockito/mockito.dart';
-import 'package:mockito/annotations.dart';
+import '../test_helper.dart'; // Import the test helper
 
 
-// --- Fake HTTP Classes to simulate NetworkImage loading ---
-
-class FakeHttpOverrides extends HttpOverrides {
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    return FakeHttpClient();
-  }
-}
-
-class FakeHttpClient extends Fake implements HttpClient {
-  @override
-  bool autoUncompress = true;  // Required by Flutter's Image.network
-
-  @override
-  Future<HttpClientRequest> getUrl(Uri url) async {
-    return FakeHttpClientRequest();
-  }
-
-  @override
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-class FakeHttpClientRequest extends Fake implements HttpClientRequest {
-  @override
-  Future<HttpClientResponse> close() async {
-    return FakeHttpClientResponse();
-  }
-
-  @override
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-class FakeHttpClientResponse extends Fake implements HttpClientResponse {
-  // A 1x1 transparent PNG image encoded in Base64
-  final List<int> _dummyPng = base64Decode(
-      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4////fwAJ/wP+Fo5IEQAAAABJRU5ErkJggg==");
-
-  @override
-  int get statusCode => 200;
-
-  @override
-  int get contentLength => _dummyPng.length;
-
-
-  @override
-  HttpClientResponseCompressionState get compressionState => HttpClientResponseCompressionState.notCompressed;
-
-
-  @override
-  StreamSubscription<List<int>> listen(void Function(List<int>)? onData,
-      {bool? cancelOnError, void Function()? onDone, Function? onError}) {
-    return Stream<List<int>>.fromIterable([_dummyPng]).listen(
-      onData,
-      cancelOnError: cancelOnError ?? false,
-      onDone: onDone,
-      onError: onError,
-    );
-  }
-
-  @override
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-// --- End of Fake HTTP Classes ---
 
 // Mock de l'ImagePickerPlatform
 class MockImagePickerPlatform extends ImagePickerPlatform {
@@ -132,8 +62,9 @@ class MockImagePickerPlatform extends ImagePickerPlatform {
 
 void main() {
   late ImagePicker mockImagePicker;
+  HttpOverrides.global = FakeHttpOverrides();
 
-  setUp(() {
+  setUpAll(() {
     HttpOverrides.global = FakeHttpOverrides();
     // Mock du file picker
     final ImagePickerPlatform imagePickerPlatform = MockImagePickerPlatform();
@@ -171,6 +102,16 @@ void main() {
     expect(find.text('AB'), findsOneWidget);
   });
 
+  testWidgets('Displays initial image when provided', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget(
+      onImageSelected: (_) {},
+      initialImageUrl: 'https://example.com/image.png',
+    ));
+    // Since we use HttpOverrides and our FakeHttpClientResponse, the image should load (using our dummy PNG).
+    expect(find.byType(Image), findsOneWidget);
+    // You might check that the widget tree contains a NetworkImage widget with the URL.
+  });
+
   testWidgets('Updates the image when a file is selected', (tester) async {
     XFile? selectedFile;
 
@@ -183,6 +124,19 @@ void main() {
     await tester.pump(); // Simulate the file picker
 
     expect(selectedFile, isNotNull);
+  });
+
+  testWidgets('Displays camera button on mobile platforms', (WidgetTester tester) async {
+    // For tests, you might simulate the platform condition using Platform.isAndroid or by using a dependency injection.
+    await tester.pumpWidget(buildTestWidget(
+      onImageSelected: (_) {},
+      imagePicker: mockImagePicker,
+    ));
+    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+      expect(find.text('Camera'), findsOneWidget);
+    } else {
+      expect(find.text('Camera'), findsNothing);
+    }
   });
 
   testWidgets('Removes the image when the remove button is pressed', (tester) async {
@@ -199,6 +153,66 @@ void main() {
     await tester.pump();
 
     expect(selectedFile, isNull);
+  });
+
+  testWidgets('Displays error placeholder when image fails to load', (tester) async {
+    // Provide an initialImageUrl that triggers an error.
+    await tester.pumpWidget(buildTestWidget(
+      onImageSelected: (_) {},
+      initialImageUrl: 'https://invalid-url.com/test.png',
+    ));
+
+    // Pump enough time to allow image loading error to occur.
+    await tester.pumpAndSettle();
+
+    // Verify that the error placeholder (e.g., an Icon with Icons.error) is displayed.
+    expect(find.byIcon(Icons.error), findsOneWidget);
+  });
+
+  testWidgets('Shows loading indicator while network image is loading', (tester) async {
+
+    await tester.pumpWidget(buildTestWidget(
+      onImageSelected: (_) {},
+      initialImageUrl: 'https://example.com/slow_image.png',
+    ));
+
+    // Check immediately after pumping (simulate a loading state).
+    // Depending on the behavior of your widget and the fake HTTP client,
+    // you might need to pump with a delay:
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 100));
+
+    // Check for the loading indicator (CircularProgressIndicator).
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+      // Now, pump for a longer duration (2 seconds) to allow the entire image to load.
+      await tester.pump(const Duration(seconds: 2));
+
+    // After loading, the CircularProgressIndicator should disappear.
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+  });
+
+  testWidgets('Displays default unknown user image when no initials or image are provided', (tester) async {
+    await tester.pumpWidget(buildTestWidget(
+      onImageSelected: (_) {},
+      initials: '',
+      initialImageUrl: null,
+    ));
+    expect(find.byType(Image), findsOneWidget);
+    // Optionally check that the asset used is the unknown user image:
+    expect(find.byWidgetPredicate((widget) => widget is Image && widget.image is AssetImage && (widget.image as AssetImage).assetName == 'assets/images/unknown_user.png'), findsOneWidget);
+  });
+  testWidgets('Calls onImageSelected callback with null when remove button is pressed', (tester) async {
+    XFile? callbackFile = XFile('test.png');
+    await tester.pumpWidget(buildTestWidget(
+      onImageSelected: (file) => callbackFile = file,
+      initialImageUrl: 'https://example.com/image.png',
+    ));
+    
+    expect(find.byIcon(Icons.cancel), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.cancel));
+    await tester.pump();
+    expect(callbackFile, isNull);
   });
 
 

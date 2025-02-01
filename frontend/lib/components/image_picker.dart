@@ -159,6 +159,30 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
                   height: widget.height,
                   width: widget.width,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return _buildErrorPlaceholder();
+                  },
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) {
+                      return child;
+                    }
+                    final expected = loadingProgress.expectedTotalBytes;
+                    if (expected != null) {
+                      final progress = loadingProgress.cumulativeBytesLoaded / expected;
+                      // If progress is complete, return the image.
+                      if (progress >= 1.0) {
+                        return child;
+                      }
+                    }
+                    return Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    );
+                  },
                 ),
               ),
               Positioned(
