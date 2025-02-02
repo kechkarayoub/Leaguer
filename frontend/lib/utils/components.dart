@@ -14,6 +14,7 @@ Drawer renderDrawerMenu(L10n l10n, StorageService storageService, BuildContext c
   /// [l10n] - The localization service for translating text.
   /// [storageService] - The service used to manage storage operations.
   /// [context] - The build context used for navigation.
+    final String currentLanguage = Localizations.localeOf(context).languageCode;
   return Drawer(
     child: ListView(
       padding: EdgeInsets.zero,
@@ -23,7 +24,7 @@ Drawer renderDrawerMenu(L10n l10n, StorageService storageService, BuildContext c
             color: Colors.blue,
           ),
           child: Text(
-            l10n.translate("Menu", Localizations.localeOf(context).languageCode),
+            l10n.translate("Menu", currentLanguage),
             style: TextStyle(
               color: Colors.white,
               fontSize: 24,
@@ -32,7 +33,7 @@ Drawer renderDrawerMenu(L10n l10n, StorageService storageService, BuildContext c
         ),
         ListTile(
           leading: Icon(Icons.exit_to_app),
-          title: Text(l10n.translate("Logout", Localizations.localeOf(context).languageCode)),
+          title: Text(l10n.translate("Logout", currentLanguage)),
           onTap: () {
             logout(storageService, context);
           },

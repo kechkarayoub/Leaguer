@@ -5,64 +5,97 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 
+/// A service for managing local storage using SharedPreferences.
+/// It supports saving, retrieving, and notifying the app of changes.
 class StorageService {
-  final ValueNotifier<dynamic> _storageNotifier = ValueNotifier<dynamic>({}); // The notifier that will updated to refresh app
+  /// Notifier to track storage changes and refresh the app state.
+  final ValueNotifier<dynamic> _storageNotifier = ValueNotifier<dynamic>({});
 
+  /// Initializes the storage service and loads initial values.
   StorageService(){
     _initStorageNotifier();
   }
 
-  void _updateNotifier() async {
-    var state = {
-      "current_language": await get("current_language"),
-      "user_session": await get("user_session"),
-    };
-    _storageNotifier.value = state; // refresh notifier with current storage
-  }
-
-  Future<void> _initStorageNotifier() async {
-    _updateNotifier();
-  }
-
-  Future<void> clear({bool updateNotifier=true}) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    if (updateNotifier) {
-      _updateNotifier();
+  /// Updates the notifier with the current stored values.
+  Future<void> _updateNotifier() async {
+    try {
+      var state = {
+        "current_language": await get("current_language"),
+        "user_session": await get("user_session"),
+      };
+      _storageNotifier.value = state; // Notify listeners of the new state.
+    } catch (e) {
+      debugPrint("Error updating storage notifier: $e");
     }
   }
 
-  dynamic get(String key) async {
-    final prefs = await SharedPreferences.getInstance();
-    String objString = prefs.getString(key) ?? "";
-    if(objString.isEmpty){
-      if(key == "current_language"){
-        return defaultLanguage;
+  /// Initializes the storage notifier with existing stored values.
+  Future<void> _initStorageNotifier() async {
+    await _updateNotifier();
+  }
+
+  /// Clears all stored data and updates the notifier if required.
+  Future<void> clear({bool updateNotifier=true}) async {
+    try{
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+      if (updateNotifier) {
+        await _updateNotifier();
       }
+    } catch (e) {
+      debugPrint("Error clearing storage: $e");
+    }
+  }
+
+  /// Retrieves a stored value by its key.
+  /// If the key is "current_language" and not found, returns the default language.
+  Future<dynamic> get(String key) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String objString = prefs.getString(key) ?? "";
+      if(objString.isEmpty){
+        if(key == "current_language"){
+          return defaultLanguage;
+        }
+        return null;
+      }
+      return jsonDecode(objString);
+    } catch (e) {
+      debugPrint("Error retrieving key [$key]: $e");
       return null;
     }
-    return jsonDecode(objString);
   }
-  void remove({required String key, bool updateNotifier=false}) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(key);
-    if(updateNotifier){
-      _updateNotifier();
+  /// Removes a stored value by its key and updates the notifier if required.
+  Future<void> remove({required String key, bool updateNotifier=false}) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(key);
+      if(updateNotifier){
+        await _updateNotifier();
+      }
+    } catch (e) {
+      debugPrint("Error removing key [$key]: $e");
     }
   }
 
-  void set({required String key, required dynamic obj, bool updateNotifier=false}) async {
-    final prefs = await SharedPreferences.getInstance();
-    String objString = "";
-    if(obj != null){
-      objString = jsonEncode(obj);
-    }
-    await prefs.setString(key, objString);
-    if(updateNotifier){
-      _updateNotifier();
+  /// Stores a value under a given key and updates the notifier if required.
+  Future<void> set({required String key, required dynamic obj, bool updateNotifier=false}) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String objString = "";
+      if(obj != null){
+        objString = jsonEncode(obj);
+      }
+      await prefs.setString(key, objString);
+      if(updateNotifier){
+        await _updateNotifier();
+      }
+    } catch (e) {
+      debugPrint("Error saving key [$key]: $e");
     }
   }
   
+  /// Provides access to the storage notifier to track storage changes.
   ValueNotifier<dynamic> get storageNotifier => _storageNotifier;
   
 }

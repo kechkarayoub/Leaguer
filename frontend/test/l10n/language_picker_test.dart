@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/l10n/language_picker.dart';
-import 'package:frontend/storage/storage.dart';
 import 'package:mockito/mockito.dart';
+import '../mocks.mocks.dart'; // Import generated mocks
 import '../test_helper.dart';
 
-// Mock StorageService
-class MockStorageService extends Mock implements StorageService {}
 
 void main() {
+  
   group('LanguagePickerDialog', () {
     late MockStorageService mockStorageService;
     late MockL10n mockL10n;
@@ -42,6 +41,12 @@ void main() {
     });
 
     testWidgets('Saves selected language and closes dialog', (WidgetTester tester) async {
+      // Stub storage service
+      when(mockStorageService.set(
+        key: "current_language",
+        obj: "fr",
+        updateNotifier: true,
+      )).thenAnswer((_) async => Future<void>.value()); // Fix: Return Future<void>
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -57,13 +62,13 @@ void main() {
       // Tap on "French"
       await tester.tap(find.text("French"));
       await tester.pumpAndSettle();
-
       // Verify storage was updated
       verify(mockStorageService.set(
         key: "current_language",
         obj: "fr",
         updateNotifier: true,
       )).called(1);
+      expect(1, 1);
     });
   
   });
