@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_no_such_method
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -36,10 +38,8 @@ class FakeSlowHttpClientResponse extends Fake implements HttpClientResponse {
     StreamController<List<int>> controller = StreamController<List<int>>();
 
     Future<void> emitChunks() async {
-      int loadedBytes = 0;
       for (int i = 0; i < chunks.length; i++) {
         await Future.delayed(const Duration(milliseconds: 100)); // Simulate delay
-        loadedBytes += chunks[i].length;
         controller.add(chunks[i]); // Emit partial data
       }
       controller.close();
