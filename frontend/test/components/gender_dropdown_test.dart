@@ -3,7 +3,18 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/l10n/l10n.dart'; 
 import 'package:frontend/components/gender_dropdown.dart';
 
-class MockL10n extends L10n {
+class MockL10n implements L10n {
+  @override
+  List<Locale> get supportedLocales => [
+        Locale('en'),
+        Locale('ar'),
+        Locale('fr'),
+      ];
+
+  @override
+  Future<void> loadTranslations() async {
+    // Mock implementation does nothing (since no real loading is needed in tests).
+  }
   @override
   String translate(String key, String languageCode) {
     final translations = {
@@ -36,6 +47,11 @@ class MockL10n extends L10n {
 
     // Safely access the translation for the languageCode.
     return languageMap[languageCode] ?? key;
+  }
+  @override
+  String translateFromContext(BuildContext context, String key) {
+    // Since we don’t have a real BuildContext in tests, return a default translation
+    return translate(key, 'en'); // Default to English for tests
   }
 }
 

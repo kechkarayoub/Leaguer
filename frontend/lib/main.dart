@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
   final L10n l10n;
   // final String currentLanguage;
   final StorageService storageService;
-  MyApp({required this.l10n/*, required this.currentLanguage*/, required this.storageService});
+  const MyApp({super.key, required this.l10n/*, required this.currentLanguage*/, required this.storageService});
 
   @override
   Widget build(BuildContext context) {
