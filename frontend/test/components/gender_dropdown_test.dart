@@ -1,59 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:frontend/l10n/l10n.dart'; 
 import 'package:frontend/components/gender_dropdown.dart';
-
-class MockL10n implements L10n {
-  @override
-  List<Locale> get supportedLocales => [
-        Locale('en'),
-        Locale('ar'),
-        Locale('fr'),
-      ];
-
-  @override
-  Future<void> loadTranslations() async {
-    // Mock implementation does nothing (since no real loading is needed in tests).
-  }
-  @override
-  String translate(String key, String languageCode) {
-    final translations = {
-      "Gender": {
-        "ar": "الجنس",
-        "en": "Gender",
-        "fr": "Genre"
-      },
-      "f_gender": {
-        "ar": "أنثى",
-        "en": "Female",
-        "fr": "Femelle"
-      },
-      "m_gender": {
-        "ar": "ذكر",
-        "en": "Male",
-        "fr": "Mâle"
-      },
-      "Please select your gender": {
-        "ar": "المرجو تحديد جنسك",
-        "en": "Please select your gender",
-        "fr": "Veuillez sélectionner votre genre"
-      },
-    };
-    // Check if the language map exists, otherwise return the key.
-    final languageMap = translations[key];
-    if (languageMap == null) {
-      return key; // Fallback to the key if no translation exists.
-    }
-
-    // Safely access the translation for the languageCode.
-    return languageMap[languageCode] ?? key;
-  }
-  @override
-  String translateFromContext(BuildContext context, String key) {
-    // Since we don’t have a real BuildContext in tests, return a default translation
-    return translate(key, 'en'); // Default to English for tests
-  }
-}
+import '../test_helper.dart';
 
 void main() {
   group('GenderDropdown', () {
