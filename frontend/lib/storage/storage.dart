@@ -24,6 +24,8 @@ class StorageService {
   /// Updates the notifier with the current stored values.
   Future<void> _updateNotifier() async {
     try {
+      // Introduce a delay to debounce multiple updates within a short time
+      await Future.delayed(Duration(milliseconds: 500));
       var state = {
         "current_language": await get("current_language"),
         "user_session": await get("user_session"),
@@ -89,7 +91,9 @@ class StorageService {
     try {
       final prefs = await SharedPreferences.getInstance();
       String objString = "";
-      if(obj != null){
+      if (obj is String) {
+        objString = obj;
+      } else if(obj != null){
         objString = jsonEncode(obj);
       }
       await prefs.setString(key, objString);
