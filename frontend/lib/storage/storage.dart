@@ -42,15 +42,12 @@ class StorageService {
   /// Clears all stored data and updates the notifier if required.
   Future<void> clear({bool updateNotifier=true}) async {
     try{
-      print('00000000000000000000000');
       final prefs = await SharedPreferences.getInstance();
       await prefs.clear();
       if (updateNotifier) {
         await _updateNotifier();
       }
-      print('111111111111111111');
     } catch (e) {
-      print('ererrerrerrerr');
       debugPrint("Error clearing storage: $e");
     }
   }
@@ -59,8 +56,6 @@ class StorageService {
   /// If the key is "current_language" and not found, returns the default language.
   Future<dynamic> get(String key) async {
     try {
-      print('44444444444444');
-      print(key);
       final prefs = await SharedPreferences.getInstance();
       String objString = prefs.getString(key) ?? "";
       if(objString.isEmpty){
@@ -70,7 +65,6 @@ class StorageService {
         return null;
       }
       
-      print('555555555555555');
       return jsonDecode(objString);
     } catch (e) {
       debugPrint("Error retrieving key [$key]: $e");
