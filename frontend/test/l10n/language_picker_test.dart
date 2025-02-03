@@ -68,7 +68,6 @@ void main() {
         obj: "fr",
         updateNotifier: true,
       )).called(1);
-      expect(1, 1);
     });
   
   });

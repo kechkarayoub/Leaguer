@@ -6,51 +6,62 @@ import 'package:frontend/storage/storage.dart';
 import 'package:frontend/utils/utils.dart';
 
 
+/// Renders a Drawer menu with the ability to log out and select a language.
+/// 
+/// The Drawer includes a header showing a translated "Menu" text, 
+/// and a "Logout" option that clears the user session from storage.
+///
+/// [l10n] - Localization service for translating text.
+/// [storageService] - Service used to manage storage operations.
+/// [context] - The build context for navigation.
 Drawer renderDrawerMenu(L10n l10n, StorageService storageService, BuildContext context){
-  /// Renders a Drawer menu.
-  /// The Drawer menu includes a header displaying the translated "Menu" text
-  /// and a logout option that clears the user session from storage.
-  ///
-  /// [l10n] - The localization service for translating text.
-  /// [storageService] - The service used to manage storage operations.
-  /// [context] - The build context used for navigation.
-    final String currentLanguage = Localizations.localeOf(context).languageCode;
+  final String currentLanguage = Localizations.localeOf(context).languageCode;
   return Drawer(
     child: ListView(
       padding: EdgeInsets.zero,
       children: <Widget>[
-        DrawerHeader(
-          decoration: BoxDecoration(
-            color: Colors.blue,
-          ),
-          child: Text(
-            l10n.translate("Menu", currentLanguage),
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-            ),
-          ),
-        ),
-        ListTile(
-          leading: Icon(Icons.exit_to_app),
-          title: Text(l10n.translate("Logout", currentLanguage)),
-          onTap: () {
-            logout(storageService, context);
-          },
-        ),
+        _buildDrawerHeader(l10n, currentLanguage),
+        _buildLogoutTile(l10n, currentLanguage, storageService, context),
       ],
     ),
   );
 }
 
+
+/// Helper method to build the Drawer header widget.
+Widget _buildDrawerHeader(L10n l10n, String currentLanguage) {
+  return DrawerHeader(
+    decoration: BoxDecoration(
+      color: Colors.blue,
+    ),
+    child: Text(
+      l10n.translate("Menu", currentLanguage), // Translating the "Menu" label
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: 24,
+      ),
+    ),
+  );
+}
+
+/// Helper method to build the logout ListTile in the Drawer.
+ListTile _buildLogoutTile(L10n l10n, String currentLanguage, StorageService storageService, BuildContext context) {
+  return ListTile(
+    leading: Icon(Icons.exit_to_app),
+    title: Text(l10n.translate("Logout", currentLanguage)), // Translating the "Logout" label
+    onTap: () async{
+      await logout(storageService, context); // Handle logout action
+    },
+  );
+}
+
+
+/// Renders an IconButton for showing the language picker dialog.
+///
+/// [l10n] - Localization service for translating text.
+/// [storageService] - Service used to manage storage operations.
+/// [context] - The build context for showing the dialog.
 IconButton renderLanguagesIcon(L10n l10n, StorageService storageService, BuildContext context){
-  /// Renders an IconButton that shows a language picker dialog.
-  ///
-  /// When pressed, the IconButton shows a dialog for selecting the app language.
-  ///
-  /// [l10n] - The localization service for translating text.
-  /// [storageService] - The service used to manage storage operations.
-  /// [context] - The build context used for showing the dialog.
   return IconButton(
     icon: Icon(Icons.language),
     onPressed: () {

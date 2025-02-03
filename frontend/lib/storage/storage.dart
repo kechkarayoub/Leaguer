@@ -11,8 +11,13 @@ class StorageService {
   /// Notifier to track storage changes and refresh the app state.
   final ValueNotifier<dynamic> _storageNotifier = ValueNotifier<dynamic>({});
 
-  /// Initializes the storage service and loads initial values.
-  StorageService(){
+  static final StorageService _instance = StorageService._internal();
+
+  /// Factory constructor for singleton.
+  factory StorageService() => _instance;
+
+  /// Private constructor for singleton pattern.
+  StorageService._internal() {
     _initStorageNotifier();
   }
 

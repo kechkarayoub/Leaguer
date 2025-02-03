@@ -205,7 +205,7 @@ class MockL10n implements L10n {
     // Mock implementation does nothing (since no real loading is needed in tests).
   }
   @override
-  String translate(String key, String languageCode) {
+  String translate(String key, [String? languageCode]) {
     final translations = {
       "Gender": {
         "ar": "الجنس",
