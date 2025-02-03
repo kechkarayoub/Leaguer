@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/l10n/language_picker.dart';
-import 'package:frontend/storage/storage.dart';
-import 'package:frontend/utils/utils.dart';
 import 'package:frontend/utils/components.dart';
+import 'package:frontend/utils/utils.dart';
 import '../mocks.mocks.dart';
 import '../test_helper.dart';
 
