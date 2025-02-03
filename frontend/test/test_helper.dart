@@ -5,6 +5,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/widgets.dart';
+import 'package:mockito/mockito.dart';
 import 'package:frontend/l10n/l10n.dart'; 
 
 // --- Fake HTTP Classes to simulate NetworkImage loading ---
@@ -190,6 +192,10 @@ class FakeHttpClientResponse extends Fake implements HttpClientResponse {
 
 // --- End of Fake HTTP Classes ---
 
+
+
+// Mock BuildContext
+class MockBuildContext extends Mock implements BuildContext {}
 
 
 class MockL10n implements L10n {

@@ -12,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 
 
+// Regular expressions for input validation
 final RegExp alphNumUnderscoreRegExp = RegExp(r'^[a-zA-Z][a-zA-Z0-9_]*$');
 const String dateFormatLabel = 'YYYY-MM-DD';
 const String dateFormat = 'yyyy-MM-dd';
@@ -22,6 +23,9 @@ final RegExp nameRegExp = RegExp(r"^[a-zA-ZÀ-ÿ\s-]+$");
 final RegExp usernameRegExp = RegExp(r'^[a-zA-Z][a-zA-Z0-9_]{2,19}$');
 
 
+/// Converts a hex color string to a Flutter [Color] object.
+/// [hexColor] - The hex color string, which may optionally start with a '#'.
+/// Returns a [Color] corresponding to the hex value.
 Color hexToColor(String hexColor) {
   // Remove the hash if present
   hexColor = hexColor.replaceFirst('#', '');
@@ -30,6 +34,11 @@ Color hexToColor(String hexColor) {
   return Color(int.parse('FF$hexColor', radix: 16));
 }
 
+
+/// Returns the initials of the user, using the first character of first name and last name.
+/// [lastName] - The last name of the user.
+/// [firstName] - The first name of the user.
+/// Returns a string with the initials (first letter of last name and first name).
 String getInitials(String lastName, String firstName) {
 
   // Get the first character of the first name and last name
@@ -41,6 +50,8 @@ String getInitials(String lastName, String firstName) {
 }
 
 
+/// Generates a random hex color code, ensuring it is dark enough.
+/// Returns a hex color string.
 String getRandomHexColor() {
   final Random random = Random();
   // Generate random color components
@@ -68,20 +79,21 @@ String getRandomHexColor() {
 }
 
 
+/// Logs out the user by clearing the storage and possibly navigating to a login page.
+/// [storageService] - The service used for clearing user data.
+/// [context] - The build context, used for navigation (if needed).
 Future<void> logout(StorageService storageService, BuildContext context) async {
-  /// Logs out the user by clearing all data from the storage.
-  /// This function clears all data from the storage, effectively logging the user out.
-  /// [storageService] - The service used to manage storage operations.
-  /// [context] - The build context used for navigation (if needed).
+  // Clear all user data stored in storage
   await storageService.clear();
   //Navigator.pushReplacementNamed(context, '/sign-in');
 }
 
 
+/// Logs information to the console in development mode.
+/// [message] - The message to log.
+/// [title] - An optional title for the log.
 void logInfo(dynamic message, [String? title]) {
-  /// Log the info.
-  /// This function log the nessage in users concole if it is developpment mode.
-  /// [messave] - The message to print.
+  // Only log in development mode
   title = title ?? "";
   if((dotenv.env['PIPLINE'] ?? 'production') == "development"){
     if(title.isNotEmpty){
@@ -92,6 +104,7 @@ void logInfo(dynamic message, [String? title]) {
 }
 
 /// Ensures the user is authenticated with Firebase.
+/// If not, it attempts to sign in using credentials from environment variables.
 Future<void> ensureUserIsAuthenticated() async {
   User? user = FirebaseAuth.instance.currentUser;
   if (user == null) {
@@ -110,7 +123,11 @@ Future<void> ensureUserIsAuthenticated() async {
   }
 }
 
-/// Determines the MIME type of a file based on its path or bytes.
+
+/// Determines the MIME type of a file, either from its path or content.
+/// [path] - The path of the file.
+/// [imageBytes] - Optional image bytes to determine MIME type.
+/// Returns the MIME type as a string.
 String determineMimeType(String path, {Uint8List? imageBytes}) {
   final mimeType = lookupMimeType(path);
   if (mimeType != null) {
@@ -127,7 +144,9 @@ String determineMimeType(String path, {Uint8List? imageBytes}) {
   return 'image/jpeg';
 }
 
-/// Uploads an image to Firebase Storage and returns the download URL.
+/// Uploads an image to Firebase Storage and returns its download URL.
+/// [image] - The image to upload.
+/// Returns the download URL of the uploaded image.
 Future<String> uploadImage(XFile image) async {
   await ensureUserIsAuthenticated();
   Uint8List? imageBytes;
