@@ -179,6 +179,7 @@ pip-wheel-metadata/
 
 # Dossiers générés par Django
 media/
+media_dev/
 staticfiles/
 
 # Node.js (Flutter web)
