@@ -31,7 +31,8 @@ class StorageService {
         "user_session": await get("user_session"),
       };
       _storageNotifier.value = state; // Notify listeners of the new state.
-    } catch (e) {
+    } 
+    catch (e) {
       debugPrint("Error updating storage notifier: $e");
     }
   }
@@ -49,7 +50,8 @@ class StorageService {
       if (updateNotifier) {
         await _updateNotifier();
       }
-    } catch (e) {
+    } 
+    catch (e) {
       debugPrint("Error clearing storage: $e");
     }
   }
@@ -65,10 +67,15 @@ class StorageService {
           return defaultLanguage;
         }
         return null;
+      } 
+      try{
+        return jsonDecode(objString);
       }
-      
-      return jsonDecode(objString);
-    } catch (e) {
+      catch (e) {
+        return objString;
+      } 
+    } 
+    catch (e) {
       debugPrint("Error retrieving key [$key]: $e");
       return null;
     }
@@ -81,7 +88,8 @@ class StorageService {
       if(updateNotifier){
         await _updateNotifier();
       }
-    } catch (e) {
+    } 
+    catch (e) {
       debugPrint("Error removing key [$key]: $e");
     }
   }
@@ -93,14 +101,16 @@ class StorageService {
       String objString = "";
       if (obj is String) {
         objString = obj;
-      } else if(obj != null){
+      } 
+      else if(obj != null){
         objString = jsonEncode(obj);
       }
       await prefs.setString(key, objString);
       if(updateNotifier){
         await _updateNotifier();
       }
-    } catch (e) {
+    } 
+    catch (e) {
       debugPrint("Error saving key [$key]: $e");
     }
   }
