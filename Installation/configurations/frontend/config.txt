@@ -1,7 +1,7 @@
 Create a .env file in frontend folder with this content:
     APP_NAME=Leaguer
     BACKEND_URL=http://localhost:8001
-    PIPLINE="development"
+    ENABLE_USERS_REGISTRATION="false"
     FIREBASE_API_KEY_ANDROID=
     FIREBASE_API_KEY_IOS=
     FIREBASE_API_KEY_MACOS=
@@ -20,3 +20,4 @@ Create a .env file in frontend folder with this content:
     FIREBASE_PASSWORD=
     FIREBASE_PROJECT_ID=
     FIREBASE_STORAGE_BUCKET=
+    PIPLINE="development"

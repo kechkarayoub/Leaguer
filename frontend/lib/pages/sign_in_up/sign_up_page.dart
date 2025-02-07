@@ -5,6 +5,7 @@ import 'package:frontend/api/backend.dart';
 import 'package:frontend/components/gender_dropdown.dart';
 import 'package:frontend/components/image_picker.dart';
 import 'package:frontend/l10n/l10n.dart';
+import 'package:frontend/pages/sign_in_up/sign_in_page.dart';
 import 'package:frontend/storage/storage.dart';
 import 'package:frontend/utils/components.dart';
 import 'package:frontend/utils/utils.dart';
@@ -13,58 +14,77 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 
+/// The SignUpPage is responsible for rendering the user registration form.
+/// It contains form fields, validation, and an image picker for profile pictures.
 class SignUpPage extends StatefulWidget {
+  /// T
+  /// o
+  /// r
+  /// e
+  /// v
+  /// i
+  /// e
+  /// w
   static const routeName = '/sign-up';
   final L10n l10n;
   final StorageService storageService;
 
-  SignUpPage({required this.l10n, required this.storageService});
+  const SignUpPage({super.key, required this.l10n, required this.storageService});
 
   @override
   SignUpPageState createState() => SignUpPageState();
 }
 
 class SignUpPageState extends State<SignUpPage> {
-  bool _isSignUpApiSent = false;
-  final _formKey = GlobalKey<FormState>();
+  bool _isSignUpApiSent = false;  // Tracks if the API call is sent to prevent duplicate requests
+  final _formKey = GlobalKey<FormState>(); // Form key for validation
+
   final DateFormat _dateFormat = DateFormat(dateFormat);
-  final TextEditingController _birthdayController = TextEditingController();
+  // Controllers for input fields
+  final TextEditingController _userBirthdayController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _passwordRepeatedController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
-  XFile? _selectedImage;
+  
+  XFile? _selectedImage;  // Stores the selected image
   String initials = "";
   String initialsBgColor = getRandomHexColor();
-  String? _errorMessage;
-  String? _selectedGender;
+  String? _errorMessage;  // Stores the error message (if any)
+  String? _selectedUserGender;  // Stores the selected gender
+  String? _userBirthdayServerError;  // Stores the server error
+  String? _emailServerError;  // Stores the server error
+  String? _firstNameServerError;  // Stores the server error
+  String? _lastNameServerError;  // Stores the server error
+  String? _usernameServerError;  // Stores the server error
 
+/// Function to open the date picker and set the selected date in the user birthday field.
   Future<void> _selectDate(BuildContext context) async {
+    DateTime now = DateTime.now();
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
+      initialDate: _userBirthdayController.text.isNotEmpty  ? _dateFormat.parse(_userBirthdayController.text) : DateTime(now.year - 24, now.month, now.day),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
       locale: Localizations.localeOf(context), // Add localization
     );
     if (picked != null) {
-      logInfo("picked");
-      logInfo(picked);
-      logInfo(picked.toString());
       setState(() {
-        _birthdayController.text = _dateFormat.format(picked);
+        _userBirthdayController.text = _dateFormat.format(picked);
+        _userBirthdayServerError = null;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    String currentLanguage = Localizations.localeOf(context).languageCode;
     initials = getInitials(_lastNameController.text, _firstNameController.text);
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.l10n.translate("Sign Up", Localizations.localeOf(context).languageCode)),
+        title: Text(widget.l10n.translate("Sign Up", currentLanguage)),
         actions: [
           renderLanguagesIcon(widget.l10n, widget.storageService, context),
         ],
@@ -80,69 +100,69 @@ class SignUpPageState extends State<SignUpPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Show error message if present
-                    if (_errorMessage != null)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: Text(
-                          widget.l10n.translate(_errorMessage!, Localizations.localeOf(context).languageCode),
-                          style: TextStyle(color: Colors.red),
-                        ),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: ImagePickerWidget(
+                        initials: initials,
+                        initialsBgColor: initialsBgColor,
+                        labelText: widget.l10n.translate(_selectedImage == null ? "Select Profile Image" : "Change Profile Image", currentLanguage),
+                        labelTextCamera: widget.l10n.translate(_selectedImage == null ? "Take photo" : "Change photo", currentLanguage),
+                        onImageSelected: (XFile? image) {
+                          setState(() {
+                            _selectedImage = image;
+                          });
+                        },
                       ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: ImagePickerWidget(
-                          initials: initials,
-                          initialsBgColor: initialsBgColor,
-                          labelText: widget.l10n.translate(_selectedImage == null ? "Select Profile Image" : "Change Profile Image", Localizations.localeOf(context).languageCode),
-                          labelTextCamera: widget.l10n.translate(_selectedImage == null ? "Take photo" : "Change photo", Localizations.localeOf(context).languageCode),
-                          onImageSelected: (XFile? image) {
-                            setState(() {
-                              _selectedImage = image;
-                            });
-                          },
-                        ),
-                      ),
+                    ),
                     TextFormField(
                       controller: _lastNameController,
-                      decoration: InputDecoration(labelText: widget.l10n.translate("Last name", Localizations.localeOf(context).languageCode)),
+                      decoration: InputDecoration(
+                        errorText: _lastNameServerError,
+                        labelText: widget.l10n.translate("Last name", currentLanguage)
+                      ),
                       onChanged: (value) {
                         setState(() {
+                          _lastNameServerError = null;
                           initials = getInitials(value, _firstNameController.text);
                         });
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return widget.l10n.translate("Please enter your last name", Localizations.localeOf(context).languageCode);
+                          return widget.l10n.translate("Please enter your last name", currentLanguage);
                         }
                         if (!nameRegExp.hasMatch(value)) {
-                          return widget.l10n.translate("Last name can only contain alphabetic characters, hyphens, or apostrophes", Localizations.localeOf(context).languageCode);
+                          return widget.l10n.translate("Last name can only contain alphabetic characters, hyphens, or apostrophes", currentLanguage);
                         }
                         return null;
                       },
                     ),
                     TextFormField(
                       controller: _firstNameController,
-                      decoration: InputDecoration(labelText: widget.l10n.translate("First name", Localizations.localeOf(context).languageCode)),
+                      decoration: InputDecoration(
+                        errorText: _firstNameServerError,
+                        labelText: widget.l10n.translate("First name", currentLanguage)
+                      ),
                       onChanged: (value) {
                         setState(() {
+                          _firstNameServerError = null;
                           initials = getInitials(_lastNameController.text, value);
                         });
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return widget.l10n.translate("Please enter your first name", Localizations.localeOf(context).languageCode);
+                          return widget.l10n.translate("Please enter your first name", currentLanguage);
                         }
                         if (!nameRegExp.hasMatch(value)) {
-                          return widget.l10n.translate("First name can only contain alphabetic characters, hyphens, or apostrophes", Localizations.localeOf(context).languageCode);
+                          return widget.l10n.translate("First name can only contain alphabetic characters, hyphens, or apostrophes", currentLanguage);
                         }
                         return null;
                       },
                     ),
                     TextFormField(
-                      controller: _birthdayController,
+                      controller: _userBirthdayController,
                       decoration: InputDecoration(
-                        labelText: widget.l10n.translate("Birthday", Localizations.localeOf(context).languageCode),
+                        errorText: _userBirthdayServerError,
+                        labelText: widget.l10n.translate("Birthday", currentLanguage),
                         hintText: dateFormatLabel,
                         suffixIcon: Icon(Icons.calendar_today),
                       ),
@@ -150,7 +170,7 @@ class SignUpPageState extends State<SignUpPage> {
                       onTap: () => _selectDate(context),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return widget.l10n.translate("Please select your birthday", Localizations.localeOf(context).languageCode);
+                          return widget.l10n.translate("Please select your birthday", currentLanguage);
                         }
                         return null;
                       },
@@ -158,22 +178,25 @@ class SignUpPageState extends State<SignUpPage> {
                     SizedBox(height: 20),
                     GenderDropdown(
                       l10n: widget.l10n,
-                      initialGender: _selectedGender,
-                      onChanged: (String? gender) {
+                      initialGender: _selectedUserGender,
+                      onChanged: (String? userGender) {
                         setState(() {
-                          _selectedGender = gender;
+                          _selectedUserGender = userGender;
                         });
                       },
                     ),
                     TextFormField(
                       controller: _emailController,
-                      decoration: InputDecoration(labelText: widget.l10n.translate("Email", Localizations.localeOf(context).languageCode)),
+                      decoration: InputDecoration(
+                        errorText: _emailServerError,
+                        labelText: widget.l10n.translate("Email", currentLanguage)
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return widget.l10n.translate("Please enter your email", Localizations.localeOf(context).languageCode);
+                          return widget.l10n.translate("Please enter your email", currentLanguage);
                         }
                         if (!emailRegExp.hasMatch(value)) {
-                          return widget.l10n.translate("Please enter a valid email address", Localizations.localeOf(context).languageCode);
+                          return widget.l10n.translate("Please enter a valid email address", currentLanguage);
                         }
                         return null;
                       },
@@ -181,65 +204,82 @@ class SignUpPageState extends State<SignUpPage> {
                     // Email or username text field
                     TextFormField(
                       controller: _usernameController,
-                      decoration: InputDecoration(labelText: widget.l10n.translate("Username", Localizations.localeOf(context).languageCode)),
+                      decoration: InputDecoration(
+                        errorText: _usernameServerError,
+                        labelText: widget.l10n.translate("Username", currentLanguage)
+                      ),
                       validator: (value) {
                         if(value == null || value.isEmpty) {
-                          return widget.l10n.translate("Please enter your username", Localizations.localeOf(context).languageCode);
+                          return widget.l10n.translate("Please enter your username", currentLanguage);
                         }
                         if(!letterStartRegExp.hasMatch(value)) {
-                          return widget.l10n.translate("Username must start with a letter.", Localizations.localeOf(context).languageCode);
+                          return widget.l10n.translate("Username must start with a letter.", currentLanguage);
                         }
                         else if(!alphNumUnderscoreRegExp.hasMatch(value)) {
-                          return widget.l10n.translate("Username can only contain letters, numbers, and underscores.", Localizations.localeOf(context).languageCode);
+                          return widget.l10n.translate("Username can only contain letters, numbers, and underscores.", currentLanguage);
                         }
                         else if(value.length < 3 || value.length > 20) {
-                          return widget.l10n.translate("Username must be between 3 and 20 characters long.", Localizations.localeOf(context).languageCode);
+                          return widget.l10n.translate("Username must be between 3 and 20 characters long.", currentLanguage);
                         }
                         return null;
                       },
                     ),
                     TextFormField(
                       controller: _passwordController,
-                      decoration: InputDecoration(labelText: widget.l10n.translate("Password", Localizations.localeOf(context).languageCode)),
+                      decoration: InputDecoration(labelText: widget.l10n.translate("Password", currentLanguage)),
                       obscureText: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return widget.l10n.translate("Please enter your password", Localizations.localeOf(context).languageCode);
+                          return widget.l10n.translate("Please enter your password", currentLanguage);
                         }
                         else if(value.length < 8) {
-                          return widget.l10n.translate("Password length must be greater than or equal to 8", Localizations.localeOf(context).languageCode);
+                          return widget.l10n.translate("Password length must be greater than or equal to 8", currentLanguage);
                         }
                         else if (_passwordRepeatedController.text.isNotEmpty && value != _passwordRepeatedController.text) {
-                          return widget.l10n.translate("The two passwords do not match", Localizations.localeOf(context).languageCode);
+                          return widget.l10n.translate("The two passwords do not match", currentLanguage);
                         }
                         return null;
                       },
                     ),
                     TextFormField(
                       controller: _passwordRepeatedController,
-                      decoration: InputDecoration(labelText: widget.l10n.translate("Re-enter your password", Localizations.localeOf(context).languageCode)),
+                      decoration: InputDecoration(labelText: widget.l10n.translate("Re-enter your password", currentLanguage)),
                       obscureText: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return widget.l10n.translate("Please re-enter your password", Localizations.localeOf(context).languageCode);
+                          return widget.l10n.translate("Please re-enter your password", currentLanguage);
                         }
                         else if(value.length < 8) {
-                          return widget.l10n.translate("Password length must be greater than or equal to 8", Localizations.localeOf(context).languageCode);
+                          return widget.l10n.translate("Password length must be greater than or equal to 8", currentLanguage);
                         }
                         else if (_passwordController.text.isNotEmpty && value != _passwordController.text) {
-                          return widget.l10n.translate("The two passwords do not match", Localizations.localeOf(context).languageCode);
+                          return widget.l10n.translate("The two passwords do not match", currentLanguage);
                         }
                         return null;
                       },
                     ),
+                    // Show error message if present
+                    if (_errorMessage != null)
+                      Column(
+                        children: [
+                          SizedBox(height: 20),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Text(
+                              widget.l10n.translate(_errorMessage!, currentLanguage),
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ],
+                      ),
                     SizedBox(height: 20),
                     Container(
-                      margin: EdgeInsets.only(bottom: 100),  // Add margin bottom here
+                      margin: EdgeInsets.only(bottom: 10),  // Add margin bottom here
                       child: ElevatedButton(
                         onPressed: _isSignUpApiSent ? null : () {
                           if (_formKey.currentState!.validate()) {
                             // Perform the sign-up logic
-                            signUpUser(widget.storageService, Localizations.localeOf(context).languageCode);
+                            signUpUser(widget.storageService, currentLanguage, context);
                           }
                         },
                         child: Row(
@@ -258,11 +298,21 @@ class SignUpPageState extends State<SignUpPage> {
                                   ),
                                 ),
                               ),
-                            Text(widget.l10n.translate("Sign Up", Localizations.localeOf(context).languageCode)),
+                            Text(widget.l10n.translate("Sign Up", currentLanguage)),
                           ]
                         )
                       )
                     ),
+                    // Sign in button
+                    Container(
+                      margin: EdgeInsets.only(bottom: 100),  // Add margin bottom here
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, SignInPage.routeName);
+                        },
+                        child: Text(widget.l10n.translate("Already have an account? Sign in", Localizations.localeOf(context).languageCode)),
+                      ),
+                    )
                   ],
                 ),
               ),
@@ -273,9 +323,9 @@ class SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  void signUpUser(StorageService storageService, String currentLanguage, {Dio? dio}) async {
+  void signUpUser(StorageService storageService, String currentLanguage, BuildContext context, {Dio? dio}) async {
     // Add your sign-up logic here, such as an HTTP request to your backend.
-    final birthday = _birthdayController.text;
+    final userBirthday = _userBirthdayController.text;
     final firsName = _firstNameController.text;
     final lastName = _lastNameController.text;
     final email = _emailController.text;
@@ -284,73 +334,94 @@ class SignUpPageState extends State<SignUpPage> {
 
 
     setState(() {
+      _errorMessage = null;
+      _emailServerError = null;
       _isSignUpApiSent = true;
+      _usernameServerError = null;
     });
-    final dynamic data = {
-      "birthday": birthday,
-      "email": email,
-      "first_name": firsName,
-      "gender": _selectedGender,
-      "image_url": "",
-      "initials_bg_color": initialsBgColor,
-      "last_name": lastName,
-      "selected_language": currentLanguage,
-      "password": password,
-      "username": username,
-    };
-    if (_selectedImage != null) {
-      try{
-        String imageUrl = await uploadImage(_selectedImage!);
-        data["image_url"] = imageUrl;
-      }
-      catch(er){
-        logInfo(er);
-      }
-    }
-    logInfo("data:");
-    logInfo(data);
-
-    dio ??= Dio(); // Use default client if none is provided
     try {
-      final response = await ApiBackendService.signInUser(data: data, dio: dio);
+      FormData formData = FormData.fromMap({
+        "user_birthday": userBirthday,
+        "email": email,
+        "first_name": firsName,
+        "user_gender": _selectedUserGender,
+        "user_image_url": "",
+        "initials_bg_color": initialsBgColor,
+        "last_name": lastName,
+        "current_language": currentLanguage,
+        "password": password,
+        "username": username,
+        if (_selectedImage != null) 
+          "profile_image": await MultipartFile.fromFile(
+            _selectedImage!.path,
+            filename: _selectedImage!.name,
+          ),
+      });
 
-      // Assuming the response contains the user session data
-      if(response["success"] && response["user"] != null){
-        setState(() {
-          _errorMessage = null;  // Clear the error message on successful sign-in
-          _isSignUpApiSent = false;
-        });
-        widget.storageService.set(key: 'user_session', obj: response["user"], updateNotifier: true);
+      Dio dio = Dio();
+      final response = await ApiBackendService.signUpUser(formData: formData, dio: dio);
+
+      // Assuming the response contains the username
+      if(response["success"] && response["username"] != null){
+        if (mounted){
+          setState(() {
+            _errorMessage = null;  // Clear the error message on successful sign-in
+            _isSignUpApiSent = false;
+          });
+          Navigator.pushNamed(
+            context,
+            SignInPage.routeName,
+            arguments: {"username": response["username"]},
+          );
+        }
+        //widget.storageService.set(key: 'user_session', obj: response["user"], updateNotifier: true);
       }
       else if(!response["success"] && response["message"] != null){
+        
         setState(() {
           _errorMessage = response["message"];  // Set the error message on unsuccessful sign-in
           _isSignUpApiSent = false;
+          if(response["errors"] != null){
+            if(response["errors"]["user_birthday"] != null){
+              _userBirthdayServerError = response["errors"]["user_birthday"][0];
+            }
+            if(response["errors"]["email"] != null){
+              _emailServerError = response["errors"]["email"][0];
+            }
+            if(response["errors"]["first_name"] != null){
+              _firstNameServerError = response["errors"]["first_name"][0];
+            }
+            if(response["errors"]["last_name"] != null){
+              _lastNameServerError = response["errors"]["last_name"][0];
+            }
+            if(response["errors"]["username"] != null){
+              _usernameServerError = response["errors"]["username"][0];
+            }
+          }
         });
-        logInfo('Sign-in error: ${response["message"]}');
       }
       else{
         setState(() {
-          _errorMessage = "An error occurred when log in!";  // Set the error message on unsuccessful sign-in
+          _errorMessage = "An error occurred when sign up! Please try later.";  // Set the error message on unsuccessful sign-in
           _isSignUpApiSent = false;
         });
       }
     } catch (e) {
       setState(() {
-        _errorMessage = "An error occurred when log in!";  // Set the error message on unsuccessful sign-in
+        _errorMessage = "An error occurred when sign up! Please try later.";  // Set the error message on unsuccessful sign-in
           _isSignUpApiSent = false;
       });
       // Handle any errors that occurred during the HTTP request
-      logInfo('Sign-in error: $e');
+      logMessage('Sign-up error: $e');
     }
-    // Here you would send the data to your backend server
+
   }
 
 
 
   @override
   void dispose() {
-    _birthdayController.dispose();
+    _userBirthdayController.dispose();
     _emailController.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();

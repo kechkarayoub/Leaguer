@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/api/backend.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/pages/sign_in_up/sign_up_page.dart';
@@ -12,7 +13,7 @@ class SignInPage extends StatefulWidget {
   final L10n l10n;
   final StorageService storageService;
 
-  SignInPage({required this.l10n, required this.storageService});
+  const SignInPage({super.key, required this.l10n, required this.storageService});
 
   @override
   SignInPageState createState() => SignInPageState();
@@ -27,6 +28,10 @@ class SignInPageState extends State<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+    String username = arguments?["username"] ?? ""; // Extract the email parameter if available
+    _emailUsernameController.text = username;
+    bool showSignUpButton = (dotenv.env['ENABLE_USERS_REGISTRATION'] ?? 'false') == "true";
     return Scaffold(
       appBar: AppBar(
         // App bar title with localized text
@@ -85,7 +90,7 @@ class SignInPageState extends State<SignInPage> {
                     SizedBox(height: 20),
                     // Sign in button
                     Container(
-                      margin: EdgeInsets.only(bottom: 20),  // Add margin bottom here
+                      margin: EdgeInsets.only(bottom: showSignUpButton ? 20 : 100),  // Add margin bottom here
                       child: ElevatedButton(
                         key: Key('signInButton'),
                         onPressed: _isSignInApiSent ? null : () {
@@ -116,15 +121,16 @@ class SignInPageState extends State<SignInPage> {
                       )
                     ),
                     // Sign up button
-                    Container(
-                      margin: EdgeInsets.only(bottom: 100),  // Add margin bottom here
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, SignUpPage.routeName);
-                        },
-                        child: Text(widget.l10n.translate("Don't have an account? Sign up", Localizations.localeOf(context).languageCode)),
-                      ),
-                    )
+                    if(showSignUpButton)
+                      Container(
+                        margin: EdgeInsets.only(bottom: 100),  // Add margin bottom here
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, SignUpPage.routeName);
+                          },
+                          child: Text(widget.l10n.translate("Don't have an account? Sign up", Localizations.localeOf(context).languageCode)),
+                        ),
+                      )
                   ],
                 ),
               )
@@ -169,7 +175,6 @@ class SignInPageState extends State<SignInPage> {
           _errorMessage = response["message"];  // Set the error message on unsuccessful sign-in
           _isSignInApiSent = false;
         });
-        logInfo('Sign-in error: ${response["message"]}');
       }
       else{
         setState(() {
@@ -183,7 +188,7 @@ class SignInPageState extends State<SignInPage> {
           _isSignInApiSent = false;
       });
       // Handle any errors that occurred during the HTTP request
-      logInfo('Sign-in error: $e');
+      logMessage('Sign-in error: $e');
     }
   }
 

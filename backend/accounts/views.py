@@ -1,16 +1,65 @@
 from .models import User
+from .serializers import UserSerializer
 from .utils import send_verification_email, send_phone_number_verification_code
 from django.contrib.auth.tokens import default_token_generator
 from django.conf import settings
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.http import JsonResponse
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.timezone import now
 from django.utils.translation import activate, gettext_lazy as _
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
 import datetime
 import logging
+import os
 
 # Get a logger instance
 logger = logging.getLogger(__name__)
+
+
+# class SignUpView(APIView):
+#     def post(self, request, *args, **kwargs):
+#         data = request.data.copy()
+#         logging.error("data")
+#         logging.error(data)
+#         current_language = data.get('current_language') or 'fr'
+#         activate(current_language)
+#         profile_image = request.FILES.get('profile_image')
+#         serializer = UserSerializer(data=data)
+#         if serializer.is_valid():
+#             image_url = None
+#             if profile_image:
+#                 # Define upload path
+#                 file_path = os.path.join('profile_images', f'profile_{profile_image.name}')
+#                 saved_path = default_storage.save(file_path, ContentFile(profile_image.read()))
+#                 # Generate full URL
+#                 image_url = f"{request.build_absolute_uri(settings.MEDIA_URL)}{saved_path}"
+#                 print(file_path)
+#
+#             data['image_url'] = image_url
+#             serializer = UserSerializer(data=data)
+#             user = None
+#             if serializer.is_valid():
+#                 user = serializer.save()
+#             message = _('Your account is created successfully. Log in with your username and password.')
+#             if settings.ENABLE_EMAIL_VERIFICATION is True and user.is_user_email_validated is False:
+#                 message = _('Your account has been successfully created. You can log in once you validate your email via the link sent to your email address.')
+#             return Response({
+#                     'message': message,
+#                     'success': True,
+#                     'username': user.username
+#                 }, status=status.HTTP_201_CREATED,
+#             )
+#         logging.error("88888888888888888")
+#         logging.error(serializer.errors)
+#         message = _("We cannot create your account due to the following errors. Please correct them and try again.")
+#         return Response(
+#             {'message': message, 'errors': serializer.errors, 'success': False, },
+#             status=status.HTTP_409_CONFLICT
+#         )
 
 
 def verify_phone_number(request):
