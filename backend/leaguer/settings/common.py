@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'accounts',
     'i18n_switcher',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -64,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'accounts.middleware.TimezoneMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 # Directory for language files
@@ -228,3 +230,7 @@ ENABLE_EMAIL_VERIFICATION = get_secret("ENABLE_EMAIL_VERIFICATION", False) in [T
 
 # Activate or deactivate phone number verification
 ENABLE_PHONE_NUMBER_VERIFICATION = get_secret("ENABLE_PHONE_NUMBER_VERIFICATION", False) in [True, "true"]
+
+
+# Media configuration
+MEDIA_URL = '/media/'
