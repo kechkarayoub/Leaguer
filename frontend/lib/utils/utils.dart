@@ -9,7 +9,10 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:frontend/storage/storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:logger/logger.dart';
 import 'package:mime/mime.dart';
+
+final logger = Logger();
 
 
 // Regular expressions for input validation
@@ -92,14 +95,30 @@ Future<void> logout(StorageService storageService, BuildContext context) async {
 /// Logs information to the console in development mode.
 /// [message] - The message to log.
 /// [title] - An optional title for the log.
-void logInfo(dynamic message, [String? title]) {
+void logMessage(dynamic message, [String? title, String? typeMessage,]) {
   // Only log in development mode
   title = title ?? "";
-  if((dotenv.env['PIPLINE'] ?? 'production') == "development"){
-    if(title.isNotEmpty){
-      print('$title:');
+  typeMessage = typeMessage ?? "d";
+
+  if(typeMessage == "d"){
+    if((dotenv.env['PIPLINE'] ?? 'production') == "development"){
+      logger.d(title, error: message);
     }
-    print('$message');
+    else{
+    }
+  }
+  else if(typeMessage == "i"){
+    if((dotenv.env['PIPLINE'] ?? 'production') == "development"){
+      logger.i(title, error: message);
+    }
+    else{
+    }
+  }
+  else if(typeMessage == "w"){
+    logger.w(title, error: message);
+  }
+  else if(typeMessage == "e"){
+    logger.e(title, error: message);
   }
 }
 
@@ -118,7 +137,7 @@ Future<void> ensureUserIsAuthenticated() async {
       user = userCredential.user;
     } catch (e) {
       // Handle sign-in error
-      logInfo('Sign-in error: $e');
+      logMessage('Sign-in error: $e', "", "e");
     }
   }
 }
