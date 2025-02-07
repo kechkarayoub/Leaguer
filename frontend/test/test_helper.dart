@@ -218,15 +218,15 @@ class MockL10n implements L10n {
         "en": "Gender",
         "fr": "Genre"
       },
-      "f_gender": {
+      "female_gender": {
         "ar": "أنثى",
         "en": "Female",
-        "fr": "Femelle"
+        "fr": "Femme"
       },
-      "m_gender": {
+      "male_gender": {
         "ar": "ذكر",
         "en": "Male",
-        "fr": "Mâle"
+        "fr": "Homme"
       },
       "Please select your gender": {
         "ar": "المرجو تحديد جنسك",

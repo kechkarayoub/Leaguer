@@ -31,7 +31,7 @@ class L10n {
         return MapEntry(key, Map<String, String>.from(value));
       });
     } catch (e) {
-      logInfo("Failed to load translations: $e");
+      logMessage("Failed to load translations: $e", "", "e");
       _translations = {}; // Avoid errors if loading fails
     }
   }
@@ -45,7 +45,7 @@ class L10n {
         return translationsForKey[locale]!;
       }
       else{
-        logInfo("Needed translation for the key: $key");
+        logMessage("Needed translation for the key: $key", "", "w");
       }
     }
     // If translation not found, return the key itself

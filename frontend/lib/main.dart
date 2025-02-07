@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
     return ValueListenableBuilder<dynamic>(
       valueListenable: storageService.storageNotifier,
       builder: (context, storage, _) {
-        logInfo(storage);
+        //logMessage(storage);
         dynamic userSession = storage['user_session'];
         String currentLanguage = storage['current_language'] ?? defaultLanguage;
         String appName = dotenv.env['APP_NAME'] ?? 'App';

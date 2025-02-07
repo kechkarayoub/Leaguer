@@ -1,8 +1,18 @@
 {
+  "Already have an account? Sign in": {
+    "ar": "لديك حساب بالفعل؟ قم بتسجيل الدخول",
+    "en": "Already have an account? Sign in",
+    "fr": "Vous avez déjà un compte ? Connectez-vous"
+  },
   "An error occurred when log in!": {
     "ar": "حدث خطأ عند تسجيل الدخول!",
     "en": "An error occurred when log in!",
     "fr": "Une erreur s'est produite lors de la connexion !"
+  },
+  "An error occurred when sign up! Please try later.": {
+    "ar": "حدث خطأ أثناء التسجيل! يرجى المحاولة لاحقًا.",
+    "en": "An error occurred when sign up! Please try later.",
+    "fr": "Une erreur est survenue lors de l'inscription ! Veuillez réessayer plus tard."
   },
   "Birthday": {
     "ar": "تاريخ الميلاد",
@@ -37,12 +47,12 @@
   "Female": {
     "ar": "أنثى",
     "en": "Female",
-    "fr": "Femelle"
+    "fr": "Femme"
   },
-  "f_gender": {
+  "female_gender": {
     "ar": "أنثى",
     "en": "Female",
-    "fr": "Femelle"
+    "fr": "Femme"
   },
   "First name": {
     "ar": "الاسم الشخصي",
@@ -102,12 +112,12 @@
   "Male": {
     "ar": "ذكر",
     "en": "Male",
-    "fr": "Mâle"
+    "fr": "Homme"
   },
-  "m_gender": {
+  "male_gender": {
     "ar": "ذكر",
     "en": "Male",
-    "fr": "Mâle"
+    "fr": "Homme"
   },
   "Menu": {
     "ar": "القائمة",
@@ -213,6 +223,11 @@
     "ar": "كلمتا المرور غير متطابقتان",
     "en": "The two passwords do not match",
     "fr": "Les deux mots de passe ne correspondent pas"
+  },
+  "Unknown conflict error during sign-up. Please contact the technical team to resolve your issue.": {
+    "ar": "خطأ تعارض غير معروف أثناء التسجيل. يرجى التواصل مع الفريق التقني لحل مشكلتك.",
+    "en": "Unknown conflict error during sign-up. Please contact the technical team to resolve your issue.",
+    "fr": "Erreur de conflit inconnue lors de l'inscription. Veuillez contacter l'équipe technique pour résoudre votre problème."
   },
   "Username": {
     "ar": "اسم المستخدم",
