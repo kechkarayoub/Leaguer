@@ -1,10 +1,13 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:dio/dio.dart';
 import 'package:frontend/api/backend.dart';
 import '../mocks.mocks.dart';
 
+// Generate mock Dio class
+@GenerateMocks([Dio])
 void main() {
   // Initialize dotenv before running the tests
   setUpAll(() async {
@@ -22,7 +25,7 @@ void main() {
 
     test('signInUser returns data when the response is successful', () async {
       // Arrange
-      const endpoint = '/accounts/login_with_token/';
+      const endpoint = '/accounts/log-in/';
       final mockResponse = Response(
         requestOptions: RequestOptions(path: backendUrl + endpoint),
         statusCode: 200,
@@ -57,7 +60,7 @@ void main() {
 
     test('signInUser throws an exception when the response is unsuccessful', () async {
       // Arrange
-      const endpoint = '/accounts/login_with_token/';
+      const endpoint = '/accounts/log-in/';
       final mockResponse = Response(
         requestOptions: RequestOptions(path: backendUrl + endpoint),
         statusCode: 400,
@@ -90,7 +93,7 @@ void main() {
 
     test('signInUser throws an exception on network errors', () async {
       // Arrange
-      const endpoint = '/accounts/login_with_token/';
+      const endpoint = '/accounts/log-in/';
       when(mockDio.post(
         '$backendUrl$endpoint',
         data: anyNamed('data'),
@@ -107,6 +110,78 @@ void main() {
           data: {'username': 'test', 'password': '1234'},
           dio: mockDio,
         ),
+        throwsA(isA<Exception>()),
+      );
+    });
+
+    test('SignUpUser returns successful response', () async {
+      final mockResponse = Response(
+        data: {'message': 'User created successfully', 'username': "username"},
+        statusCode: 201,
+        requestOptions: RequestOptions(path: ''),
+      );
+
+      when(mockDio.post(any, data: anyNamed('data'), options: anyNamed('options')))
+          .thenAnswer((_) async => mockResponse);
+
+      final response = await ApiBackendService.signUpUser(
+        formData: {}, // Replace with actual test data
+        dio: mockDio,
+      );
+
+      expect(response, {'message': 'User created successfully', 'username': "username"});
+    });
+
+    test('signUpUser handles unkown conflict (409 error)', () async {
+      final mockResponse = Response(
+        statusCode: 409,
+        requestOptions: RequestOptions(path: ''),
+      );
+
+      when(mockDio.post(any, data: anyNamed('data'), options: anyNamed('options')))
+          .thenAnswer((_) async => mockResponse);
+
+      final response = await ApiBackendService.signUpUser(formData: {}, dio: mockDio);
+
+      expect(response, {
+        'message': 'Unknown conflict error during sign-up. Please contact the technical team to resolve your issue.'
+      });
+
+    });
+
+    test('signUpUser handles conflict (409 error)', () async {
+      // Arrange: Prepare mock Dio response
+      when(mockDio.post(any, data: anyNamed('data'), options: anyNamed('options')))
+          .thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(path: ''),
+          statusCode: 409,
+          data: {
+            "message": "Cannot create your account.",
+            "errors": {"email": "Email already exists"}
+          },
+        ),
+      );
+
+      // Act: Call signUpUser
+      final response = await ApiBackendService.signUpUser(
+        formData: {},
+        dio: mockDio,
+      );
+
+      // Assert: The function should return the response data
+      expect(response, {
+        "message": "Cannot create your account.",
+        "errors": {"email": "Email already exists"}
+      });
+    });
+
+    test('signUpUser throws an exception on network failure', () async {
+      when(mockDio.post(any, data: anyNamed('data'), options: anyNamed('options')))
+          .thenThrow(DioException(requestOptions: RequestOptions(path: ''), message: 'Network error'));
+
+      expect(
+        () => ApiBackendService.signUpUser(formData: {}, dio: mockDio),
         throwsA(isA<Exception>()),
       );
     });
