@@ -30,7 +30,7 @@ class GenderDropdown extends StatelessWidget {
       ),
       value: initialGender,
       onChanged: onChanged,
-      items: <String>['m', 'f']
+      items: <String>['male', 'female']
           .map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,

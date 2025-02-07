@@ -22,9 +22,9 @@ void main() {
           home: Scaffold(
             body: GenderDropdown(
               l10n: mockL10n,
-              onChanged: (String? gender) {
+              onChanged: (String? userGender) {
               },
-              initialGender: 'm',
+              initialGender: 'male',
             ),
           ),
         ),
@@ -45,8 +45,8 @@ void main() {
           home: Scaffold(
             body: GenderDropdown(
               l10n: mockL10n,
-              onChanged: (String? gender) {
-                selectedValue = gender;
+              onChanged: (String? userGender) {
+                selectedValue = userGender;
               },
               initialGender: null,
             ),
@@ -61,7 +61,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Assert
-      expect(selectedValue, equals('m')); // Verify callback was triggered with 'm'
+      expect(selectedValue, equals('male')); // Verify callback was triggered with 'male'
     });
 
     testWidgets('Shows validation error when no gender is selected', (WidgetTester tester) async {
