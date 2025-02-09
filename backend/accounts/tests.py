@@ -16,6 +16,126 @@ import json
 from zoneinfo import ZoneInfo
 
 
+class SendVerificationEmailLinkViewTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', email='kechkarayoub@gmail.com', password='password123')
+        self.user2 = User.objects.create_user(username='testuser2', email='kechkarayoub2@gmail.com', password='password123')
+
+    def test_messing_params(self):
+        response = self.client.post('/accounts/send-verification-email-link/', {'selected_language': 'en'})
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "User id is required")
+        self.assertFalse(data.get("success"))
+
+    def test_send_verification_email_link_failed_invalid_credentials(self):
+        response = self.client.post('/accounts/send-verification-email-link/', {'selected_language': 'en', 'user_id': 100})
+        self.assertEqual(response.status_code, 404)
+        data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(data.get("message"), None)
+        self.assertFalse(data.get("success"))
+
+    def test_send_verification_email_link_failed_activated_email(self):
+        self.user.is_user_email_validated = True
+        self.user.save()
+        response = self.client.post('/accounts/send-verification-email-link/', {'selected_language': 'en', 'user_id': self.user.id})
+        self.assertEqual(response.status_code, 401)
+        data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(data.get("message"), "Your email is already verified. Try to sign in.")
+        self.assertFalse(data.get("success"))
+
+    def test_send_verification_email_link_success(self):
+        if settings.ENABLE_EMAIL_VERIFICATION is False:
+            self.assertTrue(True)
+            return
+        self.user2.is_user_email_validated = False
+        self.user2.save()
+        response = self.client.post('/accounts/send-verification-email-link/', {'selected_language': 'en', 'user_id': self.user2.id})
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(data.get("message"), "A new verification link has been sent to your email address. Please verify your email before logging in.")
+        self.assertTrue(data.get("success"))
+
+
+class SignInViewTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', email='kechkarayoub@gmail.com', password='password123')
+
+    def test_messing_params(self):
+        response = self.client.post('/accounts/sign-in/', {'selected_language': 'en'})
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Email/Username and password are required")
+        self.assertFalse(data.get("success"))
+        response = self.client.post('/accounts/sign-in/', {'selected_language': 'en', 'email_or_username': ""})
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Email/Username and password are required")
+        self.assertFalse(data.get("success"))
+        response = self.client.post('/accounts/sign-in/', {'selected_language': 'en', 'password': ""})
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Email/Username and password are required")
+        self.assertFalse(data.get("success"))
+
+    def test_sign_in_failed_invalid_credentials(self):
+        response = self.client.post('/accounts/sign-in/', {'selected_language': 'en', 'email_or_username': "invalid username", 'password': "password123"})
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(data.get("message"), "Invalid credentials")
+        self.assertFalse(data.get("success"))
+        response = self.client.post('/accounts/sign-in/', {'selected_language': 'en', 'email_or_username': "testuser", 'password': "invalid password"})
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(data.get("message"), "Invalid credentials")
+        self.assertFalse(data.get("success"))
+
+    def test_sign_in_failed_deleted_account(self):
+        self.user.is_user_deleted = True
+        self.user.save()
+        response = self.client.post('/accounts/sign-in/', {'selected_language': 'en', 'email_or_username': "testuser", 'password': "password123"})
+        self.assertEqual(response.status_code, 401)
+        data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(data.get("message"), "Your account is deleted. Please contact the technical team to resolve your issue.")
+        self.assertFalse(data.get("success"))
+
+    def test_sign_in_failed_inactive_account(self):
+        self.user.is_active = False
+        self.user.save()
+        response = self.client.post('/accounts/sign-in/', {'selected_language': 'en', 'email_or_username': "testuser", 'password': "password123"})
+        self.assertEqual(response.status_code, 401)
+        data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(data.get("message"), "Your account is inactive. Please contact the technical team to resolve your issue.")
+        self.assertFalse(data.get("success"))
+
+    def test_sign_in_failed_invalidate_email(self):
+        if settings.ENABLE_EMAIL_VERIFICATION is False:
+            self.assertTrue(True)
+            return
+        self.user.is_user_email_validated = False
+        self.user.save()
+        response = self.client.post('/accounts/sign-in/', {'selected_language': 'en', 'email_or_username': "testuser", 'password': "password123"})
+        self.assertEqual(response.status_code, 401)
+        data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(data.get("message"), "Your email is not yet verified. Please verify your email address before sign in.")
+        self.assertEqual(data.get("user_id"), 1)
+        self.assertFalse(data.get("success"))
+
+    def test_sign_in_success(self):
+        response = self.client.post('/accounts/sign-in/', {'selected_language': 'en', 'email_or_username': "testuser", 'password': "password123"})
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(data.get("user"), self.user.to_login_dict())
+        self.assertIsNone(data.get("message"))
+        self.assertTrue(data.get("success"))
+        self.assertTrue("access_token" in data)
+        self.assertTrue("refresh_token" in data)
+
+
 class TimezoneMiddlewareTestCase(TestCase):
     def setUp(self):
         """
@@ -168,6 +288,25 @@ class UserModelTest(TestCase):
     def test_get_user_timezone(self):
         self.assertEqual(self.user.user_timezone, settings.TIME_ZONE)
         self.assertEqual(self.user_verified_phone_number.user_timezone, "America/New_York")
+
+    def test_to_login_dict(self):
+        user_login_dict = self.user.to_login_dict()
+        self.assertEqual(len(user_login_dict.keys()), 15)
+        self.assertEqual(user_login_dict.get("current_language"), self.user.current_language)
+        self.assertEqual(user_login_dict.get("email"), self.user.email)
+        self.assertEqual(user_login_dict.get("first_name"), self.user.first_name)
+        self.assertEqual(user_login_dict.get("id"), self.user.id)
+        self.assertEqual(user_login_dict.get("is_user_phone_number_validated"), self.user.is_user_phone_number_validated)
+        self.assertEqual(user_login_dict.get("last_name"), self.user.last_name)
+        self.assertEqual(user_login_dict.get("user_address"), self.user.user_address)
+        self.assertEqual(user_login_dict.get("user_birthday"), self.user.user_birthday)
+        self.assertEqual(user_login_dict.get("user_cin"), self.user.user_cin)
+        self.assertEqual(user_login_dict.get("user_country"), self.user.user_country)
+        self.assertEqual(user_login_dict.get("user_gender"), self.user.user_gender)
+        self.assertEqual(user_login_dict.get("user_image_url"), self.user.user_image_url)
+        self.assertEqual(user_login_dict.get("user_phone_number"), self.user.user_phone_number)
+        self.assertEqual(user_login_dict.get("user_phone_number_to_verify"), self.user.user_phone_number_to_verify)
+        self.assertEqual(user_login_dict.get("user_timezone"), self.user.user_timezone)
 
     def test_user_creation(self):
         self.assertEqual(self.user.user_address, "123 Test Street")

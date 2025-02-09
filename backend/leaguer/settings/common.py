@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+from datetime import timedelta
 from decouple import config
 from django.utils.translation import gettext_lazy as _
 from pathlib import Path
@@ -50,10 +51,25 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'accounts',
     'i18n_switcher',
     'corsheaders',
 ]
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),  # Token valid for 1 hour
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),  # Refresh token valid for 7 days
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # Set JWT as default authentication
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',  # Restrict access to authenticated users
+    ),
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -134,11 +150,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -203,8 +214,14 @@ LANGUAGES = [
 ]
 
 # Endpoints
-BACKEND_ENDPOINT = ""
+BACKEND_ENDPOINT = "http://localhost:8080"
 FRONTEND_ENDPOINT = ""
+
+STATIC_URL = f"{BACKEND_ENDPOINT}/static/"
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 COMPANY_ADDRESS = "400 AV ZERKTOUNI, BOURGONE, CASABLAMNCA, MOROCCO"
 APPLICATION_NAME = "LEAGUER"

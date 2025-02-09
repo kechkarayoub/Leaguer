@@ -1,17 +1,21 @@
 from .models import User
 from .serializers import UserSerializer
 from .utils import send_verification_email, send_phone_number_verification_code
+from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.timezone import now
 from django.utils.translation import activate, gettext_lazy as _
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
 import datetime
 import logging
 import os
@@ -20,7 +24,144 @@ import os
 logger = logging.getLogger(__name__)
 
 
+class SendVerificationEmailLinkView(APIView):
+    """
+    API endpoint to send a verification email link.
+    This allows a user to request a new verification link if they haven't validated their email.
+    """
+    permission_classes = [AllowAny]
+
+    # noinspection PyMethodMayBeStatic
+    def post(self, request):
+        """
+        Handles POST request to send email verification link.
+
+        Request Body:
+        - user_id (int): The user's ID.
+        - selected_language (str, optional): The language preference.
+
+        Response:
+        - Success: Email sent confirmation.
+        - Failure: Appropriate error messages.
+        """
+
+        user_id = request.data.get("user_id")
+        current_language = request.data.get("selected_language") or 'fr'
+
+        activate(current_language)
+
+        if not user_id:
+            return Response(
+                {"message": _("User id is required"), "success": False},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Fetch the user or return 400 error if not found
+        user = get_object_or_404(User, pk=user_id)
+
+        if user.is_user_email_validated is True:
+            return Response(
+                {
+                    "message": _("Your email is already verified. Try to sign in."),
+                    "success": False,
+                },
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        send_email_response = User.send_emails_verifications_links(email=user.email)
+        # Check if email was successfully sent
+        if '1 verification email are sent,' not in send_email_response:
+            return Response({"message": _("Email not sent. Please contact the technical team to resolve your issue."), "success": False}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({
+            "message": _("A new verification link has been sent to your email address. Please verify your email before logging in."),
+            "success": True,
+        }, status=status.HTTP_200_OK)
+
+
+class SignInView(APIView):
+    """
+    API endpoint for user authentication.
+    If credentials are valid, returns JWT tokens (access & refresh).
+    """
+    permission_classes = [AllowAny]
+
+    # noinspection PyMethodMayBeStatic
+    def post(self, request):
+        """
+        Handles user login authentication.
+
+        Request Body:
+        - email_or_username (str): User's email or username.
+        - password (str): User's password.
+        - selected_language (str, optional): Language preference.
+
+        Response:
+        - Success: JWT tokens and user data.
+        - Failure: Error messages with proper status codes.
+        """
+        email_or_username = request.data.get("email_or_username")
+        current_language = request.data.get("selected_language") or 'fr'
+        password = request.data.get("password")
+
+        activate(current_language)
+
+        if not email_or_username or not password:
+            return Response(
+                {"message": _("Email/Username and password are required"), "success": False},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        if "@" in email_or_username:
+            user = User.objects.filter(email=email_or_username, is_active=True).first() or User.objects.filter(email=email_or_username).first()
+        else:
+            user = User.objects.filter(username=email_or_username).first()
+
+        if user is not None:
+            # Generate JWT tokens
+            if user.is_user_deleted is True:
+                return Response(
+                    {
+                        "message": _("Your account is deleted. Please contact the technical team to resolve your issue."),
+                        "success": False,
+                    },
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+            if user.is_active is False:
+                return Response(
+                    {
+                        "message": _("Your account is inactive. Please contact the technical team to resolve your issue."),
+                        "success": False,
+                    },
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+            if user.is_user_email_validated is False:
+                return Response(
+                    {
+                        "message": _("Your email is not yet verified. Please verify your email address before sign in."),
+                        "success": False,
+                        "user_id": user.id,
+                    },
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+
+            user = authenticate(request, username=user.username, password=password)
+            if user is not None:
+                if user.current_language != current_language:
+                    activate(user.current_language)
+                refresh = RefreshToken.for_user(user)
+                user_data = user.to_login_dict()
+                return Response({
+                    "access_token": str(refresh.access_token),
+                    "refresh_token": str(refresh),
+                    "success": True,
+                    "user": user_data,
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response({"message": _("Invalid credentials"), "success": False}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"message": _("Invalid credentials"), "success": False}, status=status.HTTP_400_BAD_REQUEST)
+
+
 # class SignUpView(APIView):
+#     permission_classes = [AllowAny]
 #     def post(self, request, *args, **kwargs):
 #         data = request.data.copy()
 #         logging.error("data")
