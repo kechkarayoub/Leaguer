@@ -3,6 +3,9 @@ Install gettext:
         apt install gettext
     If not working, run:
         sudo apt install gettext
+    If not working, run:
+        apt update && apt install -y gettext
+
 
 In the root directory backend, add file .env that contains:
     ENABLE_EMAIL_VERIFICATION="false"

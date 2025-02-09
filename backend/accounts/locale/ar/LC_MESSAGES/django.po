@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-23 22:53+0000\n"
+"POT-Creation-Date: 2025-02-09 22:34+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -211,15 +211,61 @@ msgstr "ذكر"
 msgid "Verify Your Email Address"
 msgstr "تحقق من عنوان بريدك الإلكتروني"
 
-#: views.py:30 views.py:177
+#: views.py:55
+msgid "User id is required"
+msgstr "مطلوب معرف المستخدم."
+
+#: views.py:65
+msgid "Your email is already verified. Try to sign in."
+msgstr "تم التحقق من بريدك الإلكتروني بالفعل. حاول تسجيل الدخول."
+
+#: views.py:73
+msgid ""
+"Email not sent. Please contact the technical team to resolve your issue."
+msgstr "لم يتم إرسال البريد الإلكتروني. يرجى التواصل مع الفريق التقني لحل مشكلتك."
+
+#: views.py:75
+msgid ""
+"A new verification link has been sent to your email address. Please verify "
+"your email before logging in."
+msgstr "تم إرسال رابط تحقق جديد إلى عنوان بريدك الإلكتروني. يرجى التحقق من بريدك الإلكتروني قبل تسجيل الدخول."
+
+#: views.py:109
+msgid "Email/Username and password are required"
+msgstr "البريد الإلكتروني/اسم المستخدم وكلمة المرور مطلوبان."
+
+#: views.py:122
+msgid ""
+"Your account is deleted. Please contact the technical team to resolve your "
+"issue."
+msgstr "تم حذف حسابك. يرجى التواصل مع الفريق التقني لحل مشكلتك."
+
+#: views.py:130
+msgid ""
+"Your account is inactive. Please contact the technical team to resolve your "
+"issue."
+msgstr "حسابك غير نشط. يرجى التواصل مع الفريق التقني لحل مشكلتك."
+
+#: views.py:138
+msgid ""
+"Your email is not yet verified. Please verify your email address before sign "
+"in."
+msgstr "لم يتم التحقق من بريدك الإلكتروني بعد. يرجى التحقق من عنوان بريدك الإلكتروني قبل تسجيل الدخول."
+
+
+#: views.py:158 views.py:160
+msgid "Invalid credentials"
+msgstr "بيانات غير صالحة"
+
+#: views.py:220 views.py:367
 msgid "Missing required parameters."
 msgstr "المعلمات المطلوبة مفقودة."
 
-#: views.py:40
+#: views.py:230
 msgid "You should add a phone number before validate it!"
 msgstr "يجب عليك إضافة رقم هاتف قبل التحقق منه!"
 
-#: views.py:46
+#: views.py:236
 #, python-brace-format
 msgid ""
 "This phone number already verified for another user. Please contact the "
@@ -228,27 +274,27 @@ msgstr ""
 "رقم الهاتف هذا تم التحقق منه بالفعل لمستخدم آخر. يرجى الاتصال بالخدمة "
 "التقنية على {technical_service_email} لحل مشكلتك."
 
-#: views.py:53
+#: views.py:243
 msgid "Invalid verification code."
 msgstr "رمز التحقق غير صالح."
 
-#: views.py:56
+#: views.py:246
 msgid "Phone number already verified."
 msgstr "رقم الهاتف تم التحقق منه بالفعل."
 
-#: views.py:58
+#: views.py:248
 msgid "Phone number verified successfully."
 msgstr "تم التحقق من رقم الهاتف بنجاح."
 
-#: views.py:63
+#: views.py:253
 msgid "A new verification code will be sent to your phone number."
 msgstr "سيتم إرسال رمز تحقق جديد إلى رقم هاتفك."
 
-#: views.py:66
+#: views.py:256
 msgid "Expired verification code."
 msgstr "رمز التحقق منتهي الصلاحية."
 
-#: views.py:70
+#: views.py:260
 #, python-brace-format
 msgid ""
 "Your sms verification code quota has been exceeded. Please contact the "
@@ -257,28 +303,28 @@ msgstr ""
 "تم تجاوز حصتك من رموز التحقق عبر الرسائل القصيرة. يرجى الاتصال بالخدمة "
 "التقنية على {technical_service_email} لحل مشكلتك."
 
-#: views.py:73
+#: views.py:263
 msgid "Invalid code."
 msgstr "رمز غير صالح."
 
-#: views.py:190
+#: views.py:380
 msgid "Invalid verification link."
 msgstr "رابط التحقق غير صالح."
 
-#: views.py:194
+#: views.py:384
 msgid "Email already verified."
 msgstr "تم بالفعل التحقق من البريد الإلكتروني."
 
-#: views.py:196
+#: views.py:386
 msgid "Email verified successfully."
 msgstr "تم التحقق من البريد الإلكتروني بنجاح."
 
-#: views.py:200
+#: views.py:390
 msgid ""
 "Expired token. A new verification email will be sent to your email address."
 msgstr ""
 "انتهت صلاحية الرمز. سيتم إرسال رسالة تحقق جديدة إلى عنوان بريدك الإلكتروني."
 
-#: views.py:203
+#: views.py:393
 msgid "Invalid token."
 msgstr "الرمز المميز غير صالح."
