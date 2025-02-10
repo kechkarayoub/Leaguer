@@ -21,7 +21,7 @@ class SendVerificationEmailLinkViewTest(TestCase):
         self.user = User.objects.create_user(username='testuser', email='kechkarayoub@gmail.com', password='password123')
         self.user2 = User.objects.create_user(username='testuser2', email='kechkarayoub2@gmail.com', password='password123')
 
-    def test_messing_params(self):
+    def test_missing_params(self):
         response = self.client.post('/accounts/send-verification-email-link/', {'selected_language': 'en'})
         self.assertEqual(response.status_code, 400)
         data = json.loads(response.content.decode('utf-8'))
@@ -62,7 +62,7 @@ class SignInViewTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='testuser', email='kechkarayoub@gmail.com', password='password123')
 
-    def test_messing_params(self):
+    def test_missing_params(self):
         response = self.client.post('/accounts/sign-in/', {'selected_language': 'en'})
         self.assertEqual(response.status_code, 400)
         data = json.loads(response.content.decode('utf-8'))
