@@ -374,7 +374,7 @@ class SignUpPageState extends State<SignUpPage> {
             arguments: {"username": response["username"]},
           );
         }
-        //widget.storageService.set(key: 'user_session', obj: response["user"], updateNotifier: true);
+        //widget.storageService.set(key: 'user', obj: response["user"], updateNotifier: true);
       }
       else if(!response["success"] && response["message"] != null){
         

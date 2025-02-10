@@ -1,4 +1,9 @@
 {
+  "A new verification link has been sent to your email address. Please verify your email before logging in.": {
+    "ar": "تم إرسال رابط تحقق جديد إلى عنوان بريدك الإلكتروني. يرجى التحقق من بريدك الإلكتروني قبل تسجيل الدخول.",
+    "en": "A new verification link has been sent to your email address. Please verify your email before logging in.",
+    "fr": "Un nouveau lien de vérification a été envoyé à votre adresse e-mail. Veuillez vérifier votre e-mail avant de vous connecter."
+  },
   "Already have an account? Sign in": {
     "ar": "لديك حساب بالفعل؟ قم بتسجيل الدخول",
     "en": "Already have an account? Sign in",
@@ -9,10 +14,25 @@
     "en": "An error occurred when log in!",
     "fr": "Une erreur s'est produite lors de la connexion !"
   },
+  "An error occurred while resending the verification email": {
+    "ar": "حدث خطأ أثناء إعادة إرسال بريد التحقق!",
+    "en": "An error occurred while resending the verification email",
+    "fr": "Une erreur s'est produite lors de la réexpédition de l'e-mail de vérification !"
+  },
   "An error occurred when sign up! Please try later.": {
     "ar": "حدث خطأ أثناء التسجيل! يرجى المحاولة لاحقًا.",
     "en": "An error occurred when sign up! Please try later.",
     "fr": "Une erreur est survenue lors de l'inscription ! Veuillez réessayer plus tard."
+  },
+  "An unknown error occurred during sign-in. Please contact the technical team to resolve your issue.": {
+    "ar": "حدث خطأ غير معروف أثناء تسجيل الدخول. يرجى التواصل مع الفريق التقني لحل مشكلتك.",
+    "en": "An unknown error occurred during sign-in. Please contact the technical team to resolve your issue.",
+    "fr": "Une erreur inconnue s'est produite lors de la connexion. Veuillez contacter l'équipe technique pour résoudre votre problème."
+  },
+  "An unknown error occurred while resending the verification email link. Please contact the technical team to resolve your issue.": {
+    "ar": "حدث خطأ غير معروف أثناء إعادة إرسال رابط التحقق عبر البريد الإلكتروني. يرجى التواصل مع الفريق التقني لحل مشكلتك.",
+    "en": "An unknown error occurred while resending the verification email link. Please contact the technical team to resolve your issue.",
+    "fr": "Une erreur inconnue s'est produite lors de la réexpédition du lien de vérification par e-mail. Veuillez contacter l'équipe technique pour résoudre votre problème."
   },
   "Birthday": {
     "ar": "تاريخ الميلاد",
@@ -28,6 +48,11 @@
     "ar": "تغيير الصورة الشخصية",
     "en": "Change Profile Image",
     "fr": "Modifier la photo de profil"
+  },
+  "Connection timeout. Please check your internet connection.": {
+    "ar": "انتهت مهلة الاتصال. يرجى التحقق من اتصالك بالإنترنت.",
+    "en": "Connection timeout. Please check your internet connection.",
+    "fr": "Délai de connexion dépassé. Veuillez vérifier votre connexion Internet."
   },
   "Don't have an account? Sign up": {
     "ar": "ليس لديك حساب؟ قم بالتسجيل",
@@ -194,6 +219,11 @@
     "en": "Re-enter your password",
     "fr": "Entrez à nouveau votre mot de passe"
   },
+  "Resend verification email link": {
+    "ar": "إعادة إرسال رابط التحقق عبر البريد الإلكتروني",
+    "en": "Resend verification email link",
+    "fr": "Renvoyer le lien de vérification par e-mail"
+  },
   "Select Language": {
     "ar": "اختر اللغة",
     "en": "Select Language",
@@ -203,6 +233,16 @@
     "ar": "اختر الصورة الشخصية",
     "en": "Select Profile Image",
     "fr": "Sélectionnez la photo du profil"
+  },
+  "Server took too long to respond (Send verivication email). Please try again later.": {
+    "ar": "استغرق الخادم وقتًا طويلاً للرد (إرسال بريد التحقق). يرجى المحاولة لاحقًا.",
+    "en": "Server took too long to respond (Send verivication email). Please try again later.",
+    "fr": "Le serveur a mis trop de temps à répondre (Envoi de l'e-mail de vérification). Veuillez réessayer plus tard."
+  },
+  "Server took too long to respond (Sign in). Please try again later.": {
+    "ar": "استغرق الخادم وقتًا طويلاً للرد (تسجيل الدخول). يرجى المحاولة لاحقًا.",
+    "en": "Server took too long to respond (Sign in). Please try again later.",
+    "fr": "Le serveur a mis trop de temps à répondre (Connexion). Veuillez réessayer plus tard."
   },
   "Sign In": {
     "ar": "تسجيل الدخول",

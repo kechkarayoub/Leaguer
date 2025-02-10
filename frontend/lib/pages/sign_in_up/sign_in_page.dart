@@ -21,21 +21,28 @@ class SignInPage extends StatefulWidget {
 
 class SignInPageState extends State<SignInPage> {
   bool _isSignInApiSent = false;
+  bool _isResendVerificationEmailApiSent = false;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailUsernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String? _errorMessage;
+  String? _successMessage;
+  bool _showSendEmailVerificationLinkButton = false;
+  dynamic _userId;
 
   @override
   Widget build(BuildContext context) {
+    String currentLanguage = Localizations.localeOf(context).languageCode;
     final arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
     String username = arguments?["username"] ?? ""; // Extract the email parameter if available
-    _emailUsernameController.text = username;
+    if(username.isNotEmpty){
+      _emailUsernameController.text = username;
+    }
     bool showSignUpButton = (dotenv.env['ENABLE_USERS_REGISTRATION'] ?? 'false') == "true";
     return Scaffold(
       appBar: AppBar(
         // App bar title with localized text
-        title: Text(widget.l10n.translate("Sign In", Localizations.localeOf(context).languageCode)),
+        title: Text(widget.l10n.translate("Sign In", currentLanguage)),
         actions: [
           // Render languages icon in the app bar
           renderLanguagesIcon(widget.l10n, widget.storageService, context),
@@ -52,25 +59,16 @@ class SignInPageState extends State<SignInPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Show error message if present
-                    if (_errorMessage != null)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: Text(
-                          widget.l10n.translate(_errorMessage!, Localizations.localeOf(context).languageCode),
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ),
                     // Email or username text field
                     TextFormField(
                       controller: _emailUsernameController,
-                      decoration: InputDecoration(labelText: widget.l10n.translate("Email or Username", Localizations.localeOf(context).languageCode)),
+                      decoration: InputDecoration(labelText: widget.l10n.translate("Email or Username", currentLanguage)),
                       validator: (value) {
                         if(value == null || value.isEmpty) {
-                          return widget.l10n.translate("Please enter your email or username", Localizations.localeOf(context).languageCode);
+                          return widget.l10n.translate("Please enter your email or username", currentLanguage);
                         }
                         if(value.contains('@') && !emailRegExp.hasMatch(value)) {
-                          return widget.l10n.translate("Please enter a valid email address", Localizations.localeOf(context).languageCode);
+                          return widget.l10n.translate("Please enter a valid email address", currentLanguage);
                         }
                         return null;
                       },
@@ -78,25 +76,56 @@ class SignInPageState extends State<SignInPage> {
                     // Password text field
                     TextFormField(
                       controller: _passwordController,
-                      decoration: InputDecoration(labelText: widget.l10n.translate("Password", Localizations.localeOf(context).languageCode)),
+                      decoration: InputDecoration(labelText: widget.l10n.translate("Password", currentLanguage)),
                       obscureText: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return widget.l10n.translate("Please enter your password", Localizations.localeOf(context).languageCode);
+                          return widget.l10n.translate("Please enter your password", currentLanguage);
                         }
                         return null;
                       },
                     ),
+                    // Show error message if present
+                    if (_errorMessage != null)
+                      Column(
+                        children: [
+                          SizedBox(height: 20),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Text(
+                              widget.l10n.translate(_errorMessage!, currentLanguage),
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ],
+                      ),
+                    // Show error message if present
+                    if (_successMessage != null)
+                      Column(
+                        children: [
+                          SizedBox(height: 20),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Text(
+                              widget.l10n.translate(_successMessage!, currentLanguage),
+                              style: TextStyle(color: Colors.green),
+                            ),
+                          ),
+                        ],
+                      ),
                     SizedBox(height: 20),
                     // Sign in button
                     Container(
-                      margin: EdgeInsets.only(bottom: showSignUpButton ? 20 : 100),  // Add margin bottom here
+                      margin: EdgeInsets.only(bottom: showSignUpButton || _showSendEmailVerificationLinkButton ? 20 : 100),  // Add margin bottom here
                       child: ElevatedButton(
                         key: Key('signInButton'),
                         onPressed: _isSignInApiSent ? null : () {
+                          setState(() {
+                            _errorMessage = null;
+                          });
                           if (_formKey.currentState!.validate()) {
                             // Perform the sign-in logic
-                            signInUser(widget.storageService, Localizations.localeOf(context).languageCode);
+                            signInUser(widget.storageService, currentLanguage);
                           }
                         },
                         child: Row(
@@ -115,7 +144,7 @@ class SignInPageState extends State<SignInPage> {
                                   ),
                                 ),
                               ),
-                            Text(widget.l10n.translate("Sign In", Localizations.localeOf(context).languageCode)),
+                            Text(widget.l10n.translate("Sign In", currentLanguage)),
                           ]
                         )
                       )
@@ -123,12 +152,41 @@ class SignInPageState extends State<SignInPage> {
                     // Sign up button
                     if(showSignUpButton)
                       Container(
-                        margin: EdgeInsets.only(bottom: 100),  // Add margin bottom here
+                        margin: EdgeInsets.only(bottom: _showSendEmailVerificationLinkButton ? 20 : 100),  // Add margin bottom here
                         child: TextButton(
                           onPressed: () {
                             Navigator.pushNamed(context, SignUpPage.routeName);
                           },
-                          child: Text(widget.l10n.translate("Don't have an account? Sign up", Localizations.localeOf(context).languageCode)),
+                          child: Text(widget.l10n.translate("Don't have an account? Sign up", currentLanguage)),
+                        ),
+                      ),
+                    // send email verification link button
+                    if(_showSendEmailVerificationLinkButton && _userId != null)
+                      Container(
+                        margin: EdgeInsets.only(bottom: 100),  // Add margin bottom here
+                        child: TextButton(
+                          onPressed: _isResendVerificationEmailApiSent ? null : () {
+                            resendEmailVerificationLink(_userId, currentLanguage);
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (_isResendVerificationEmailApiSent)
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                      strokeWidth: 2.0,
+                                    ),
+                                  ),
+                                ),
+                              Text(widget.l10n.translate("Resend verification email link", currentLanguage)),
+                            ]
+                          )
                         ),
                       )
                   ],
@@ -143,6 +201,58 @@ class SignInPageState extends State<SignInPage> {
 
 
   // Function to handle user sign-in
+  void resendEmailVerificationLink(dynamic userId, String currentLanguage, {Dio? dio}) async {
+  
+    dio ??= Dio(); // Use default client if none is provided
+
+    setState(() {
+      _errorMessage = null;  // Clear the error message on successful sign-in
+      _isResendVerificationEmailApiSent = true;
+    });
+    final dynamic data = {
+      "selected_language": currentLanguage,
+      "user_id": userId,
+    };
+
+    try {
+      final response = await ApiBackendService.resendVerificationEmail(data: data, dio: dio);
+
+      // Assuming the response contains the user session data
+      if(response["success"]){
+        setState(() {
+          _errorMessage = null;  // Clear the error message on successful resend verification email
+          _successMessage = "A new verification link has been sent to your email address. Please verify your email before logging in.";
+          _isResendVerificationEmailApiSent = false;
+        });
+      }
+      else if(!response["success"]){
+        setState(() {
+          _errorMessage = response["message"];  // Set the error message on unsuccessful resend verification email
+          _successMessage = null;
+          _isResendVerificationEmailApiSent = false;
+        });
+      }
+      else{
+        setState(() {
+          _errorMessage = "An error occurred while resending the verification email";  // Set the error message on unsuccessful resend verification email
+          _successMessage = null;
+          _isResendVerificationEmailApiSent = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = "An error occurred while resending the verification email";  // Set the error message on unsuccessful resend verification email
+        _successMessage = null;
+        _isResendVerificationEmailApiSent = false;
+      });
+      // Handle any errors that occurred during the HTTP request
+      logMessage('Sign-in error: $e');
+    }
+  }
+
+
+
+  // Function to handle user sign-in
   void signInUser(StorageService storageService, String currentLanguage, {Dio? dio}) async {
   
     final emailOrUsername = _emailUsernameController.text;
@@ -151,7 +261,10 @@ class SignInPageState extends State<SignInPage> {
     dio ??= Dio(); // Use default client if none is provided
 
     setState(() {
+      _errorMessage = null;  // Clear the error message on successful sign-in
       _isSignInApiSent = true;
+      _showSendEmailVerificationLinkButton = false;
+      _userId = null;
     });
     final dynamic data = {
       "email_or_username": emailOrUsername,
@@ -166,26 +279,34 @@ class SignInPageState extends State<SignInPage> {
       if(response["success"] && response["user"] != null){
         setState(() {
           _errorMessage = null;  // Clear the error message on successful sign-in
+          _successMessage = null;
           _isSignInApiSent = false;
         });
-        widget.storageService.set(key: 'user_session', obj: response["user"], updateNotifier: true);
+        widget.storageService.set(key: 'access_token', obj: response["access_token"]);
+        widget.storageService.set(key: 'refresh_token', obj: response["refresh_token"]);
+        widget.storageService.set(key: 'user', obj: response["user"], updateNotifier: true);
       }
       else if(!response["success"] && response["message"] != null){
         setState(() {
           _errorMessage = response["message"];  // Set the error message on unsuccessful sign-in
+          _successMessage = null;
           _isSignInApiSent = false;
+          _showSendEmailVerificationLinkButton = response["user_id"] != null;
+          _userId = response["user_id"];
         });
       }
       else{
         setState(() {
           _errorMessage = "An error occurred when log in!";  // Set the error message on unsuccessful sign-in
+          _successMessage = null;
           _isSignInApiSent = false;
         });
       }
     } catch (e) {
       setState(() {
         _errorMessage = "An error occurred when log in!";  // Set the error message on unsuccessful sign-in
-          _isSignInApiSent = false;
+        _successMessage = null;
+        _isSignInApiSent = false;
       });
       // Handle any errors that occurred during the HTTP request
       logMessage('Sign-in error: $e');

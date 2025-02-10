@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
       valueListenable: storageService.storageNotifier,
       builder: (context, storage, _) {
         //logMessage(storage);
-        dynamic userSession = storage['user_session'];
+        dynamic userSession = storage['user'];
         String currentLanguage = storage['current_language'] ?? defaultLanguage;
         String appName = dotenv.env['APP_NAME'] ?? 'App';
         return MaterialApp(

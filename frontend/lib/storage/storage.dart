@@ -28,7 +28,7 @@ class StorageService {
       await Future.delayed(Duration(milliseconds: 500));
       var state = {
         "current_language": await get("current_language"),
-        "user_session": await get("user_session"),
+        "user": await get("user"),
       };
       _storageNotifier.value = state; // Notify listeners of the new state.
     } 
