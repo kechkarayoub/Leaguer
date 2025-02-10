@@ -1,7 +1,7 @@
 import 'dart:io'; // For File
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:frontend/api/backend.dart';
+import 'package:frontend/api/unautenticated_backend.dart';
 import 'package:frontend/components/gender_dropdown.dart';
 import 'package:frontend/components/image_picker.dart';
 import 'package:frontend/l10n/l10n.dart';

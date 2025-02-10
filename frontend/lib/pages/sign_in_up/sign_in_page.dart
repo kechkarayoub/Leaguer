@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:frontend/api/backend.dart';
+import 'package:frontend/api/unautenticated_backend.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/pages/sign_in_up/sign_up_page.dart';
 import 'package:frontend/storage/storage.dart';

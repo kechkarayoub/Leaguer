@@ -4,7 +4,7 @@ import 'package:frontend/utils/utils.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:dio/dio.dart';
-import 'package:frontend/api/backend.dart';
+import 'package:frontend/api/unautenticated_backend.dart';
 import '../mocks.mocks.dart';
 
 // Generate mock Dio class

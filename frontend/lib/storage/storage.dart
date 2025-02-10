@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -119,3 +120,50 @@ class StorageService {
   ValueNotifier<dynamic> get storageNotifier => _storageNotifier;
   
 }
+
+
+
+/// A service for managing local secure storage using FlutterSecureStorage.
+/// It supports saving, retrieving, and notifying the app of changes.
+class SecureStorageService {
+    // 🔹 Private constructor
+  SecureStorageService._privateConstructor({FlutterSecureStorage? storage})
+      : _storage = storage ?? const FlutterSecureStorage();
+
+  // 🔹 Singleton instance
+  static final SecureStorageService _instance = SecureStorageService._privateConstructor();
+
+  // 🔹 Factory constructor
+  factory SecureStorageService({FlutterSecureStorage? storage}) {
+    if (storage != null) {
+      return SecureStorageService._privateConstructor(storage: storage);
+    }
+    return _instance;
+  }
+
+  // 🔹 Secure Storage Instance
+  final FlutterSecureStorage _storage;
+
+  // Save tokens securely
+  Future<void> saveTokens(String accessToken, String refreshToken) async {
+    await _storage.write(key: 'access_token', value: accessToken);
+    await _storage.write(key: 'refresh_token', value: refreshToken);
+  }
+
+  // Retrieve access token
+  Future<String?> getAccessToken() async {
+    return await _storage.read(key: 'access_token');
+  }
+
+  // Retrieve refresh token
+  Future<String?> getRefreshToken() async {
+    return await _storage.read(key: 'refresh_token');
+  }
+
+  // Delete tokens (e.g., during logout)
+  Future<void> clearTokens() async {
+    await _storage.delete(key: 'access_token');
+    await _storage.delete(key: 'refresh_token');
+  }
+}
+
