@@ -7,9 +7,10 @@ class DashboardPage extends StatefulWidget {
   static const routeName = '/dashboard';
   final L10n l10n;
   final dynamic userSession;
+  final SecureStorageService secureStorageService;
   final StorageService storageService;
 
-  DashboardPage({required this.l10n, required this.userSession, required this.storageService});
+  const DashboardPage({super.key, required this.l10n, required this.userSession, required this.storageService, required this.secureStorageService});
 
   @override
   DashboardPageState createState() => DashboardPageState();

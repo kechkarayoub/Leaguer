@@ -27,9 +27,10 @@ class SignUpPage extends StatefulWidget {
   /// w
   static const routeName = '/sign-up';
   final L10n l10n;
+  final SecureStorageService secureStorageService;
   final StorageService storageService;
 
-  const SignUpPage({super.key, required this.l10n, required this.storageService});
+  const SignUpPage({super.key, required this.l10n, required this.storageService, required this.secureStorageService});
 
   @override
   SignUpPageState createState() => SignUpPageState();

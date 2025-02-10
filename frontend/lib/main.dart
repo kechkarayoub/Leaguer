@@ -17,16 +17,18 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final l10n = L10n();
   await l10n.loadTranslations();
+  final SecureStorageService secureStorageService = SecureStorageService();
   StorageService storageService = StorageService();
   // var currentLanguage = await storageService.get("current_language");
-  runApp(MyApp(l10n: l10n, /*currentLanguage: currentLanguage,*/ storageService: storageService,));
+  runApp(MyApp(l10n: l10n, /*currentLanguage: currentLanguage,*/ storageService: storageService, secureStorageService: secureStorageService,));
 }
 
 class MyApp extends StatelessWidget {
   final L10n l10n;
   // final String currentLanguage;
+  final SecureStorageService secureStorageService;
   final StorageService storageService;
-  const MyApp({super.key, required this.l10n/*, required this.currentLanguage*/, required this.storageService});
+  const MyApp({super.key, required this.l10n/*, required this.currentLanguage*/, required this.storageService, required this.secureStorageService});
 
   @override
   Widget build(BuildContext context) {
@@ -58,11 +60,11 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          home: userSession != null ? DashboardPage(l10n: l10n, userSession: userSession, storageService: storageService) : SignInPage(l10n: l10n, storageService: storageService),
+          home: userSession != null ? DashboardPage(l10n: l10n, userSession: userSession, storageService: storageService, secureStorageService: secureStorageService) : SignInPage(l10n: l10n, storageService: storageService, secureStorageService: secureStorageService),
           routes: {
-            DashboardPage.routeName: (context) => DashboardPage(l10n: l10n, userSession: userSession, storageService: storageService),
-            SignInPage.routeName: (context) => SignInPage(l10n: l10n, storageService: storageService),
-            SignUpPage.routeName: (context) => SignUpPage(l10n: l10n, storageService: storageService),
+            DashboardPage.routeName: (context) => DashboardPage(l10n: l10n, userSession: userSession, storageService: storageService, secureStorageService: secureStorageService),
+            SignInPage.routeName: (context) => SignInPage(l10n: l10n, storageService: storageService, secureStorageService: secureStorageService),
+            SignUpPage.routeName: (context) => SignUpPage(l10n: l10n, storageService: storageService, secureStorageService: secureStorageService),
           },
         );
       },

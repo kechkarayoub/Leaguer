@@ -1,10 +1,10 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/storage/storage.dart';
 import 'package:frontend/utils/utils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mockito/annotations.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mockito/mockito.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Generate Mock
 @GenerateMocks([FlutterSecureStorage])

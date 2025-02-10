@@ -11,9 +11,10 @@ import 'package:dio/dio.dart';
 class SignInPage extends StatefulWidget {
   static const routeName = '/sign-in';
   final L10n l10n;
+  final SecureStorageService secureStorageService;
   final StorageService storageService;
 
-  const SignInPage({super.key, required this.l10n, required this.storageService});
+  const SignInPage({super.key, required this.l10n, required this.storageService, required this.secureStorageService});
 
   @override
   SignInPageState createState() => SignInPageState();
@@ -125,7 +126,7 @@ class SignInPageState extends State<SignInPage> {
                           });
                           if (_formKey.currentState!.validate()) {
                             // Perform the sign-in logic
-                            signInUser(widget.storageService, currentLanguage);
+                            signInUser(widget.storageService, currentLanguage, widget.secureStorageService);
                           }
                         },
                         child: Row(
@@ -253,7 +254,7 @@ class SignInPageState extends State<SignInPage> {
 
 
   // Function to handle user sign-in
-  void signInUser(StorageService storageService, String currentLanguage, {Dio? dio}) async {
+  void signInUser(StorageService storageService, String currentLanguage, SecureStorageService secureStorageService, {Dio? dio}) async {
   
     final emailOrUsername = _emailUsernameController.text;
     final password = _passwordController.text;
@@ -282,8 +283,7 @@ class SignInPageState extends State<SignInPage> {
           _successMessage = null;
           _isSignInApiSent = false;
         });
-        widget.storageService.set(key: 'access_token', obj: response["access_token"]);
-        widget.storageService.set(key: 'refresh_token', obj: response["refresh_token"]);
+        widget.secureStorageService.saveTokens(response["access_token"], response["refresh_token"]);
         widget.storageService.set(key: 'user', obj: response["user"], updateNotifier: true);
       }
       else if(!response["success"] && response["message"] != null){
