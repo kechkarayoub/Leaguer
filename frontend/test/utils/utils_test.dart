@@ -33,8 +33,10 @@ void main() {
 
    test('Logout clears storage', () async {
     final mockStorageService = MockStorageService();
+    final mockSecureStorageService = MockSecureStorageService();
     final mockContext = MockBuildContext();
-    await logout(mockStorageService, mockContext);
+    await logout(mockStorageService, mockSecureStorageService, mockContext);
+    verify(mockSecureStorageService.clearTokens()).called(1);
     verify(mockStorageService.clear()).called(1);
   });
 

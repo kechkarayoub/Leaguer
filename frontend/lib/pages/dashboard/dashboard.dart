@@ -27,7 +27,7 @@ class DashboardPageState extends State<DashboardPage> {
           renderLanguagesIcon(widget.l10n, widget.storageService, context),
         ],
       ),
-      drawer: renderDrawerMenu(widget.l10n, widget.storageService, context),
+      drawer: renderDrawerMenu(widget.l10n, widget.storageService, widget.secureStorageService, context),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: null,

@@ -6,6 +6,7 @@ import 'package:frontend/utils/components.dart';
 import 'package:frontend/utils/utils.dart';
 import '../mocks.mocks.dart';
 import '../test_helper.dart';
+import '../storage/storage_test.mocks.dart';
 
 //import 'package:frontend/storage/storage.dart';
 
@@ -20,10 +21,12 @@ import '../test_helper.dart';
 void main() {
   late MockL10n mockL10n;
   late MockStorageService mockStorageService;
+  late MockSecureStorageService mockSecureStorageService;
 
   setUp(() {
     mockL10n = MockL10n();
     mockStorageService = MockStorageService();
+    mockSecureStorageService = MockSecureStorageService();
 
     // when(mockL10n.translate("Menu", any)).thenReturn("Menu");
     // when(mockL10n.translate("Logout", any)).thenReturn("Logout");
@@ -36,7 +39,7 @@ void main() {
           appBar: AppBar(title: Text("Test App")),
           drawer: Builder(
             builder: (BuildContext context) {
-              return renderDrawerMenu(mockL10n, mockStorageService, context);
+              return renderDrawerMenu(mockL10n, mockStorageService, mockSecureStorageService, context);
             },
           ),
         ),
@@ -67,9 +70,9 @@ void main() {
             builder: (BuildContext context) {
               capturedContext = context; // Capture BuildContext
               
-              when(logout(mockStorageService, capturedContext)).thenAnswer((_) async => Future<void>.value()); // Fix: Return Future<void>
+              when(logout(mockStorageService, mockSecureStorageService, capturedContext)).thenAnswer((_) async => Future<void>.value()); // Fix: Return Future<void>
               when(mockStorageService.clear()).thenAnswer((_) async => Future<void>.value()); // Fix: Return Future<void>
-              return renderDrawerMenu(mockL10n, mockStorageService, context);
+              return renderDrawerMenu(mockL10n, mockStorageService, mockSecureStorageService, context);
             },
           ),
         ),
@@ -86,7 +89,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify logout is called with captured context
-    verify(logout(mockStorageService, capturedContext)).called(1);
+    verify(logout(mockStorageService, mockSecureStorageService, capturedContext)).called(1);
   });
 
 

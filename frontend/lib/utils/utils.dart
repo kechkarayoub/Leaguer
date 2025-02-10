@@ -83,10 +83,12 @@ String getRandomHexColor() {
 
 
 /// Logs out the user by clearing the storage and possibly navigating to a login page.
+/// [secureStorageService] - The service used for clearing user data.
 /// [storageService] - The service used for clearing user data.
 /// [context] - The build context, used for navigation (if needed).
-Future<void> logout(StorageService storageService, BuildContext context) async {
+Future<void> logout(StorageService storageService, SecureStorageService secureStorageService, BuildContext context) async {
   // Clear all user data stored in storage
+  await secureStorageService.clearTokens();
   await storageService.clear();
   //Navigator.pushReplacementNamed(context, '/sign-in');
 }

@@ -12,16 +12,17 @@ import 'package:frontend/utils/utils.dart';
 /// and a "Logout" option that clears the user session from storage.
 ///
 /// [l10n] - Localization service for translating text.
+/// [secureStorageService] - Service used to manage storage operations.
 /// [storageService] - Service used to manage storage operations.
 /// [context] - The build context for navigation.
-Drawer renderDrawerMenu(L10n l10n, StorageService storageService, BuildContext context){
+Drawer renderDrawerMenu(L10n l10n, StorageService storageService, SecureStorageService secureStorageService, BuildContext context){
   final String currentLanguage = Localizations.localeOf(context).languageCode;
   return Drawer(
     child: ListView(
       padding: EdgeInsets.zero,
       children: <Widget>[
         _buildDrawerHeader(l10n, currentLanguage),
-        _buildLogoutTile(l10n, currentLanguage, storageService, context),
+        _buildLogoutTile(l10n, currentLanguage, storageService, secureStorageService, context),
       ],
     ),
   );
@@ -45,12 +46,12 @@ Widget _buildDrawerHeader(L10n l10n, String currentLanguage) {
 }
 
 /// Helper method to build the logout ListTile in the Drawer.
-ListTile _buildLogoutTile(L10n l10n, String currentLanguage, StorageService storageService, BuildContext context) {
+ListTile _buildLogoutTile(L10n l10n, String currentLanguage, StorageService storageService, SecureStorageService secureStorageService, BuildContext context) {
   return ListTile(
     leading: Icon(Icons.exit_to_app),
     title: Text(l10n.translate("Logout", currentLanguage)), // Translating the "Logout" label
     onTap: () async{
-      await logout(storageService, context); // Handle logout action
+      await logout(storageService, secureStorageService, context); // Handle logout action
     },
   );
 }

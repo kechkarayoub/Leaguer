@@ -4,6 +4,7 @@ import 'package:mockito/annotations.dart';
 import 'package:frontend/storage/storage.dart'; // Adjust path as needed
 
 @GenerateMocks([StorageService])
+@GenerateMocks([SecureStorageService])
 // Annotate the Dio class to generate a mock
 @GenerateMocks([Dio])
 // // Annotate the L10n class to generate a mock

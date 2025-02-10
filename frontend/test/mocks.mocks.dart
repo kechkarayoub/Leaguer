@@ -136,6 +136,50 @@ class MockStorageService extends _i1.Mock implements _i9.StorageService {
           as _i10.Future<void>);
 }
 
+/// A class which mocks [SecureStorageService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockSecureStorageService extends _i1.Mock
+    implements _i9.SecureStorageService {
+  MockSecureStorageService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i10.Future<void> saveTokens(String? accessToken, String? refreshToken) =>
+      (super.noSuchMethod(
+            Invocation.method(#saveTokens, [accessToken, refreshToken]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<String?> getAccessToken() =>
+      (super.noSuchMethod(
+            Invocation.method(#getAccessToken, []),
+            returnValue: _i10.Future<String?>.value(),
+          )
+          as _i10.Future<String?>);
+
+  @override
+  _i10.Future<String?> getRefreshToken() =>
+      (super.noSuchMethod(
+            Invocation.method(#getRefreshToken, []),
+            returnValue: _i10.Future<String?>.value(),
+          )
+          as _i10.Future<String?>);
+
+  @override
+  _i10.Future<void> clearTokens() =>
+      (super.noSuchMethod(
+            Invocation.method(#clearTokens, []),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+}
+
 /// A class which mocks [Dio].
 ///
 /// See the documentation for Mockito's code generation for more information.
