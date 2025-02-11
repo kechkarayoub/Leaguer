@@ -45,7 +45,7 @@ class UnauthenticatedApiBackendService {
         // Throw an exception if the response is not successful
         throw Exception('Failed to resend verification email link: ${response.data}');
       }
-    }  on DioException catch (e) {  print('DioException caught: ${e.type}');
+    }  on DioException catch (e) {  
 
       // Handle error and rethrow or log
       if (e.type == DioExceptionType.connectionTimeout) {
