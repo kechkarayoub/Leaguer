@@ -4,7 +4,7 @@ import 'package:frontend/utils/utils.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:dio/dio.dart';
-import 'package:frontend/api/unautenticated_backend.dart';
+import 'package:frontend/api/unauthenticated_api_service.dart';
 import '../mocks.mocks.dart';
 
 // Generate mock Dio class
@@ -14,7 +14,7 @@ void main() {
   setUpAll(() async {
     await dotenv.load(); // Load .env file
   });
-  group('ApiBackendService: signinUser', () {
+  group('UnauthenticatedApiBackendService: signinUser', () {
     late MockDio mockDio;
     String backendUrl = '';
 
@@ -42,7 +42,7 @@ void main() {
       )).thenAnswer((_) async => mockResponse);
 
       // Act
-      final result = await ApiBackendService.signInUser(
+      final result = await UnauthenticatedApiBackendService.signInUser(
         data: {'email_or_username': "email_or_username", 'password': "password"},
         dio: mockDio,
       );
@@ -91,7 +91,7 @@ void main() {
 
 
       // Act
-      final result = await ApiBackendService.signInUser(
+      final result = await UnauthenticatedApiBackendService.signInUser(
         data: {},
         dio: mockDio,
       );      
@@ -107,7 +107,7 @@ void main() {
       expect(result['success'], equals(false));
       expect(result['message'], equals("Email/Username and password are required"));
       // Act
-      final result2 = await ApiBackendService.signInUser(
+      final result2 = await UnauthenticatedApiBackendService.signInUser(
         data: {'email_or_username': "email_or_username"},
         dio: mockDio,
       );      
@@ -123,7 +123,7 @@ void main() {
       expect(result2['success'], equals(false));
       expect(result2['message'], equals("Email/Username and password are required"));
       // Act
-      final result3 = await ApiBackendService.signInUser(
+      final result3 = await UnauthenticatedApiBackendService.signInUser(
         data: {'password': "password"},
         dio: mockDio,
       );      
@@ -158,7 +158,7 @@ void main() {
 
 
       // Act
-      final result = await ApiBackendService.signInUser(
+      final result = await UnauthenticatedApiBackendService.signInUser(
         data: {'email_or_username': "deleted_user", 'password': "password"},
         dio: mockDio,
       );      
@@ -194,7 +194,7 @@ void main() {
 
 
       // Act
-      final result = await ApiBackendService.signInUser(
+      final result = await UnauthenticatedApiBackendService.signInUser(
         data: {'email_or_username': "inactive_user", 'password': "password"},
         dio: mockDio,
       );      
@@ -230,7 +230,7 @@ void main() {
 
 
       // Act
-      final result = await ApiBackendService.signInUser(
+      final result = await UnauthenticatedApiBackendService.signInUser(
         data: {'email_or_username': "invalidated_email", 'password': "password"},
         dio: mockDio,
       );      
@@ -267,7 +267,7 @@ void main() {
 
 
       // Act
-      final result = await ApiBackendService.signInUser(
+      final result = await UnauthenticatedApiBackendService.signInUser(
         data: {'email_or_username': "wrongusername", 'password': "wrongpassword"},
         dio: mockDio,
       );      
@@ -293,7 +293,7 @@ void main() {
       ));
       
 
-      final result = await ApiBackendService.signInUser(data: {'email': 'test@example.com', 'password': '123456'}, dio: mockDio);
+      final result = await UnauthenticatedApiBackendService.signInUser(data: {'email': 'test@example.com', 'password': '123456'}, dio: mockDio);
 
       expect(result['success'], false);
       expect(result['message'], 'Connection timeout. Please check your internet connection.');
@@ -307,7 +307,7 @@ void main() {
       ));
       
 
-      final result = await ApiBackendService.signInUser(data: {'email': 'test@example.com', 'password': '123456'}, dio: mockDio);
+      final result = await UnauthenticatedApiBackendService.signInUser(data: {'email': 'test@example.com', 'password': '123456'}, dio: mockDio);
 
       expect(result['success'], false);
       expect(result['message'], 'Server took too long to respond (Sign in). Please try again later.');
@@ -316,7 +316,7 @@ void main() {
     
   });
 
-  group('ApiBackendService: resendVerificationEmail', () {
+  group('UnauthenticatedApiBackendService: resendVerificationEmail', () {
     late MockDio mockDio;
     String backendUrl = '';
 
@@ -344,7 +344,7 @@ void main() {
       )).thenAnswer((_) async => mockResponse);
 
       // Act
-      final result = await ApiBackendService.resendVerificationEmail(
+      final result = await UnauthenticatedApiBackendService.resendVerificationEmail(
         data: {'user_id': 1},
         dio: mockDio,
       );
@@ -381,7 +381,7 @@ void main() {
 
 
       // Act
-      final result = await ApiBackendService.resendVerificationEmail(
+      final result = await UnauthenticatedApiBackendService.resendVerificationEmail(
         data: {},
         dio: mockDio,
       );      
@@ -417,7 +417,7 @@ void main() {
 
 
       // Act
-      final result = await ApiBackendService.resendVerificationEmail(
+      final result = await UnauthenticatedApiBackendService.resendVerificationEmail(
         data: {'user_id': 1},
         dio: mockDio,
       );      
@@ -443,7 +443,7 @@ void main() {
         type: DioExceptionType.connectionTimeout,
       ));
       
-      final result = await ApiBackendService.resendVerificationEmail(data: {'user_id': 1}, dio: mockDio);
+      final result = await UnauthenticatedApiBackendService.resendVerificationEmail(data: {'user_id': 1}, dio: mockDio);
 
       expect(result['success'], false);
       expect(result['message'], 'Connection timeout. Please check your internet connection.');
@@ -459,7 +459,7 @@ void main() {
       ));
       
 
-      final result = await ApiBackendService.resendVerificationEmail(data: {'user_id': 1}, dio: mockDio);
+      final result = await UnauthenticatedApiBackendService.resendVerificationEmail(data: {'user_id': 1}, dio: mockDio);
 
       expect(result['success'], false);
       expect(result['message'], 'Server took too long to respond (Send verivication email). Please try again later.');

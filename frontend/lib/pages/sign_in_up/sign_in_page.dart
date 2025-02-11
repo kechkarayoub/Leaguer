@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:frontend/api/unautenticated_backend.dart';
+import 'package:frontend/api/unauthenticated_api_service.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/pages/sign_in_up/sign_up_page.dart';
 import 'package:frontend/storage/storage.dart';
@@ -216,7 +216,7 @@ class SignInPageState extends State<SignInPage> {
     };
 
     try {
-      final response = await ApiBackendService.resendVerificationEmail(data: data, dio: dio);
+      final response = await UnauthenticatedApiBackendService.resendVerificationEmail(data: data, dio: dio);
 
       // Assuming the response contains the user session data
       if(response["success"]){
@@ -274,7 +274,7 @@ class SignInPageState extends State<SignInPage> {
     };
 
     try {
-      final response = await ApiBackendService.signInUser(data: data, dio: dio);
+      final response = await UnauthenticatedApiBackendService.signInUser(data: data, dio: dio);
 
       // Assuming the response contains the user session data
       if(response["success"] && response["user"] != null){

@@ -1,7 +1,7 @@
 import 'dart:io'; // For File
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:frontend/api/unautenticated_backend.dart';
+import 'package:frontend/api/unauthenticated_api_service.dart';
 import 'package:frontend/components/gender_dropdown.dart';
 import 'package:frontend/components/image_picker.dart';
 import 'package:frontend/l10n/l10n.dart';
@@ -360,7 +360,7 @@ class SignUpPageState extends State<SignUpPage> {
       });
 
       Dio dio = Dio();
-      final response = await ApiBackendService.signUpUser(formData: formData, dio: dio);
+      final response = await UnauthenticatedApiBackendService.signUpUser(formData: formData, dio: dio);
 
       // Assuming the response contains the username
       if(response["success"] && response["username"] != null){

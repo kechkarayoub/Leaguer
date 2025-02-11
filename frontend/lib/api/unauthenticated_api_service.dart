@@ -2,7 +2,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:dio/dio.dart';
 import 'package:frontend/utils/utils.dart';
 
-class ApiBackendService {
+class UnauthenticatedApiBackendService {
     /// This service handles communication with the backend API.
   static String backendUrl = dotenv.env['BACKEND_URL'] ?? 'Backend URL not found';
     
@@ -61,7 +61,7 @@ class ApiBackendService {
       logMessage(e, "Resending the verification email link error", "e");
       throw Exception('Failed to resend verification email link: ${e.toString()}');
     } catch (e) {
-      logMessage('Unexpected error during resending verification email link: $e', 'ApiBackendService.resendVerificationEmail', "e");
+      logMessage('Unexpected error during resending verification email link: $e', 'UnauthenticatedApiBackendService.resendVerificationEmail', "e");
       return {'success': false, 'message': 'An unexpected error occurred. Please try again later.'};
     }
   }
@@ -122,7 +122,7 @@ class ApiBackendService {
       logMessage(e, "Sign-in error", "e");
       throw Exception('Failed to sign in: ${e.toString()}');
     } catch (e) {
-      logMessage('Unexpected error during sign-in: $e', 'ApiBackendService.signInUser', "e");
+      logMessage('Unexpected error during sign-in: $e', 'UnauthenticatedApiBackendService.signInUser', "e");
       return {'success': false, 'message': 'An unexpected error occurred. Please try again later.'};
     }
   }
