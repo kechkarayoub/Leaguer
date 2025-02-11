@@ -80,7 +80,7 @@ class AuthenticatedApiBackendService {
       if (refreshToken == null){
         _handleSessionExpired();
       }
-      final response = await _dio.post('$backendUrl/api/token/refresh/', data: {
+      final response = await _dio.post('$backendUrl/accounts/api/token/refresh/', data: {
         'refresh_token': refreshToken,
       });
 

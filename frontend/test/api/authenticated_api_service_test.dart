@@ -57,7 +57,7 @@ void main() async {
       when(mockSecureStorageService.getRefreshToken()).thenAnswer((_) async => 'mock_refresh_token');
       when(mockDio.post(any, data: anyNamed('data'))).thenAnswer(
         (_) async => Response(
-          requestOptions: RequestOptions(path: '/api/token/refresh/'),
+          requestOptions: RequestOptions(path: '/accounts/api/token/refresh/'),
           statusCode: 200,
           data: {
             'access_token': 'new_access_token',
