@@ -2,8 +2,6 @@
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -124,26 +122,6 @@ void logMessage(dynamic message, [String? title, String? typeMessage,]) {
   }
 }
 
-/// Ensures the user is authenticated with Firebase.
-/// If not, it attempts to sign in using credentials from environment variables.
-Future<void> ensureUserIsAuthenticated() async {
-  User? user = FirebaseAuth.instance.currentUser;
-  if (user == null) {
-    try {
-      String firebaseEmail = dotenv.env['FIREBASE_EMAIL'] ?? 'No email provided';
-      String firebasePassword = dotenv.env['FIREBASE_PASSWORD'] ?? 'No password provided';
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: firebaseEmail,  // Replace with your email
-        password: firebasePassword,        // Replace with your password
-      );
-      user = userCredential.user;
-    } catch (e) {
-      // Handle sign-in error
-      logMessage('Sign-in error: $e', "", "e");
-    }
-  }
-}
-
 
 /// Determines the MIME type of a file, either from its path or content.
 /// [path] - The path of the file.
@@ -163,39 +141,4 @@ String determineMimeType(String path, {Uint8List? imageBytes}) {
   }
   // Default to image/jpeg if no mime type can be determined
   return 'image/jpeg';
-}
-
-/// Uploads an image to Firebase Storage and returns its download URL.
-/// [image] - The image to upload.
-/// Returns the download URL of the uploaded image.
-Future<String> uploadImage(XFile image) async {
-  await ensureUserIsAuthenticated();
-  Uint8List? imageBytes;
-
-  // Define metadata with the correct MIME type
-  if (kIsWeb) {
-    imageBytes = await image.readAsBytes();
-  }
-  // Determine MIME type
-  final mimeType = determineMimeType(image.path, imageBytes: imageBytes);
-  final metadata = SettableMetadata(contentType: mimeType);
-  // Create a reference to the location you want to upload the image
-  Reference storageReference = FirebaseStorage.instance
-    .ref()
-    .child('images/${DateTime.now().millisecondsSinceEpoch.toString()}');
-
-  if (kIsWeb) {
-    // Upload for Web
-    Uint8List imageBytes = await image.readAsBytes();
-    UploadTask uploadTask = storageReference.putData(imageBytes, metadata);
-    TaskSnapshot taskSnapshot = await uploadTask;
-    return await taskSnapshot.ref.getDownloadURL();
-  } 
-  else {
-    // Upload for Mobile and Desktop
-    File file = File(image.path);
-    UploadTask uploadTask = storageReference.putFile(file, metadata);
-    TaskSnapshot taskSnapshot = await uploadTask;
-    return await taskSnapshot.ref.getDownloadURL();
-  }
 }
