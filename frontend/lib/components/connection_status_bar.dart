@@ -1,26 +1,32 @@
 
 import 'dart:async';
+import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/l10n/l10n.dart';
+import 'package:frontend/utils/utils.dart';
 
 // Create a Dio instance for making HTTP requests
 Dio _dio = Dio();
+var random = Random();
 
 /// Checks if the device has an active internet connection.
 /// Sends a GET request to a reliable endpoint and checks the response status code.
 Future<bool> hasInternet(Dio dio) async {
-
+  // Generate a random integer between 0 and 99999900
+  int randomNumber = random.nextInt(100000000); 
+  String url = 'http://captive.apple.com/?key=$randomNumber';
   try {
      final response = await dio.get(
-      'https://httpbin.org/get',
+      url,
       options: Options(
-        receiveTimeout: Duration(seconds: 2), // Timeout for response
-        sendTimeout: Duration(seconds: 1), // Timeout for sending request
+        receiveTimeout: Duration(seconds: 3), // Timeout for response
+        sendTimeout: Duration(seconds: 2), // Timeout for sending request
       ),
     );
     return response.statusCode == 200; // Return true if the request is successful
   } catch (e) {
+    logMessage(e, "Check connection failed", "d");
     return false; // Return false if there's an error (e.g., no internet)
   }
 }
@@ -68,7 +74,7 @@ class ConnectionStatusWidgetState extends State<ConnectionStatusWidget> {
     else{
       // Update the state based on the connection status and only if it is changed
       double newInternetStatus = connected ? 1 : -1;
-      if(newInternetStatus != internetStatus){
+      if(!(connected && internetStatus == 0) && newInternetStatus != internetStatus){
         setState(() {
           internetStatus = connected ? 1 : -1;
         });
