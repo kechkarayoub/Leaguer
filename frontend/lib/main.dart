@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:frontend/components/connection_status_bar.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/pages/dashboard/dashboard.dart';
 import 'package:frontend/pages/sign_in_up/sign_in_page.dart';
@@ -11,7 +12,17 @@ import 'package:frontend/pages/sign_in_up/sign_up_page.dart';
 import 'package:frontend/storage/storage.dart';
 import 'package:frontend/utils/utils.dart';
 
+import 'package:flutter/foundation.dart';
+
+import 'dart:io';
+
+void _enablePlatformOverrideForDesktop() {
+  if (!kIsWeb && (Platform.isWindows || Platform.isLinux)) {
+    debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
+  }
+}
 void main() async {
+  _enablePlatformOverrideForDesktop();
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +31,13 @@ void main() async {
   final SecureStorageService secureStorageService = SecureStorageService();
   StorageService storageService = StorageService();
   // var currentLanguage = await storageService.get("current_language");
-  runApp(MyApp(l10n: l10n, /*currentLanguage: currentLanguage,*/ storageService: storageService, secureStorageService: secureStorageService,));
+  runApp(
+    MyApp(
+      l10n: l10n, 
+      storageService: storageService, 
+      secureStorageService: secureStorageService,
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -28,7 +45,9 @@ class MyApp extends StatelessWidget {
   // final String currentLanguage;
   final SecureStorageService secureStorageService;
   final StorageService storageService;
-  const MyApp({super.key, required this.l10n/*, required this.currentLanguage*/, required this.storageService, required this.secureStorageService});
+  const MyApp({
+      super.key, required this.l10n, required this.storageService, required this.secureStorageService,
+    });
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +64,7 @@ class MyApp extends StatelessWidget {
               appBar: AppBar(
                 title: Text(appName),
               ),
-              body: child,
+              body: ConnectionStatusWidget(l10n: l10n, child: child!),
             );
           },
           debugShowCheckedModeBanner: dotenv.env['PIPLINE'] == "development", // Supprimer la bannière DEBUG

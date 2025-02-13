@@ -49,6 +49,11 @@
     "en": "Change Profile Image",
     "fr": "Modifier la photo de profil"
   },
+  "Connection Restored!": {
+    "ar": "تمت استعادة الاتصال!",
+    "en": "Connection Restored!",
+    "fr": "Connexion rétablie !"
+  },
   "Connection timeout. Please check your internet connection.": {
     "ar": "انتهت مهلة الاتصال. يرجى التحقق من اتصالك بالإنترنت.",
     "en": "Connection timeout. Please check your internet connection.",
@@ -148,6 +153,11 @@
     "ar": "القائمة",
     "en": "Menu",
     "fr": "Menu"
+  },
+  "Oops! You're Offline. Attempting to reconnect....": {
+    "ar": "عذرًا! أنت غير متصل. جاري إعادة الاتصال...",
+    "en": "Oops! You're Offline. Attempting to reconnect....",
+    "fr": "Oups ! Vous êtes hors ligne. Tentative de reconnexion..."
   },
   "Password": {
     "ar": "كلمة المرور",
