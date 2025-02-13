@@ -1,6 +1,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/components/connection_status_bar.dart';
 import 'package:mockito/mockito.dart';
@@ -11,11 +12,12 @@ import '../test_helper.dart';
 // Generate mock Dio class
 @GenerateMocks([Dio])
 
-void main() {
+void main() async{
   late MockDio mockDio;
-    late MockL10n mockL10n;
+  late MockL10n mockL10n;
 
-  setUp(() {
+  setUp(() async{
+    await dotenv.load(fileName: ".env");
     mockDio = MockDio();
     mockL10n = MockL10n();
   });
@@ -43,7 +45,7 @@ void main() {
       expect(find.text("Oops! You're Offline. Attempting to reconnect...."), findsNothing);
       expect(find.text("Connection Restored!"), findsNothing);
 
-      await tester.pump(const Duration(seconds: 3));
+      await tester.pumpAndSettle();
 
       // Verify that the connection lost banner is displayed
       expect(find.text("Oops! You're Offline. Attempting to reconnect...."), findsOneWidget);
