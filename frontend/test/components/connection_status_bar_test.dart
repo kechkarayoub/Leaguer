@@ -1,9 +1,10 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
-import 'package:frontend/components/connection_status_bar.dart';
+
 import 'package:dio/dio.dart';
-import 'package:mockito/annotations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:frontend/components/connection_status_bar.dart';
+import 'package:mockito/mockito.dart';
+import 'package:mockito/annotations.dart';
 import '../mocks.mocks.dart';
 import '../test_helper.dart';
 

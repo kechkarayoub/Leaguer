@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/l10n/l10n.dart';
-import 'package:frontend/utils/utils.dart';
 
 // Create a Dio instance for making HTTP requests
 Dio _dio = Dio();
