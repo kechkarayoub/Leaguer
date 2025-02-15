@@ -2,12 +2,15 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:frontend/components/wakelock_service.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/utils/utils.dart';
 
 // Create a Dio instance for making HTTP requests
 Dio _dio = Dio();
+WakelockService _wakelockService = WakelockService();
 var random = Random();
 
 /// Checks if the device has an active internet connection.
@@ -37,60 +40,93 @@ class ConnectionStatusWidget extends StatefulWidget {
   final Widget child; // The main content of the app
   final L10n l10n; // Localization instance for translating text
   final Dio? dio; // Dio instance
+  final WakelockService? wakelockService;
 
-  const ConnectionStatusWidget({super.key, required this.child, required this.l10n, this.dio});
+  const ConnectionStatusWidget({super.key, required this.child, required this.l10n, this.dio, this.wakelockService});
 
   @override
   ConnectionStatusWidgetState createState() => ConnectionStatusWidgetState();
 }
 
-class ConnectionStatusWidgetState extends State<ConnectionStatusWidget> {
+class ConnectionStatusWidgetState extends State<ConnectionStatusWidget> with WidgetsBindingObserver {
   double internetStatus = 0; // 1: connected, -1: unconnected, 0: default;
   late Timer _timer; // Timer to hide the connection restored banner
-  bool isUnmounted = false;
+  //bool isUnmounted = false;
+  bool isInBackground = false; // Tracks whether the app is in the background
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Handles app lifecycle state changes (e.g., background/foreground)
+    if (!kIsWeb) { // Skip lifecycle events on the web
+      super.didChangeAppLifecycleState(state);
+      switch (state) {
+        case AppLifecycleState.inactive: // To review
+        case AppLifecycleState.paused:
+          isInBackground = true;
+          // logMessage('App is in the background (screen may be locked).', "", "d");
+          break;
+        case AppLifecycleState.resumed:
+          isInBackground = false;
+          //logMessage('App is in the foreground (screen is unlocked).', "", "d");
+          break;
+        default:
+          break;
+      }
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     // Start checking the internet connection on widget initialization
     internetCheck(true);
+    if (!kIsWeb) {
+      WidgetsBinding.instance.addObserver(this); // Add lifecycle observer
+      try{
+        (widget.wakelockService??_wakelockService).enable(); // Prevent screen from locking
+      } catch (e) {
+        logMessage('$e', "Failed to enable wakelock", "e");
+      }
+    }
   }
 
   /// Checks the internet connection and updates the state accordingly.
   /// [isFirstCheck] is true during the initial check and false for subsequent checks.
   void internetCheck(bool isFirstCheck) async {
-    if(isUnmounted){
+    if(!mounted){
       return;
     }
-    bool connected = await hasInternet(widget.dio??_dio);
-    if(isFirstCheck){
-      // Update the state only if it's the first check and there's no internet
-      if(!connected && internetStatus == 0){
-        setState(() {
-          internetStatus = -1;
-        });
-      }
-    }
-    else{
-      // Update the state based on the connection status and only if it is changed
-      double newInternetStatus = connected ? 1 : -1;
-      if(!(connected && internetStatus == 0) && newInternetStatus != internetStatus){
-        setState(() {
-          internetStatus = connected ? 1 : -1;
-        });
-        // If the connection is restored, start a timer to hide the banner after 3 seconds
-        if(connected){
-          try{
-            _timer.cancel();  // Cancel any existing timer
-          }
-          catch(e){
-            // Ignore errors if the timer is not initialized
-          }
-          _timer = Timer(const Duration(seconds: 3), () {
-            setState(() {
-              internetStatus = 0;  // Reset the status to default
-            });
+    if(!isInBackground){ // Skip internet checks when the app is in the background
+      bool connected = await hasInternet(widget.dio??_dio);
+      if(isFirstCheck){
+        // Update the state only if it's the first check and there's no internet
+        if(!connected && internetStatus == 0){
+          setState(() {
+            internetStatus = -1;
           });
+        }
+      }
+      else{
+        // Update the state based on the connection status and only if it is changed
+        double newInternetStatus = connected ? 1 : -1;
+        if(!(connected && internetStatus == 0) && newInternetStatus != internetStatus){
+          setState(() {
+            internetStatus = connected ? 1 : -1;
+          });
+          // If the connection is restored, start a timer to hide the banner after 3 seconds
+          if(connected){
+            try{
+              _timer.cancel();  // Cancel any existing timer
+            }
+            catch(e){
+              // Ignore errors if the timer is not initialized
+            }
+            _timer = Timer(const Duration(seconds: 3), () {
+              setState(() {
+                internetStatus = 0;  // Reset the status to default
+              });
+            });
+          }
         }
       }
     }
@@ -102,13 +138,21 @@ class ConnectionStatusWidgetState extends State<ConnectionStatusWidget> {
 
   @override
   void dispose() {
-    isUnmounted = true;
+    //isUnmounted = true;
     // Cancel the timer to avoid memory leaks
     try{
       _timer.cancel();
     }
     catch(e){
       // Ignore errors if the timer is not initialized
+    }
+    if (!kIsWeb) {
+      WidgetsBinding.instance.removeObserver(this); // Remove lifecycle observer
+      try{
+        (widget.wakelockService??_wakelockService).disable(); // Allow screen to lock
+      } catch (e) {
+        logMessage('$e', "Failed to disable wakelock", "e");
+      }
     }
     super.dispose();
   }
@@ -126,8 +170,8 @@ class ConnectionStatusWidgetState extends State<ConnectionStatusWidget> {
         if (isConnectionRestored || isConnectionLost)
           Positioned(
             top: 0,
-            left: 100,
-            right: 100,
+            left: 50,
+            right: 50,
             child: Opacity(
               opacity: 0.5,
               child: Center(

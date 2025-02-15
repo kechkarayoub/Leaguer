@@ -8,6 +8,7 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import '../mocks.mocks.dart';
 import '../test_helper.dart';
+import '../wakelock.mocks.dart';
 
 // Generate mock Dio class
 @GenerateMocks([Dio])
@@ -15,11 +16,13 @@ import '../test_helper.dart';
 void main() async{
   late MockDio mockDio;
   late MockL10n mockL10n;
+  late MockWakelockService mockWakelockService;
 
   setUp(() async{
     await dotenv.load(fileName: ".env");
     mockDio = MockDio();
     mockL10n = MockL10n();
+    mockWakelockService = MockWakelockService();
   });
 
   testWidgets('Test ConnectionStatusWidget - Connection Lost', (tester) async {
@@ -37,6 +40,7 @@ void main() async{
           home: ConnectionStatusWidget(
             l10n: mockL10n,
             dio: mockDio,
+            wakelockService: mockWakelockService,
             child: Container(),
           ),
         ),
@@ -65,6 +69,7 @@ void main() async{
           home: ConnectionStatusWidget(
             l10n: mockL10n,
             dio: mockDio,
+            wakelockService: mockWakelockService,
             child: Container(),
           ),
         ),
@@ -96,6 +101,7 @@ void main() async{
           home: ConnectionStatusWidget(
             l10n: mockL10n,
             dio: mockDio,
+            wakelockService: mockWakelockService,
             child: Container(),
           ),
         ),
