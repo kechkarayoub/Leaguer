@@ -1,5 +1,3 @@
-import 'dart:io'; // For File
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:frontend/api/unauthenticated_api_service.dart';
 import 'package:frontend/components/gender_dropdown.dart';

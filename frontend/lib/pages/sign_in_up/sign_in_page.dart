@@ -21,19 +21,50 @@ class SignInPage extends StatefulWidget {
 }
 
 class SignInPageState extends State<SignInPage> {
-  bool _isSignInApiSent = false;
-  bool _isResendVerificationEmailApiSent = false;
-  final _formKey = GlobalKey<FormState>();
+  bool _isSignInApiSent = false; // Flag to disable sign-in button while processing
+  bool _isResendVerificationEmailApiSent = false; // Flag to disable resend button
+  final _formKey = GlobalKey<FormState>(); // Form key for validation
   final TextEditingController _emailUsernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  String? _errorMessage;
-  String? _successMessage;
+  String? _errorMessage; // Stores error messages to display
+  String? _successMessage; // Stores success messages
   bool _showSendEmailVerificationLinkButton = false;
-  dynamic _userId;
+  dynamic _userId; // Stores user ID for email verification
+
+  Widget _buildEmailUsernameField(String currentLanguage) {
+    return TextFormField(
+      controller: _emailUsernameController,
+      decoration: InputDecoration(labelText: widget.l10n.translate("Email or Username", currentLanguage)),
+      validator: (value) {
+        if(value == null || value.isEmpty) {
+          return widget.l10n.translate("Please enter your email or username", currentLanguage);
+        }
+        if(value.contains('@') && !emailRegExp.hasMatch(value)) {
+          return widget.l10n.translate("Please enter a valid email address", currentLanguage);
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildPasswordField(String currentLanguage) {
+    return TextFormField(
+      controller: _passwordController,
+      decoration: InputDecoration(labelText: widget.l10n.translate("Password", currentLanguage)),
+      obscureText: true,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return widget.l10n.translate("Please enter your password", currentLanguage);
+        }
+        return null;
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     String currentLanguage = Localizations.localeOf(context).languageCode;
+    // Extract the email parameter if available from the previous screen
     final arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
     String username = arguments?["username"] ?? ""; // Extract the email parameter if available
     if(username.isNotEmpty){
@@ -61,31 +92,9 @@ class SignInPageState extends State<SignInPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Email or username text field
-                    TextFormField(
-                      controller: _emailUsernameController,
-                      decoration: InputDecoration(labelText: widget.l10n.translate("Email or Username", currentLanguage)),
-                      validator: (value) {
-                        if(value == null || value.isEmpty) {
-                          return widget.l10n.translate("Please enter your email or username", currentLanguage);
-                        }
-                        if(value.contains('@') && !emailRegExp.hasMatch(value)) {
-                          return widget.l10n.translate("Please enter a valid email address", currentLanguage);
-                        }
-                        return null;
-                      },
-                    ),
+                    _buildEmailUsernameField(currentLanguage),
                     // Password text field
-                    TextFormField(
-                      controller: _passwordController,
-                      decoration: InputDecoration(labelText: widget.l10n.translate("Password", currentLanguage)),
-                      obscureText: true,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return widget.l10n.translate("Please enter your password", currentLanguage);
-                        }
-                        return null;
-                      },
-                    ),
+                    _buildPasswordField(currentLanguage),
                     // Show error message if present
                     if (_errorMessage != null)
                       Column(
