@@ -21,14 +21,15 @@ void enablePlatformOverrideForDesktop() {
 
 /// Main entry point of the application.
 void main() async {
-  bool iskTestMode = (dotenv.env['IS_TEST'] ?? 'false') == "true";
-  if (!iskTestMode) {
-    // Enable platform override for desktop
-    enablePlatformOverrideForDesktop();
-  }
 
   // Load environment variables from .env file
   await dotenv.load(fileName: ".env");
+
+  bool iskTestMode = (dotenv.env['IS_TEST'] ?? 'false') == "true";
+  if (!iskTestMode) { // If is test mode; do not execute enablePlatformOverrideForDesktop.
+    // Enable platform override for desktop
+    enablePlatformOverrideForDesktop();
+  }
 
   // Ensure Flutter binding is initialized
   WidgetsFlutterBinding.ensureInitialized();
