@@ -95,10 +95,15 @@ Future<void> logout(StorageService storageService, SecureStorageService secureSt
 /// Logs information to the console in development mode.
 /// [message] - The message to log.
 /// [title] - An optional title for the log.
-void logMessage(dynamic message, [String? title, String? typeMessage,]) {
+void logMessage(dynamic message, [String? title, String? typeMessage, String? typeError]) {
   // Only log in development mode
   title = title ?? "";
   typeMessage = typeMessage ?? "d";
+  typeError = typeError?? "";
+
+  if(typeError == "wakelock" && (dotenv.env['IS_TEST'] ?? 'false') == "true"){ // Do not show wakelock error messae in test 
+    return;
+  }
 
   if(typeMessage == "d"){
     if((dotenv.env['PIPLINE'] ?? 'production') == "development"){

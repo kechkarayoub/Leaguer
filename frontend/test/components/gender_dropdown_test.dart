@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/components/gender_dropdown.dart';
-import '../test_helper.dart';
+import '../mocks/test_helper.dart';
 
 void main() {
   group('GenderDropdown', () {

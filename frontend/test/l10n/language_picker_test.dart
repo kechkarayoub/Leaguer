@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/l10n/language_picker.dart';
 import 'package:mockito/mockito.dart';
-import '../mocks.mocks.dart'; // Import generated mocks
-import '../test_helper.dart';
+import '../mocks/mocks.mocks.dart'; // Import generated mocks
+import '../mocks/test_helper.dart';
 
 
 void main() {

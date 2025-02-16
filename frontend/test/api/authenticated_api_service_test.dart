@@ -6,7 +6,7 @@ import 'package:frontend/storage/storage.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import '../mocks.mocks.dart';
+import '../mocks/mocks.mocks.dart';
 
 // Generate mock Dio class
 @GenerateMocks([Dio])

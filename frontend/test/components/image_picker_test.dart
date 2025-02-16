@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/components/image_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
-import '../test_helper.dart'; // Import the test helper
+import '../mocks/test_helper.dart'; // Import the test helper
 
 
 

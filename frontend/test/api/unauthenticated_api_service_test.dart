@@ -1,11 +1,10 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:frontend/utils/utils.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:dio/dio.dart';
 import 'package:frontend/api/unauthenticated_api_service.dart';
-import '../mocks.mocks.dart';
+import '../mocks/mocks.mocks.dart';
 
 // Generate mock Dio class
 @GenerateMocks([Dio])

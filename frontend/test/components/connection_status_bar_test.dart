@@ -6,9 +6,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/components/connection_status_bar.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import '../mocks.mocks.dart';
-import '../test_helper.dart';
-import '../wakelock.mocks.dart';
+import '../mocks/mocks.mocks.dart';
+import '../mocks/test_helper.dart';
+import '../mocks/wakelock.mocks.dart';
 
 // Generate mock Dio class
 @GenerateMocks([Dio])

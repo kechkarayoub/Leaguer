@@ -85,7 +85,7 @@ class ConnectionStatusWidgetState extends State<ConnectionStatusWidget> with Wid
       try{
         (widget.wakelockService??_wakelockService).enable(); // Prevent screen from locking
       } catch (e) {
-        logMessage('$e', "Failed to enable wakelock", "e");
+        logMessage('$e', "Failed to enable wakelock", "e", "wakelock");
       }
     }
   }
@@ -151,7 +151,7 @@ class ConnectionStatusWidgetState extends State<ConnectionStatusWidget> with Wid
       try{
         (widget.wakelockService??_wakelockService).disable(); // Allow screen to lock
       } catch (e) {
-        logMessage('$e', "Failed to disable wakelock", "e");
+        logMessage('$e', "Failed to disable wakelock", "e", "wakelock");
       }
     }
     super.dispose();

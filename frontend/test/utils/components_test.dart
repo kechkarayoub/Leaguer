@@ -4,9 +4,8 @@ import 'package:mockito/mockito.dart';
 import 'package:frontend/l10n/language_picker.dart';
 import 'package:frontend/utils/components.dart';
 import 'package:frontend/utils/utils.dart';
-import '../mocks.mocks.dart';
-import '../test_helper.dart';
-import '../storage/storage_test.mocks.dart';
+import '../mocks/mocks.mocks.dart';
+import '../mocks/test_helper.dart';
 
 //import 'package:frontend/storage/storage.dart';
 
