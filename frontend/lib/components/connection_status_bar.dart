@@ -98,6 +98,9 @@ class ConnectionStatusWidgetState extends State<ConnectionStatusWidget> with Wid
     }
     if(!isInBackground){ // Skip internet checks when the app is in the background
       bool connected = await hasInternet(widget.dio??_dio);
+      if(!mounted){
+        return;
+      }
       if(isFirstCheck){
         // Update the state only if it's the first check and there's no internet
         if(!connected && internetStatus == 0){
