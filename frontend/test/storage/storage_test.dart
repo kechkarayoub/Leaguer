@@ -108,7 +108,7 @@ void main() {
     });
 
     test('Should clear tokens from secure storage', () async {
-      when(mockStorage.delete(key: anyNamed('key'))).thenAnswer((_) async => {null});
+      when(mockStorage.delete(key: anyNamed('key'))).thenAnswer((_) async {null;});
 
       await secureStorageService.clearTokens();
 
