@@ -17,8 +17,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 import datetime
+from firebase_admin import auth
+
 import logging
 import os
+import firebase_config
 
 # Get a logger instance
 logger = logging.getLogger(__name__)
@@ -156,6 +159,87 @@ class SignInView(APIView):
                 }, status=status.HTTP_200_OK)
             else:
                 return Response({"message": _("Invalid credentials"), "success": False}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"message": _("Invalid credentials"), "success": False}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SignInThirdPartyView(APIView):
+    """
+    API endpoint for user authentication using third party.
+    If credentials are valid, returns JWT tokens (access & refresh).
+    """
+    permission_classes = [AllowAny]
+
+    # noinspection PyMethodMayBeStatic
+    def post(self, request):
+        """
+        Handles user login authentication.
+
+        Request Body:
+        - email (str): User's email.
+        - selected_language (str, optional): Language preference.
+        - type_third_party (str): Type third party (Apple, facebook, google, ...).
+
+        Returns:
+        - 200 OK: If authentication is successful (JWT tokens and user data).
+        - 400 Bad Request: If required fields are missing or credentials are invalid.
+        - 401 Unauthorized: If the user is deleted or inactive.
+        """
+        email = request.data.get("email")
+        current_language = request.data.get("selected_language") or 'fr'
+        id_token = request.data.get("id_token")
+        type_third_party = request.data.get("type_third_party")
+
+        activate(current_language)
+
+        if not email or not type_third_party or not id_token:
+            return Response(
+                {"message": _("Email, Id token and Third party type are required"), "success": False},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        try:
+            # Verify the token using Firebase Admin SDK
+            if type_third_party == "google":
+                decoded_token = auth.verify_id_token(id_token)
+                email = decoded_token.get('email') == email and email
+            else:
+                email = None
+        except:
+            email = None
+        user = User.objects.filter(email=email).first()
+
+        if user is not None:
+            if user.is_user_deleted is True:
+                return Response(
+                    {
+                        "message": _("Your account is deleted. Please contact the technical team to resolve your issue."),
+                        "success": False,
+                    },
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+            if user.is_active is False:
+                return Response(
+                    {
+                        "message": _("Your account is inactive. Please contact the technical team to resolve your issue."),
+                        "success": False,
+                    },
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+
+            if user.is_user_email_validated is False:
+                user.is_user_email_validated = True
+                user.save()
+            if user.current_language != current_language:
+                activate(user.current_language)
+            # Generate JWT tokens
+            refresh = RefreshToken.for_user(user)
+            user_data = user.to_login_dict()
+            return Response({
+                "access_token": str(refresh.access_token),
+                "refresh_token": str(refresh),
+                "success": True,
+                "user": user_data,
+            }, status=status.HTTP_200_OK)
         else:
             return Response({"message": _("Invalid credentials"), "success": False}, status=status.HTTP_400_BAD_REQUEST)
 

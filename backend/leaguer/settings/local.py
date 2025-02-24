@@ -27,7 +27,7 @@ PARENT_DIR = Path(__file__).resolve().parent.parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 CORS_ORIGIN_ALLOW_ALL = False
@@ -68,7 +68,7 @@ DEFAULT_FROM_EMAIL = get_secret("DEFAULT_FROM_EMAIL")
 
 # Endpoints
 BACKEND_ENDPOINT = ""
-FRONTEND_ENDPOINT = "http:localhost:3000"
+FRONTEND_ENDPOINT = "http://192.168.94.239:3000"
 
 
 # Technical service email

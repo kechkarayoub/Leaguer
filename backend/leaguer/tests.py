@@ -5,6 +5,17 @@ from django.conf import settings
 from django.test import TestCase
 from django.utils.timezone import now
 from zoneinfo import ZoneInfo
+import os
+from pathlib import Path
+
+
+class LeaguerConfigTest(TestCase):
+    def setUp(self):
+        pass
+
+    def test_firebase_credentials_path(self):
+        self.assertEqual(settings.FIREBASE_CREDENTIALS_PATH, os.path.join(settings.PARENT_DIR, "firebase-service-account.json"))
+        self.assertTrue(Path(settings.FIREBASE_CREDENTIALS_PATH).exists(), True)
 
 
 class LeaguerUtilsTest(TestCase):

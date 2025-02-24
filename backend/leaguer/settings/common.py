@@ -216,14 +216,16 @@ LANGUAGES = [
 ]
 
 # Endpoints
-BACKEND_ENDPOINT = "http://localhost:8080"
+BACKEND_ENDPOINT = "http://192.168.94.239:8080"
 FRONTEND_ENDPOINT = ""
 
-STATIC_URL = f"{BACKEND_ENDPOINT}/static/"
+STATIC_URL = f"{BACKEND_ENDPOINT}/static/" # this is for showing images in email in dev environement
+STATIC_URL = f"/static/"
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 COMPANY_ADDRESS = "400 AV ZERKTOUNI, BOURGONE, CASABLAMNCA, MOROCCO"
 APPLICATION_NAME = "LEAGUER"
@@ -253,3 +255,7 @@ ENABLE_PHONE_NUMBER_VERIFICATION = get_secret("ENABLE_PHONE_NUMBER_VERIFICATION"
 
 # Media configuration
 MEDIA_URL = '/media/'
+
+# FIREBASE CREDENTIALS PATH
+FIREBASE_CREDENTIALS_PATH = os.path.join(BASE_DIR, "firebase-service-account.json")
+print(FIREBASE_CREDENTIALS_PATH)

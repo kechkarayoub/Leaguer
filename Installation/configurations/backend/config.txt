@@ -24,9 +24,9 @@ In the root directory backend, add file .env that contains:
     EMAIL_HOST="smtp.gmail.com"
     EMAIL_PORT=587
     EMAIL_USE_TLS="true"
-    EMAIL_HOST_USER = "leaguerdev@gmail.com"
-    EMAIL_HOST_PASSWORD = "as_default_keyboard"  # Use an App Password
-    DEFAULT_FROM_EMAIL = "leaguerdev@gmail.com"
+    EMAIL_HOST_USER="leaguerdev@gmail.com"
+    EMAIL_HOST_PASSWORD="as_default_keyboard"  # Use an App Password
+    DEFAULT_FROM_EMAIL="leaguerdev@gmail.com"
     WHATSAPP_INSTANCE_ID="id_xxxx"
     WHATSAPP_INSTANCE_TOKEN="xxxx"
     WHATSAPP_INSTANCE_URL="https://waapi.app/api/v1/instances/id_xxxx/client/action/send-message"
@@ -44,4 +44,18 @@ Generate .mo files:
     For each app:
         After adding translations, run:
             django-admin compilemessages
+
+
+Firebase firebase-service-account.json:
+    Get firebase-service-account.json from Firebase Console
+        Go to Firebase Console:  https://console.firebase.google.com/
+        Select Your Project.
+        Go to Project Settings:
+            Click the ⚙️ gear icon in the left sidebar.
+            Select Project settings.
+        Service Accounts Tab:
+            Click on the Service accounts tab.
+            Under "Firebase Admin SDK", click Generate new private key. This will download a JSON file (firebase-service-account.json).
+            Move the JSON file to your Django project: /your-django-project/firebase-service-account.json
+        DO NOT commit this file to GitHub or version control for security reasons.
 

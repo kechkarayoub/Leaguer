@@ -11,9 +11,10 @@ from django.test import RequestFactory, TestCase
 from django.utils.timezone import get_current_timezone, now
 from io import StringIO
 from rest_framework.test import APITestCase
+from unittest.mock import patch
+from zoneinfo import ZoneInfo
 import datetime
 import json
-from zoneinfo import ZoneInfo
 
 
 class SendVerificationEmailLinkViewTest(TestCase):
@@ -56,6 +57,80 @@ class SendVerificationEmailLinkViewTest(TestCase):
         data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(data.get("message"), "A new verification link has been sent to your email address. Please verify your email before logging in.")
         self.assertTrue(data.get("success"))
+
+
+class SignInThirdPartyViewTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', email='kechkarayoub@gmail.com', password='password123')
+
+    def test_missing_params(self):
+        response = self.client.post('/accounts/sign-in-third-party/', {'selected_language': 'en'})
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Email, Id token and Third party type are required")
+        self.assertFalse(data.get("success"))
+        response = self.client.post('/accounts/sign-in-third-party/', {'selected_language': 'en', 'id_token': ""})
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Email, Id token and Third party type are required")
+        self.assertFalse(data.get("success"))
+        response = self.client.post('/accounts/sign-in-third-party/', {'selected_language': 'en', 'email': ""})
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Email, Id token and Third party type are required")
+        self.assertFalse(data.get("success"))
+
+    @patch("firebase_admin.auth.verify_id_token")
+    def test_sign_in_failed_invalid_credentials(self, mock_verify_id_token):
+        mock_verify_id_token.return_value = None  # Simulate invalid token
+        response = self.client.post('/accounts/sign-in-third-party/', {'selected_language': 'en', 'email': "invalid username", 'id_token': "id_token", "type_third_party": "google"})
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(data.get("message"), "Invalid credentials")
+        self.assertFalse(data.get("success"))
+        response = self.client.post('/accounts/sign-in-third-party/', {'selected_language': 'en', 'email': "invalid username", 'id_token': "id_token", "type_third_party": "xxxx"})
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(data.get("message"), "Invalid credentials")
+        self.assertFalse(data.get("success"))
+
+    @patch("firebase_admin.auth.verify_id_token")
+    def test_sign_in_failed_deleted_account(self, mock_verify_id_token):
+        mock_verify_id_token.return_value = {"email": self.user.email}
+        self.user.is_user_deleted = True
+        self.user.save()
+        response = self.client.post('/accounts/sign-in-third-party/', {'selected_language': 'en', 'email': "kechkarayoub@gmail.com", 'id_token': "id_token", "type_third_party": "google"})
+        self.assertEqual(response.status_code, 401)
+        data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(data.get("message"), "Your account is deleted. Please contact the technical team to resolve your issue.")
+        self.assertFalse(data.get("success"))
+
+    @patch("firebase_admin.auth.verify_id_token")
+    def test_sign_in_failed_inactive_account(self, mock_verify_id_token):
+        mock_verify_id_token.return_value = {"email": self.user.email}
+        self.user.is_active = False
+        self.user.save()
+        response = self.client.post('/accounts/sign-in-third-party/', {'selected_language': 'en', 'email': "kechkarayoub@gmail.com", 'id_token': "id_token", "type_third_party": "google"})
+        self.assertEqual(response.status_code, 401)
+        data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(data.get("message"), "Your account is inactive. Please contact the technical team to resolve your issue.")
+        self.assertFalse(data.get("success"))
+
+
+    @patch("firebase_admin.auth.verify_id_token")
+    def test_sign_in_success(self, mock_verify_id_token):
+        mock_verify_id_token.return_value = {"email": self.user.email}
+        response = self.client.post('/accounts/sign-in-third-party/', {'selected_language': 'en', 'email': "kechkarayoub@gmail.com", 'id_token': "id_token", "type_third_party": "google"})
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(data.get("user"), self.user.to_login_dict())
+        self.assertIsNone(data.get("message"))
+        self.assertTrue(data.get("success"))
+        self.assertTrue("access_token" in data)
+        self.assertTrue("refresh_token" in data)
 
 
 class SignInViewTest(TestCase):
