@@ -4,9 +4,55 @@ from datetime import datetime, timezone
 from django.conf import settings
 from django.test import TestCase
 from django.utils.timezone import now
+# from dotenv import load_dotenv
+from decouple import config
 from zoneinfo import ZoneInfo
 import os
-from pathlib import Path
+
+
+class EnvFileTest(TestCase):
+    """Test if .env file exists and contains required environment variables."""
+
+    @classmethod
+    def setUpClass(cls):
+        """Load environment variables before running tests."""
+        super().setUpClass()
+        # load_dotenv()
+
+    def test_env_file_exists(self):
+        """Test that the .env file exists in the project root."""
+        env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
+        self.assertTrue(os.path.exists(env_path), "⚠️ .env file is missing!")
+
+    def test_required_env_variables(self):
+        """Test that all required environment variables are set."""
+        required_vars = [
+            "ENABLE_EMAIL_VERIFICATION",
+            "ENABLE_PHONE_NUMBER_VERIFICATION",
+            "DB_CONTAINER_EXTERNAL_PORT",
+            "DB_CONTAINER_INTERNAL_PORT",
+            "DB_IP",
+            "DB_NAME",
+            "DB_ROOT_PASSWORD",
+            "DB_USER_NM",
+            "DB_USER_PW",
+            "DJANGO_CONTAINER_EXTERNAL_PORT",
+            "DJANGO_CONTAINER_INTERNAL_PORT",
+            "PIPLINE",
+            "DJANGO_SECRET_KEY",
+            "EMAIL_HOST",
+            "EMAIL_PORT",
+            "EMAIL_USE_TLS",
+            "EMAIL_HOST_USER",
+            "EMAIL_HOST_PASSWORD",
+            "DEFAULT_FROM_EMAIL",
+            "WHATSAPP_INSTANCE_ID",
+            "WHATSAPP_INSTANCE_TOKEN",
+            "WHATSAPP_INSTANCE_URL",
+        ]
+
+        missing_vars = [var for var in required_vars if not config(var, None)]
+        self.assertEqual(missing_vars, [], f"⚠️ Missing environment variables: {', '.join(missing_vars)}")
 
 
 class LeaguerConfigTest(TestCase):
@@ -15,7 +61,7 @@ class LeaguerConfigTest(TestCase):
 
     def test_firebase_credentials_path(self):
         self.assertEqual(settings.FIREBASE_CREDENTIALS_PATH, os.path.join(settings.PARENT_DIR, "firebase-service-account.json"))
-        self.assertTrue(Path(settings.FIREBASE_CREDENTIALS_PATH).exists(), True)
+        self.assertTrue(os.path.exists(settings.FIREBASE_CREDENTIALS_PATH), True)
 
 
 class LeaguerUtilsTest(TestCase):
