@@ -1,0 +1,54 @@
+1) Go to https://console.firebase.google.com/?pli=1 and create project.
+2) Add apps:
+    2.1) For Android:
+        - In Firebase Console, click "Add App" → Select Android.
+        - Enter your Android package name (find it in android/app/build.gradle under applicationId).
+        - (Optional) Add a nickname and SHA-1 Key (for authentication features).
+            Run this command to get SHA-1 in android folder (on windows: gradlew signingReport):
+                ./gradlew signingReport
+        - Click Register App.
+        - Download the google-services.json file and place it inside:
+            android/app/
+        - Click Next and follow the instructions to update android/build.gradle and android/app/build.gradle.
+    2.2) For IOS:
+        - Click "Add App" → Select iOS.
+        - Enter your iOS Bundle ID (find it in ios/Runner.xcodeproj) (or find it in ios/Runner/Info.plist and search: CFBundleIdentifier).
+        - (Optional) Add a nickname and App Store ID (not needed for dev mode).
+        - Click Register App.
+        - Download the GoogleService-Info.plist file and place it inside:
+            ios/Runner/GoogleService-Info.plist
+        Click Next and follow the instructions to update ios/Runner/Info.plist.gradle and android/app/build.gradle.
+            Use Swift Package Manager (https://www.swift.org/documentation/package-manager/) to install and manage Firebase dependencies.
+            In Xcode, with your app project open, navigate to File > Add Packages
+            When prompted, enter the Firebase iOS SDK repository URL:
+            https://github.com/firebase/firebase-ios-sdk
+            Select the SDK version that you want to use.
+            We recommend using the default (latest) SDK version, but you can use an older version, if needed.
+            Choose the Firebase libraries that you want to use.
+            Make sure to add FirebaseAnalytics. For Analytics without IDFA collection capability, add FirebaseAnalyticsWithoutAdId instead.
+            After you click Finish, Xcode will automatically begin resolving and downloading your dependencies in the background
+
+    2.3) For web: Only next config n main.dart.
+
+
+
+    Add this in main.dart:
+        if(kIsWeb){
+          await Firebase.initializeApp(
+            options: FirebaseOptions(
+              apiKey: dotenv.env['FIREBASE_WEB_API_KEY']??"",
+              authDomain: dotenv.env['FIREBASE_WEB_AUTH_DOMAIN'],
+              projectId: dotenv.env['FIREBASE_WEB_PROJECT_ID']??"",
+              storageBucket: dotenv.env['FIREBASE_WEB_STORAGE_BUCKET'],
+              messagingSenderId: dotenv.env['FIREBASE_WEB_MESSAGING_SENDER_ID']??"",
+              appId: dotenv.env['FIREBASE_WEB_APP_ID']??"",
+              measurementId: dotenv.env['FIREBASE_WEB_MEASUREMENT_ID'],
+            ),
+          );
+        }
+        else{
+          await Firebase.initializeApp();
+        }
+
+
+

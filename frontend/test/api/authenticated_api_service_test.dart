@@ -1,8 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/api/authenticated_api_service.dart';
+import 'package:frontend/api/unauthenticated_api_service.dart';
 import 'package:frontend/storage/storage.dart';
+import 'package:google_sign_in_mocks/google_sign_in_mocks.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
@@ -16,16 +19,22 @@ class MockStorageService extends Mock implements StorageService {}
 void main() async {
   await dotenv.load(fileName: ".env");
   group('AuthenticatedApiBackendService Tests', () {
-    late AuthenticatedApiBackendService apiService;
+    late AuthenticatedApiBackendService apiService; 
     late MockSecureStorageService mockSecureStorageService;
     late MockStorageService mockStorageService;
     late MockDio mockDio;
     bool sessionExpiredCalled = false;
+    late ThirdPartyAuthService thirdPartyAuthService;
+    late MockFirebaseAuth mockAuth;
+    late MockGoogleSignIn mockGoogleSignIn;
 
   setUp(() async{
     mockDio = MockDio();
     mockSecureStorageService = MockSecureStorageService();
     mockStorageService = MockStorageService();
+    mockAuth = MockFirebaseAuth();
+    mockGoogleSignIn = MockGoogleSignIn();
+    thirdPartyAuthService = ThirdPartyAuthService(auth: mockAuth, googleSignIn: mockGoogleSignIn);
     // ✅ Stub `options` to prevent "MissingStubError: options"
     when(mockDio.options).thenReturn(BaseOptions());
 
@@ -42,6 +51,7 @@ void main() async {
       onSessionExpired: () {
         sessionExpiredCalled = true;
       },
+      thirdPartyAuthService: thirdPartyAuthService,
     );
   });
 

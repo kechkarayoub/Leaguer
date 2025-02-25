@@ -1,6 +1,7 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:frontend/api/unauthenticated_api_service.dart';
 import 'package:frontend/utils/utils.dart';
 import 'package:frontend/storage/storage.dart';
 
@@ -24,14 +25,16 @@ class AuthenticatedApiBackendService {
 
   /// Mockable session expiry callback for testing.
   final VoidCallback? onSessionExpired;
+  final ThirdPartyAuthService? thirdPartyAuthService;
 
   AuthenticatedApiBackendService({
       Dio? dio, SecureStorageService? secureStorageService, StorageService? storageService, BuildContext? providedContext,
-      this.onSessionExpired, // Inject callback for testing
+      this.onSessionExpired, ThirdPartyAuthService? thirdPartyAuthService, // Inject callback for testing
     })
       : _dio = dio ?? Dio(),
         _secureStorageService = secureStorageService ?? SecureStorageService(),
         _storageService = storageService ?? StorageService(),
+        thirdPartyAuthService = thirdPartyAuthService?? ThirdPartyAuthService(),
         _providedCcontext = providedContext {
     _dio.options.baseUrl = backendUrl;
     _dio.options.headers['Content-Type'] = 'application/json';
@@ -105,7 +108,7 @@ class AuthenticatedApiBackendService {
     }
     if (_context != null && !_isLoggingOut) {
       _isLoggingOut = true;
-      logout(_storageService, _secureStorageService, _context!).then((_) {
+      logout(_storageService, _secureStorageService, _context!, thirdPartyAuthService).then((_) {
         _isLoggingOut = false;
       });
       logMessage('Session expired. Please log in again.', "Auth", "e");

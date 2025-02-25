@@ -1,8 +1,12 @@
+
+import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:google_sign_in_mocks/google_sign_in_mocks.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:dio/dio.dart';
 import 'package:frontend/api/unauthenticated_api_service.dart';
 import '../mocks/mocks.mocks.dart';
 
@@ -13,6 +17,39 @@ void main() {
   setUpAll(() async {
     await dotenv.load(); // Load .env file
   });
+  group('ThirdPartyAuthService', () {
+    late ThirdPartyAuthService thirdPartyAuthService;
+    late MockFirebaseAuth mockAuth;
+    late MockGoogleSignIn mockGoogleSignIn;
+
+    setUp(() {
+      mockAuth = MockFirebaseAuth();
+      mockGoogleSignIn = MockGoogleSignIn();
+      thirdPartyAuthService = ThirdPartyAuthService(auth: mockAuth, googleSignIn: mockGoogleSignIn);
+    });
+
+    test("Google Sign-In returns UserCredential", () async {
+      final mockGoogleUser = await mockGoogleSignIn.signIn();
+      expect(mockGoogleUser, isNotNull, reason: "Google Sign-In failed");
+
+      // Simulate Firebase authentication response
+      //final mockUser = MockUser(email: "test@example.com");
+      mockAuth.createUserWithEmailAndPassword(email: "test@example.com", password: "password");
+
+      final UserCredential? result = await thirdPartyAuthService.signInWithGoogle();
+      expect(result, isNotNull, reason: "UserCredential should not be null");
+      expect(result!.user, isNotNull);
+      expect(result.user!.email, equals("test@example.com"));
+    });
+
+    test("Google Sign-Out works without errors", () async {
+      await thirdPartyAuthService.signOut();
+      expect(mockAuth.currentUser, isNull);
+    });
+
+    
+  });
+
   group('UnauthenticatedApiBackendService: signinUser', () {
     late MockDio mockDio;
     String backendUrl = '';
@@ -307,6 +344,271 @@ void main() {
       
 
       final result = await UnauthenticatedApiBackendService.signInUser(data: {'email': 'test@example.com', 'password': '123456'}, dio: mockDio);
+
+      expect(result['success'], false);
+      expect(result['message'], 'Server took too long to respond (Sign in). Please try again later.');
+    });
+
+    
+  });
+
+  group('UnauthenticatedApiBackendService: signInUserWithThirdParty', () {
+    late MockDio mockDio;
+    String backendUrl = '';
+
+    setUp(() {
+      // Initialize the mock Dio
+      mockDio = MockDio();
+      backendUrl = dotenv.env['BACKEND_URL'] ?? '';
+    });
+
+    test('Sign in user with third party returns data when the response is successful', () async {
+      // Arrange
+      const endpoint = '/accounts/sign-in-third-party/';
+      
+      final mockResponse = Response(
+        requestOptions: RequestOptions(path: backendUrl + endpoint),
+        statusCode: 200,
+        data: {'success': true, 'access_token': "abcd1234", 'refresh_token': "rabcd1234", 'user': {'id': 1, 'username': "username"}},
+      );
+
+      // Mock the Dio post method
+      when(mockDio.post(
+        '$backendUrl$endpoint',
+        data: anyNamed('data'),
+        options: anyNamed('options'),
+      )).thenAnswer((_) async => mockResponse);
+
+      // Act
+      final result = await UnauthenticatedApiBackendService.signInUserWithThirdParty(
+        data: {'email': "email_or_username", 'id_token': "idtoken", "type_third_party": "google"},
+        dio: mockDio,
+      );
+
+      // Verify that the POST request was called with the correct URL and data
+      verify(mockDio.post(
+        '$backendUrl$endpoint',
+        data: {'email': "email_or_username", 'id_token': "idtoken", "type_third_party": "google"},
+        options: anyNamed('options'),
+      )).called(1);
+
+      // Assert
+      expect(result, isA<Map<String, dynamic>>());
+      expect(result['success'], equals(true));
+      expect(result['access_token'], equals('abcd1234'));
+      expect(result['refresh_token'], equals('rabcd1234'));
+      expect(result['user'], equals({'id': 1, 'username': "username"}));
+
+    });
+
+    test('Sign in user with third party when missing params', () async {
+      // Arrange
+      const endpoint = '/accounts/sign-in-third-party/';
+      final mockResponse = Response(
+        requestOptions: RequestOptions(path: backendUrl + endpoint),
+        statusCode: 400,
+        data: {'message': "Email, Id token and Third party type are required", 'success': false},
+      );
+
+      // Mock the Dio post method
+      when(mockDio.post(
+        '$backendUrl$endpoint',
+        data: {},
+        options: anyNamed('options'),
+      )).thenAnswer((_) async => mockResponse);
+      when(mockDio.post(
+        '$backendUrl$endpoint',
+        data: {'email': "email"},
+        options: anyNamed('options'),
+      )).thenAnswer((_) async => mockResponse);
+      when(mockDio.post(
+        '$backendUrl$endpoint',
+        data: {"id_token": "id_token"},
+        options: anyNamed('options'),
+      )).thenAnswer((_) async => mockResponse);
+
+
+      // Act
+      final result = await UnauthenticatedApiBackendService.signInUserWithThirdParty(
+        data: {},
+        dio: mockDio,
+      );      
+      // Verify that the POST request was called with the correct URL and data
+      verify(mockDio.post(
+        '$backendUrl$endpoint',
+        data: {},
+        options: anyNamed('options'),
+      )).called(1);
+
+      // Assert
+      expect(result, isA<Map<String, dynamic>>());
+      expect(result['success'], equals(false));
+      expect(result['message'], equals("Email, Id token and Third party type are required"));
+      // Act
+      final result2 = await UnauthenticatedApiBackendService.signInUserWithThirdParty(
+        data: {'email': "email"},
+        dio: mockDio,
+      );      
+      // Verify that the POST request was called with the correct URL and data
+      verify(mockDio.post(
+        '$backendUrl$endpoint',
+        data: {'email': "email"},
+        options: anyNamed('options'),
+      )).called(1);
+
+      // Assert
+      expect(result2, isA<Map<String, dynamic>>());
+      expect(result2['success'], equals(false));
+      expect(result2['message'], equals("Email, Id token and Third party type are required"));
+      // Act
+      final result3 = await UnauthenticatedApiBackendService.signInUserWithThirdParty(
+        data: {'id_token': "id_token"},
+        dio: mockDio,
+      );      
+      // Verify that the POST request was called with the correct URL and data
+      verify(mockDio.post(
+        '$backendUrl$endpoint',
+        data: {'id_token': "id_token"},
+        options: anyNamed('options'),
+      )).called(1);
+
+      // Assert
+      expect(result3, isA<Map<String, dynamic>>());
+      expect(result3['success'], equals(false));
+      expect(result3['message'], equals("Email, Id token and Third party type are required"));
+    });
+
+    test('Sign in user with third party when deleted user', () async {
+      // Arrange
+      const endpoint = '/accounts/sign-in-third-party/';
+      final mockResponse = Response(
+        requestOptions: RequestOptions(path: backendUrl + endpoint),
+        statusCode: 400,
+        data: {'message': "Your account is deleted. Please contact the technical team to resolve your issue.", 'success': false},
+      );
+
+      // Mock the Dio post method
+      when(mockDio.post(
+        '$backendUrl$endpoint',
+        data: {'email': "email_or_username", 'id_token': "idtoken", "type_third_party": "google"},
+        options: anyNamed('options'),
+      )).thenAnswer((_) async => mockResponse);
+
+
+      // Act
+      final result = await UnauthenticatedApiBackendService.signInUserWithThirdParty(
+        data: {'email': "email_or_username", 'id_token': "idtoken", "type_third_party": "google"},
+        dio: mockDio,
+      );      
+      // Verify that the POST request was called with the correct URL and data
+      verify(mockDio.post(
+        '$backendUrl$endpoint',
+        data: {'email': "email_or_username", 'id_token': "idtoken", "type_third_party": "google"},
+        options: anyNamed('options'),
+      )).called(1);
+
+      // Assert
+      expect(result, isA<Map<String, dynamic>>());
+      expect(result['success'], equals(false));
+      expect(result['message'], equals("Your account is deleted. Please contact the technical team to resolve your issue."));
+      
+    });
+
+    test('Sign in user with third party when inactive user', () async {
+      // Arrange
+      const endpoint = '/accounts/sign-in-third-party/';
+      final mockResponse = Response(
+        requestOptions: RequestOptions(path: backendUrl + endpoint),
+        statusCode: 400,
+        data: {'message': "Your account is inactive. Please contact the technical team to resolve your issue.", 'success': false},
+      );
+
+      // Mock the Dio post method
+      when(mockDio.post(
+        '$backendUrl$endpoint',
+        data: {'email': "email_or_username", 'id_token': "idtoken", "type_third_party": "google"},
+        options: anyNamed('options'),
+      )).thenAnswer((_) async => mockResponse);
+
+
+      // Act
+      final result = await UnauthenticatedApiBackendService.signInUserWithThirdParty(
+        data: {'email': "email_or_username", 'id_token': "idtoken", "type_third_party": "google"},
+        dio: mockDio,
+      );      
+      // Verify that the POST request was called with the correct URL and data
+      verify(mockDio.post(
+        '$backendUrl$endpoint',
+        data: {'email': "email_or_username", 'id_token': "idtoken", "type_third_party": "google"},
+        options: anyNamed('options'),
+      )).called(1);
+
+      // Assert
+      expect(result, isA<Map<String, dynamic>>());
+      expect(result['success'], equals(false));
+      expect(result['message'], equals("Your account is inactive. Please contact the technical team to resolve your issue."));
+      
+    });
+
+    test('Sign in user with third party when invalid credentials', () async {
+      // Arrange
+      const endpoint = '/accounts/sign-in-third-party/';
+      final mockResponse = Response(
+        requestOptions: RequestOptions(path: backendUrl + endpoint),
+        statusCode: 400,
+        data: {'message': "Invalid credentials", 'success': false},
+      );
+
+      // Mock the Dio post method
+      when(mockDio.post(
+        '$backendUrl$endpoint',
+        data: {'email': "email_or_username", 'id_token': "idtoken", "type_third_party": "google"},
+        options: anyNamed('options'),
+      )).thenAnswer((_) async => mockResponse);
+
+
+      // Act
+      final result = await UnauthenticatedApiBackendService.signInUserWithThirdParty(
+        data: {'email': "email_or_username", 'id_token': "idtoken", "type_third_party": "google"},
+        dio: mockDio,
+      );      
+      // Verify that the POST request was called with the correct URL and data
+      verify(mockDio.post(
+        '$backendUrl$endpoint',
+        data: {'email': "email_or_username", 'id_token': "idtoken", "type_third_party": "google"},
+        options: anyNamed('options'),
+      )).called(1);
+
+      // Assert
+      expect(result, isA<Map<String, dynamic>>());
+      expect(result['success'], equals(false));
+      expect(result['message'], equals("Invalid credentials"));
+      
+    });
+
+    
+    test('Sign in user with third party should return timeout error on network issue', () async {
+      when(mockDio.post(any, data: anyNamed('data'))).thenThrow(DioException(
+        requestOptions: RequestOptions(path: ''),
+        type: DioExceptionType.connectionTimeout,
+      ));
+      
+
+      final result = await UnauthenticatedApiBackendService.signInUserWithThirdParty(data: {'email': "email_or_username", 'id_token': "idtoken", "type_third_party": "google"}, dio: mockDio);
+
+      expect(result['success'], false);
+      expect(result['message'], 'Connection timeout. Please check your internet connection.');
+    });
+
+    
+    test('Sign in user with third party should return timeout error on server issue', () async {
+      when(mockDio.post(any, data: anyNamed('data'))).thenThrow(DioException(
+        requestOptions: RequestOptions(path: ''),
+        type: DioExceptionType.receiveTimeout,
+      ));
+      
+
+      final result = await UnauthenticatedApiBackendService.signInUserWithThirdParty(data: {'email': "email_or_username", 'id_token': "idtoken", "type_third_party": "google"}, dio: mockDio);
 
       expect(result['success'], false);
       expect(result['message'], 'Server took too long to respond (Sign in). Please try again later.');

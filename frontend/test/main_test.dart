@@ -1,12 +1,15 @@
 
 import 'dart:io';
+import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:frontend/api/unauthenticated_api_service.dart';
 import 'package:frontend/main.dart'; // Adjust the import path as needed
 import 'package:mockito/mockito.dart';
 import 'package:frontend/pages/sign_in_up/sign_in_page.dart';
 import 'package:frontend/pages/dashboard/dashboard.dart';
+import 'package:google_sign_in_mocks/google_sign_in_mocks.dart';
 import './mocks/mocks.mocks.dart';
 import './mocks/test_helper.dart';
 import './mocks/wakelock.mocks.dart';
@@ -18,6 +21,9 @@ void main() async{
   late MockL10n mockL10n;
   late TargetPlatform? originalDebugTargetPlatform;
   late MockWakelockService mockWakelockService;
+  late ThirdPartyAuthService thirdPartyAuthService;
+  late MockFirebaseAuth mockAuth;
+  late MockGoogleSignIn mockGoogleSignIn;
 
   group('EnablePlatformOverrideForDesktop', () {
     setUp(() async {
@@ -51,6 +57,9 @@ void main() async{
       mockSecureStorageService = MockSecureStorageService();
       mockL10n = MockL10n();
       mockWakelockService = MockWakelockService();
+      mockAuth = MockFirebaseAuth();
+      mockGoogleSignIn = MockGoogleSignIn();
+      thirdPartyAuthService = ThirdPartyAuthService(auth: mockAuth, googleSignIn: mockGoogleSignIn);
     });
 
     testWidgets('MyApp should render SignInPage when userSession is null', (WidgetTester tester) async {
@@ -65,6 +74,7 @@ void main() async{
             storageService: mockStorageService,
             secureStorageService: mockSecureStorageService,
             wakelockService: mockWakelockService,
+            thirdPartyAuthService: thirdPartyAuthService,
           ),
         );
         await tester.pumpAndSettle();
@@ -86,6 +96,7 @@ void main() async{
             storageService: mockStorageService,
             secureStorageService: mockSecureStorageService,
             wakelockService: mockWakelockService,
+            thirdPartyAuthService: thirdPartyAuthService,
           ),
         );
         await tester.pumpAndSettle();

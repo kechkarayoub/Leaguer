@@ -1,12 +1,10 @@
 
-import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:frontend/api/unauthenticated_api_service.dart';
 import 'package:frontend/storage/storage.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:mime/mime.dart';
 
@@ -84,10 +82,18 @@ String getRandomHexColor() {
 /// [secureStorageService] - The service used for clearing user data.
 /// [storageService] - The service used for clearing user data.
 /// [context] - The build context, used for navigation (if needed).
-Future<void> logout(StorageService storageService, SecureStorageService secureStorageService, BuildContext context) async {
+Future<void> logout(StorageService storageService, SecureStorageService secureStorageService, BuildContext context, [ThirdPartyAuthService? thirdPartyAuthService]) async {
   // Clear all user data stored in storage
   await secureStorageService.clearTokens();
   await storageService.clear();
+  try{
+    thirdPartyAuthService = thirdPartyAuthService?? ThirdPartyAuthService();
+    await thirdPartyAuthService.signOut();
+  }
+  catch(e){
+    // Error when log out or not login with third party auth service.
+    logMessage(e, "Error when log out from third party auth service", "e");
+  }
   //Navigator.pushReplacementNamed(context, '/sign-in');
 }
 
@@ -95,11 +101,16 @@ Future<void> logout(StorageService storageService, SecureStorageService secureSt
 /// Logs information to the console in development mode.
 /// [message] - The message to log.
 /// [title] - An optional title for the log.
-void logMessage(dynamic message, [String? title, String? typeMessage, String? typeError]) {
+void logMessage(dynamic message, [String? title, String? typeMessage, String? typeError, bool? forcePrint]) {
   // Only log in development mode
   title = title ?? "";
   typeMessage = typeMessage ?? "d";
   typeError = typeError?? "";
+  forcePrint = forcePrint ?? false;
+
+  if(forcePrint == false && (dotenv.env['DISABLE_LOG_MESSAGE'] ?? 'false') == "true"){ // Do not show print messages if not needed 
+    return;
+  }
 
   if(typeError == "wakelock" && (dotenv.env['IS_TEST'] ?? 'false') == "true"){ // Do not show wakelock error messae in test 
     return;

@@ -1,9 +1,14 @@
+
+import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:frontend/api/unauthenticated_api_service.dart';
 import 'package:frontend/l10n/language_picker.dart';
 import 'package:frontend/utils/components.dart';
 import 'package:frontend/utils/utils.dart';
+import 'package:google_sign_in_mocks/google_sign_in_mocks.dart';
 import '../mocks/mocks.mocks.dart';
 import '../mocks/test_helper.dart';
 
@@ -21,11 +26,19 @@ void main() {
   late MockL10n mockL10n;
   late MockStorageService mockStorageService;
   late MockSecureStorageService mockSecureStorageService;
+  late ThirdPartyAuthService thirdPartyAuthService;
+  late MockFirebaseAuth mockAuth;
+  late MockGoogleSignIn mockGoogleSignIn;
 
-  setUp(() {
+  setUp(() async{
     mockL10n = MockL10n();
     mockStorageService = MockStorageService();
     mockSecureStorageService = MockSecureStorageService();
+    mockAuth = MockFirebaseAuth();
+    mockGoogleSignIn = MockGoogleSignIn();
+    thirdPartyAuthService = ThirdPartyAuthService(auth: mockAuth, googleSignIn: mockGoogleSignIn);
+    // Initialize flutter_dotenv for tests
+    await dotenv.load(fileName: ".env");
 
     // when(mockL10n.translate("Menu", any)).thenReturn("Menu");
     // when(mockL10n.translate("Logout", any)).thenReturn("Logout");
@@ -69,7 +82,7 @@ void main() {
             builder: (BuildContext context) {
               capturedContext = context; // Capture BuildContext
               
-              when(logout(mockStorageService, mockSecureStorageService, capturedContext)).thenAnswer((_) async => Future<void>.value()); // Fix: Return Future<void>
+              when(logout(mockStorageService, mockSecureStorageService, capturedContext, thirdPartyAuthService)).thenAnswer((_) async => Future<void>.value()); // Fix: Return Future<void>
               when(mockStorageService.clear()).thenAnswer((_) async => Future<void>.value()); // Fix: Return Future<void>
               return renderDrawerMenu(mockL10n, mockStorageService, mockSecureStorageService, context);
             },
@@ -88,7 +101,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify logout is called with captured context
-    verify(logout(mockStorageService, mockSecureStorageService, capturedContext)).called(1);
+    verify(logout(mockStorageService, mockSecureStorageService, capturedContext, thirdPartyAuthService)).called(1);
   });
 
 

@@ -1,20 +1,24 @@
+
+import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/api/unauthenticated_api_service.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/pages/sign_in_up/sign_up_page.dart';
 import 'package:frontend/storage/storage.dart';
 import 'package:frontend/utils/utils.dart';
 import 'package:frontend/utils/components.dart';
-import 'package:dio/dio.dart';
 
 class SignInPage extends StatefulWidget {
   static const routeName = '/sign-in';
   final L10n l10n;
   final SecureStorageService secureStorageService;
   final StorageService storageService;
+  final ThirdPartyAuthService? thirdPartyAuthService;
 
-  const SignInPage({super.key, required this.l10n, required this.storageService, required this.secureStorageService});
+  const SignInPage({super.key, required this.l10n, required this.storageService, required this.secureStorageService, this.thirdPartyAuthService,});
 
   @override
   SignInPageState createState() => SignInPageState();
@@ -22,6 +26,8 @@ class SignInPage extends StatefulWidget {
 
 class SignInPageState extends State<SignInPage> {
   bool _isSignInApiSent = false; // Flag to disable sign-in button while processing
+  bool _isSignInThirdPartyApiSent = false; // Flag to disable third party sign-in button while processing
+  String typeThirdPartyApiSent = "";
   bool _isResendVerificationEmailApiSent = false; // Flag to disable resend button
   final _formKey = GlobalKey<FormState>(); // Form key for validation
   final TextEditingController _emailUsernameController = TextEditingController();
@@ -30,6 +36,13 @@ class SignInPageState extends State<SignInPage> {
   String? _successMessage; // Stores success messages
   bool _showSendEmailVerificationLinkButton = false;
   dynamic _userId; // Stores user ID for email verification
+  late ThirdPartyAuthService _thirdPartyAuthService; 
+  @override
+  void initState() {
+    super.initState();
+    // Use the injected service or create a new one
+    _thirdPartyAuthService = widget.thirdPartyAuthService ?? ThirdPartyAuthService();
+  }
 
   Widget _buildEmailUsernameField(String currentLanguage) {
     return TextFormField(
@@ -71,6 +84,7 @@ class SignInPageState extends State<SignInPage> {
       _emailUsernameController.text = username;
     }
     bool showSignUpButton = (dotenv.env['ENABLE_USERS_REGISTRATION'] ?? 'false') == "true";
+    bool showSignInWithGoogleButton = (dotenv.env['ENABLE_LOG_IN_WITH_GOOGLE'] ?? 'false') == "true";
     return Scaffold(
       appBar: AppBar(
         // App bar title with localized text
@@ -126,10 +140,10 @@ class SignInPageState extends State<SignInPage> {
                     SizedBox(height: 20),
                     // Sign in button
                     Container(
-                      margin: EdgeInsets.only(bottom: showSignUpButton || _showSendEmailVerificationLinkButton ? 20 : 100),  // Add margin bottom here
+                      margin: EdgeInsets.only(bottom: showSignUpButton || showSignInWithGoogleButton || _showSendEmailVerificationLinkButton ? 20 : 100),  // Add margin bottom here
                       child: ElevatedButton(
                         key: Key('signInButton'),
-                        onPressed: _isSignInApiSent ? null : () {
+                        onPressed: _isSignInApiSent || _isSignInThirdPartyApiSent ? null : () {
                           setState(() {
                             _errorMessage = null;
                           });
@@ -162,7 +176,7 @@ class SignInPageState extends State<SignInPage> {
                     // Sign up button
                     if(showSignUpButton)
                       Container(
-                        margin: EdgeInsets.only(bottom: _showSendEmailVerificationLinkButton ? 20 : 100),  // Add margin bottom here
+                        margin: EdgeInsets.only(bottom: showSignInWithGoogleButton || _showSendEmailVerificationLinkButton ? 20 : 100),  // Add margin bottom here
                         child: TextButton(
                           onPressed: () {
                             Navigator.pushNamed(context, SignUpPage.routeName);
@@ -173,7 +187,7 @@ class SignInPageState extends State<SignInPage> {
                     // send email verification link button
                     if(_showSendEmailVerificationLinkButton && _userId != null)
                       Container(
-                        margin: EdgeInsets.only(bottom: 100),  // Add margin bottom here
+                        margin: EdgeInsets.only(bottom: showSignInWithGoogleButton ? 20 : 100),  // Add margin bottom here
                         child: TextButton(
                           onPressed: _isResendVerificationEmailApiSent ? null : () {
                             resendEmailVerificationLink(_userId, currentLanguage);
@@ -195,6 +209,41 @@ class SignInPageState extends State<SignInPage> {
                                   ),
                                 ),
                               Text(widget.l10n.translate("Resend verification email link", currentLanguage)),
+                            ]
+                          )
+                        ),
+                      ),
+                    if(showSignInWithGoogleButton)
+                      Container(
+                        margin: EdgeInsets.only(bottom: 100),  // Add margin bottom here
+                        child: TextButton(
+                          key: Key('googleSignInButton'),
+                          onPressed: _isSignInApiSent || _isSignInThirdPartyApiSent ? null : () {
+                            thirdPrtySignIn("google", widget.storageService, currentLanguage, widget.secureStorageService);
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (_isSignInThirdPartyApiSent && typeThirdPartyApiSent == "google")
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                      strokeWidth: 2.0,
+                                    ),
+                                  ),
+                                ),
+                              FaIcon(
+                                FontAwesomeIcons.google,  // Icon from Font Awesome
+                                size: 20.0,               // Icon size
+                                color: Colors.red, 
+                              ),
+                              SizedBox(width: 8), // Add margin between the icon and text
+                              Text(widget.l10n.translate("Sign in with Google", currentLanguage)),
                             ]
                           )
                         ),
@@ -319,6 +368,117 @@ class SignInPageState extends State<SignInPage> {
       });
       // Handle any errors that occurred during the HTTP request
       logMessage('Sign-in error: $e');
+    }
+  }
+
+
+
+  /// Handles third-party authentication (e.g., Google Sign-In).
+  /// This method initiates the third-party sign-in flow, retrieves user credentials,
+  /// and sends them to the backend for verification and token generation.
+  ///
+  /// Parameters:
+  /// - [typeThirdPartyApiSent]: The type of third-party authentication (e.g., "google").
+  /// - [storageService]: The storage service for saving user data.
+  /// - [currentLanguage]: The current language for localization.
+  /// - [secureStorageService]: The secure storage service for saving tokens.
+  /// - [dio]: Optional Dio client for HTTP requests.
+  void thirdPrtySignIn(String typeThirdPartyApiSent, StorageService storageService, String currentLanguage, SecureStorageService secureStorageService, {Dio? dio}) async {
+  
+    dio ??= Dio(); // Use default client if none is provided
+    setState(() {
+      _errorMessage = null;  // Clear the error message on successful sign-in third party
+      _isSignInApiSent = false;
+      _showSendEmailVerificationLinkButton = false;
+      _isSignInThirdPartyApiSent = true;
+      typeThirdPartyApiSent = typeThirdPartyApiSent;
+      _userId = null;
+    });
+
+    try {
+      if(typeThirdPartyApiSent == "google"){
+        UserCredential? userCredential = await _thirdPartyAuthService.signInWithGoogle();
+        final User? user = userCredential?.user;
+        if (user == null) {
+          setState(() {
+            _errorMessage = "Cannot get user info from Google sign in api!";  // Set the error message on if account is null
+            _successMessage = null;
+            _isSignInThirdPartyApiSent = false;
+            typeThirdPartyApiSent = "";
+          });
+        }
+        else{
+          final idToken = await user.getIdToken();
+          final dynamic data = {
+            "email": user.email,
+            "id_token": idToken,
+            "selected_language": currentLanguage,
+            "type_third_party": "google",
+          };
+
+          try {
+            final response = await UnauthenticatedApiBackendService.signInUserWithThirdParty(data: data, dio: dio);
+            // Assuming the response contains the user session data
+            if(response["success"] && response["user"] != null){
+              setState(() {
+                _errorMessage = null;  // Clear the error message on successful sign-in with third party
+                _successMessage = null;
+                _isSignInThirdPartyApiSent = false;
+              });
+              widget.secureStorageService.saveTokens(response["access_token"], response["refresh_token"]);
+              widget.storageService.set(key: 'user', obj: response["user"], updateNotifier: true);
+            }
+            else if(!response["success"] && response["message"] != null){
+              await _thirdPartyAuthService.signOut();
+              setState(() {
+                _errorMessage = response["message"];  // Set the error message on unsuccessful sign-in with third party
+                _successMessage = null;
+                _isSignInThirdPartyApiSent = false;
+                typeThirdPartyApiSent = "";
+              });
+            }
+            else{
+              await _thirdPartyAuthService.signOut();
+              setState(() {
+                _errorMessage = "An error occurred when log in with $typeThirdPartyApiSent!";  // Set the error message on unsuccessful sign-in with third party
+                _successMessage = null;
+                _isSignInThirdPartyApiSent = false;
+                typeThirdPartyApiSent = "";
+              });
+            }
+          } catch (e) {
+            await _thirdPartyAuthService.signOut();
+            setState(() {
+              _errorMessage = "An error occurred when log in with $typeThirdPartyApiSent!";  // Set the error message on unsuccessful sign-in with third party
+              _successMessage = null;
+              _isSignInThirdPartyApiSent = false;
+              typeThirdPartyApiSent = "";
+            });
+            // Handle any errors that occurred during the HTTP request
+            logMessage(e, 'Sign-in with $typeThirdPartyApiSent error: ', "e");
+          }
+        }
+      }
+
+      
+    }  on FirebaseAuthException catch (e) {
+      setState(() {
+        _errorMessage = e.code == "popup-closed-by-user" ? null : "An error occurred when log in with $typeThirdPartyApiSent!";  // Set the error message on unsuccessful sign-in with third party
+        _successMessage = null;
+        _isSignInThirdPartyApiSent = false;
+        typeThirdPartyApiSent = "";
+      });
+      // Handle any errors that occurred during the HTTP request
+      logMessage(e, 'Sign-in with $typeThirdPartyApiSent error:', "e");
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString() == "popup_closed" ? null : "An error occurred when log in with $typeThirdPartyApiSent!";  // Set the error message on unsuccessful sign-in with third party
+        _successMessage = null;
+        _isSignInThirdPartyApiSent = false;
+        typeThirdPartyApiSent = "";
+      });
+      // Handle any errors that occurred during the HTTP request
+      logMessage(e, 'Sign-in with $typeThirdPartyApiSent error:', "e");
     }
   }
 
