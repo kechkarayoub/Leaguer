@@ -1,12 +1,15 @@
 
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/api/unauthenticated_api_service.dart';
 import 'package:frontend/storage/storage.dart';
+import 'package:image/image.dart' as img;
 import 'package:logger/logger.dart';
 import 'package:mime/mime.dart';
+import 'package:path/path.dart' as p;
 
 final logger = Logger();
 
@@ -75,6 +78,76 @@ String getRandomHexColor() {
   String blueHex = blue.toRadixString(16).padLeft(2, '0');
 
   return '#$redHex$greenHex$blueHex';
+}
+
+/// Compresses and resizes an image file while maintaining the original format.
+///
+/// [originalImage]: The original image file to process.
+/// [width]: The desired width of the resized image (optional).
+/// [height]: The desired height of the resized image (optional).
+///
+/// Returns a new [File] containing the processed image.
+///
+/// Throws an [Exception] if the image cannot be decoded.
+Future<File> compressAndResizeImage(File originalImage, {int? width, int? height, int? jpegQuality, int? pngCompression}) async {
+  jpegQuality = jpegQuality ?? 50;
+  pngCompression = pngCompression ?? 6;
+  // Read the original image bytes
+  final originalBytes = await originalImage.readAsBytes();
+
+  // Decode the image
+  final image = img.decodeImage(originalBytes);
+  if (image == null) throw Exception('Unable to decode image');
+
+  // Get original dimensions
+  final originalWidth = image.width;
+  final originalHeight = image.height;
+  final aspectRatio = originalWidth / originalHeight;
+
+  // Resize the image based on provided dimensions
+  img.Image resizedImage = image;
+  if (width != null && height != null) {
+    // Resize to exact width and height
+    resizedImage = img.copyResize(image, width: width, height: height);
+  } 
+  else if (width != null) {
+    // Resize to the specified width while maintaining aspect ratio
+    height = (width / aspectRatio).round();
+    resizedImage = img.copyResize(image, width: width, height: height);
+  } 
+  else if (height != null) {
+    // Resize to the specified height while maintaining aspect ratio
+    width = (height * aspectRatio).round();
+    resizedImage = img.copyResize(image, width: width, height: height);
+  }
+
+  // Determine the original image format from the file extension
+  final originalExtension = p.extension(originalImage.path).toLowerCase();
+  // Encode the processed image in the original format
+  List<int> encodedBytes;
+  switch (originalExtension) {
+    case '.jpg':
+    case '.jpeg':
+      encodedBytes = img.encodeJpg(resizedImage, quality: jpegQuality);
+      break;
+    case '.png':
+      encodedBytes = img.encodePng(resizedImage, level: pngCompression);
+      break;
+    case '.bmp':
+      encodedBytes = img.encodeBmp(resizedImage);
+      break;
+    case '.gif':
+      encodedBytes = img.encodeGif(resizedImage);
+      break;
+    default:
+      // Default to JPEG if the format is unsupported
+      encodedBytes = img.encodeJpg(resizedImage, quality: jpegQuality);
+  }
+  // Save the encoded bytes to a new file
+  final newFilePath = '${originalImage.path.replaceAll(originalExtension, "")}_processed$originalExtension';
+  final newFile = File(newFilePath)..writeAsBytesSync(encodedBytes);
+
+  return newFile;
 }
 
 
