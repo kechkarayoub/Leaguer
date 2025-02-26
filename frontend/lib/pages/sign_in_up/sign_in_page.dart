@@ -400,8 +400,9 @@ class SignInPageState extends State<SignInPage> {
         UserCredential? userCredential = await _thirdPartyAuthService.signInWithGoogle();
         final User? user = userCredential?.user;
         if (user == null) {
+          // The pop up is closed or canceled by the user
           setState(() {
-            _errorMessage = "Cannot get user info from Google sign in api!";  // Set the error message on if account is null
+            _errorMessage = null;  
             _successMessage = null;
             _isSignInThirdPartyApiSent = false;
             typeThirdPartyApiSent = "";

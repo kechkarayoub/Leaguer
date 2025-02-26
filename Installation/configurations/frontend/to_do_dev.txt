@@ -1,1 +1,2 @@
 - Optimizing images before upload.
+- Notifications && Push notifications.
