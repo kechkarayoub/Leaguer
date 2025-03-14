@@ -341,7 +341,9 @@ local.properties
 # Firebase configuration
 frontend/android/app/google-services.json
 frontend/ios/Runner/GoogleService-Info.plist
+frontend/ios/GoogleService-Info.plist
 frontend/macos/Runner/GoogleService-Info.plist
+frontend/macos/GoogleService-Info.plist
 
 
 # Miscellaneous
