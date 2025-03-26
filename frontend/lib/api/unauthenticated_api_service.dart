@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -17,7 +18,11 @@ class ThirdPartyAuthService {
     FirebaseAuth? auth,
     GoogleSignIn? googleSignIn,
   })  : _auth = auth ?? FirebaseAuth.instance,
-        _googleSignIn = googleSignIn ?? GoogleSignIn(clientId: dotenv.env['GOOGLE_SIGN_IN_CLIENT_ID'],);
+        _googleSignIn = googleSignIn ?? GoogleSignIn(clientId: Platform.isIOS
+      ? dotenv.env['GOOGLE_SIGN_IN_IOS_CLIENT_ID']
+      : Platform.isAndroid
+      ? dotenv.env['GOOGLE_SIGN_IN_ANDROID_CLIENT_ID']
+      : dotenv.env['GOOGLE_SIGN_IN_WEB_CLIENT_ID'],);
 
   /// Signs in the user using Google authentication.
   ///
