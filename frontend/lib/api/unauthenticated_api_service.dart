@@ -18,11 +18,11 @@ class ThirdPartyAuthService {
     FirebaseAuth? auth,
     GoogleSignIn? googleSignIn,
   })  : _auth = auth ?? FirebaseAuth.instance,
-        _googleSignIn = googleSignIn ?? GoogleSignIn(clientId: Platform.isIOS
-      ? dotenv.env['GOOGLE_SIGN_IN_IOS_CLIENT_ID']
-      : Platform.isAndroid
-      ? dotenv.env['GOOGLE_SIGN_IN_ANDROID_CLIENT_ID']
-      : dotenv.env['GOOGLE_SIGN_IN_WEB_CLIENT_ID'],);
+        _googleSignIn = googleSignIn ?? GoogleSignIn(
+          clientId: !kIsWeb && Platform.isIOS ? dotenv.env['GOOGLE_SIGN_IN_IOS_CLIENT_ID']
+            : !kIsWeb && Platform.isAndroid ? dotenv.env['GOOGLE_SIGN_IN_ANDROID_CLIENT_ID']
+            : dotenv.env['GOOGLE_SIGN_IN_WEB_CLIENT_ID'],
+        );
 
   /// Signs in the user using Google authentication.
   ///
