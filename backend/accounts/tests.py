@@ -296,6 +296,7 @@ class UserModelTest(TestCase):
             first_name="First name",
             user_gender=GENDERS_CHOICES[1][0],
             user_image_url="https://www.s3.com/image_url",
+            user_initials_bg_color="#dd5588",
             last_name="Last name",
             password="testpassword123",
             user_phone_number="12 34-567890",
@@ -312,6 +313,7 @@ class UserModelTest(TestCase):
             first_name="First name",
             user_gender=GENDERS_CHOICES[1][0],
             user_image_url="https://www.s3.com/image_url",
+            user_initials_bg_color="#dd5588",
             is_user_email_validated=True,
             is_user_phone_number_validated=True,
             last_name="Last name",
@@ -366,7 +368,7 @@ class UserModelTest(TestCase):
 
     def test_to_login_dict(self):
         user_login_dict = self.user.to_login_dict()
-        self.assertEqual(len(user_login_dict.keys()), 15)
+        self.assertEqual(len(user_login_dict.keys()), 16)
         self.assertEqual(user_login_dict.get("current_language"), self.user.current_language)
         self.assertEqual(user_login_dict.get("email"), self.user.email)
         self.assertEqual(user_login_dict.get("first_name"), self.user.first_name)
@@ -379,6 +381,7 @@ class UserModelTest(TestCase):
         self.assertEqual(user_login_dict.get("user_country"), self.user.user_country)
         self.assertEqual(user_login_dict.get("user_gender"), self.user.user_gender)
         self.assertEqual(user_login_dict.get("user_image_url"), self.user.user_image_url)
+        self.assertEqual(user_login_dict.get("user_initials_bg_color"), self.user.user_initials_bg_color)
         self.assertEqual(user_login_dict.get("user_phone_number"), self.user.user_phone_number)
         self.assertEqual(user_login_dict.get("user_phone_number_to_verify"), self.user.user_phone_number_to_verify)
         self.assertEqual(user_login_dict.get("user_timezone"), self.user.user_timezone)
@@ -393,6 +396,7 @@ class UserModelTest(TestCase):
         self.assertEqual(self.user.first_name, "First name")
         self.assertEqual(self.user.user_gender, GENDERS_CHOICES[1][0])
         self.assertEqual(self.user.user_image_url, "https://www.s3.com/image_url")
+        self.assertEqual(self.user.user_initials_bg_color, "#dd5588")
         self.assertEqual(self.user.last_name, "Last name")
         self.assertEqual(self.user.user_phone_number_to_verify, "+2121234567890")
         if settings.ENABLE_PHONE_NUMBER_VERIFICATION:
@@ -487,6 +491,7 @@ class UserUtilsTest(TestCase):
             first_name="First name",
             user_gender=GENDERS_CHOICES[1][0],
             user_image_url="https://www.s3.com/image_url",
+            user_initials_bg_color="#dd5588",
             last_name="Last name",
             password="testpassword123",
             user_phone_number_to_verify="+212612505257",
@@ -535,6 +540,7 @@ class UserSerializerTest(APITestCase):
             'first_name': "First name",
             'user_gender': GENDERS_CHOICES[1][0],
             'user_image_url': "https://www.s3.com/image_url",
+            'user_initials_bg_color': "#dd5588",
             'last_name': "Last name",
             'password': "testpassword123",
             'user_phone_number': "+2126-234 56789",
@@ -552,6 +558,7 @@ class UserSerializerTest(APITestCase):
             'first_name': "First name",
             'user_gender': GENDERS_CHOICES[1][0],
             'user_image_url': "https://www.s3.com/image_url",
+            'user_initials_bg_color': "#dd5588",
             'is_user_phone_number_validated': True,
             'last_name': "Last name",
             'password': "testpassword123",
@@ -578,6 +585,7 @@ class UserSerializerTest(APITestCase):
         self.assertEqual(data['first_name'], "First name")
         self.assertEqual(data['user_gender'], GENDERS_CHOICES[1][0])
         self.assertEqual(data['user_image_url'], "https://www.s3.com/image_url")
+        self.assertEqual(data['user_initials_bg_color'], "#dd5588")
         self.assertEqual(data['last_name'], "Last name")
         self.assertEqual(data['user_phone_number_to_verify'], "+212623456789")
         if settings.ENABLE_PHONE_NUMBER_VERIFICATION:
@@ -588,7 +596,7 @@ class UserSerializerTest(APITestCase):
             self.assertEqual(data['user_phone_number'], "+212623456789")
         self.assertEqual(data['user_timezone'], settings.TIME_ZONE)
         self.assertEqual(data['username'], "testuser")
-        self.assertEqual(len(data.keys()), 24)
+        self.assertEqual(len(data.keys()), 25)
         self.assertIn('date_joined', data)
         user2 = User.objects.create_user(
             **self.valid_data2
@@ -604,13 +612,14 @@ class UserSerializerTest(APITestCase):
         self.assertEqual(data2['first_name'], "First name")
         self.assertEqual(data2['user_gender'], GENDERS_CHOICES[1][0])
         self.assertEqual(data2['user_image_url'], "https://www.s3.com/image_url")
+        self.assertEqual(data2['user_initials_bg_color'], "#dd5588")
         self.assertEqual(data2['last_name'], "Last name")
         self.assertEqual(data2['user_phone_number'], "+212623456709")
         self.assertEqual(data2['user_phone_number_to_verify'], "+212623456709")
         self.assertEqual(data2['user_phone_number_verified_by'], "google")
         self.assertEqual(data2['user_timezone'], "")
         self.assertEqual(data2['username'], "testuser2")
-        self.assertEqual(len(data2.keys()), 24)
+        self.assertEqual(len(data2.keys()), 25)
         self.assertIn('date_joined', data2)
 
     def test_valid_serializer(self):

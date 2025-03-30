@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-24 23:23+0000\n"
+"POT-Creation-Date: 2025-03-30 22:50+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,95 +34,99 @@ msgstr "Important Dates"
 msgid "Accounts"
 msgstr ""
 
-#: models.py:41
+#: models.py:42
 msgid "User"
 msgstr ""
 
-#: models.py:42
+#: models.py:43
 msgid "Users"
 msgstr ""
 
-#: models.py:44
+#: models.py:45
 msgid "Current language"
 msgstr ""
 
-#: models.py:45
+#: models.py:46
 msgid "Email"
 msgstr ""
 
-#: models.py:46
+#: models.py:47
 msgid "First name"
 msgstr ""
 
-#: models.py:47
+#: models.py:48
 msgid "Is active"
 msgstr ""
 
-#: models.py:48
+#: models.py:49
 msgid "Is email validated"
 msgstr ""
 
-#: models.py:49
+#: models.py:50
 msgid "Is deleted"
 msgstr ""
 
-#: models.py:50
+#: models.py:51
 msgid "Is phone number validated"
 msgstr ""
 
-#: models.py:51
+#: models.py:52
 msgid "Last name"
 msgstr ""
 
-#: models.py:52
+#: models.py:53
 msgid "Number of phone number's verification code used"
 msgstr ""
 
-#: models.py:53
+#: models.py:54
 msgid "Address"
 msgstr ""
 
-#: models.py:54
+#: models.py:55
 msgid "Birthday"
 msgstr ""
 
-#: models.py:55
+#: models.py:56
 msgid "CIN"
 msgstr ""
 
-#: models.py:56
+#: models.py:57
 msgid "Country"
 msgstr ""
 
-#: models.py:57
+#: models.py:58
 msgid "GENDER"
 msgstr ""
 
-#: models.py:58
+#: models.py:59
 msgid "Image url"
 msgstr ""
 
-#: models.py:59
-msgid "Phone number"
-msgstr ""
-
 #: models.py:60
-msgid "Phone number's verification code"
+msgid "Initials background color"
 msgstr ""
 
 #: models.py:61
-msgid "Phone number's verification code generation date"
+msgid "Phone number"
 msgstr ""
 
 #: models.py:62
-msgid "Phone number to verify"
+msgid "Phone number's verification code"
 msgstr ""
 
 #: models.py:63
-msgid "Phone number verified by"
+msgid "Phone number's verification code generation date"
 msgstr ""
 
 #: models.py:64
+msgid "Phone number to verify"
+msgstr ""
+
+#: models.py:65
+msgid "Phone number verified by"
+msgstr ""
+
+#: models.py:66
 msgid "Time zone"
 msgstr ""
 

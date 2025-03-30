@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = [
             "user_address", "user_birthday", "user_cin", "user_country", "current_language", "date_joined", "email",
             "first_name", "user_gender", "user_phone_number_verification_code", "user_phone_number_verification_code_generated_at",
-            "id", "user_image_url", "is_active", "is_user_email_validated", "is_user_deleted", "is_user_phone_number_validated",
+            "id", "user_image_url", "user_initials_bg_color", "is_active", "is_user_email_validated", "is_user_deleted", "is_user_phone_number_validated",
             "last_name", "user_phone_number", "user_phone_number_to_verify", "user_phone_number_verified_by",
             "username", "nbr_phone_number_verification_code_used", "user_timezone",
         ]

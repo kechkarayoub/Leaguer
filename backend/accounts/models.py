@@ -27,6 +27,7 @@ class User(AbstractUser):
         user_country (CharField): Optional. Stores the user's country.
         user_gender (CharField): Optional. Stores the user's gender using predefined choices.
         user_image_url (URLField): Optional. Stores the URL of the user's profile image.
+        user_initials_bg_color (CharField): Optional. Stores the user's initials bg color.
         user_phone_number (CharField): Optional. Stores the user's phone number (unique).
         user_phone_number_verification_code (CharField): Optional. Stores the user's phone number verification code.
         user_phone_number_verification_code_generated_at (DateTimeField): Optional. Stores the user's phone number verification code's dqte creation.
@@ -56,6 +57,7 @@ class User(AbstractUser):
     user_country = models.CharField(blank=True, max_length=100, null=True, verbose_name=_("Country"))
     user_gender = models.CharField(blank=True, choices=GENDERS_CHOICES, db_index=True, default="", max_length=10, verbose_name=_("GENDER"))
     user_image_url = models.URLField(blank=True, max_length=500, null=True, verbose_name=_("Image url"))
+    user_initials_bg_color = models.CharField(blank=True, db_index=True, max_length=15, null=True, verbose_name=_("Initials background color"))
     user_phone_number = models.CharField(db_index=True, blank=True, max_length=15, null=True, verbose_name=_("Phone number"), unique=True)
     user_phone_number_verification_code = models.CharField(blank=True, max_length=6, null=True, verbose_name=_("Phone number's verification code"))
     user_phone_number_verification_code_generated_at = models.DateTimeField(blank=True, null=True, verbose_name=_("Phone number's verification code generation date"))
@@ -93,6 +95,7 @@ class User(AbstractUser):
             "user_country": self.user_country,
             "user_gender": self.user_gender,
             "user_image_url": self.user_image_url,
+            "user_initials_bg_color": self.user_initials_bg_color or "",
             "user_phone_number": self.user_phone_number,
             "user_phone_number_to_verify": self.user_phone_number_to_verify,
             "user_timezone": self.user_timezone,
