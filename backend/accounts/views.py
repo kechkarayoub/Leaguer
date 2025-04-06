@@ -11,8 +11,10 @@ from django.shortcuts import get_object_or_404
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.timezone import now
 from django.utils.translation import activate, gettext_lazy as _
+from leaguer.utils import generate_random_code, upload_file, remove_file
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -262,7 +264,7 @@ class SignInThirdPartyView(APIView):
 #                 saved_path = default_storage.save(file_path, ContentFile(profile_image.read()))
 #                 # Generate full URL
 #                 image_url = f"{request.build_absolute_uri(settings.MEDIA_URL)}{saved_path}"
-#                 print(file_path)
+#                 logger.info(f"file_path: {file_path}")
 #
 #             data['image_url'] = image_url
 #             serializer = UserSerializer(data=data)
@@ -285,6 +287,124 @@ class SignInThirdPartyView(APIView):
 #             {'message': message, 'errors': serializer.errors, 'success': False, },
 #             status=status.HTTP_409_CONFLICT
 #         )
+
+
+class UpdateProfileView(APIView):
+    """
+    A view to handle updating the user's profile information, including personal data
+    and optional image and password updates.
+
+    This view:
+    - Requires the user to be authenticated.
+    - Allows updating of basic profile information such as name, gender, and birthday.
+    - Handles the optional upload of a profile image.
+    - Optionally, allows the user to update their password if the correct current password is provided.
+
+    Methods:
+        put: Handles the PUT request to update the user profile.
+    """
+    permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
+
+    # noinspection PyMethodMayBeStatic
+    def put(self, request, *args, **kwargs):
+        """
+        Handles the logic for updating the user's profile.
+        This includes updating their basic profile fields, profile image (if provided),
+        and optionally updating the password.
+
+        Args:
+            request (Request): The request object containing the user's data and files.
+
+        Returns:
+            Response: The response containing the updated user data, any relevant tokens, and success/failure message.
+        """
+        user = request.user
+        data = request.data.copy()
+
+        # Get selected language or default to French
+        current_language = data.get('current_language') or 'fr'
+        activate(current_language)
+
+        # Generate a unique prefix to avoid email/username uniqueness validation errors
+        random_prefix = generate_random_code()
+        data['email'] = random_prefix + data.get('email', '')
+        data['username'] = random_prefix + data.get('username', '')
+
+        # Create a dummy serializer for validation purposes only
+        serializer = UserSerializer(data=data)
+        if not serializer.is_valid():
+            message = _("Your profile could not be updated due to the errors listed above. Please correct them and try again.")
+            return Response(
+                {'message': message, 'errors': serializer.errors, 'success': False},
+                status=status.HTTP_409_CONFLICT
+            )
+
+        # Retrieve additional profile data
+        profile_image = request.FILES.get('profile_image')
+        current_password = data.get('current_password')
+        first_name = data.get('first_name')
+        image_updated = data.get('image_updated') in [True, 'true']
+        last_name = data.get('last_name')
+        new_password = data.get('new_password')
+        update_password = data.get('update_password') in [True, 'true']
+        user_birthday = data.get('user_birthday')
+        user_gender = data.get('user_gender')
+        user_image_url = user.user_image_url
+        user_initials_bg_color = data.get('user_initials_bg_color')
+
+        # Handle profile image update
+        if image_updated:
+            user_image_url = None
+            if profile_image:
+                try:
+                    user_image_url, file_path = upload_file(request, profile_image, 'profile_images', prefix="profile_")
+                    logger.info(f"file_path: {file_path}")
+                except Exception as e:
+                    logger.error(f"Image upload failed: {str(e)}")
+                    return Response({'message': _("Image upload failed."), 'success': False}, status=500)
+
+            if user.user_image_url:
+                remove_file(request, user.user_image_url)
+
+        # Update user fields
+        user.current_language = current_language
+        user.first_name = first_name
+        user.last_name = last_name
+        user.user_birthday = user_birthday
+        user.user_gender = user_gender
+        user.user_image_url = user_image_url
+        user.user_initials_bg_color = user_initials_bg_color
+
+        user.save()
+
+        # Handle password update
+        wrong_password = False
+        access_token = None
+        refresh_token = None
+        if update_password:
+            authenticated_user = authenticate(request, username=user.username, password=current_password)
+            if authenticated_user is not None:
+                user.set_password(new_password)
+                user.save()
+                refresh = RefreshToken.for_user(user)
+                access_token = str(refresh.access_token)
+                refresh_token = str(refresh)
+            else:
+                wrong_password = True
+
+        # Prepare response
+        user_data = user.to_login_dict()
+        message = _('Your profile has been updated successfully.')
+        return Response({
+                'message': message,
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+                "success": True,
+                "user": user_data,
+                "wrong_password": wrong_password,
+            }, status=status.HTTP_200_OK,
+        )
 
 
 def verify_phone_number(request):

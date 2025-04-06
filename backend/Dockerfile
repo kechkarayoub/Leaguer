@@ -12,6 +12,9 @@ WORKDIR /app
 # Copy the entire current directory contents into the container at /app
 COPY . /app/
 
+# Install gettext
+RUN apt-get update && apt-get install -y gettext
+
 # Upgrade pip to ensure we have the latest version for installing dependencies
 RUN pip install --upgrade pip
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-30 22:50+0000\n"
+"POT-Creation-Date: 2025-04-04 23:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -219,22 +219,22 @@ msgstr "Homme"
 msgid "Verify Your Email Address"
 msgstr "Vérifiez votre adresse e-mail"
 
-#: views.py:58
+#: views.py:60
 msgid "User id is required"
 msgstr "L'identifiant utilisateur est requis."
 
-#: views.py:68
+#: views.py:70
 msgid "Your email is already verified. Try to sign in."
 msgstr "Votre e-mail est déjà vérifié. Essayez de vous connecter."
 
-#: views.py:76
+#: views.py:78
 msgid ""
 "Email not sent. Please contact the technical team to resolve your issue."
 msgstr ""
 "E-mail non envoyé. Veuillez contacter l'équipe technique pour résoudre votre "
 "problème."
 
-#: views.py:78
+#: views.py:80
 msgid ""
 "A new verification link has been sent to your email address. Please verify "
 "your email before logging in."
@@ -242,11 +242,11 @@ msgstr ""
 "Un nouveau lien de vérification a été envoyé à votre adresse e-mail. "
 "Veuillez vérifier votre e-mail avant de vous connecter."
 
-#: views.py:112
+#: views.py:114
 msgid "Email/Username and password are required"
 msgstr "L'e-mail/nom d'utilisateur et le mot de passe sont requis."
 
-#: views.py:125 views.py:215
+#: views.py:127 views.py:217
 msgid ""
 "Your account is deleted. Please contact the technical team to resolve your "
 "issue."
@@ -254,7 +254,7 @@ msgstr ""
 "Votre compte a été supprimé. Veuillez contacter l'équipe technique pour "
 "résoudre votre problème."
 
-#: views.py:133 views.py:223
+#: views.py:135 views.py:225
 msgid ""
 "Your account is inactive. Please contact the technical team to resolve your "
 "issue."
@@ -262,7 +262,7 @@ msgstr ""
 "Votre compte est inactif. Veuillez contacter l'équipe technique pour "
 "résoudre votre problème."
 
-#: views.py:141
+#: views.py:143
 msgid ""
 "Your email is not yet verified. Please verify your email address before sign "
 "in."
@@ -270,24 +270,40 @@ msgstr ""
 "Votre e-mail n'est pas encore vérifié. Veuillez vérifier votre adresse e-"
 "mail avant de vous connecter."
 
-#: views.py:161 views.py:163 views.py:244
+#: views.py:163 views.py:165 views.py:246
 msgid "Invalid credentials"
 msgstr "Identifiants invalides"
 
-#: views.py:197
+#: views.py:199
 msgid "Email, Id token and Third party type are required"
 msgstr ""
 "L'e-mail, le jeton d'identification et le type de service tiers sont requis"
 
-#: views.py:304 views.py:451
+#: views.py:338
+msgid ""
+"Your profile could not be updated due to the errors listed above. Please "
+"correct them and try again."
+msgstr ""
+"Votre profil n’a pas pu être mis à jour en raison des erreurs mentionnées ci-"
+"dessus. Veuillez les corriger et réessayer."
+
+#: views.py:366
+msgid "Image upload failed."
+msgstr "Échec de l'envoi de l'image."
+
+#: views.py:399
+msgid "Your profile has been updated successfully."
+msgstr "Votre profil a été mis à jour avec succès."
+
+#: views.py:425 views.py:572
 msgid "Missing required parameters."
 msgstr "Paramètres requis manquants."
 
-#: views.py:314
+#: views.py:435
 msgid "You should add a phone number before validate it!"
 msgstr "Vous devez ajouter un numéro de téléphone avant de le valider !"
 
-#: views.py:320
+#: views.py:441
 #, python-brace-format
 msgid ""
 "This phone number already verified for another user. Please contact the "
@@ -297,28 +313,28 @@ msgstr ""
 "contacter le service technique à {technical_service_email} pour résoudre "
 "votre problème."
 
-#: views.py:327
+#: views.py:448
 msgid "Invalid verification code."
 msgstr "Code de vérification invalide."
 
-#: views.py:330
+#: views.py:451
 msgid "Phone number already verified."
 msgstr "Numéro de téléphone déjà vérifié."
 
-#: views.py:332
+#: views.py:453
 msgid "Phone number verified successfully."
 msgstr "Numéro de téléphone vérifié avec succès."
 
-#: views.py:337
+#: views.py:458
 msgid "A new verification code will be sent to your phone number."
 msgstr ""
 "Un nouveau code de vérification sera envoyé à votre numéro de téléphone."
 
-#: views.py:340
+#: views.py:461
 msgid "Expired verification code."
 msgstr "Code de vérification expiré."
 
-#: views.py:344
+#: views.py:465
 #, python-brace-format
 msgid ""
 "Your sms verification code quota has been exceeded. Please contact the "
@@ -328,29 +344,29 @@ msgstr ""
 "contacter le service technique à {technical_service_email} pour résoudre "
 "votre problème."
 
-#: views.py:347
+#: views.py:468
 msgid "Invalid code."
 msgstr "Code invalide."
 
-#: views.py:464
+#: views.py:585
 msgid "Invalid verification link."
 msgstr "Lien de vérification invalide."
 
-#: views.py:468
+#: views.py:589
 msgid "Email already verified."
 msgstr "L'email a déjà été vérifié."
 
-#: views.py:470
+#: views.py:591
 msgid "Email verified successfully."
 msgstr "L'email a été vérifié avec succès."
 
-#: views.py:474
+#: views.py:595
 msgid ""
 "Expired token. A new verification email will be sent to your email address."
 msgstr ""
 "Jeton expiré. Un nouvel e-mail de vérification sera envoyé à votre adresse e-"
 "mail."
 
-#: views.py:477
+#: views.py:598
 msgid "Invalid token."
 msgstr "Jeton non valide."

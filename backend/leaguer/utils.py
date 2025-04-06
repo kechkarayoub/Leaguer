@@ -1,11 +1,14 @@
 
 from django.conf import settings
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.db import connection
 from django.utils.timezone import localtime, now
 from django.utils.translation import gettext_lazy as _
 from zoneinfo import available_timezones, ZoneInfo
 import json
 import logging
+import os
 import random
 import requests
 
@@ -96,6 +99,32 @@ PHONE_NUMBER_VERIFICATION_METHOD = [
 ]
 
 
+def remove_file(request, file_url):
+    """
+    Removes a file from the storage based on the provided file URL.
+
+    Args:
+        request (Request): The incoming HTTP request object.
+        file_url (str): The URL of the file to be deleted.
+            This URL is used to derive the file's path in storage.
+
+    Returns:
+        None: This function performs the deletion and does not return any value.
+    """
+
+    # Convert the file URL to a relative file path
+    relative_path = file_url.replace(request.build_absolute_uri(settings.MEDIA_URL), "")
+    # Construct the full path of the file in the storage directory
+    file_path = os.path.join(settings.MEDIA_ROOT, relative_path)
+
+    # Attempt to delete the file if it exists in the local filesystem
+    if os.path.exists(file_path):
+        os.remove(file_path)
+    elif default_storage.exists(relative_path):
+        # If the file is stored remotely (e.g., in cloud storage), delete it there
+        default_storage.delete(relative_path)
+
+
 def send_phone_message(content, receivers_numbers, as_sms=False, handle_error=False, do_not_mock_api=False):
     """
     Send content to receivers_numbers.
@@ -181,3 +210,32 @@ def send_whatsapp(whatsapp_content, receivers_numbers, handle_error=False, do_no
     # Checking if all receivers_numbers receive the whatsapp content
     response_data['all_verification_codes_sent'] = response_data['nbr_verification_codes_sent'] == len(receivers_numbers)
     return response_data
+
+
+def upload_file(request, file, directory, prefix=""):
+    """
+    Uploads a file and returns the URL and file path.
+
+    Args:
+        request (Request): The incoming HTTP request object.
+        file (UploadedFile): The file object to be uploaded.
+        directory (String): Directory where to set files.
+        prefix (String) (Optional): The prefix to add before the file name.
+
+    Returns:
+        tuple: A tuple containing the URL of the uploaded file and the saved file path.
+            Example: ("/media/profile_images/profile_image.jpg", "/path/to/file")
+    """
+    if file:
+        # Define the file path for saving the uploaded file
+        file_path = os.path.join(directory, f'{prefix}{file.name}')
+        # Save the file to the default storage location
+        saved_path = default_storage.save(file_path, ContentFile(file.read()))
+        # Construct the full URL for accessing the uploaded file
+        file_url = f"{request.build_absolute_uri(settings.MEDIA_URL)}{saved_path}"
+    else:
+        # If no file is provided, return None for both URL and path
+        file_url = None
+        file_path = None
+    return file_url, file_path
+

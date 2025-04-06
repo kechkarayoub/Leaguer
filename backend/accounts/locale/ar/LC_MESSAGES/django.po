@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-30 22:50+0000\n"
+"POT-Creation-Date: 2025-04-04 23:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -215,21 +215,21 @@ msgstr "ذكر"
 msgid "Verify Your Email Address"
 msgstr "تحقق من عنوان بريدك الإلكتروني"
 
-#: views.py:58
+#: views.py:60
 msgid "User id is required"
 msgstr "مطلوب معرف المستخدم."
 
-#: views.py:68
+#: views.py:70
 msgid "Your email is already verified. Try to sign in."
 msgstr "تم التحقق من بريدك الإلكتروني بالفعل. حاول تسجيل الدخول."
 
-#: views.py:76
+#: views.py:78
 msgid ""
 "Email not sent. Please contact the technical team to resolve your issue."
 msgstr ""
 "لم يتم إرسال البريد الإلكتروني. يرجى التواصل مع الفريق التقني لحل مشكلتك."
 
-#: views.py:78
+#: views.py:80
 msgid ""
 "A new verification link has been sent to your email address. Please verify "
 "your email before logging in."
@@ -237,23 +237,23 @@ msgstr ""
 "تم إرسال رابط تحقق جديد إلى عنوان بريدك الإلكتروني. يرجى التحقق من بريدك "
 "الإلكتروني قبل تسجيل الدخول."
 
-#: views.py:112
+#: views.py:114
 msgid "Email/Username and password are required"
 msgstr "البريد الإلكتروني/اسم المستخدم وكلمة المرور مطلوبان."
 
-#: views.py:125 views.py:215
+#: views.py:127 views.py:217
 msgid ""
 "Your account is deleted. Please contact the technical team to resolve your "
 "issue."
 msgstr "تم حذف حسابك. يرجى التواصل مع الفريق التقني لحل مشكلتك."
 
-#: views.py:133 views.py:223
+#: views.py:135 views.py:225
 msgid ""
 "Your account is inactive. Please contact the technical team to resolve your "
 "issue."
 msgstr "حسابك غير نشط. يرجى التواصل مع الفريق التقني لحل مشكلتك."
 
-#: views.py:141
+#: views.py:143
 msgid ""
 "Your email is not yet verified. Please verify your email address before sign "
 "in."
@@ -261,23 +261,39 @@ msgstr ""
 "لم يتم التحقق من بريدك الإلكتروني بعد. يرجى التحقق من عنوان بريدك الإلكتروني "
 "قبل تسجيل الدخول."
 
-#: views.py:161 views.py:163 views.py:244
+#: views.py:163 views.py:165 views.py:246
 msgid "Invalid credentials"
 msgstr "بيانات غير صالحة"
 
-#: views.py:197
+#: views.py:199
 msgid "Email, Id token and Third party type are required"
 msgstr "البريد الإلكتروني ورمز التعريف ونوع الخدمة الخارجية مطلوبون"
 
-#: views.py:304 views.py:451
+#: views.py:338
+msgid ""
+"Your profile could not be updated due to the errors listed above. Please "
+"correct them and try again."
+msgstr ""
+"تعذّر تحديث ملفك الشخصي بسبب الأخطاء المذكورة أعلاه. يرجى تصحيحها والمحاولة "
+"مرة أخرى."
+
+#: views.py:366
+msgid "Image upload failed."
+msgstr "فشل تحميل الصورة."
+
+#: views.py:399
+msgid "Your profile has been updated successfully."
+msgstr "تم تحديث ملفك الشخصي بنجاح."
+
+#: views.py:425 views.py:572
 msgid "Missing required parameters."
 msgstr "المعلمات المطلوبة مفقودة."
 
-#: views.py:314
+#: views.py:435
 msgid "You should add a phone number before validate it!"
 msgstr "يجب عليك إضافة رقم هاتف قبل التحقق منه!"
 
-#: views.py:320
+#: views.py:441
 #, python-brace-format
 msgid ""
 "This phone number already verified for another user. Please contact the "
@@ -286,27 +302,27 @@ msgstr ""
 "رقم الهاتف هذا تم التحقق منه بالفعل لمستخدم آخر. يرجى الاتصال بالخدمة "
 "التقنية على {technical_service_email} لحل مشكلتك."
 
-#: views.py:327
+#: views.py:448
 msgid "Invalid verification code."
 msgstr "رمز التحقق غير صالح."
 
-#: views.py:330
+#: views.py:451
 msgid "Phone number already verified."
 msgstr "رقم الهاتف تم التحقق منه بالفعل."
 
-#: views.py:332
+#: views.py:453
 msgid "Phone number verified successfully."
 msgstr "تم التحقق من رقم الهاتف بنجاح."
 
-#: views.py:337
+#: views.py:458
 msgid "A new verification code will be sent to your phone number."
 msgstr "سيتم إرسال رمز تحقق جديد إلى رقم هاتفك."
 
-#: views.py:340
+#: views.py:461
 msgid "Expired verification code."
 msgstr "رمز التحقق منتهي الصلاحية."
 
-#: views.py:344
+#: views.py:465
 #, python-brace-format
 msgid ""
 "Your sms verification code quota has been exceeded. Please contact the "
@@ -315,28 +331,28 @@ msgstr ""
 "تم تجاوز حصتك من رموز التحقق عبر الرسائل القصيرة. يرجى الاتصال بالخدمة "
 "التقنية على {technical_service_email} لحل مشكلتك."
 
-#: views.py:347
+#: views.py:468
 msgid "Invalid code."
 msgstr "رمز غير صالح."
 
-#: views.py:464
+#: views.py:585
 msgid "Invalid verification link."
 msgstr "رابط التحقق غير صالح."
 
-#: views.py:468
+#: views.py:589
 msgid "Email already verified."
 msgstr "تم بالفعل التحقق من البريد الإلكتروني."
 
-#: views.py:470
+#: views.py:591
 msgid "Email verified successfully."
 msgstr "تم التحقق من البريد الإلكتروني بنجاح."
 
-#: views.py:474
+#: views.py:595
 msgid ""
 "Expired token. A new verification email will be sent to your email address."
 msgstr ""
 "انتهت صلاحية الرمز. سيتم إرسال رسالة تحقق جديدة إلى عنوان بريدك الإلكتروني."
 
-#: views.py:477
+#: views.py:598
 msgid "Invalid token."
 msgstr "الرمز المميز غير صالح."

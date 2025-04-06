@@ -1,11 +1,15 @@
-from .utils import execute_native_query, generate_random_code, get_all_timezones, get_email_base_context, get_local_datetime, send_whatsapp, send_phone_message
+from .utils import (execute_native_query, generate_random_code, get_all_timezones, get_email_base_context,
+                    get_local_datetime, remove_file, send_whatsapp, send_phone_message, upload_file)
 from accounts.models import User
 from datetime import datetime, timezone
 from django.conf import settings
-from django.test import TestCase
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import RequestFactory, TestCase
 from django.utils.timezone import now
+from django.utils.translation import activate, gettext_lazy as _
 # from dotenv import load_dotenv
 from decouple import config
+from unittest.mock import patch
 from zoneinfo import ZoneInfo
 import os
 
@@ -66,6 +70,7 @@ class LeaguerConfigTest(TestCase):
 
 class LeaguerUtilsTest(TestCase):
     def setUp(self):
+        self.factory = RequestFactory()
         self.user = User.objects.create_user(
             email="testuser@example.com",
             first_name="First name",
@@ -138,7 +143,8 @@ class LeaguerUtilsTest(TestCase):
         """
         timezones = get_all_timezones(as_list=True)
         # Check that the default option is included
-        self.assertEqual(timezones[0], ["", "Sélectionner"])
+        activate(self.user.current_language)
+        self.assertEqual(timezones[0], ["", _("Select")])
         # Ensure the timezones are sorted and that they match the expected format
         self.assertTrue(all(isinstance(item, list) and len(item) == 2 for item in timezones[1:]))
         self.assertTrue(all(isinstance(item[0], str) for item in timezones[1:]))
@@ -148,7 +154,7 @@ class LeaguerUtilsTest(TestCase):
         """
         timezones = get_all_timezones(as_list=False)
         # Check that the default option is included
-        self.assertEqual(timezones[0], ("", "Sélectionner"))
+        self.assertEqual(timezones[0], ("", _("Select")))
         # Ensure the timezones are sorted and that they match the expected format
         self.assertTrue(all(isinstance(item, tuple) and len(item) == 2 for item in timezones[1:]))
         self.assertTrue(all(isinstance(item[0], str) for item in timezones[1:]))
@@ -195,6 +201,42 @@ class LeaguerUtilsTest(TestCase):
         email_base_context_ltr = get_email_base_context(selected_language="en")
         self.assertEqual(email_base_context_ltr['direction'], "ltr")
 
+    @patch('django.core.files.storage.default_storage.exists')
+    @patch('os.remove')
+    def test_remove_file(self, mock_remove, mock_exists):
+        """Test file removal"""
+
+        # Set up the mock to simulate the file's existence
+        mock_exists.return_value = True
+
+        # Define the file URL to be removed
+        file_url = 'http://testserver/media/profile_images/test_image.jpg'
+
+        # Simulate the file removal
+        request = self.factory.post('/fake-url/', {})
+        remove_file(request, file_url)
+
+        # Assert that the file removal was called
+        mock_exists.assert_called_once_with('profile_images/test_image.jpg')
+        mock_remove.assert_called_once_with(os.path.join(settings.MEDIA_ROOT, 'profile_images/test_image.jpg'))
+
+    @patch('django.core.files.storage.default_storage.exists')
+    def test_remove_file_not_found(self, mock_exists):
+        """Test file removal when file doesn't exist"""
+
+        # Set up the mock to simulate the file not existing
+        mock_exists.return_value = False
+
+        # Define the file URL to be removed
+        file_url = 'http://testserver/media/profile_images/test_image.jpg'
+
+        # Simulate the file removal
+        request = self.factory.post('/update-profile/', {})
+        remove_file(request, file_url)
+
+        # Assert that the remove_file function did not attempt to remove a file
+        mock_exists.assert_called_once_with('profile_images/test_image.jpg')
+
     def test_send_phone_message(self):
         self.assertEqual(self.user.nbr_phone_number_verification_code_used, 0)
         response = send_phone_message("test", ["+212612505257"])
@@ -231,4 +273,23 @@ class LeaguerUtilsTest(TestCase):
         self.user = User.objects.get(pk=self.user.id)
         self.assertEqual(self.user.nbr_phone_number_verification_code_used, 0)
 
+    @patch('django.core.files.storage.default_storage.save')
+    def test_upload_file(self, mock_save):
+        # Create a fake image file (for the test)
+        test_file = SimpleUploadedFile(name='test_image.jpg', content=b'fake_image_content', content_type='image/jpeg')
+
+        # Mock the `save` method to simulate file saving
+        mock_save.return_value = 'profile_images/profile_test_image.jpg'
+
+        # Simulate request with the file
+        request = self.factory.post('/fake-url/', {})
+        file_url, file_path = upload_file(request, test_file, 'profile_images', prefix="profile_")
+
+        # Assert that the file URL and path are correct
+        self.assertEqual(file_url, f'{request.build_absolute_uri(settings.MEDIA_URL)}profile_images/profile_test_image.jpg')
+        self.assertEqual(file_path, 'profile_images/profile_test_image.jpg')
+
+        file_url, file_path = upload_file(request, None, 'profile_images', prefix="profile_")
+        self.assertIsNone(file_url)
+        self.assertIsNone(file_path)
 

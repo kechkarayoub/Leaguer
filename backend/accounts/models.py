@@ -99,6 +99,7 @@ class User(AbstractUser):
             "user_phone_number": self.user_phone_number,
             "user_phone_number_to_verify": self.user_phone_number_to_verify,
             "user_timezone": self.user_timezone,
+            "username": self.username,
         }
 
     @classmethod

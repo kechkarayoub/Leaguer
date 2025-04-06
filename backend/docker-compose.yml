@@ -28,7 +28,8 @@ services:
     depends_on:
       - postgres
     container_name: backend_container
-    command: python manage.py runserver 0.0.0.0:${DJANGO_CONTAINER_INTERNAL_PORT}
+#    command: python manage.py runserver 0.0.0.0:${DJANGO_CONTAINER_INTERNAL_PORT}
+    command: tail -f /dev/null
     environment:
       - DATABASE_URL=postgres://${DB_USER_NM}:${DB_USER_PW}@postgres:${DB_CONTAINER_INTERNAL_PORT}/${DB_NAME}
     #  - PIPLINE=${PIPLINE}
