@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:frontend/components/custom_text_field.dart';
+import 'package:frontend/components/custom_password_field.dart';
+import 'package:frontend/l10n/l10n.dart';
 import '../mocks/test_helper.dart';
 
 void main() {
@@ -20,140 +21,89 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: CustomTextFormField(
+          body: CustomPasswordFormField(
             controller: controller,
-            labelKey: 'test_label',
+            labelKey: 'password',
             l10n: mockL10n,
-            obscureText: false,
           ),
         ),
       ),
     );
 
-    expect(find.byType(TextFormField), findsOneWidget);
-    final textField = tester.widget<CustomTextFormField>(find.byType(CustomTextFormField));
-    expect(textField.obscureText, isFalse);
+    expect(find.byType(CustomPasswordFormField), findsOneWidget);
+    expect(find.byType(TextField), findsOneWidget);
+    expect(find.byIcon(Icons.visibility), findsOneWidget);
+  });
+
+  testWidgets('Toggles password visibility when eye icon is pressed', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CustomPasswordFormField(
+            controller: controller,
+            labelKey: 'password',
+            l10n: mockL10n,
+          ),
+        ),
+      ),
+    );
+
+    // Initially obscured
+    final textField = tester.widget<TextField>(find.byType(TextField));
+    expect(textField.obscureText, isTrue);
+    expect(find.byIcon(Icons.visibility), findsOneWidget);
+
+    // Tap the visibility toggle
+    await tester.tap(find.byType(IconButton));
+    await tester.pump();
+
+    // Now visible
+    final updatedTextField = tester.widget<TextField>(find.byType(TextField));
+    expect(updatedTextField.obscureText, isFalse);
+    expect(find.byIcon(Icons.visibility_off), findsOneWidget);
+  });
+
+  testWidgets('Passes through properties to CustomTextFormField', (WidgetTester tester) async {
+    const testErrorText = 'Invalid password';
+    const testHintText = 'Enter password';
+    var onChangedCalled = false;
+    var onTapCalled = false;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CustomPasswordFormField(
+            controller: controller,
+            labelKey: 'password',
+            l10n: mockL10n,
+            errorText: testErrorText,
+            hintText: testHintText,
+            onChanged: (value) => onChangedCalled = true,
+            onTap: () => onTapCalled = true,
+            enabled: true,
+            readOnly: false,
+          ),
+        ),
+      ),
+    );
+
+    // Verify properties are passed through
+    final textField = tester.widget<TextField>(find.byType(TextField));
     expect(textField.enabled, isTrue);
     expect(textField.readOnly, isFalse);
-    expect(find.text('test_label'), findsOneWidget);
+    expect(textField.decoration!.errorText, testErrorText);
+    expect(textField.decoration!.hintText, testHintText);
+
+    // Test onChanged
+    await tester.enterText(find.byType(TextField), 'test');
+    expect(onChangedCalled, isTrue);
+
+    // Test onTap
+    await tester.tap(find.byType(TextField));
+    expect(onTapCalled, isTrue);
   });
 
-  testWidgets('Displays label and hint text', 
-      (WidgetTester tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: CustomTextFormField(
-            controller: controller,
-            labelKey: 'username',
-            l10n: mockL10n,
-            hintText: 'hint_username',
-          ),
-        ),
-      ),
-    );
-
-    expect(find.text('username'), findsOneWidget);
-    expect(find.text('hint_username'), findsOneWidget);
-  });
-
-  testWidgets('Shows error text when provided', (WidgetTester tester) async {
-    const errorText = 'Invalid input';
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: CustomTextFormField(
-            controller: controller,
-            labelKey: 'test_label',
-            l10n: mockL10n,
-            errorText: errorText,
-          ),
-        ),
-      ),
-    );
-
-    expect(find.text(errorText), findsOneWidget);
-  });
-
-  testWidgets('Handles onChanged callback', (WidgetTester tester) async {
-    var callbackCalled = false;
-    String? callbackValue;
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: CustomTextFormField(
-            controller: controller,
-            labelKey: 'test_label',
-            l10n: mockL10n,
-            onChanged: (value) {
-              callbackCalled = true;
-              callbackValue = value;
-            },
-          ),
-        ),
-      ),
-    );
-
-    await tester.enterText(find.byType(TextFormField), 'test input');
-    expect(callbackCalled, isTrue);
-    expect(callbackValue, 'test input');
-  });
-
-  testWidgets('Handles onTap callback', (WidgetTester tester) async {
-    var callbackCalled = false;
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: CustomTextFormField(
-            controller: controller,
-            labelKey: 'test_label',
-            l10n: mockL10n,
-            onTap: () {
-              callbackCalled = true;
-            },
-          ),
-        ),
-      ),
-    );
-
-    await tester.tap(find.byType(TextFormField));
-    expect(callbackCalled, isTrue);
-  });
-
-  testWidgets('Respects enabled and readOnly properties', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Column(
-            children: [
-              CustomTextFormField(
-                controller: controller,
-                labelKey: 'disabled_field',
-                l10n: mockL10n,
-                enabled: false,
-              ),
-              CustomTextFormField(
-                controller: controller,
-                labelKey: 'readonly_field',
-                l10n: mockL10n,
-                readOnly: true,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-
-    final textFields = tester.widgetList<CustomTextFormField>(find.byType(CustomTextFormField));
-    expect(textFields.first.enabled, isFalse);
-    expect(textFields.last.readOnly, isTrue);
-  });
-
-  testWidgets('Uses custom validator when provided', 
-      (WidgetTester tester) async {
+  testWidgets('Uses custom validator when provided', (WidgetTester tester) async {
     const errorText = 'Custom validation error';
     
     String? validator(String? value) {
@@ -166,9 +116,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: CustomTextFormField(
+          body: CustomPasswordFormField(
             controller: controller,
-            labelKey: 'test_label',
+            labelKey: 'password',
             l10n: mockL10n,
             validator: validator,
           ),
@@ -176,47 +126,29 @@ void main() {
       ),
     );
 
-    final formField = tester.widget<TextFormField>(find.byType(TextFormField));
+    // Trigger validation with empty text
+    final formField = tester.widget<FormField<String>>(find.byType(TextFormField));
     final validationResult = formField.validator?.call('');
     expect(validationResult, errorText);
   });
 
-  testWidgets('Displays suffix icon when provided', 
-      (WidgetTester tester) async {
-    const testIcon = Icons.search;
+  testWidgets('Shows errorText when provided', (WidgetTester tester) async {
+    const errorText = 'Password is required';
 
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: CustomTextFormField(
-            controller: controller,
-            labelKey: 'test_label',
-            l10n: mockL10n,
-            suffixIcon: const Icon(testIcon),
-          ),
-        ),
-      ),
-    );
-
-    expect(find.byIcon(testIcon), findsOneWidget);
-  });
-
-  testWidgets('Handles obscureText property', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: CustomTextFormField(
+          body: CustomPasswordFormField(
             controller: controller,
             labelKey: 'password',
             l10n: mockL10n,
-            obscureText: true,
+            errorText: errorText,
           ),
         ),
       ),
     );
 
-    final textField = tester.widget<CustomTextFormField>(find.byType(CustomTextFormField));
-    expect(textField.obscureText, isTrue);
+    expect(find.text(errorText), findsOneWidget);
   });
 
 }
