@@ -1,5 +1,7 @@
 
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -18,6 +20,7 @@ void main() async{
   late ThirdPartyAuthService thirdPartyAuthService;
   late MockFirebaseAuth mockAuth;
   late MockGoogleSignIn mockGoogleSignIn;
+  late MockDio mockDio;
   // Initialize flutter_dotenv for tests
   await dotenv.load(fileName: ".env");
   
@@ -98,6 +101,203 @@ void main() async{
       if (await compressedJpg.exists()) {
         await compressedJpg.delete();
       }
+    });
+  });
+
+  group('createXFileFromUrl', () {
+    const testUrl = 'https://example.com/testfile.jpg';
+    final testBytes = Uint8List.fromList([1, 2, 3, 4, 5]);
+    setUp(() async{
+      mockDio = MockDio();
+      // ✅ Stub `options` to prevent "MissingStubError: options"
+      when(mockDio.options).thenReturn(BaseOptions());
+    });
+    test('Successfully downloads file with custom name', () async {
+      // Arrange
+      when(mockDio.get<List<int>>(
+        testUrl,
+        options: anyNamed('options'),
+        onReceiveProgress: anyNamed('onReceiveProgress'),
+      )).thenAnswer((_) async => Response(
+        data: testBytes,
+        statusCode: 200,
+        requestOptions: RequestOptions(path: ''),
+        headers: Headers.fromMap({
+          'content-type': ['image/jpeg'],
+        }),
+      ));
+
+      // Act
+      final result = await createXFileFromUrl(
+        testUrl,
+        name: 'custom.jpg',
+        dioInstance: mockDio,
+      );
+
+      // Assert
+      expect(result, isNotNull);
+      expect(result!.path.endsWith('custom.jpg'), isTrue);
+      expect(await result.length(), testBytes.length);
+    });
+
+    test('Extracts filename from Content-Disposition header', () async {
+      // Arrange
+      when(mockDio.get<List<int>>(
+        testUrl,
+        options: anyNamed('options'),
+        onReceiveProgress: anyNamed('onReceiveProgress'),
+      )).thenAnswer((_) async => Response(
+        data: testBytes,
+        statusCode: 200,
+        requestOptions: RequestOptions(path: ''),
+        headers: Headers.fromMap({
+          'content-disposition': ['attachment; filename="realname.jpg"'],
+          'content-type': ['image/jpeg'],
+        }),
+      ));
+
+      // Act
+      final result = await createXFileFromUrl(
+        testUrl,
+        dioInstance: mockDio,
+      );
+
+      // Assert
+      expect(result!.path.endsWith('realname.jpg'), isTrue);
+    });
+
+    test('Extracts filename from URL when no headers', () async {
+      // Arrange
+      when(mockDio.get<List<int>>(
+        testUrl,
+        options: anyNamed('options'),
+        onReceiveProgress: anyNamed('onReceiveProgress'),
+      )).thenAnswer((_) async => Response(
+        data: testBytes,
+        statusCode: 200,
+        requestOptions: RequestOptions(path: ''),
+      ));
+
+      // Act
+      final result = await createXFileFromUrl(
+        testUrl,
+        dioInstance: mockDio,
+      );
+
+      // Assert
+      expect(result!.path.endsWith('testfile.jpg'), isTrue);
+    });
+
+    test('Returns null for empty response', () async {
+      // Arrange
+      when(mockDio.get<List<int>>(
+        testUrl,
+        options: anyNamed('options'),
+        onReceiveProgress: anyNamed('onReceiveProgress'),
+      )).thenAnswer((_) async => Response(
+        data: null,
+        statusCode: 200,
+        requestOptions: RequestOptions(path: ''),
+      ));
+
+      // Act
+      final result = await createXFileFromUrl(
+        testUrl,
+        dioInstance: mockDio,
+      );
+
+      // Assert
+      expect(result, isNull);
+    });
+
+    test('Handles Dio errors and returns null', () async {
+      // Arrange
+      when(mockDio.get<List<int>>(
+        testUrl,
+        options: anyNamed('options'),
+        onReceiveProgress: anyNamed('onReceiveProgress'),
+      )).thenThrow(DioException(
+        requestOptions: RequestOptions(path: ''),
+      ));
+
+      // Act
+      final result = await createXFileFromUrl(
+        testUrl,
+        dioInstance: mockDio,
+      );
+
+      // Assert
+      expect(result, isNull);
+    });
+
+    test('Throws ArgumentError for empty URL', () async {
+      // Act & Assert
+      expect(() => createXFileFromUrl(''), throwsArgumentError);
+    });
+
+  
+  });
+
+  group('ReadStreamToBytes', () {
+    test('Converts single-chunk stream correctly', () async {
+      final stream = Stream<List<int>>.fromIterable([
+        [1, 2, 3, 4, 5]
+      ]);
+
+      final result = await readStreamToBytes(stream);
+      expect(result, equals(Uint8List.fromList([1, 2, 3, 4, 5])));
+    });
+
+    test('Combines multiple chunks correctly', () async {
+      final stream = Stream<List<int>>.fromIterable([
+        [1, 2],
+        [3, 4],
+        [5]
+      ]);
+
+      final result = await readStreamToBytes(stream);
+      expect(result, equals(Uint8List.fromList([1, 2, 3, 4, 5])));
+    });
+
+    test('Handles empty stream', () async {
+      final stream = Stream<List<int>>.fromIterable([]);
+      final result = await readStreamToBytes(stream);
+      expect(result, equals(Uint8List(0)));
+    });
+
+    test('Handles large streams efficiently', () async {
+      // Generate 1MB of test data in 100 chunks
+      final chunks = List.generate(100, (i) => List<int>.filled(1024 * 10, i % 256));
+      final stream = Stream<List<int>>.fromIterable(chunks);
+
+      final stopwatch = Stopwatch()..start();
+      final result = await readStreamToBytes(stream);
+      stopwatch.stop();
+
+      expect(result.length, equals(1024 * 10 * 100));
+      logMessage('Processed 1MB in ${stopwatch.elapsedMilliseconds}ms', "ReadStreamToBytes", 'd', "", true);
+    });
+
+    test('Throws on null stream', () async {
+      expect(() => readStreamToBytes(null), throwsArgumentError);
+    });
+
+    test('Propagates stream errors', () async {
+      final stream = Stream<List<int>>.error(Exception('Test error'));
+      expect(readStreamToBytes(stream), throwsException);
+    });
+
+    test('Handles empty chunks', () async {
+      final stream = Stream<List<int>>.fromIterable([
+        [],
+        [1, 2],
+        [],
+        [3, 4],
+        []
+      ]);
+
+      final result = await readStreamToBytes(stream);
+      expect(result, equals(Uint8List.fromList([1, 2, 3, 4])));
     });
   });
 

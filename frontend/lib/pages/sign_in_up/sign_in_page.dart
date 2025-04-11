@@ -7,12 +7,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/api/unauthenticated_api_service.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/pages/sign_in_up/sign_up_page.dart';
+import 'package:frontend/pages/dashboard/dashboard.dart';
 import 'package:frontend/storage/storage.dart';
 import 'package:frontend/utils/utils.dart';
 import 'package:frontend/utils/components.dart';
 
 class SignInPage extends StatefulWidget {
-  static const routeName = '/sign-in';
+  static const routeName = routeSignIn;
   final L10n l10n;
   final SecureStorageService secureStorageService;
   final StorageService storageService;
@@ -76,6 +77,16 @@ class SignInPageState extends State<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
+    // // Handle null user session using post-frame callback
+    // final userSession = await widget.storageService.get('user');
+    // if (userSession != null) {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     if (mounted && !Navigator.of(context).userGestureInProgress) {
+    //       Navigator.pushReplacementNamed(context, routeSignIn);
+    //     }
+    //   });
+    //   return Scaffold(body: Center(child: CircularProgressIndicator()));
+    // }
     String currentLanguage = Localizations.localeOf(context).languageCode;
     // Extract the email parameter if available from the previous screen
     final arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
@@ -149,7 +160,7 @@ class SignInPageState extends State<SignInPage> {
                           });
                           if (_formKey.currentState!.validate()) {
                             // Perform the sign-in logic
-                            signInUser(widget.storageService, currentLanguage, widget.secureStorageService);
+                            signInUser(widget.storageService, currentLanguage, widget.secureStorageService, context: context);
                           }
                         },
                         child: Row(
@@ -219,7 +230,7 @@ class SignInPageState extends State<SignInPage> {
                         child: TextButton(
                           key: Key('googleSignInButton'),
                           onPressed: _isSignInApiSent || _isSignInThirdPartyApiSent ? null : () {
-                            thirdPrtySignIn("google", widget.storageService, currentLanguage, widget.secureStorageService);
+                            thirdPrtySignIn("google", widget.storageService, currentLanguage, widget.secureStorageService, context: context);
                           },
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -312,7 +323,7 @@ class SignInPageState extends State<SignInPage> {
 
 
   // Function to handle user sign-in
-  void signInUser(StorageService storageService, String currentLanguage, SecureStorageService secureStorageService, {Dio? dio}) async {
+  void signInUser(StorageService storageService, String currentLanguage, SecureStorageService secureStorageService, {Dio? dio, BuildContext? context}) async {
   
     final emailOrUsername = _emailUsernameController.text;
     final password = _passwordController.text;
@@ -343,6 +354,12 @@ class SignInPageState extends State<SignInPage> {
         });
         widget.secureStorageService.saveTokens(response["access_token"], response["refresh_token"]);
         widget.storageService.set(key: 'user', obj: response["user"], updateNotifier: true);
+        if (context != null && context.mounted) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            //Navigator.pushReplacementNamed(context, routeDashboard);
+            Navigator.pushNamed(context, routeDashboard);
+          });
+        }
       }
       else if(!response["success"] && response["message"] != null){
         setState(() {
@@ -383,7 +400,7 @@ class SignInPageState extends State<SignInPage> {
   /// - [currentLanguage]: The current language for localization.
   /// - [secureStorageService]: The secure storage service for saving tokens.
   /// - [dio]: Optional Dio client for HTTP requests.
-  void thirdPrtySignIn(String typeThirdPartyApiSent, StorageService storageService, String currentLanguage, SecureStorageService secureStorageService, {Dio? dio}) async {
+  void thirdPrtySignIn(String typeThirdPartyApiSent, StorageService storageService, String currentLanguage, SecureStorageService secureStorageService, {Dio? dio, BuildContext? context}) async {
   
     dio ??= Dio(); // Use default client if none is provided
     setState(() {
@@ -428,6 +445,12 @@ class SignInPageState extends State<SignInPage> {
               });
               widget.secureStorageService.saveTokens(response["access_token"], response["refresh_token"]);
               widget.storageService.set(key: 'user', obj: response["user"], updateNotifier: true);
+              if (context != null && context.mounted) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  //Navigator.pushReplacementNamed(context, routeDashboard);
+                  Navigator.pushNamed(context, routeDashboard);
+                });
+              }
             }
             else if(!response["success"] && response["message"] != null){
               await _thirdPartyAuthService.signOut();

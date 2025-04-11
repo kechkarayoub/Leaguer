@@ -7,14 +7,14 @@ void main() {
     testWidgets('Renders with default properties', (WidgetTester tester) async {
       // Arrange
       const initials = 'AB';
-      const initialsBgColors = '#FF5733';
+      const userInitialsBgColor = '#FF5733';
 
       // Act
       await tester.pumpWidget(const MaterialApp(
         home: Scaffold(
           body: InitialsAvatar(
             initials: initials,
-            initialsBgColors: initialsBgColors,
+            userInitialsBgColor: userInitialsBgColor,
           ),
         ),
       ));
@@ -38,7 +38,7 @@ void main() {
     testWidgets('Applies custom width, height, and shape', (WidgetTester tester) async {
       // Arrange
       const initials = 'XY';
-      const initialsBgColors = '#3498DB';
+      const userInitialsBgColor = '#3498DB';
       const customWidth = 150.0;
       const customHeight = 120.0;
 
@@ -47,7 +47,7 @@ void main() {
         home: Scaffold(
           body: InitialsAvatar(
             initials: initials,
-            initialsBgColors: initialsBgColors,
+            userInitialsBgColor: userInitialsBgColor,
             width: customWidth,
             height: customHeight,
             shape: BoxShape.rectangle,
@@ -71,7 +71,7 @@ void main() {
     testWidgets('Uses custom text style', (WidgetTester tester) async {
       // Arrange
       const initials = 'CD';
-      const initialsBgColors = '#2ECC71';
+      const userInitialsBgColor = '#2ECC71';
       const customTextStyle = TextStyle(
         color: Colors.black,
         fontSize: 30,
@@ -83,7 +83,7 @@ void main() {
         home: Scaffold(
           body: InitialsAvatar(
             initials: initials,
-            initialsBgColors: initialsBgColors,
+            userInitialsBgColor: userInitialsBgColor,
             textStyle: customTextStyle,
           ),
         ),

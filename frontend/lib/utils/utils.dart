@@ -1,7 +1,9 @@
 
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
+import 'dart:typed_data'; // Add this import for Uint8List
+import 'package:cross_file/cross_file.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/api/unauthenticated_api_service.dart';
@@ -10,15 +12,23 @@ import 'package:image/image.dart' as img;
 import 'package:logger/logger.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 
 final logger = Logger();
 
+
+/// Global key to access the current context if not passed
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 // Regular expressions for input validation
 final RegExp alphNumUnderscoreRegExp = RegExp(r'^[a-zA-Z][a-zA-Z0-9_]*$');
 const String dateFormatLabel = 'YYYY-MM-DD';
 const String dateFormat = 'yyyy-MM-dd';
 const String defaultLanguage = "fr";
+const String routeDashboard = '/dashboard';
+const String routeProfile = '/profile';
+const String routeSignIn = '/sign-in';
+const String routeSignUp = '/sign-up';
 final RegExp emailRegExp = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
 final RegExp letterStartRegExp = RegExp(r'^[a-zA-Z]');
 final RegExp nameRegExp = RegExp(r"^[a-zA-ZÀ-ÿ\s-]+$");
@@ -49,6 +59,10 @@ String getInitials(String lastName, String firstName) {
 
   // Concatenate and return
   return lastNameInitial + firstNameInitial;
+}
+
+String getMimeType(String? filePath) {
+  return lookupMimeType(filePath!) ?? 'image/jpeg';
 }
 
 
@@ -151,11 +165,115 @@ Future<File> compressAndResizeImage(File originalImage, {int? width, int? height
 }
 
 
+/// Creates an [XFile] from a remote URL by downloading the file.
+///
+/// This function handles:
+/// - Network requests with timeout
+/// - Proper filename extraction from URL or headers
+/// - Memory-efficient file handling
+/// - Progress reporting
+///
+/// Parameters:
+///   - [url]: The remote file URL (required)
+///   - [name]: Custom filename (optional)
+///   - [dioInstance]: Custom Dio client (optional)
+///   - [onReceiveProgress]: Download progress callback (optional)
+///   - [timeoutSeconds]: Request timeout in seconds (default: 15)
+///
+/// Returns:
+///   - [XFile] if download succeeds
+///   - `null` if download fails or response is empty
+///
+/// Throws:
+///   - [ArgumentError] for invalid URL
+///   - [DioException] for network errors (handled internally)
+Future<XFile?> createXFileFromUrl(
+  String url, {
+  String? name,
+  Dio? dioInstance,
+  ProgressCallback? onReceiveProgress,
+  int timeoutSeconds = 15,
+}) async {
+  // Validate URL
+  if (url.isEmpty) {
+    throw ArgumentError('URL cannot be empty');
+  }
+
+  final dio = dioInstance ?? Dio()
+    ..options.connectTimeout = Duration(seconds: timeoutSeconds)
+    ..options.receiveTimeout = Duration(seconds: timeoutSeconds);
+
+  try {
+    // Download file
+    final response = await dio.get<List<int>>(
+      url,
+      options: Options(
+        responseType: ResponseType.bytes,
+        followRedirects: true,
+        maxRedirects: 5,
+      ),
+      onReceiveProgress: onReceiveProgress,
+    );
+
+
+    // Validate response
+    if (response.data == null || response.data!.isEmpty) {
+      logMessage('Empty response from $url', 'createXFileFromUrl', 'w');
+      return null;
+    }
+
+    // Convert List<int> to Uint8List
+    final fileData = Uint8List.fromList(response.data!);
+    
+    final fileName = name ?? _extractFilenameFromUrl(url, response);
+    Directory tempDir;
+    try {
+      tempDir = await getTemporaryDirectory(); // Flutter context
+    } catch (_) {
+      tempDir = Directory.systemTemp; // Fallback for tests
+    }
+    final filePath = '${tempDir.path}/$fileName';
+    final file = File(filePath);
+    await file.writeAsBytes(fileData);
+    return XFile(file.path, name: fileName, mimeType: response.headers.value('content-type'));
+  } on DioException catch (e) {
+    logMessage('Failed to download file from $url: ${e.message}', 'createXFileFromUrl', 'e');
+    return null;
+  } catch (e) {
+    logMessage('Unexpected error downloading $url: $e', 'createXFileFromUrl', 'e');
+    return null;
+  }
+}
+
+String _extractFilenameFromUrl(String url, Response<List<int>> response) {
+  // Try from Content-Disposition header first
+  final contentDisposition = response.headers.value('content-disposition');
+  if (contentDisposition != null) {
+    // final filenameMatch = RegExp('filename="?(.+)"?').firstMatch(contentDisposition);
+    final filenameMatch = RegExp('filename\\*?=[\\\'"]?(?:UTF-\\d[\\\'"]*)?([^\\\'"\\s;]*)').firstMatch(contentDisposition) ??  
+    RegExp('filename=[\\\'"]?([^\\\'"\\s;]*)').firstMatch(contentDisposition);
+    if (filenameMatch != null && filenameMatch.group(1)!.isNotEmpty) {
+      return filenameMatch.group(1)!;
+    }
+  }
+
+  // Fallback to URL path segments
+  try {
+    final pathSegments = Uri.parse(url).pathSegments;
+    if (pathSegments.isNotEmpty) {
+      return pathSegments.last;
+    }
+  } catch (_) {}
+
+  // Default name if all else fails
+  return 'download_${DateTime.now().millisecondsSinceEpoch}';
+}
+
 /// Logs out the user by clearing the storage and possibly navigating to a login page.
 /// [secureStorageService] - The service used for clearing user data.
 /// [storageService] - The service used for clearing user data.
 /// [context] - The build context, used for navigation (if needed).
-Future<void> logout(StorageService storageService, SecureStorageService secureStorageService, BuildContext context, [ThirdPartyAuthService? thirdPartyAuthService]) async {
+Future<void> logout(StorageService storageService, SecureStorageService secureStorageService, BuildContext? context, [ThirdPartyAuthService? thirdPartyAuthService]) async {
   // Clear all user data stored in storage
   await secureStorageService.clearTokens();
   await storageService.clear();
@@ -167,7 +285,23 @@ Future<void> logout(StorageService storageService, SecureStorageService secureSt
     // Error when log out or not login with third party auth service.
     logMessage(e, "Error when log out from third party auth service", "e");
   }
-  //Navigator.pushReplacementNamed(context, '/sign-in');
+  storageService.set(key: 'user', obj: null, updateNotifier: true);
+  
+  if (context?.mounted ?? false) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.of(context!).pushNamedAndRemoveUntil(
+        routeSignIn,
+        (Route<dynamic> route) => false,
+      );
+    });
+  } else if (navigatorKey.currentContext != null) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.of(navigatorKey.currentContext!).pushNamedAndRemoveUntil(
+        routeSignIn,
+        (Route<dynamic> route) => false,
+      );
+    });
+  }
 }
 
 
@@ -230,4 +364,68 @@ String determineMimeType(String path, {Uint8List? imageBytes}) {
   }
   // Default to image/jpeg if no mime type can be determined
   return 'image/jpeg';
+}
+
+
+  
+  // // Helper method to convert stream to bytes
+  // Future<Uint8List> readStreamToBytes(Stream<List<int>> stream) async {
+  //   final chunks = <List<int>>[];
+  //   await for (final chunk in stream) {
+  //     chunks.add(chunk);
+  //   }
+  //   return Uint8List.fromList(chunks.expand((x) => x).toList());
+  // }
+
+/// Converts a stream of byte chunks into a single [Uint8List].
+///
+/// This helper method is useful for converting streaming data (like file uploads
+/// or network responses) into a contiguous byte array that can be processed
+/// as a whole.
+///
+/// Parameters:
+///   - [stream]: The input stream of byte chunks (List<int>)
+///
+/// Returns:
+///   A [Future<Uint8List>] that completes with all stream data combined
+///
+/// Throws:
+///   - Propagates any errors from the stream
+///   - May throw [StateError] if the stream is malformed
+///
+/// Example:
+/// ```dart
+/// final fileStream = File('example.txt').openRead();
+/// final bytes = await readStreamToBytes(fileStream);
+/// ```
+Future<Uint8List> readStreamToBytes(Stream<List<int>>? stream) async {
+  // Validate the stream isn't null
+  ArgumentError.checkNotNull(stream, 'stream');
+
+  final chunks = <List<int>>[];
+  int totalLength = 0;
+
+  try {
+    await for (final chunk in stream!) {
+      chunks.add(chunk);
+      totalLength += chunk.length;
+    }
+
+    // Optimize for single-chunk case
+    if (chunks.length == 1) {
+      return Uint8List.fromList(chunks.single);
+    }
+
+    // Combine all chunks efficiently
+    final result = Uint8List(totalLength);
+    int offset = 0;
+    for (final chunk in chunks) {
+      result.setRange(offset, offset + chunk.length, chunk);
+      offset += chunk.length;
+    }
+
+    return result;
+  } catch (e) {
+    throw Exception('Failed to convert stream to bytes: $e');
+  }
 }

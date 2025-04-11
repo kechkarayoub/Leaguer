@@ -9,6 +9,7 @@ import 'package:frontend/components/connection_status_bar.dart';
 import 'package:frontend/components/wakelock_service.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/pages/dashboard/dashboard.dart';
+import 'package:frontend/pages/profile/profile.dart';
 import 'package:frontend/pages/sign_in_up/sign_in_page.dart';
 import 'package:frontend/pages/sign_in_up/sign_up_page.dart';
 import 'package:frontend/storage/storage.dart';
@@ -20,6 +21,8 @@ void enablePlatformOverrideForDesktop() {
     debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
   }
 }
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 /// Main entry point of the application.
 void main() async {
@@ -94,6 +97,7 @@ class MyApp extends StatelessWidget {
         String currentLanguage = storage['current_language'] ?? defaultLanguage;
         String appName = dotenv.env['APP_NAME'] ?? 'App';
         return MaterialApp(
+          navigatorKey: navigatorKey,
           builder: (context, child) {
             return Scaffold(
               appBar: AppBar(
@@ -127,6 +131,9 @@ class MyApp extends StatelessWidget {
           // Route configurations
           routes: {
             DashboardPage.routeName: (context) => DashboardPage(
+              l10n: l10n, userSession: userSession, storageService: storageService, secureStorageService: secureStorageService
+            ),
+            ProfilePage.routeName: (context) => ProfilePage(
               l10n: l10n, userSession: userSession, storageService: storageService, secureStorageService: secureStorageService
             ),
             SignInPage.routeName: (context) => SignInPage(

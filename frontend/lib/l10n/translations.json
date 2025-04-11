@@ -29,15 +29,30 @@
     "en": "An error occurred when sign up! Please try later.",
     "fr": "Une erreur est survenue lors de l'inscription ! Veuillez réessayer plus tard."
   },
+  "An error occurred while updating profile information. Please try again later.": {
+    "ar": "حدث خطأ أثناء تحديث معلومات الملف الشخصي. يرجى المحاولة مرة أخرى لاحقًا.",
+    "en": "An error occurred while updating profile information. Please try again later.",
+    "fr": "Une erreur est survenue lors de la mise à jour des informations du profil. Veuillez réessayer plus tard."
+  },
   "An unknown error occurred during sign-in. Please contact the technical team to resolve your issue.": {
     "ar": "حدث خطأ غير معروف أثناء تسجيل الدخول. يرجى التواصل مع الفريق التقني لحل مشكلتك.",
     "en": "An unknown error occurred during sign-in. Please contact the technical team to resolve your issue.",
     "fr": "Une erreur inconnue s'est produite lors de la connexion. Veuillez contacter l'équipe technique pour résoudre votre problème."
   },
+  "An unknown error occurred during the profile update. Please contact the technical team to resolve the issue.": {
+    "ar": "حدث خطأ غير معروف أثناء تحديث الملف الشخصي. يرجى الاتصال بالفريق الفني لحل المشكلة.",
+    "en": "An unknown error occurred during the profile update. Please contact the technical team to resolve the issue.",
+    "fr": "Une erreur inconnue s'est produite lors de la mise à jour du profil. Veuillez contacter l'équipe technique pour résoudre le problème."
+  },
   "An unknown error occurred while resending the verification email link. Please contact the technical team to resolve your issue.": {
     "ar": "حدث خطأ غير معروف أثناء إعادة إرسال رابط التحقق عبر البريد الإلكتروني. يرجى التواصل مع الفريق التقني لحل مشكلتك.",
     "en": "An unknown error occurred while resending the verification email link. Please contact the technical team to resolve your issue.",
     "fr": "Une erreur inconnue s'est produite lors de la réexpédition du lien de vérification par e-mail. Veuillez contacter l'équipe technique pour résoudre votre problème."
+  },
+  "An unknown conflict error occurred during the profile update. Please contact the technical team to resolve this issue.": {
+    "ar": "حدث خطأ تعارض غير معروف أثناء تحديث الملف الشخصي. يُرجى الاتصال بالفريق التقني لحل هذه المشكلة.",
+    "en": "An unknown conflict error occurred during the profile update. Please contact the technical team to resolve this issue.",
+    "fr": "Une erreur de conflit inconnue s'est produite lors de la mise à jour du profil. Veuillez contacter l'équipe technique pour résoudre ce problème."
   },
   "Birthday": {
     "ar": "تاريخ الميلاد",
@@ -68,6 +83,11 @@
     "ar": "انتهت مهلة الاتصال. يرجى التحقق من اتصالك بالإنترنت.",
     "en": "Connection timeout. Please check your internet connection.",
     "fr": "Délai de connexion dépassé. Veuillez vérifier votre connexion Internet."
+  },
+  "Current password": {
+    "ar": "كلمة المرور الحالية",
+    "en": "Current password",
+    "fr": "Mot de passe actuel"
   },
   "Don't have an account? Sign up": {
     "ar": "ليس لديك حساب؟ قم بالتسجيل",
@@ -164,6 +184,11 @@
     "en": "Menu",
     "fr": "Menu"
   },
+  "New password": {
+    "ar": "كلمة المرور الجديدة",
+    "en": "New password",
+    "fr": "Nouveau mot de passe"
+  },
   "Oops! You're Offline. Attempting to reconnect....": {
     "ar": "عذرًا! أنت غير متصل. جاري إعادة الاتصال...",
     "en": "Oops! You're Offline. Attempting to reconnect....",
@@ -209,6 +234,16 @@
     "en": "Please enter your last name",
     "fr": "Veuillez entrer votre nom de famille"
   },
+  "Please enter your current password": {
+    "ar": "المرجو إدخال كلمة المرور الحالية",
+    "en": "Please enter your current password",
+    "fr": "Veuillez entrer votre mot de passe actuel"
+  },
+  "Please enter your new password": {
+    "ar": "المرجو إدخال كلمة المرور الجديدة",
+    "en": "Please enter your new password",
+    "fr": "Veuillez entrer votre nouveau mot de passe"
+  },
   "Please enter your password": {
     "ar": "المرجو إدخال كلمة المرور",
     "en": "Please enter your password",
@@ -229,10 +264,25 @@
     "en": "Please select your gender",
     "fr": "Veuillez sélectionner votre genre"
   },
+  "Please re-enter your new password": {
+    "ar": "المرجو إعادة إدخال كلمة المرور الجديدة",
+    "en": "Please re-enter your new password",
+    "fr": "Veuillez saisir à nouveau votre nouveau mot de passe"
+  },
   "Please re-enter your password": {
     "ar": "المرجو إعادة إدخال كلمة المرور",
     "en": "Please re-enter your password",
     "fr": "Veuillez entrer à nouveau votre mot de passe"
+  },
+  "Profile": {
+    "ar": "الملف الشخصي",
+    "en": "Profile",
+    "fr": "Profil"
+  },
+  "Re-enter your new password": {
+    "ar": "أدخل كلمة المرور الجديدة مرة أخرى",
+    "en": "Re-enter your new password",
+    "fr": "Saisissez à nouveau votre nouveau mot de passe"
   },
   "Re-enter your password": {
     "ar": "أعد إدخال كلمة المرور",
@@ -264,6 +314,11 @@
     "en": "Server took too long to respond (Sign in). Please try again later.",
     "fr": "Le serveur a mis trop de temps à répondre (Connexion). Veuillez réessayer plus tard."
   },
+  "Server took too long to respond (Update profile). Please try again later.": {
+    "ar": "استغرق الخادم وقتًا طويلاً للرد (تحديث الملف الشخصي). يرجى المحاولة لاحقًا.",
+    "en": "Server took too long to respond (Update profile). Please try again later.",
+    "fr": "Le serveur a mis trop de temps à répondre (Mettre à jour le profil). Veuillez réessayer plus tard."
+  },
   "Sign In": {
     "ar": "تسجيل الدخول",
     "en": "Sign In",
@@ -284,6 +339,11 @@
     "en": "Take photo",
     "fr": "Prendre une photo"
   },
+  "The current password is incorrect, so the password has not been updated.": {
+    "ar": "كلمة المرور الحالية غير صحيحة، لذلك لم يتم تحديث كلمة المرور.",
+    "en": "The current password is incorrect, so the password has not been updated.",
+    "fr": "Le mot de passe actuel est incorrect, donc le mot de passe n'a pas été mis à jour."
+  },
   "The two passwords do not match": {
     "ar": "كلمتا المرور غير متطابقتان",
     "en": "The two passwords do not match",
@@ -293,6 +353,16 @@
     "ar": "خطأ تعارض غير معروف أثناء التسجيل. يرجى التواصل مع الفريق التقني لحل مشكلتك.",
     "en": "Unknown conflict error during sign-up. Please contact the technical team to resolve your issue.",
     "fr": "Erreur de conflit inconnue lors de l'inscription. Veuillez contacter l'équipe technique pour résoudre votre problème."
+  },
+  "Update password": {
+    "ar": "تحديث كلمة المرور",
+    "en": "Update password",
+    "fr": "Mettre à jour le mot de passe"
+  },
+  "Update profile": {
+    "ar": "تحديث الملف الشخصي",
+    "en": "Update profile",
+    "fr": "Mettre à jour le profil"
   },
   "Username": {
     "ar": "اسم المستخدم",

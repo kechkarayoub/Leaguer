@@ -1,41 +1,37 @@
+import 'dart:developer';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:frontend/api/unauthenticated_api_service.dart';
+import 'package:frontend/api/authenticated_api_service.dart';
 import 'package:frontend/components/gender_dropdown.dart';
 import 'package:frontend/components/image_picker.dart';
 import 'package:frontend/l10n/l10n.dart';
-import 'package:frontend/pages/sign_in_up/sign_in_page.dart';
 import 'package:frontend/storage/storage.dart';
 import 'package:frontend/utils/components.dart';
 import 'package:frontend/utils/utils.dart';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:http_parser/http_parser.dart';
 
 
-/// The SignUpPage is responsible for rendering the user registration form.
+/// The ProfilePage is responsible for rendering the user registration form.
 /// It contains form fields, validation, and an image picker for profile pictures.
-class SignUpPage extends StatefulWidget {
-  /// T
-  /// o
-  /// r
-  /// e
-  /// v
-  /// i
-  /// e
-  /// w
-  static const routeName = routeSignUp;
+class ProfilePage extends StatefulWidget {
+  static const routeName = routeProfile;
   final L10n l10n;
+  final dynamic userSession;
   final SecureStorageService secureStorageService;
   final StorageService storageService;
 
-  const SignUpPage({super.key, required this.l10n, required this.storageService, required this.secureStorageService});
+  const ProfilePage({super.key, required this.l10n, required this.userSession, required this.storageService, required this.secureStorageService});
 
   @override
-  SignUpPageState createState() => SignUpPageState();
+  ProfilePageState createState() => ProfilePageState();
 }
 
-class SignUpPageState extends State<SignUpPage> {
-  bool _isSignUpApiSent = false;  // Tracks if the API call is sent to prevent duplicate requests
+class ProfilePageState extends State<ProfilePage> {
+  bool _isProfileUpdateApiSent = false;  // Tracks if the API call is sent to prevent duplicate requests
   final _formKey = GlobalKey<FormState>(); // Form key for validation
 
   final DateFormat _dateFormat = DateFormat(dateFormat);
@@ -44,15 +40,21 @@ class SignUpPageState extends State<SignUpPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _passwordRepeatedController = TextEditingController();
+  final TextEditingController _currentPasswordController = TextEditingController();
+  final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _newPasswordRepeatedController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
-  
+
+  bool _dataInitialized = false;
+  bool _imageUpdated = false;  // Stores if image modified
+  bool _updatePassword = false;
   XFile? _selectedImage;  // Stores the selected image
   String initials = "";
   String userInitialsBgColor = getRandomHexColor();
+  String? _currentPasswordErrorMessage;  // Stores the error message (if any)
   String? _errorMessage;  // Stores the error message (if any)
   String? _selectedUserGender;  // Stores the selected gender
+  String? _successMessage;  // Stores the success
   String? _userBirthdayServerError;  // Stores the server error
   String? _emailServerError;  // Stores the server error
   String? _firstNameServerError;  // Stores the server error
@@ -64,7 +66,7 @@ class SignUpPageState extends State<SignUpPage> {
     DateTime now = DateTime.now();
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _userBirthdayController.text.isNotEmpty  ? _dateFormat.parse(_userBirthdayController.text) : DateTime(now.year - 24, now.month, now.day),
+      initialDate: _userBirthdayController.text.isNotEmpty  ? _dateFormat.parse(_userBirthdayController.text) : null,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
       locale: Localizations.localeOf(context), // Add localization
@@ -79,23 +81,55 @@ class SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Handle null user session using post-frame callback
+    if (widget.userSession == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !Navigator.of(context).userGestureInProgress) {
+          Navigator.pushReplacementNamed(context, routeSignIn);
+        }
+      });
+      return Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    
+    final AuthenticatedApiBackendService authenticatedApiBackendService = AuthenticatedApiBackendService(
+      secureStorageService: widget.secureStorageService,
+      storageService: widget.storageService,
+    );
     String currentLanguage = Localizations.localeOf(context).languageCode;
-    initials = getInitials(_lastNameController.text, _firstNameController.text);
+    if(!_dataInitialized){
+      _dataInitialized = true;
+      _lastNameController.text = widget.userSession["last_name"];
+      _firstNameController.text = widget.userSession["first_name"];
+      _userBirthdayController.text = widget.userSession["user_birthday"] ?? "";
+      _emailController.text = widget.userSession["email"];
+      _selectedUserGender = widget.userSession["user_gender"];
+      _usernameController.text = widget.userSession["username"];
+      userInitialsBgColor = (widget.userSession["user_initials_bg_color"] ?? "").isEmpty ? userInitialsBgColor : widget.userSession["user_initials_bg_color"];
+      // if(widget.userSession["user_image_url"] != null){
+      //   _selectedImage = createXFileFromUrl(widget.userSession["user_image_url"]) as XFile?;
+      // }
+      initials = getInitials(_lastNameController.text, _firstNameController.text);
+    }
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.l10n.translate("Sign Up", currentLanguage)),
+        title: Text(widget.l10n.translate("Profile", currentLanguage)),
         actions: [
           renderLanguagesIcon(widget.l10n, widget.storageService, context),
         ],
       ),
+      drawer: renderDrawerMenu(widget.l10n, widget.storageService, widget.secureStorageService, context),
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
             padding: EdgeInsets.all(16.0),
             child: Form(
               key: _formKey,
-              child: SizedBox(
-                width: 400,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * 0.9, // 90% of screen width
+                  minWidth: 400, // Optional: Set a minimum width if needed
+                  maxHeight: double.infinity,
+                ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -104,13 +138,15 @@ class SignUpPageState extends State<SignUpPage> {
                       child: ImagePickerWidget(
                         initials: initials,
                         userInitialsBgColor: userInitialsBgColor,
-                        labelText: widget.l10n.translate(_selectedImage == null ? "Select Profile Image" : "Change Profile Image", currentLanguage),
-                        labelTextCamera: widget.l10n.translate(_selectedImage == null ? "Take photo" : "Change photo", currentLanguage),
+                        labelText: widget.l10n.translate(_selectedImage == null && widget.userSession["user_image_url"] == null ? "Select Profile Image" : "Change Profile Image", currentLanguage),
+                        labelTextCamera: widget.l10n.translate(_selectedImage == null && widget.userSession["user_image_url"] == null ? "Take photo" : "Change photo", currentLanguage),
                         onImageSelected: (XFile? image) {
                           setState(() {
                             _selectedImage = image;
+                            _imageUpdated = true;
                           });
                         },
+                        initialImageUrl: widget.userSession["user_image_url"],
                       ),
                     ),
                     TextFormField(
@@ -186,6 +222,7 @@ class SignUpPageState extends State<SignUpPage> {
                     ),
                     TextFormField(
                       controller: _emailController,
+                      enabled: false,
                       decoration: InputDecoration(
                         errorText: _emailServerError,
                         labelText: widget.l10n.translate("Email", currentLanguage)
@@ -203,6 +240,7 @@ class SignUpPageState extends State<SignUpPage> {
                     // Email or username text field
                     TextFormField(
                       controller: _usernameController,
+                      enabled: false,
                       decoration: InputDecoration(
                         errorText: _usernameServerError,
                         labelText: widget.l10n.translate("Username", currentLanguage)
@@ -223,40 +261,102 @@ class SignUpPageState extends State<SignUpPage> {
                         return null;
                       },
                     ),
-                    TextFormField(
-                      controller: _passwordController,
-                      decoration: InputDecoration(labelText: widget.l10n.translate("Password", currentLanguage)),
-                      obscureText: true,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return widget.l10n.translate("Please enter your password", currentLanguage);
-                        }
-                        else if(value.length < 8) {
-                          return widget.l10n.translate("Password length must be greater than or equal to 8", currentLanguage);
-                        }
-                        else if (_passwordRepeatedController.text.isNotEmpty && value != _passwordRepeatedController.text) {
-                          return widget.l10n.translate("The two passwords do not match", currentLanguage);
-                        }
-                        return null;
-                      },
+                    SizedBox(height: 20),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10),  // Add margin bottom here
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _updatePassword = !_updatePassword;
+                            _successMessage = null;
+                          });
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(widget.l10n.translate("Update password", currentLanguage)),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: Icon(
+                                  _updatePassword ? Icons.arrow_upward : Icons.arrow_downward,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                              ),
+                            ),
+                          ]
+                        )
+                      )
                     ),
-                    TextFormField(
-                      controller: _passwordRepeatedController,
-                      decoration: InputDecoration(labelText: widget.l10n.translate("Re-enter your password", currentLanguage)),
-                      obscureText: true,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return widget.l10n.translate("Please re-enter your password", currentLanguage);
-                        }
-                        else if(value.length < 8) {
-                          return widget.l10n.translate("Password length must be greater than or equal to 8", currentLanguage);
-                        }
-                        else if (_passwordController.text.isNotEmpty && value != _passwordController.text) {
-                          return widget.l10n.translate("The two passwords do not match", currentLanguage);
-                        }
-                        return null;
-                      },
-                    ),
+                    if(_updatePassword)
+                      TextFormField(
+                        controller: _currentPasswordController,
+                        decoration: InputDecoration(
+                          errorText: _currentPasswordErrorMessage == null ? null : widget.l10n.translate(_currentPasswordErrorMessage ?? "", currentLanguage),
+                          labelText: widget.l10n.translate("Current password", currentLanguage)
+                        ),
+                        obscureText: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return widget.l10n.translate("Please enter your current password", currentLanguage);
+                          }
+                          return null;
+                        },
+                      ),
+                    if(_updatePassword)
+                      TextFormField(
+                        controller: _newPasswordController,
+                        decoration: InputDecoration(labelText: widget.l10n.translate("New password", currentLanguage)),
+                        obscureText: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return widget.l10n.translate("Please enter your new password", currentLanguage);
+                          }
+                          else if(value.length < 8) {
+                            return widget.l10n.translate("Password length must be greater than or equal to 8", currentLanguage);
+                          }
+                          else if (_newPasswordRepeatedController.text.isNotEmpty && value != _newPasswordRepeatedController.text) {
+                            return widget.l10n.translate("The two passwords do not match", currentLanguage);
+                          }
+                          return null;
+                        },
+                      ),
+                    if(_updatePassword)
+                      TextFormField(
+                        controller: _newPasswordRepeatedController,
+                        decoration: InputDecoration(labelText: widget.l10n.translate("Re-enter your new password", currentLanguage)),
+                        obscureText: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return widget.l10n.translate("Please re-enter your new password", currentLanguage);
+                          }
+                          else if(value.length < 8) {
+                            return widget.l10n.translate("Password length must be greater than or equal to 8", currentLanguage);
+                          }
+                          else if (_newPasswordController.text.isNotEmpty && value != _newPasswordController.text) {
+                            return widget.l10n.translate("The two passwords do not match", currentLanguage);
+                          }
+                          return null;
+                        },
+                      ),
+                    // Show success message if present
+                    if (_successMessage != null)
+                      Column(
+                        children: [
+                          SizedBox(height: 20),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Text(
+                              widget.l10n.translate(_successMessage!, currentLanguage),
+                              style: TextStyle(color: const Color.fromARGB(255, 0, 255, 8)),
+                            ),
+                          ),
+                        ],
+                      ),
                     // Show error message if present
                     if (_errorMessage != null)
                       Column(
@@ -275,17 +375,17 @@ class SignUpPageState extends State<SignUpPage> {
                     Container(
                       margin: EdgeInsets.only(bottom: 10),  // Add margin bottom here
                       child: ElevatedButton(
-                        onPressed: _isSignUpApiSent ? null : () {
+                        onPressed: _isProfileUpdateApiSent ? null : () {
                           if (_formKey.currentState!.validate()) {
-                            // Perform the sign-up logic
-                            signUpUser(widget.storageService, currentLanguage, context);
+                            // Perform the profile data update logic
+                            updateProfile(widget.storageService, currentLanguage, context, authenticatedApiBackendService);
                           }
                         },
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            if (_isSignUpApiSent)
+                            if (_isProfileUpdateApiSent)
                               Padding(
                                 padding: const EdgeInsets.only(right: 8.0),
                                 child: SizedBox(
@@ -297,21 +397,11 @@ class SignUpPageState extends State<SignUpPage> {
                                   ),
                                 ),
                               ),
-                            Text(widget.l10n.translate("Sign Up", currentLanguage)),
+                            Text(widget.l10n.translate("Update profile", currentLanguage)),
                           ]
                         )
                       )
                     ),
-                    // Sign in button
-                    Container(
-                      margin: EdgeInsets.only(bottom: 100),  // Add margin bottom here
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, SignInPage.routeName);
-                        },
-                        child: Text(widget.l10n.translate("Already have an account? Sign in", Localizations.localeOf(context).languageCode)),
-                      ),
-                    )
                   ],
                 ),
               ),
@@ -319,70 +409,95 @@ class SignUpPageState extends State<SignUpPage> {
           ),
         ),
       ),
+    
     );
   }
 
-  void signUpUser(StorageService storageService, String currentLanguage, BuildContext context, {Dio? dio}) async {
-    // Add your sign-up logic here, such as an HTTP request to your backend.
+  void updateProfile(StorageService storageService, String currentLanguage, BuildContext context, AuthenticatedApiBackendService authenticatedApiBackendService) async {
+    // Add your profile data update logic here, such as an HTTP request to your backend.
     final userBirthday = _userBirthdayController.text;
-    final firsName = _firstNameController.text;
+    final firstName = _firstNameController.text;
     final lastName = _lastNameController.text;
     final email = _emailController.text;
-    final password = _passwordController.text;
+    final currentPassword = _currentPasswordController.text;
+    final newPassword = _newPasswordController.text;
     final username = _usernameController.text;
 
 
     setState(() {
       _errorMessage = null;
+      _successMessage = null;
       _emailServerError = null;
-      _isSignUpApiSent = true;
+      _currentPasswordErrorMessage = null;
+      _isProfileUpdateApiSent = true;
       _usernameServerError = null;
     });
     try {
       FormData formData = FormData.fromMap({
         "user_birthday": userBirthday,
         "email": email,
-        "first_name": firsName,
-        "user_gender": _selectedUserGender,
-        "user_image_url": "",
+        "first_name": firstName,
+        "user_gender": _selectedUserGender ?? "",
         "user_initials_bg_color": userInitialsBgColor,
         "last_name": lastName,
         "current_language": currentLanguage,
-        "password": password,
+        "current_password": currentPassword,
+        "new_password": newPassword,
+        "update_password": _updatePassword.toString(),
+        "image_updated": _imageUpdated.toString(),
         "username": username,
-        if (_selectedImage != null) 
-          "profile_image": await MultipartFile.fromFile(
+      });
+      
+      if (_selectedImage != null) {
+        MultipartFile profileImage;
+        final mimeType = getMimeType(_selectedImage!.path);
+
+        if (kIsWeb) {
+          // 🌐 Web: Convert file to bytes
+          Uint8List bytes = await _selectedImage!.readAsBytes();
+          profileImage = MultipartFile.fromBytes(
+            bytes,
+            filename: _selectedImage!.name,
+          );
+        } else {
+          // 📱 Mobile: Use file path
+          profileImage = await MultipartFile.fromFile(
             _selectedImage!.path,
             filename: _selectedImage!.name,
-          ),
-      });
-
-      Dio dio = Dio();
-      final response = await UnauthenticatedApiBackendService.signUpUser(formData: formData, dio: dio);
-
-      // Assuming the response contains the username
-      if(response["success"] && response["username"] != null){
-        if (mounted){
-          setState(() {
-            _errorMessage = null;  // Clear the error message on successful sign-in
-            _isSignUpApiSent = false;
-          });
-          Navigator.pushNamed(
-            context,
-            SignInPage.routeName,
-            arguments: {"username": response["username"]},
           );
         }
-        //widget.storageService.set(key: 'user', obj: response["user"], updateNotifier: true);
+        formData.files.add(MapEntry('profile_image', profileImage));
+      }
+      final response = await authenticatedApiBackendService.updateProfile(formData: formData);
+
+      // Assuming the response contains the username
+      if(response["success"]){
+        bool updateTokens = _updatePassword && !response["wrong_password"];
+        if (mounted){
+          setState(() {
+            _successMessage = response["message"];
+            _imageUpdated = false;
+            _isProfileUpdateApiSent = false;
+            _updatePassword = response["wrong_password"];
+            _currentPasswordErrorMessage = response["wrong_password"] ? "The current password is incorrect, so the password has not been updated." : null;
+          });
+        }
+        if(updateTokens){
+          widget.secureStorageService.saveTokens(response["access_token"], response["refresh_token"]);
+        }
+        widget.storageService.set(key: 'user', obj: response["user"], updateNotifier: true);
       }
       else if(!response["success"] && response["message"] != null){
         
         setState(() {
-          _errorMessage = response["message"];  // Set the error message on unsuccessful sign-in
-          _isSignUpApiSent = false;
+          _errorMessage = response["message"];  // Set the error message on unsuccessful profile update
+          _isProfileUpdateApiSent = false;
           if(response["errors"] != null){
             if(response["errors"]["user_birthday"] != null){
               _userBirthdayServerError = response["errors"]["user_birthday"][0];
+            }
+            if(response["errors"]["current_password"] != null){
+              _currentPasswordErrorMessage = response["errors"]["current_password"][0];
             }
             if(response["errors"]["email"] != null){
               _emailServerError = response["errors"]["email"][0];
@@ -401,17 +516,16 @@ class SignUpPageState extends State<SignUpPage> {
       }
       else{
         setState(() {
-          _errorMessage = "An error occurred when sign up! Please try later.";  // Set the error message on unsuccessful sign-in
-          _isSignUpApiSent = false;
+          _errorMessage = "An error occurred while updating profile information. Please try again later.";  // Set the error message on unsuccessful profile update
+          _isProfileUpdateApiSent = false;
         });
       }
     } catch (e) {
+      logMessage(e, "", "e", "", true);
       setState(() {
-        _errorMessage = "An error occurred when sign up! Please try later.";  // Set the error message on unsuccessful sign-in
-          _isSignUpApiSent = false;
+        _errorMessage = "An error occurred while updating profile information. Please try again later.";  // Set the error message on unsuccessful profile update
+          _isProfileUpdateApiSent = false;
       });
-      // Handle any errors that occurred during the HTTP request
-      logMessage('Sign-up error: $e');
     }
 
   }
@@ -424,8 +538,9 @@ class SignUpPageState extends State<SignUpPage> {
     _emailController.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
-    _passwordController.dispose();
-    _passwordRepeatedController.dispose();
+    _currentPasswordController.dispose();
+    _newPasswordController.dispose();
+    _newPasswordRepeatedController.dispose();
     _usernameController.dispose();
     super.dispose();
   }

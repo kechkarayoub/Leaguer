@@ -10,7 +10,17 @@ import 'package:frontend/storage/storage.dart';
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 /// A service that handles authenticated requests to the backend API.
-/// Automatically attaches an access token to requests and refreshes tokens when expired.
+/// 
+/// This service automatically:
+/// - Attaches access tokens to outgoing requests
+/// - Refreshes tokens when they expire
+/// - Handles session expiration by logging out the user
+/// 
+/// Dependencies:
+/// - [Dio] for HTTP requests
+/// - [SecureStorageService] for token storage
+/// - [StorageService] for local storage
+/// - [ThirdPartyAuthService] for third-party authentication
 class AuthenticatedApiBackendService {
   /// Backend API base URL, loaded from environment variables
   static String backendUrl = dotenv.env['BACKEND_URL'] ?? 'Backend URL not found';
@@ -52,9 +62,52 @@ class AuthenticatedApiBackendService {
         if (error.response?.statusCode == 401) {
           bool refreshed = await refreshToken();
           if (refreshed) {
-            // Retry the failed request with the new token
-            final retryRequest = await _dio.fetch(error.requestOptions);
-            return handler.resolve(retryRequest);
+            // Create a NEW request options object
+            final newOptions = Options(
+              method: error.requestOptions.method,
+              headers: error.requestOptions.headers,
+              extra: error.requestOptions.extra,
+              responseType: error.requestOptions.responseType,
+            );
+
+            //await attachAccessToken(newOptions);
+            // For FormData requests, we need to recreate the data
+            dynamic newData = error.requestOptions.data;
+            if (error.requestOptions.data is FormData) {
+              final originalFormData = error.requestOptions.data as FormData;
+              newData = FormData();
+              
+              // Copy fields
+              newData.fields.addAll(originalFormData.fields);
+              
+              // Copy files (async)
+              for (final file in originalFormData.files) {
+                  final multipart = file.value.clone();
+                  // Collect bytes from the stream
+                  final bytes = await readStreamToBytes(multipart.finalize());
+                  newData.files.add(MapEntry(
+                    file.key,
+                    MultipartFile.fromBytes(
+                      bytes,
+                      filename: multipart.filename,
+                      contentType: multipart.contentType,
+                    ),
+                  ));
+              }
+            }
+
+            // Retry with new request options
+            try {
+              final retryRequest = await _dio.request(
+                error.requestOptions.path,
+                data: newData,
+                queryParameters: error.requestOptions.queryParameters,
+                options: newOptions,
+              );
+              return handler.resolve(retryRequest);
+            } catch (e) {
+              return handler.reject(DioException(requestOptions: error.requestOptions, error: e));
+            }
           }
           else{
             _handleSessionExpired();
@@ -76,7 +129,20 @@ class AuthenticatedApiBackendService {
     }
   }
 
-  // Refresh Token Function
+  /// Attempts to refresh the access token using the stored refresh token.
+  /// 
+  /// This function is automatically called when a 401 Unauthorized response
+  /// is received from the API. It:
+  /// 1. Retrieves the refresh token from secure storage
+  /// 2. Sends it to the token refresh endpoint
+  /// 3. If successful, saves the new tokens and returns true
+  /// 4. If failed, triggers session expiration handling and returns false
+  /// 
+  /// Returns:
+  /// - [bool]: true if token refresh succeeded, false otherwise
+  /// 
+  /// Throws:
+  /// - No explicit throws, but logs errors and handles session expiration
   Future<bool> refreshToken() async {
     try {
       String? refreshToken = await _secureStorageService.getRefreshToken();
@@ -84,12 +150,12 @@ class AuthenticatedApiBackendService {
         _handleSessionExpired();
       }
       final response = await _dio.post('$backendUrl/accounts/api/token/refresh/', data: {
-        'refresh_token': refreshToken,
+        'refresh': refreshToken,
       });
 
       if (response.statusCode == 200) {
-        String newAccessToken = response.data['access_token'];
-        String newRefreshToken = response.data['refresh_token'];
+        String newAccessToken = response.data['access'];
+        String newRefreshToken = response.data['refresh'];
 
         // Save the new tokens
         await _secureStorageService.saveTokens(newAccessToken, newRefreshToken);
@@ -101,12 +167,13 @@ class AuthenticatedApiBackendService {
     }
     return false;
   }
-   void _handleSessionExpired() async {
+  
+  void _handleSessionExpired() async {
     if (onSessionExpired != null) {
       onSessionExpired!(); // Call testable callback instead of UI code
       return;
     }
-    if (_context != null && !_isLoggingOut) {
+    if (!_isLoggingOut) {
       _isLoggingOut = true;
       logout(_storageService, _secureStorageService, _context!, thirdPartyAuthService).then((_) {
         _isLoggingOut = false;
@@ -114,6 +181,74 @@ class AuthenticatedApiBackendService {
       logMessage('Session expired. Please log in again.', "Auth", "e");
     }
   }
+
+  
+   
+  
+  /// Update user profile by sending the provided data to the backend.
+  ///
+  /// Parameters:
+  /// - `formData`: The user profile data to be sent.
+  /// - `dio`: Optional custom Dio HTTP client instance.
+  ///
+  /// Returns:
+  /// - A `Map<String, dynamic>` containing the JSON response data if successful.
+  ///
+  /// Throws:
+  /// - Exception if the update profile fails or there is an error during the HTTP request.
+  Future<Map<String, dynamic>> updateProfile({
+    required dynamic formData,
+    Dio? dio,  // Client HTTP optionnel
+  }) async {
+    dio ??= _dio; // Utiliser le client par défaut si aucun n'est fourni
+    final url = '$backendUrl/accounts/update-profile/';
+    try{
+      final response = await dio.put(
+        url,
+        data: formData,
+      );
+
+      if (response.statusCode == 200) {
+        // Parse the JSON response and return it
+        return response.data;
+      } 
+      else if (response.statusCode == 400 || response.statusCode == 401) {
+        // Parse the JSON response and return it
+        return response.data ?? {'message': "An unknown error occurred during the profile update. Please contact the technical team to resolve the issue."};
+      } 
+      else if (response.statusCode == 409) {
+        // Parse the JSON response and return it
+        return response.data ?? {'message': "An unknown conflict error occurred during the profile update. Please contact the technical team to resolve this issue."};
+      } 
+      else {
+        // Throw an exception if the response is not successful
+        throw Exception('Failed to update profile: ${response.data}');
+      }
+    } on DioException catch (e) {
+      // Handle error and rethrow or log
+      if (e.type == DioExceptionType.connectionTimeout) {
+        return {'success': false, 'message': "Connection timeout. Please check your internet connection."};
+      }
+      if (e.type == DioExceptionType.receiveTimeout) {
+        return {'success': false, 'message': "Server took too long to respond (Update profile). Please try again later."};
+      }
+      if (e.response?.statusCode == 400 || e.response?.statusCode == 401) {
+        // Parse the JSON response and return it
+        return e.response?.data ?? {'message': "An unknown error occurred during the profile update. Please contact the technical team to resolve the issue."};
+      } 
+      else if (e.response?.statusCode == 409) {
+        // Parse the JSON response and return it
+        return e.response?.data ?? {'message': "An unknown conflict error occurred during the profile update. Please contact the technical team to resolve this issue."};
+      } 
+      logMessage(e, "Update profile error", "e");
+      throw Exception('Failed to update profile: ${e.toString()}');
+    } catch (e) {
+      logMessage('Unexpected error during update profile: $e', 'AuthenticatedApiBackendService.updateProfile', "e");
+      return {'success': false, 'message': 'An unexpected error occurred. Please try again later.'};
+    }
+  }
+
+   
 
   /// Expose `_dio` for testing
   Dio get dio => _dio;

@@ -195,7 +195,10 @@ class FakeHttpClientResponse extends Fake implements HttpClientResponse {
 
 
 // Mock BuildContext
-class MockBuildContext extends Mock implements BuildContext {}
+class MockBuildContext extends Mock implements BuildContext {
+  @override
+  bool get mounted => true;
+}
 
 
 class MockL10n implements L10n {

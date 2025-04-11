@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 class ImagePickerWidget extends StatefulWidget {
   final Function(XFile?) onImageSelected;   // Callback function to pass the selected image file
   final String initials;  // Initials to display if no image is selected
-  final String initialsBgColor;  // Background color for the initials avatar
+  final String userInitialsBgColor;  // Background color for the initials avatar
   final String labelText;  // Label text for the image picker button
   final String labelTextCamera;  // Label text for the camera picker button
   final String? initialImageUrl;  // Initial image URL if there's an existing image
@@ -20,7 +20,7 @@ class ImagePickerWidget extends StatefulWidget {
   const ImagePickerWidget({
     super.key,
     required this.initials,
-    required this.initialsBgColor,
+    required this.userInitialsBgColor,
     required this.labelText,
     required this.labelTextCamera,
     required this.onImageSelected,
@@ -39,6 +39,7 @@ class ImagePickerWidget extends StatefulWidget {
 class ImagePickerWidgetState extends State<ImagePickerWidget> {
   XFile? _selectedImage;  // File object for the selected image
   String? _webImageUrl;
+  bool _imageRemoved = false;
   bool isPicking = false;
   
   @override
@@ -59,7 +60,7 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
           }
           _selectedImage = XFile(pickedFile.path);  // Update the selected image file
         });
-        widget.onImageSelected(_selectedImage);  // Call the callback function with the selected image
+        widget.onImageSelected(pickedFile);  // Call the callback function with the selected image
       }
     } catch (e) {
       debugPrint('Error picking image: $e');
@@ -73,6 +74,7 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
     setState(() {
       _selectedImage = null;  // Clear the selected image file
       _webImageUrl = null;
+      _imageRemoved = true;
     });
     widget.onImageSelected(null);  // Call the callback function with null to indicate image removal
   }
@@ -148,8 +150,8 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
               ),
             ],
           )
-        // Display the initial image if provided
-        else if (widget.initialImageUrl != null)
+        // Display the initial image if provided and image not removed
+        else if (widget.initialImageUrl != null && !_imageRemoved)
           Stack(
             children: [
               ClipRRect(
@@ -200,7 +202,7 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
           )
         // Display the initials avatar if no image is selected and initials are provided
         else if (widget.initials.isNotEmpty)
-          InitialsAvatar(initials: widget.initials, initialsBgColors: widget.initialsBgColor)
+          InitialsAvatar(initials: widget.initials, userInitialsBgColor: widget.userInitialsBgColor)
         // Display a default "Unknown user" image if no image is selected and no initials are provided
         else
           Stack(

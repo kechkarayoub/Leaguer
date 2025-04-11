@@ -44,7 +44,7 @@ void main() {
     // when(mockL10n.translate("Logout", any)).thenReturn("Logout");
   });
 
-  testWidgets('Drawer menu displays Menu and Logout options', (WidgetTester tester) async {
+  testWidgets('Drawer menu displays Menu, Profile and Logout options', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -68,6 +68,7 @@ void main() {
 
     // Verify "Menu" and "Logout" texts appear
     expect(find.text("Menu"), findsOneWidget);
+    expect(find.text("Profile"), findsOneWidget);
     expect(find.text("Logout"), findsOneWidget);
 
   });
@@ -76,18 +77,22 @@ void main() {
     late BuildContext capturedContext; // Capture the context
     await tester.pumpWidget(
       MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(title: Text("Test App")),
-          drawer: Builder(
-            builder: (BuildContext context) {
-              capturedContext = context; // Capture BuildContext
-              
-              when(logout(mockStorageService, mockSecureStorageService, capturedContext, thirdPartyAuthService)).thenAnswer((_) async => Future<void>.value()); // Fix: Return Future<void>
-              when(mockStorageService.clear()).thenAnswer((_) async => Future<void>.value()); // Fix: Return Future<void>
-              return renderDrawerMenu(mockL10n, mockStorageService, mockSecureStorageService, context);
-            },
-          ),
-        ),
+        routes: {
+          '/sign-in': (context) => Scaffold(body: Container()), // Mock sign-in page
+        },  
+        home: Builder(builder: (context) {
+          capturedContext = context;
+          return Scaffold(
+            appBar: AppBar(title: Text("Test App")),
+            drawer: renderDrawerMenu(
+              mockL10n,
+              mockStorageService,
+              mockSecureStorageService,
+              capturedContext, // pass the context directly here
+            ),
+            body: Container(),
+          );
+        }),
       ),
     );
     

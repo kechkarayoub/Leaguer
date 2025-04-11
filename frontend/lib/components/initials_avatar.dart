@@ -8,10 +8,10 @@ class InitialsAvatar extends StatelessWidget {
   ///
   /// Parameters:
   /// - `initials`: The initials to display.
-  /// - `initialsBgColors`: The background color of the avatar in hexadecimal format.
+  /// - `userInitialsBgColor`: The background color of the avatar in hexadecimal format.
 
   final String initials;
-  final String initialsBgColors;
+  final String userInitialsBgColor;
   final double height;
   final double width;
   final Color textColor;
@@ -19,7 +19,7 @@ class InitialsAvatar extends StatelessWidget {
   final BoxShape shape;
 
 
-  const InitialsAvatar({super.key, required this.initials, required this.initialsBgColors, this.width = 100, this.height = 100, this.textColor = Colors.white, this.shape = BoxShape.circle, this.textStyle});
+  const InitialsAvatar({super.key, required this.initials, required this.userInitialsBgColor, this.width = 100, this.height = 100, this.textColor = Colors.white, this.shape = BoxShape.circle, this.textStyle});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class InitialsAvatar extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         shape: shape,
-        color: hexToColor(initialsBgColors),
+        color: hexToColor(userInitialsBgColor),
       ),
       child: Center(
         child: Text(

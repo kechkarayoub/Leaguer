@@ -75,7 +75,7 @@ void main() {
   Widget buildTestWidget({
     required Function(XFile?) onImageSelected,
     String initials = 'AB',
-    String initialsBgColor = '#0000ff',
+    String userInitialsBgColor = '#0000ff',
     String labelText = 'Gallery',
     String labelTextCamera = 'Camera',
     String? initialImageUrl,
@@ -87,7 +87,7 @@ void main() {
         body: ImagePickerWidget(
           onImageSelected: onImageSelected,
           initials: initials,
-          initialsBgColor: initialsBgColor,
+          userInitialsBgColor: userInitialsBgColor,
           labelText: labelText,
           labelTextCamera: labelTextCamera,
           initialImageUrl: initialImageUrl,

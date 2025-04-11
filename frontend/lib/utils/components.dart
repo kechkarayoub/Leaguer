@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/l10n/language_picker.dart';
+import 'package:frontend/pages/profile/profile.dart';
 import 'package:frontend/storage/storage.dart';
 import 'package:frontend/utils/utils.dart';
 
@@ -22,9 +23,23 @@ Drawer renderDrawerMenu(L10n l10n, StorageService storageService, SecureStorageS
       padding: EdgeInsets.zero,
       children: <Widget>[
         _buildDrawerHeader(l10n, currentLanguage),
+        _buildProfileTile(l10n, currentLanguage, context),
         _buildLogoutTile(l10n, currentLanguage, storageService, secureStorageService, context),
       ],
     ),
+  );
+}
+
+
+/// Helper method to build the profile ListTile in the Drawer.
+ListTile _buildProfileTile(L10n l10n, String currentLanguage, BuildContext context) {
+  return ListTile(
+    leading: Icon(Icons.person),
+    title: Text(l10n.translate("Profile", currentLanguage)),
+    onTap: () {
+      Navigator.pop(context); // Close the drawer
+      Navigator.pushNamed(context, ProfilePage.routeName);
+    },
   );
 }
 
@@ -75,3 +90,4 @@ IconButton renderLanguagesIcon(L10n l10n, StorageService storageService, BuildCo
     },
   );
 }
+
