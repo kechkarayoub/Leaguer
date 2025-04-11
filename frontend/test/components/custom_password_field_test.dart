@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/components/custom_password_field.dart';
-import 'package:frontend/l10n/l10n.dart';
 import '../mocks/test_helper.dart';
 
 void main() {
