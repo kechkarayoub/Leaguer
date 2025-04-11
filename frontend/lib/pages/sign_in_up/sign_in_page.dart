@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/api/unauthenticated_api_service.dart';
+import 'package:frontend/components/custom_password_field.dart';
+import 'package:frontend/components/custom_text_field.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/pages/sign_in_up/sign_up_page.dart';
 import 'package:frontend/pages/dashboard/dashboard.dart';
@@ -46,9 +48,10 @@ class SignInPageState extends State<SignInPage> {
   }
 
   Widget _buildEmailUsernameField(String currentLanguage) {
-    return TextFormField(
+    return CustomTextFormField(
       controller: _emailUsernameController,
-      decoration: InputDecoration(labelText: widget.l10n.translate("Email or Username", currentLanguage)),
+      l10n: widget.l10n,
+      labelKey: "Email or Username",
       validator: (value) {
         if(value == null || value.isEmpty) {
           return widget.l10n.translate("Please enter your email or username", currentLanguage);
@@ -59,19 +62,21 @@ class SignInPageState extends State<SignInPage> {
         return null;
       },
     );
+    
   }
 
   Widget _buildPasswordField(String currentLanguage) {
-    return TextFormField(
+    return CustomPasswordFormField(
       controller: _passwordController,
-      decoration: InputDecoration(labelText: widget.l10n.translate("Password", currentLanguage)),
+      l10n: widget.l10n,
+      labelKey: "Current password",
       obscureText: true,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return widget.l10n.translate("Please enter your password", currentLanguage);
         }
         return null;
-      },
+      }
     );
   }
 
