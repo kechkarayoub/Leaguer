@@ -18,6 +18,7 @@ class CustomPasswordFormField extends StatefulWidget {
   final bool readOnly;
   final VoidCallback? onTap;
   final String? hintText;
+  final String? fieldKey;
 
   const CustomPasswordFormField({
     super.key,
@@ -33,6 +34,7 @@ class CustomPasswordFormField extends StatefulWidget {
     this.readOnly = false,
     this.onTap,
     this.hintText,
+    this.fieldKey,
   });
 
 
@@ -58,6 +60,7 @@ class _CustomPasswordFormField extends State<CustomPasswordFormField> {
       onChanged: widget.onChanged,
       onTap: widget.onTap,
       hintText: widget.hintText,
+      key: Key(widget.fieldKey??""),
       suffixIcon: IconButton(
         icon: Icon(
           _obscureText ? Icons.visibility : Icons.visibility_off,

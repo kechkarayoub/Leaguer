@@ -17,6 +17,7 @@ class CustomTextFormField extends StatelessWidget {
   final bool readOnly;
   final VoidCallback? onTap;
   final String? hintText;
+  final String? fieldKey;
 
   const CustomTextFormField({
     super.key,
@@ -32,6 +33,7 @@ class CustomTextFormField extends StatelessWidget {
     this.readOnly = false,
     this.onTap,
     this.hintText,
+    this.fieldKey,
   });
 
   @override
@@ -46,6 +48,7 @@ class CustomTextFormField extends StatelessWidget {
         hintText: hintText != null ? l10n.translate(hintText!, currentLanguage) : null,
         suffixIcon: suffixIcon,
       ),
+      key: Key(fieldKey??""),
       obscureText: obscureText,
       enabled: enabled,
       onChanged: onChanged,

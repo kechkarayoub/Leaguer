@@ -14,8 +14,9 @@ class GenderDropdown extends StatelessWidget {
   final ValueChanged<String?> onChanged;
   final String? initialGender;
   final L10n l10n;
+  final String? fieldKey;
 
-  const GenderDropdown({super.key, required this.l10n, required this.onChanged, this.initialGender});
+  const GenderDropdown({super.key, required this.l10n, required this.onChanged, this.initialGender, this.fieldKey,});
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +29,7 @@ class GenderDropdown extends StatelessWidget {
       decoration: InputDecoration(
         labelText: l10n.translate("Gender", languageCode),
       ),
+      key: Key(fieldKey??""),
       value: initialGender,
       onChanged: onChanged,
       items: <String>['male', 'female']

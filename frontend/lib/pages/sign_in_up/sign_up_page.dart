@@ -177,6 +177,7 @@ class SignUpPageState extends State<SignUpPage> {
                     SizedBox(height: 20),
                     GenderDropdown(
                       l10n: widget.l10n,
+                      fieldKey: "gender",
                       initialGender: _selectedUserGender,
                       onChanged: (String? userGender) {
                         setState(() {

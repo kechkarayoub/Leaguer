@@ -50,6 +50,7 @@ class SignInPageState extends State<SignInPage> {
   Widget _buildEmailUsernameField(String currentLanguage) {
     return CustomTextFormField(
       controller: _emailUsernameController,
+      fieldKey: "email-or-username",
       l10n: widget.l10n,
       labelKey: "Email or Username",
       validator: (value) {
@@ -68,6 +69,7 @@ class SignInPageState extends State<SignInPage> {
   Widget _buildPasswordField(String currentLanguage) {
     return CustomPasswordFormField(
       controller: _passwordController,
+      fieldKey: "current-password",
       l10n: widget.l10n,
       labelKey: "Current password",
       obscureText: true,
