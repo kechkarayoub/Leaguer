@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api/unauthenticated_api_service.dart';
+import 'package:frontend/components/custom_button.dart';
+import 'package:frontend/components/custom_text_button.dart';
 import 'package:frontend/components/gender_dropdown.dart';
 import 'package:frontend/components/image_picker.dart';
 import 'package:frontend/l10n/l10n.dart';
@@ -273,45 +275,25 @@ class SignUpPageState extends State<SignUpPage> {
                         ],
                       ),
                     SizedBox(height: 20),
-                    Container(
+                    CustomButton(
                       margin: EdgeInsets.only(bottom: 10),  // Add margin bottom here
-                      child: ElevatedButton(
-                        onPressed: _isSignUpApiSent ? null : () {
-                          if (_formKey.currentState!.validate()) {
-                            // Perform the sign-up logic
-                            signUpUser(widget.storageService, currentLanguage, context);
-                          }
-                        },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (_isSignUpApiSent)
-                              Padding(
-                                padding: const EdgeInsets.only(right: 8.0),
-                                child: SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                    strokeWidth: 2.0,
-                                  ),
-                                ),
-                              ),
-                            Text(widget.l10n.translate("Sign Up", currentLanguage)),
-                          ]
-                        )
-                      )
+                      text: widget.l10n.translate("Sign Up", currentLanguage),
+                      showLoader: _isSignUpApiSent,
+                      isEnabled: !_isSignUpApiSent,
+                      onPressed: _isSignUpApiSent ? null : () {
+                        if (_formKey.currentState!.validate()) {
+                          // Perform the sign-up logic
+                          signUpUser(widget.storageService, currentLanguage, context);
+                        }
+                      },
                     ),
                     // Sign in button
-                    Container(
+                    CustomTextButton(
                       margin: EdgeInsets.only(bottom: 100),  // Add margin bottom here
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, SignInPage.routeName);
-                        },
-                        child: Text(widget.l10n.translate("Already have an account? Sign in", Localizations.localeOf(context).languageCode)),
-                      ),
+                      text: widget.l10n.translate("Already have an account? Sign in", currentLanguage),
+                      onPressed: () {
+                        Navigator.pushNamed(context, SignInPage.routeName);
+                      },
                     )
                   ],
                 ),

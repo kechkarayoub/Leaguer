@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/api/unauthenticated_api_service.dart';
+import 'package:frontend/components/custom_button.dart';
 import 'package:frontend/components/custom_password_field.dart';
+import 'package:frontend/components/custom_text_button.dart';
 import 'package:frontend/components/custom_text_field.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/pages/sign_in_up/sign_up_page.dart';
@@ -157,114 +159,52 @@ class SignInPageState extends State<SignInPage> {
                       ),
                     SizedBox(height: 20),
                     // Sign in button
-                    Container(
-                      margin: EdgeInsets.only(bottom: showSignUpButton || showSignInWithGoogleButton || _showSendEmailVerificationLinkButton ? 20 : 100),  // Add margin bottom here
-                      child: ElevatedButton(
-                        key: Key('signInButton'),
-                        onPressed: _isSignInApiSent || _isSignInThirdPartyApiSent ? null : () {
-                          setState(() {
-                            _errorMessage = null;
-                          });
-                          if (_formKey.currentState!.validate()) {
-                            // Perform the sign-in logic
-                            signInUser(widget.storageService, currentLanguage, widget.secureStorageService, context: context);
-                          }
-                        },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (_isSignInApiSent)
-                              Padding(
-                                padding: const EdgeInsets.only(right: 8.0),
-                                child: SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                    strokeWidth: 2.0,
-                                  ),
-                                ),
-                              ),
-                            Text(widget.l10n.translate("Sign In", currentLanguage)),
-                          ]
-                        )
-                      )
+                    CustomButton(
+                      keyWidget: const Key('signInButton'),
+                      margin: EdgeInsets.only(bottom: showSignUpButton || showSignInWithGoogleButton || _showSendEmailVerificationLinkButton ? 20 : 100),
+                      text: widget.l10n.translate("Sign In", currentLanguage),
+                      showLoader: _isSignInApiSent,
+                      isEnabled: !_isSignInApiSent && !_isSignInThirdPartyApiSent,
+                      onPressed: () {
+                        setState(() => _errorMessage = null);
+                        if (_formKey.currentState!.validate()) {
+                          signInUser(widget.storageService, currentLanguage, widget.secureStorageService, context: context);
+                        }
+                      },
                     ),
                     // Sign up button
                     if(showSignUpButton)
-                      Container(
-                        margin: EdgeInsets.only(bottom: showSignInWithGoogleButton || _showSendEmailVerificationLinkButton ? 20 : 100),  // Add margin bottom here
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, SignUpPage.routeName);
-                          },
-                          child: Text(widget.l10n.translate("Don't have an account? Sign up", currentLanguage)),
-                        ),
+                      CustomTextButton(
+                        margin: EdgeInsets.only(bottom: showSignInWithGoogleButton || _showSendEmailVerificationLinkButton ? 20 : 100),
+                        text: widget.l10n.translate("Don't have an account? Sign up", currentLanguage),
+                        onPressed: () {
+                          Navigator.pushNamed(context, SignUpPage.routeName);
+                        },
                       ),
                     // send email verification link button
                     if(_showSendEmailVerificationLinkButton && _userId != null)
-                      Container(
-                        margin: EdgeInsets.only(bottom: showSignInWithGoogleButton ? 20 : 100),  // Add margin bottom here
-                        child: TextButton(
-                          onPressed: _isResendVerificationEmailApiSent ? null : () {
-                            resendEmailVerificationLink(_userId, currentLanguage);
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              if (_isResendVerificationEmailApiSent)
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                      strokeWidth: 2.0,
-                                    ),
-                                  ),
-                                ),
-                              Text(widget.l10n.translate("Resend verification email link", currentLanguage)),
-                            ]
-                          )
-                        ),
+                      CustomTextButton(
+                        margin: EdgeInsets.only(bottom: showSignInWithGoogleButton ? 20 : 100),
+                        text: widget.l10n.translate("Resend verification email link", currentLanguage),
+                        onPressed: _isResendVerificationEmailApiSent ? null : () {
+                          resendEmailVerificationLink(_userId, currentLanguage);
+                        },
+                        showLoader: _isResendVerificationEmailApiSent,
                       ),
                     if(showSignInWithGoogleButton)
-                      Container(
-                        margin: EdgeInsets.only(bottom: 100),  // Add margin bottom here
-                        child: TextButton(
-                          key: Key('googleSignInButton'),
-                          onPressed: _isSignInApiSent || _isSignInThirdPartyApiSent ? null : () {
-                            thirdPrtySignIn("google", widget.storageService, currentLanguage, widget.secureStorageService, context: context);
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              if (_isSignInThirdPartyApiSent && typeThirdPartyApiSent == "google")
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                      strokeWidth: 2.0,
-                                    ),
-                                  ),
-                                ),
-                              FaIcon(
-                                FontAwesomeIcons.google,  // Icon from Font Awesome
-                                size: 20.0,               // Icon size
-                                color: Colors.red, 
-                              ),
-                              SizedBox(width: 8), // Add margin between the icon and text
-                              Text(widget.l10n.translate("Sign in with Google", currentLanguage)),
-                            ]
-                          )
+                      CustomTextButton(
+                        margin: EdgeInsets.only(bottom: 100),
+                        key: Key('googleSignInButton'),
+                        text: widget.l10n.translate("Sign in with Google", currentLanguage),
+                        onPressed: _isSignInApiSent || _isSignInThirdPartyApiSent ? null : () {
+                          thirdPrtySignIn("google", widget.storageService, currentLanguage, widget.secureStorageService, context: context);
+                        },
+                        icon: FaIcon(
+                          FontAwesomeIcons.google,  // Icon from Font Awesome
+                          size: 20.0,               // Icon size
+                          color: Colors.red, 
                         ),
+                        showLoader: _isSignInThirdPartyApiSent && typeThirdPartyApiSent == "google",
                       )
                   ],
                 ),
