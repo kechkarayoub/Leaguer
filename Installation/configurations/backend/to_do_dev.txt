@@ -1,2 +1,2 @@
-- Permissions.
+- Add permission manage.
 - Notifications && Push notifications.

@@ -1,7 +1,10 @@
-import 'dart:developer';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:frontend/components/custom_button.dart';
+import 'package:frontend/components/custom_password_field.dart';
+import 'package:frontend/components/custom_text_field.dart';
 import 'package:frontend/api/authenticated_api_service.dart';
+import 'package:frontend/api/unauthenticated_api_service.dart';
 import 'package:frontend/components/gender_dropdown.dart';
 import 'package:frontend/components/image_picker.dart';
 import 'package:frontend/l10n/l10n.dart';
@@ -12,24 +15,44 @@ import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:http_parser/http_parser.dart';
 
 
-/// The ProfilePage is responsible for rendering the user registration form.
-/// It contains form fields, validation, and an image picker for profile pictures.
+/// ProfilePage displays and manages user profile information.
+/// 
+/// This widget provides:
+/// - User profile viewing/editing
+/// - Image upload capability
+/// - Form validation
+/// - Password update functionality
+/// 
+/// Requires:
+/// - [l10n] for localization
+/// - [userSession] containing current user data
+/// - [secureStorageService] for token management
+/// - [storageService] for local storage
 class ProfilePage extends StatefulWidget {
   static const routeName = routeProfile;
   final L10n l10n;
   final dynamic userSession;
   final SecureStorageService secureStorageService;
   final StorageService storageService;
+  final ThirdPartyAuthService? thirdPartyAuthService;
+  final AuthenticatedApiBackendService? authenticatedApiBackendService;
 
-  const ProfilePage({super.key, required this.l10n, required this.userSession, required this.storageService, required this.secureStorageService});
+  const ProfilePage({super.key, required this.l10n, required this.userSession, required this.storageService, required this.secureStorageService, this.thirdPartyAuthService, this.authenticatedApiBackendService,});
 
   @override
   ProfilePageState createState() => ProfilePageState();
 }
 
+/// State management for ProfilePage
+/// 
+/// Manages:
+/// - Form state and validation
+/// - API call states
+/// - User input controllers
+/// - Error/success messages
+/// - Image selection state
 class ProfilePageState extends State<ProfilePage> {
   bool _isProfileUpdateApiSent = false;  // Tracks if the API call is sent to prevent duplicate requests
   final _formKey = GlobalKey<FormState>(); // Form key for validation
@@ -61,9 +84,13 @@ class ProfilePageState extends State<ProfilePage> {
   String? _lastNameServerError;  // Stores the server error
   String? _usernameServerError;  // Stores the server error
 
-/// Function to open the date picker and set the selected date in the user birthday field.
+  /// Opens date picker and updates birthday field
+  /// 
+  /// Handles:
+  /// - Initial date selection based on current value
+  /// - Date range constraints (1900 to today)
+  /// - Localized date formatting
   Future<void> _selectDate(BuildContext context) async {
-    DateTime now = DateTime.now();
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _userBirthdayController.text.isNotEmpty  ? _dateFormat.parse(_userBirthdayController.text) : null,
@@ -78,6 +105,20 @@ class ProfilePageState extends State<ProfilePage> {
       });
     }
   }
+  
+  late ThirdPartyAuthService _thirdPartyAuthService; 
+  late AuthenticatedApiBackendService _authenticatedApiBackendService; 
+  @override
+  void initState() {
+    super.initState();
+    // Use the injected service or create a new one
+    _thirdPartyAuthService = widget.thirdPartyAuthService ?? ThirdPartyAuthService();
+    _authenticatedApiBackendService = widget.authenticatedApiBackendService ?? AuthenticatedApiBackendService(
+      secureStorageService: widget.secureStorageService,
+      storageService: widget.storageService,
+      thirdPartyAuthService: _thirdPartyAuthService,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,10 +132,6 @@ class ProfilePageState extends State<ProfilePage> {
       return Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     
-    final AuthenticatedApiBackendService authenticatedApiBackendService = AuthenticatedApiBackendService(
-      secureStorageService: widget.secureStorageService,
-      storageService: widget.storageService,
-    );
     String currentLanguage = Localizations.localeOf(context).languageCode;
     if(!_dataInitialized){
       _dataInitialized = true;
@@ -149,12 +186,12 @@ class ProfilePageState extends State<ProfilePage> {
                         initialImageUrl: widget.userSession["user_image_url"],
                       ),
                     ),
-                    TextFormField(
+                    CustomTextFormField(
                       controller: _lastNameController,
-                      decoration: InputDecoration(
-                        errorText: _lastNameServerError,
-                        labelText: widget.l10n.translate("Last name", currentLanguage)
-                      ),
+                      errorText: _lastNameServerError,
+                      fieldKey: "last-name",
+                      l10n: widget.l10n,
+                      labelKey: "Last name",
                       onChanged: (value) {
                         setState(() {
                           _lastNameServerError = null;
@@ -171,12 +208,13 @@ class ProfilePageState extends State<ProfilePage> {
                         return null;
                       },
                     ),
-                    TextFormField(
+                    CustomTextFormField(
                       controller: _firstNameController,
-                      decoration: InputDecoration(
-                        errorText: _firstNameServerError,
-                        labelText: widget.l10n.translate("First name", currentLanguage)
-                      ),
+                      errorText: _firstNameServerError,
+                      fieldKey: "first-name",
+                      key: const Key('first-name'),
+                      l10n: widget.l10n,
+                      labelKey: "First name",
                       onChanged: (value) {
                         setState(() {
                           _firstNameServerError = null;
@@ -193,14 +231,14 @@ class ProfilePageState extends State<ProfilePage> {
                         return null;
                       },
                     ),
-                    TextFormField(
+                    CustomTextFormField(
                       controller: _userBirthdayController,
-                      decoration: InputDecoration(
-                        errorText: _userBirthdayServerError,
-                        labelText: widget.l10n.translate("Birthday", currentLanguage),
-                        hintText: dateFormatLabel,
-                        suffixIcon: Icon(Icons.calendar_today),
-                      ),
+                      errorText: _userBirthdayServerError,
+                      fieldKey: "birthday",
+                      l10n: widget.l10n,
+                      labelKey: "Birthday",
+                      hintText: dateFormatLabel,
+                      suffixIcon: Icon(Icons.calendar_today),
                       readOnly: true,
                       onTap: () => _selectDate(context),
                       validator: (value) {
@@ -212,6 +250,7 @@ class ProfilePageState extends State<ProfilePage> {
                     ),
                     SizedBox(height: 20),
                     GenderDropdown(
+                      fieldKey: "gender",
                       l10n: widget.l10n,
                       initialGender: _selectedUserGender,
                       onChanged: (String? userGender) {
@@ -220,13 +259,13 @@ class ProfilePageState extends State<ProfilePage> {
                         });
                       },
                     ),
-                    TextFormField(
+                    CustomTextFormField(
                       controller: _emailController,
+                      errorText: _emailServerError,
+                      fieldKey: "email",
+                      l10n: widget.l10n,
+                      labelKey: "Email",
                       enabled: false,
-                      decoration: InputDecoration(
-                        errorText: _emailServerError,
-                        labelText: widget.l10n.translate("Email", currentLanguage)
-                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return widget.l10n.translate("Please enter your email", currentLanguage);
@@ -237,14 +276,13 @@ class ProfilePageState extends State<ProfilePage> {
                         return null;
                       },
                     ),
-                    // Email or username text field
-                    TextFormField(
+                    CustomTextFormField(
                       controller: _usernameController,
+                      errorText: _usernameServerError,
+                      fieldKey: "username",
+                      l10n: widget.l10n,
+                      labelKey: "Username",
                       enabled: false,
-                      decoration: InputDecoration(
-                        errorText: _usernameServerError,
-                        labelText: widget.l10n.translate("Username", currentLanguage)
-                      ),
                       validator: (value) {
                         if(value == null || value.isEmpty) {
                           return widget.l10n.translate("Please enter your username", currentLanguage);
@@ -261,45 +299,32 @@ class ProfilePageState extends State<ProfilePage> {
                         return null;
                       },
                     ),
+                    // Email or username text field
                     SizedBox(height: 20),
-                    Container(
-                      margin: EdgeInsets.only(bottom: 10),  // Add margin bottom here
-                      child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _updatePassword = !_updatePassword;
-                            _successMessage = null;
-                          });
-                        },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(widget.l10n.translate("Update password", currentLanguage)),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: Icon(
-                                  _updatePassword ? Icons.arrow_upward : Icons.arrow_downward,
-                                  color: Colors.white,
-                                  size: 16,
-                                ),
-                              ),
-                            ),
-                          ]
-                        )
-                      )
+                    CustomButton(
+                      keyWidget: const Key('updatePassworButton'),
+                      margin: EdgeInsets.only(bottom: 10),
+                      text: widget.l10n.translate("Update password", currentLanguage),
+                      icon: Icon(
+                        _updatePassword ? Icons.arrow_upward : Icons.arrow_downward,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _updatePassword = !_updatePassword;
+                          _successMessage = null;
+                        });
+                      },
                     ),
                     if(_updatePassword)
-                      TextFormField(
+                      CustomPasswordFormField(
                         controller: _currentPasswordController,
-                        decoration: InputDecoration(
-                          errorText: _currentPasswordErrorMessage == null ? null : widget.l10n.translate(_currentPasswordErrorMessage ?? "", currentLanguage),
-                          labelText: widget.l10n.translate("Current password", currentLanguage)
-                        ),
+                        fieldKey: "current-password",
+                        l10n: widget.l10n,
+                        labelKey: "Current password",
                         obscureText: true,
+                        errorText: _currentPasswordErrorMessage,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return widget.l10n.translate("Please enter your current password", currentLanguage);
@@ -308,9 +333,11 @@ class ProfilePageState extends State<ProfilePage> {
                         },
                       ),
                     if(_updatePassword)
-                      TextFormField(
+                      CustomPasswordFormField(
                         controller: _newPasswordController,
-                        decoration: InputDecoration(labelText: widget.l10n.translate("New password", currentLanguage)),
+                        fieldKey: "new-password",
+                        l10n: widget.l10n,
+                        labelKey: "New password",
                         obscureText: true,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -326,9 +353,11 @@ class ProfilePageState extends State<ProfilePage> {
                         },
                       ),
                     if(_updatePassword)
-                      TextFormField(
+                      CustomPasswordFormField(
                         controller: _newPasswordRepeatedController,
-                        decoration: InputDecoration(labelText: widget.l10n.translate("Re-enter your new password", currentLanguage)),
+                        fieldKey: "new-password-repeated",
+                        l10n: widget.l10n,
+                        labelKey: "Re-enter your new password",
                         obscureText: true,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -372,35 +401,18 @@ class ProfilePageState extends State<ProfilePage> {
                         ],
                       ),
                     SizedBox(height: 20),
-                    Container(
-                      margin: EdgeInsets.only(bottom: 10),  // Add margin bottom here
-                      child: ElevatedButton(
-                        onPressed: _isProfileUpdateApiSent ? null : () {
-                          if (_formKey.currentState!.validate()) {
-                            // Perform the profile data update logic
-                            updateProfile(widget.storageService, currentLanguage, context, authenticatedApiBackendService);
-                          }
-                        },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (_isProfileUpdateApiSent)
-                              Padding(
-                                padding: const EdgeInsets.only(right: 8.0),
-                                child: SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                    strokeWidth: 2.0,
-                                  ),
-                                ),
-                              ),
-                            Text(widget.l10n.translate("Update profile", currentLanguage)),
-                          ]
-                        )
-                      )
+                    CustomButton(
+                      keyWidget: const Key('updateProfileButton'),
+                      margin: EdgeInsets.only(bottom: 10),
+                      text: widget.l10n.translate("Update profile", currentLanguage),
+                      showLoader: _isProfileUpdateApiSent,
+                      isEnabled: !_isProfileUpdateApiSent,
+                      onPressed: _isProfileUpdateApiSent ? null : () {
+                        if (_formKey.currentState!.validate()) {
+                          // Perform the profile data update logic
+                          updateProfile(widget.storageService, currentLanguage, context, _authenticatedApiBackendService);
+                        }
+                      },
                     ),
                   ],
                 ),
@@ -413,6 +425,20 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  /// Handles profile update API call
+  /// 
+  /// Parameters:
+  /// - [storageService] for local storage operations
+  /// - [currentLanguage] for localization
+  /// - [context] for navigation/UI
+  /// - [authenticatedApiBackendService] for API calls
+  /// 
+  /// Manages:
+  /// - Form data preparation
+  /// - Image upload handling (web/mobile)
+  /// - API response processing
+  /// - Error/success states
+  /// - Token updates if password changed
   void updateProfile(StorageService storageService, String currentLanguage, BuildContext context, AuthenticatedApiBackendService authenticatedApiBackendService) async {
     // Add your profile data update logic here, such as an HTTP request to your backend.
     final userBirthday = _userBirthdayController.text;

@@ -3,3 +3,4 @@
 - Notifications && Push notifications.
 - Test update profile on mobile.
 - Add phone number to profile update.
+- Add permission manage.
