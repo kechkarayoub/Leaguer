@@ -28,8 +28,10 @@ class ThirdPartyAuthService {
   ///
   /// Returns a [UserCredential] if successful, otherwise returns `null`.
   Future<UserCredential?> signInWithGoogle() async {
+    
+    final platform = getPlatformType();
     try{
-      if (kIsWeb) {
+      if (platform == PlatformType.web) {
         // 🌐 Web-specific Google Sign-In
         GoogleAuthProvider googleProvider = GoogleAuthProvider();
         return await _auth.signInWithPopup(googleProvider);
@@ -65,9 +67,10 @@ class ThirdPartyAuthService {
   ///
   /// Works for both Web and Native platforms.
   Future<void> signOut() async {
+    final platform = getPlatformType();
     try{
       await _auth.signOut();
-      if (!kIsWeb) await _googleSignIn.signOut();
+      if (platform != PlatformType.web) await _googleSignIn.signOut();
     }
     catch(e){
       logMessage(e, "Google Sign-Out Error", "e");

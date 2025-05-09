@@ -9,6 +9,7 @@ import 'package:frontend/main.dart'; // Adjust the import path as needed
 import 'package:mockito/mockito.dart';
 import 'package:frontend/pages/sign_in_up/sign_in_page.dart';
 import 'package:frontend/pages/dashboard/dashboard.dart';
+import 'package:frontend/utils/utils.dart';
 import 'package:google_sign_in_mocks/google_sign_in_mocks.dart';
 import './mocks/mocks.mocks.dart';
 import './mocks/test_helper.dart';
@@ -24,6 +25,8 @@ void main() async{
   late ThirdPartyAuthService thirdPartyAuthService;
   late MockFirebaseAuth mockAuth;
   late MockGoogleSignIn mockGoogleSignIn;
+  
+  final platform = getPlatformType();
 
   group('EnablePlatformOverrideForDesktop', () {
     setUp(() async {
@@ -39,7 +42,7 @@ void main() async{
       // Mock platform to be Windows
       debugDefaultTargetPlatformOverride = null; // Reset to default
 
-      enablePlatformOverrideForDesktop();
+      enablePlatformOverrideForDesktop(platform);
 
       if (Platform.isWindows || Platform.isLinux) {
         expect(debugDefaultTargetPlatformOverride, TargetPlatform.fuchsia);

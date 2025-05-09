@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:frontend/components/initials_avatar.dart';
+import 'package:frontend/utils/utils.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImagePickerWidget extends StatefulWidget {
@@ -41,6 +41,7 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
   String? _webImageUrl;
   bool _imageRemoved = false;
   bool isPicking = false;
+  final platform = getPlatformType();
   
   @override
   void initState() {
@@ -55,7 +56,7 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
       final pickedFile = await (widget.imagePicker ?? ImagePicker()).pickImage(source: source);
       if (pickedFile != null) {
         setState(() {
-          if (kIsWeb) {
+          if (platform == PlatformType.web) {
             _webImageUrl = pickedFile.path; // Using the path as URL for web
           }
           _selectedImage = XFile(pickedFile.path);  // Update the selected image file
@@ -109,7 +110,7 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(widget.borderRadius),  // Circular shape for the image
-                child: kIsWeb
+                child: platform == PlatformType.web
                   ? Image.network(
                       _webImageUrl!,
                       height: widget.height,
@@ -232,7 +233,7 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
                       child: Text(widget.labelText),
                     ),
                   ),
-                  if (!kIsWeb && (Platform.isAndroid || Platform.isIOS))
+                  if (platform == PlatformType.mobile)
                     Semantics(
                       label: widget.labelTextCamera,
                       child: TextButton(

@@ -2,7 +2,6 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:frontend/components/wakelock_service.dart';
 import 'package:frontend/l10n/l10n.dart';
@@ -53,11 +52,12 @@ class ConnectionStatusWidgetState extends State<ConnectionStatusWidget> with Wid
   late Timer _timer; // Timer to hide the connection restored banner
   //bool isUnmounted = false;
   bool isInBackground = false; // Tracks whether the app is in the background
+  final platform = getPlatformType();
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // Handles app lifecycle state changes (e.g., background/foreground)
-    if (!kIsWeb) { // Skip lifecycle events on the web
+    if (platform != PlatformType.web) { // Skip lifecycle events on the web
       super.didChangeAppLifecycleState(state);
       switch (state) {
         case AppLifecycleState.inactive: // To review
@@ -80,7 +80,7 @@ class ConnectionStatusWidgetState extends State<ConnectionStatusWidget> with Wid
     super.initState();
     // Start checking the internet connection on widget initialization
     internetCheck(true);
-    if (!kIsWeb) {
+    if (platform != PlatformType.web) {
       WidgetsBinding.instance.addObserver(this); // Add lifecycle observer
       try{
         (widget.wakelockService??_wakelockService).enable(); // Prevent screen from locking
@@ -149,7 +149,7 @@ class ConnectionStatusWidgetState extends State<ConnectionStatusWidget> with Wid
     catch(e){
       // Ignore errors if the timer is not initialized
     }
-    if (!kIsWeb) {
+    if (platform != PlatformType.web) {
       WidgetsBinding.instance.removeObserver(this); // Remove lifecycle observer
       try{
         (widget.wakelockService??_wakelockService).disable(); // Allow screen to lock

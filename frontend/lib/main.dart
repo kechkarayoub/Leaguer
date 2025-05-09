@@ -16,8 +16,8 @@ import 'package:frontend/storage/storage.dart';
 import 'package:frontend/utils/utils.dart';
 
 /// Enables platform override for desktop (Windows/Linux) to use Fuchsia as the target platform.
-void enablePlatformOverrideForDesktop() {
-  if (!kIsWeb && (Platform.isWindows || Platform.isLinux)) {
+void enablePlatformOverrideForDesktop(platform) {
+  if (platform == PlatformType.desktop) {
     debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
   }
 }
@@ -31,14 +31,15 @@ void main() async {
   await dotenv.load(fileName: ".env");
 
   bool iskTestMode = (dotenv.env['IS_TEST'] ?? 'false') == "true";
+  final platform = getPlatformType();
   if (!iskTestMode) { // If is test mode; do not execute enablePlatformOverrideForDesktop.
     // Enable platform override for desktop
-    enablePlatformOverrideForDesktop();
+    enablePlatformOverrideForDesktop(platform);
   }
 
   // Ensure Flutter binding is initialized
   WidgetsFlutterBinding.ensureInitialized();
-  if(kIsWeb){
+  if(platform == PlatformType.web){
     await Firebase.initializeApp(
       options: FirebaseOptions(
         apiKey: dotenv.env['FIREBASE_WEB_API_KEY']??"",

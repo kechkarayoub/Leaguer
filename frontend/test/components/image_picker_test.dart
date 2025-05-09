@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:frontend/components/image_picker.dart';
+import 'package:frontend/utils/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import '../mocks/test_helper.dart'; // Import the test helper
@@ -132,7 +132,8 @@ void main() {
       onImageSelected: (_) {},
       imagePicker: mockImagePicker,
     ));
-    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+    final platform = getPlatformType();
+    if (platform == PlatformType.mobile) {
       expect(find.text('Camera'), findsOneWidget);
     } else {
       expect(find.text('Camera'), findsNothing);
