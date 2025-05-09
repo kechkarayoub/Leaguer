@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/components/wakelock_service.dart';
 import 'package:frontend/l10n/l10n.dart';
+import 'package:frontend/utils/platform_detector.dart';
 import 'package:frontend/utils/utils.dart';
 
 // Create a Dio instance for making HTTP requests

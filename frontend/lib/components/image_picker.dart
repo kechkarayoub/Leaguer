@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:frontend/components/initials_avatar.dart';
-import 'package:frontend/utils/utils.dart';
+import 'package:frontend/utils/platform_detector.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImagePickerWidget extends StatefulWidget {

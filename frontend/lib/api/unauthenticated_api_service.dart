@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:frontend/utils/platform_detector.dart';
 import 'package:frontend/utils/utils.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 

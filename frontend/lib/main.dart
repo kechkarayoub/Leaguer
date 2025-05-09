@@ -13,6 +13,7 @@ import 'package:frontend/pages/profile/profile.dart';
 import 'package:frontend/pages/sign_in_up/sign_in_page.dart';
 import 'package:frontend/pages/sign_in_up/sign_up_page.dart';
 import 'package:frontend/storage/storage.dart';
+import 'package:frontend/utils/platform_detector.dart';
 import 'package:frontend/utils/utils.dart';
 
 /// Enables platform override for desktop (Windows/Linux) to use Fuchsia as the target platform.

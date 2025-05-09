@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/components/image_picker.dart';
-import 'package:frontend/utils/utils.dart';
+import 'package:frontend/utils/platform_detector.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import '../mocks/test_helper.dart'; // Import the test helper
