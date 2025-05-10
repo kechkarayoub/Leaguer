@@ -21,27 +21,28 @@ enum PlatformType {android, desktop, ios, linux, macOs, mobile, web, windows}
 /// - PlatformType.mobile or specific mobile OS (android/ios) for mobile devices
 /// - PlatformType.desktop or specific desktop OS (windows/macOs/linux) for desktops
 /// - The specified default platform or mobile if detection fails
-PlatformType getPlatformType({bool returnSpecificPlatform = false, PlatformType? defaultPlatform,}) {
+PlatformType getPlatformType({bool returnSpecificPlatform = false, PlatformType? defaultPlatform, bool isTest=false}) {
   // Check if the platform is Web (highest priority)
-  if (kIsWeb) return PlatformType.web;
+  if (isTest && defaultPlatform == PlatformType.web) return PlatformType.web;
+  if (!isTest && kIsWeb) return PlatformType.web;
 
   try {
     // Mobile platform detection
-    if (Platform.isAndroid) {
+    if (isTest ? defaultPlatform == PlatformType.android : Platform.isAndroid) {
       return returnSpecificPlatform ? PlatformType.android : PlatformType.mobile;
     }
-    if (Platform.isIOS) {
+    if (isTest ? defaultPlatform == PlatformType.ios : Platform.isIOS) {
       return returnSpecificPlatform ? PlatformType.ios : PlatformType.mobile;
     }
 
     // Desktop platform detection
-    if (Platform.isWindows) {
+    if (isTest ? defaultPlatform == PlatformType.windows : Platform.isWindows) {
       return returnSpecificPlatform ? PlatformType.windows : PlatformType.desktop;
     }
-    if (Platform.isMacOS) {
+    if (isTest ? defaultPlatform == PlatformType.macOs : Platform.isMacOS) {
       return returnSpecificPlatform ? PlatformType.macOs : PlatformType.desktop;
     }
-    if (Platform.isLinux) {
+    if (isTest ? defaultPlatform == PlatformType.linux : Platform.isLinux) {
       return returnSpecificPlatform ? PlatformType.linux : PlatformType.desktop;
     }
   } catch (_) {
