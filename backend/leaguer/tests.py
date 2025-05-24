@@ -1,5 +1,7 @@
 from .utils import (execute_native_query, generate_random_code, get_all_timezones, get_email_base_context,
-                    get_local_datetime, remove_file, send_whatsapp, send_phone_message, upload_file)
+                    get_geolocation_info, get_local_datetime, remove_file, send_whatsapp, send_phone_message,
+                    upload_file)
+from .views import get_geolocation
 from accounts.models import User
 from datetime import datetime, timezone
 from django.conf import settings
@@ -9,9 +11,10 @@ from django.utils.timezone import now
 from django.utils.translation import activate, gettext_lazy as _
 # from dotenv import load_dotenv
 from decouple import config
-from unittest.mock import patch
+from rest_framework import status
+from unittest.mock import Mock, patch
 from zoneinfo import ZoneInfo
-import os
+import json, os
 
 
 class EnvFileTest(TestCase):
@@ -160,6 +163,34 @@ class LeaguerUtilsTest(TestCase):
         self.assertTrue(all(isinstance(item[0], str) for item in timezones[1:]))
         self.assertTrue(all(isinstance(item[1], str) for item in timezones[1:]))
 
+    @patch("requests.get")
+    def test_get_geolocation_info(self, mock_get):
+        """
+        Test the `get_geolocation_info`.
+        """
+        valid_ip = "8.8.8.8"
+        fields = "country,countryCode,city"
+        mock_success_response = {
+            "country": "United States",
+            "countryCode": "US",
+            "city": "Mountain View"
+        }
+        mock_response = Mock()
+        mock_response.json.return_value = mock_success_response
+        mock_response.raise_for_status.return_value = None
+        mock_get.return_value = mock_response
+
+        # Call the function
+        result = get_geolocation_info(valid_ip, fields=fields)
+
+        # Assertions
+        self.assertEqual(result, mock_success_response)
+        mock_get.assert_called_once_with(
+            f"http://ip-api.com/json/{valid_ip}",
+            params={"fields": fields},
+            timeout=5
+        )
+
     def test_get_local_datetime(self):
         """
         Test the `get_local_datetime` function with a valid timezone.
@@ -292,4 +323,40 @@ class LeaguerUtilsTest(TestCase):
         file_url, file_path = upload_file(request, None, 'profile_images', prefix="profile_")
         self.assertIsNone(file_url)
         self.assertIsNone(file_path)
+
+
+class GeolocationViewTests(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+
+    @patch("requests.get")
+    def test_success(self, mock_get):
+        # Mock API response
+        mock_get.return_value.json.return_value = {
+            "country": "France",
+            "countryCode": "FR",
+        }
+
+        # Simulate request
+        request = self.factory.get("/geolocation/")
+        response = get_geolocation(request)
+
+        data = json.loads(response.content.decode('utf-8'))
+
+        # Assertions
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(data.get("countryCode"), "FR")
+        self.assertEqual(data.get("country"), "France")
+
+    @patch("requests.get")
+    def test_invalid_ip(self, mock_get):
+        # Simulate missing IP
+        request = self.factory.get("/geolocation/?selected_language=fr", REMOTE_ADDR=None)
+        response = get_geolocation(request)
+        data = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(data.get("error"), 'Geolocation service unavailable. Try again later.')
+        self.assertEqual(data.get("error"), _('Geolocation service unavailable. Try again later.'))
+
 

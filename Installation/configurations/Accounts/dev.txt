@@ -1,0 +1,7 @@
+Geolocation:
+    https://findip.net: touchedor37@gmail.com
+    Visit:
+        https://cors-anywhere.herokuapp.com/corsdemo
+
+Firebase:
+    kechkarayoub@gmail.com

@@ -30,8 +30,9 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 
-CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = []
+CORS_ALLOWED_ORIGINS = ['http://localhost:8082']
+# CORS_ALLOW_ALL_ORIGINS = True
 
 
 # Database
@@ -82,8 +83,6 @@ WHATSAPP_INSTANCE_ID = get_secret("WHATSAPP_INSTANCE_ID")
 WHATSAPP_INSTANCE_TOKEN = get_secret("WHATSAPP_INSTANCE_TOKEN")
 WHATSAPP_INSTANCE_URL = get_secret("WHATSAPP_INSTANCE_URL")
 
-# Allowed origins
-CORS_ALLOW_ALL_ORIGINS = True
 
 # Media configuration
 MEDIA_ROOT = os.path.join(PARENT_DIR, 'media_dev')

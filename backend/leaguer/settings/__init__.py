@@ -1,6 +1,6 @@
 import os
 from decouple import config
-from .common import *
+from .production import *
 
 
 def get_secret(secret_id, backup=None):
@@ -9,8 +9,7 @@ def get_secret(secret_id, backup=None):
 
 if get_secret("PIPLINE") == "development":
     from .local import *
-    LOGGING['handlers']['file']['level'] = 'INFO'
-    LOGGING['loggers']['django']['handlers'] = ['console', 'file']
-    LOGGING['loggers']['leaguer']['handlers'] = ['console', 'file']
-else:
-    from .production import *
+    if TEST is False:
+        LOGGING['handlers']['file']['level'] = 'INFO'
+        LOGGING['loggers']['django']['handlers'] = ['console', 'file']
+        LOGGING['loggers']['leaguer']['handlers'] = ['console', 'file']

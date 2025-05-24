@@ -61,6 +61,26 @@ def get_all_timezones(as_list=False):
     return [tuple(default_value)] + [(timezone, timezone) for timezone in sorted(all_timezones)]
 
 
+def get_geolocation_info(client_ip, fields="country,countryCode"):
+    """
+    Fetch geolocation data from ip-api.com.
+
+    Args:
+        client_ip (str): The IP address to lookup.
+        fields (str): Comma-separated fields (e.g., "country,countryCode,city").
+
+    Returns:
+        dict: Raw API response (e.g., {"country": "France", "countryCode": "FR"}).
+    """
+    try:
+        response = requests.get(f"http://ip-api.com/json/{client_ip}", params={"fields": fields}, timeout=5,)
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException as e:
+        logger.error("ip-api.com request failed: %s", str(e))
+        return {"status": "fail", "message": str(e)}
+
+
 def get_local_datetime(datetime_to_localize, custom_timezone):
     """
     Convert a UTC time to the user's local time based on their timezone.

@@ -9,17 +9,38 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-from . import get_secret
+from datetime import timedelta
+from decouple import config
+from django.utils.translation import gettext_lazy as _
 from pathlib import Path
 import os
+import sys
+
+
+def get_secret(secret_id, backup=None):
+    return config(secret_id) or backup
+
+
+TEST = 'test' in sys.argv
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 PARENT_DIR = Path(__file__).resolve().parent.parent.parent
 
+# Define the log directory path
+log_dir = os.path.join(BASE_DIR, 'logs')
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+# Create the directory if it doesn't exist
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
+
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = get_secret("DJANGO_SECRET_KEY")
+
+
+AUTH_USER_MODEL = 'accounts.User'
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -27,6 +48,228 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
+# Allowed origins
+CORS_ALLOWED_ORIGINS = []
+# CORS_ALLOW_ALL_ORIGINS = False
+
+# Application definition
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'accounts',
+    'i18n_switcher',
+    'corsheaders',
+]
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),  # Token valid for 1 hour
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),  # Refresh token valid for 7 days
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # Set JWT as default authentication
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',  # Restrict access to authenticated users
+    ),
+}
+
+MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'accounts.middleware.TimezoneMiddleware',
+]
+
+# Directory for language files
+LOCALE_PATHS = [
+    BASE_DIR / 'accounts/locale',
+    BASE_DIR / 'i18n_switcher/locale',
+    BASE_DIR / 'leaguer/locale',
+]
+
+ROOT_URLCONF = 'leaguer.urls'
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'accounts/templates'),
+            os.path.join(BASE_DIR, 'leaguer/templates'),
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.i18n',
+            ],
+        },
+    },
+]
+
+WSGI_APPLICATION = 'leaguer.wsgi.application'
+
+
+# Password validation
+# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+# Internationalization
+# https://docs.djangoproject.com/en/5.1/topics/i18n/
+
+
+TIME_ZONE = 'Africa/Casablanca'
+
+USE_I18N = True
+
+USE_TZ = True
+
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/5.1/howto/static-files/
+
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# LOGGING
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'file': {
+            'level': 'WARNING',  # Default to WARNING level
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'log.log'),
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB per file
+            'backupCount': 10,  # Keep 10 files max
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],  # Default to file handler
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'leaguer': {
+            'handlers': ['file'],  # Default to file handler
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
+
+
+MINIMUM_AGE_ALLOWED_FOR_USERS = 12
+
+
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = []
+LANGUAGE_CODE = "fr"
+
+LANGUAGES = [
+    ('ar', _('Arabic')),
+    ('en', _('English')),
+    ('fr', _('French')),
+]
+
+# Endpoints
+BACKEND_ENDPOINT = "http://192.168.94.239:8080"
+FRONTEND_ENDPOINT = ""
+
+STATIC_URL = f"{BACKEND_ENDPOINT}/static/" # this is for showing images in email in dev environement
+STATIC_URL = f"/static/"
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+COMPANY_ADDRESS = "400 AV ZERKTOUNI, BOURGONE, CASABLAMNCA, MOROCCO"
+APPLICATION_NAME = "LEAGUER"
+
+# Replace with your default country code
+DEFAULT_PHONE_NUMBER_COUNTRY_CODE = "MA"
+
+# Phone number verification required
+PHONE_NUMBER_VERIFICATION_REQUIRED = True
+
+# Number of minute that the phone number verification code still valid
+NUMBER_MINUTES_BEFORE_PHONE_NUMBER_VERIFICATION_CODE_EXPIRATION = 60
+
+# Phone number verification code's quota
+PHONE_NUMBER_VERIFICATION_CODE_QUOTA = 3
+
+
+# Technical service email
+TECHNICAL_SERVICE_EMAIL = ""
+
+# Activate or deactivate email verification
+ENABLE_EMAIL_VERIFICATION = get_secret("ENABLE_EMAIL_VERIFICATION", False) in [True, "true"]
+
+# Activate or deactivate phone number verification
+ENABLE_PHONE_NUMBER_VERIFICATION = get_secret("ENABLE_PHONE_NUMBER_VERIFICATION", False) in [True, "true"]
+
+
+# Media configuration
+MEDIA_URL = '/media/'
+
+# FIREBASE CREDENTIALS PATH
+FIREBASE_CREDENTIALS_PATH = os.path.join(BASE_DIR, "firebase-service-account.json")
+print(FIREBASE_CREDENTIALS_PATH)
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -68,8 +311,7 @@ WHATSAPP_INSTANCE_ID = get_secret("WHATSAPP_INSTANCE_ID")
 WHATSAPP_INSTANCE_TOKEN = get_secret("WHATSAPP_INSTANCE_TOKEN")
 WHATSAPP_INSTANCE_URL = get_secret("WHATSAPP_INSTANCE_URL")
 
-# Allowed origins
-CORS_ALLOW_ALL_ORIGINS = False
 
 # Media configuration
 MEDIA_ROOT = os.path.join(PARENT_DIR, 'media')
+
