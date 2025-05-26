@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -83,6 +84,73 @@ class ThirdPartyAuthService {
 class UnauthenticatedApiBackendService {
     /// This service handles communication with the backend API.
   static String backendUrl = dotenv.env['BACKEND_URL'] ?? 'Backend URL not found';
+    
+  
+  /// Get geolocation info from user IP.
+  ///
+  /// Parameters:
+  /// - `data`: Map containing request parameters including 'requested_info'.
+  /// - `dio`: Optional custom Dio HTTP client instance.
+  ///
+  /// Returns:
+  /// - A `Map<String, dynamic>` containing the geolocation info or String for country code.
+  /// - Returns default country code if only countryCode is requested and request fails.
+  ///
+  /// Throws:
+  /// - Exception if there is an error during the HTTP request.
+  static Future<dynamic> getGeolocationInfo({
+    required Map<String, dynamic> data,
+    Dio? dio,  // Client HTTP optionnel
+  }) async {
+    dio ??= Dio(); // Utiliser le client par défaut si aucun n'est fourni
+    String defaultCountryCode = dotenv.env['DEFAULT_COUNTRY_CODE'] ?? 'MA';
+    
+    bool isDevelopment = (dotenv.env['PIPLINE'] ?? 'production') == "development";
+    bool isProductionUrl = (dotenv.env['BACKEND_URL'] ?? 'localhost').contains(".com");
+    
+    String url = '$backendUrl/geolocation';
+    Map<String, dynamic> queryParams = {...data};
+    if (isDevelopment && isProductionUrl) {
+      final params = data.entries.map((e) => '${e.key}=${e.value}').join('&');
+      url = 'https://api.allorigins.win/get?url=${Uri.encodeComponent('$backendUrl/geolocation?$params')}';
+      queryParams = {};
+    }
+    try{
+      final response = await dio.get(
+        url,
+        queryParameters: queryParams,
+        options: Options(
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest', // Required by CORS Anywhere
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        // Parse the JSON response and return it
+        
+        dynamic content;
+        if (response.data is Map && response.data.containsKey('content')) {
+          // Handle allorigins.win response
+          content = response.data['content'];
+          if (content is String) {
+            content = jsonDecode(content);
+          }
+        } else {
+          // Handle direct response
+          content = response.data;
+        }
+        return data['requested_info'] == "countryCode"  ? content['countryCode'] ?? defaultCountryCode : content;
+      } else {
+        logMessage(response.statusCode, "Failed to get IP information", "e");
+      }
+    }  on DioException catch (e) {  
+        logMessage(e, "Exception when get IP information", "e");
+    } catch (e) {
+        logMessage(e, "Unkown error when get IP information", "e");
+    }
+    return data['requested_info'] == "countryCode" ? defaultCountryCode : null;
+  }
+
     
   
   /// Resend a verification email link to the user email.

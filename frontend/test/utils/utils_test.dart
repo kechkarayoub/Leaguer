@@ -10,8 +10,8 @@ import 'package:frontend/api/unauthenticated_api_service.dart';
 import 'package:frontend/utils/utils.dart';
 import 'package:google_sign_in_mocks/google_sign_in_mocks.dart';
 import 'package:image/image.dart' as img;
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:mockito/mockito.dart';
-import 'package:path_provider/path_provider.dart';
 import '../mocks/mocks.mocks.dart';
 import '../mocks/test_helper.dart';
 
@@ -24,6 +24,77 @@ void main() async{
   // Initialize flutter_dotenv for tests
   await dotenv.load(fileName: ".env");
   
+
+  group('FormatPhoneNumber', () {
+    test('Removes redundant zero after country code', () {
+      final number = PhoneNumber(
+        isoCode: 'MA',
+        dialCode: '+212',
+        phoneNumber: '+2120612345678',
+      );
+      expect(formatPhoneNumber(number), equals('+212612345678'));
+
+    });
+
+    test('Returns empty string for null phone number', () {
+      expect(formatPhoneNumber(PhoneNumber(isoCode: 'US')), equals(''));
+
+    });
+
+    test('Leaves number unchanged when no redundant zero', () {
+      final number = PhoneNumber(
+        isoCode: 'US',
+        dialCode: '+1',
+        phoneNumber: '+14155552671',
+      );
+      expect(formatPhoneNumber(number), equals('+14155552671'));
+
+    });
+
+  });
+
+  group('ParsePhoneNumber', () {
+    test('Returns PhoneNumber for valid international number', () async {
+      final result = await parsePhoneNumber('+14155552671');
+      expect(result, isNotNull);
+      expect(result?.isoCode, equals('US'));
+
+    }, skip: true); // Skip if running in an environment without plugin support
+
+    test('Returns null for empty string', () async {
+      expect(await parsePhoneNumber(''), isNull);
+
+    });
+
+    test('Returns null for invalid number', () async {
+      expect(await parsePhoneNumber('invalid'), isNull);
+
+    }, skip: true); // Skip if running in an environment without plugin support
+
+  });
+
+  group('GetAllowedCountries', () {
+    test('Returns all countries when no exclusions', () {
+      expect(getAllowedCuntries(excludedCountriesList: []), equals(allCountryCodes.where((code) => 'IL' != code).toList()));
+
+    });
+
+    test('Excludes specified countries', () {
+      final result = getAllowedCuntries(excludedCountriesList: ['US', 'CA']);
+      expect(result, isNot(contains('US')));
+      expect(result, isNot(contains('CA')));
+      expect(result.length, equals(allCountryCodes.length - 2));
+
+    });
+
+    test('Defaults to excluding Israel', () {
+      expect(getAllowedCuntries(), isNot(contains('IL')));
+
+    });
+
+  });
+
+
   group('Other functions', () {
     test('HexToColor converts hex string to Color object correctly', () {
       expect(hexToColor('#FF5733'), equals(Color(0xFFFF5733)));
@@ -104,7 +175,7 @@ void main() async{
     });
   });
 
-  group('createXFileFromUrl', () {
+  group('CreateXFileFromUrl', () {
     const testUrl = 'https://example.com/testfile.jpg';
     final testBytes = Uint8List.fromList([1, 2, 3, 4, 5]);
     setUp(() async{

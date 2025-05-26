@@ -255,7 +255,6 @@ void main() async {
     late ThirdPartyAuthService thirdPartyAuthService;
     late MockFirebaseAuth mockAuth;
     late MockGoogleSignIn mockGoogleSignIn;
-    bool sessionExpiredCalled = false;
     String testBackendUrl = dotenv.env['BACKEND_URL']??"";
 
     setUp(() {
@@ -284,7 +283,6 @@ void main() async {
         secureStorageService: mockSecureStorage,
         storageService: mockStorage,
         onSessionExpired: () {
-          sessionExpiredCalled = true;
         },
         thirdPartyAuthService: thirdPartyAuthService,
       );

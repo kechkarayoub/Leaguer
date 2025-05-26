@@ -204,15 +204,30 @@
     "en": "Password length must be greater than or equal to 8",
     "fr": "La longueur du mot de passe doit être supérieure ou égale à 8"
   },
+  "Phone number": {
+    "ar": "رقم الهاتف",
+    "en": "Phone number",
+    "fr": "Numéro de téléphone"
+  },
   "Please enter a valid email address": {
     "ar": "المرجو إدخال بريد إلكتروني صحيح",
-    "en": "Please enter your email",
+    "en": "Please enter a valid email address",
     "fr": "Veuillez saisir une adresse e-mail valide"
+  },
+  "Please enter a valid phone number": {
+    "ar": "المرجو إدخال رقم هاتف صحيح",
+    "en": "Please enter a valid phone number",
+    "fr": "Veuillez saisir un numéro de téléphone valide"
   },
   "Please enter a valid username": {
     "ar": "المرجو إدخال بريد إلكتروني صحيح",
     "en": "Please enter a valid username",
     "fr": "Veuillez saisir un nom d'utilisateur valide"
+  },
+  "Please enter your current password": {
+    "ar": "المرجو إدخال كلمة المرور الحالية",
+    "en": "Please enter your current password",
+    "fr": "Veuillez entrer votre mot de passe actuel"
   },
   "Please enter your email": {
     "ar": "المرجو إدخال البريدك الإلكتروني",
@@ -234,11 +249,6 @@
     "en": "Please enter your last name",
     "fr": "Veuillez entrer votre nom de famille"
   },
-  "Please enter your current password": {
-    "ar": "المرجو إدخال كلمة المرور الحالية",
-    "en": "Please enter your current password",
-    "fr": "Veuillez entrer votre mot de passe actuel"
-  },
   "Please enter your new password": {
     "ar": "المرجو إدخال كلمة المرور الجديدة",
     "en": "Please enter your new password",
@@ -253,6 +263,11 @@
     "ar": "المرجو إدخال اسم المستخدم",
     "en": "Please enter your username",
     "fr": "Veuillez entrer votre nom d'utilisateur"
+  },
+  "Please enter your phone number": {
+    "ar": "المرجو إدخال رقم الهاتف",
+    "en": "Please enter your phone number",
+    "fr": "Veuillez entrer votre numéro de téléphone"
   },
   "Please select your birthday": {
     "ar": "المرجو اختيار تاريخ ميلادك",
@@ -293,6 +308,11 @@
     "ar": "إعادة إرسال رابط التحقق عبر البريد الإلكتروني",
     "en": "Resend verification email link",
     "fr": "Renvoyer le lien de vérification par e-mail"
+  },
+  "Search country": {
+    "ar": "ابحث عن دولة",
+    "en": "Search country",
+    "fr": "Rechercher un pays"
   },
   "Select Language": {
     "ar": "اختر اللغة",

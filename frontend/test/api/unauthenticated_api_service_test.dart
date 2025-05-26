@@ -1,4 +1,5 @@
 
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
@@ -45,6 +46,176 @@ void main() {
     test("Google Sign-Out works without errors", () async {
       await thirdPartyAuthService.signOut();
       expect(mockAuth.currentUser, isNull);
+    });
+
+    
+  });
+
+  group('UnauthenticatedApiBackendService: getGeolocationInfo', () {
+    late MockDio mockDio;
+    String backendUrl = '';
+    String endpoint = '/geolocation';
+    String? originalPipeline;
+    String? originalBackendUrl;
+
+    setUp(() {
+      // Initialize the mock Dio
+      mockDio = MockDio();
+      backendUrl = dotenv.env['BACKEND_URL'] ?? '';
+
+      // Save original values
+      originalPipeline = dotenv.env['PIPLINE'];
+      originalBackendUrl = dotenv.env['BACKEND_URL'];
+    });
+
+    tearDown(() {
+      // Restore original values
+      dotenv.env['PIPLINE'] = originalPipeline ?? "";
+      dotenv.env['BACKEND_URL'] = originalBackendUrl ?? "";
+    });
+
+    test('GetGeolocationInfo returns country code successfully', () async {
+      // Arrange
+      final mockResponse = Response(
+        requestOptions: RequestOptions(path: '$backendUrl$endpoint'),
+        statusCode: 200,
+        data: {
+          'content': {
+            'countryCode': 'US',
+            'otherInfo': 'value'
+          }
+        },
+      );
+
+      // Mock the Dio post method
+      when(mockDio.get(
+        '$backendUrl$endpoint',
+        queryParameters: {'requested_info': 'countryCode'},
+        options: anyNamed('options'),
+      )).thenAnswer((_) async => mockResponse);
+
+      // Act
+      final result = await UnauthenticatedApiBackendService.getGeolocationInfo(
+        data: {'requested_info': 'countryCode'},
+        dio: mockDio,
+      );
+
+      // Verify that the get request was called with the correct URL and data
+      verify(mockDio.get(
+        '$backendUrl$endpoint',
+        queryParameters: {'requested_info': 'countryCode'},
+        options: anyNamed('options'),
+      )).called(1);
+
+      // Assert
+      expect(result, equals('US'));
+
+    });
+
+    test('GetGeolocationInfo returns full info successfully', () async {
+      // Arrange
+      final mockGeoData = {
+        'countryCode': 'US',
+        'city': 'New York',
+        'region': 'NY'
+      };
+      final mockResponse = Response(
+        requestOptions: RequestOptions(path: '$backendUrl$endpoint'),
+        statusCode: 200,
+        data: {'content': mockGeoData},
+      );
+
+      when(mockDio.get(
+        '$backendUrl$endpoint',
+        queryParameters: {},
+        options: anyNamed('options'),
+      )).thenAnswer((_) async => mockResponse);
+
+      // Act
+      final result = await UnauthenticatedApiBackendService.getGeolocationInfo(
+        data: {},
+        dio: mockDio,
+      );
+
+      // Assert
+      expect(result, equals(mockGeoData));
+    });
+
+    test('GetGeolocationInfo uses allorigins in development', () async {
+      // Arrange - Set development environment
+      dotenv.env['PIPLINE'] = 'development';
+      dotenv.env['BACKEND_URL'] = 'https://api.example.com';
+      
+      final mockResponse = Response(
+        requestOptions: RequestOptions(path: 'https://api.allorigins.win/get'),
+        statusCode: 200,
+        data: {
+          'content': jsonEncode({
+            'countryCode': 'FR',
+            'otherInfo': 'value'
+          })
+        },
+      );
+
+      when(mockDio.get(
+        any,
+        queryParameters: {},
+        options: anyNamed('options'),
+      )).thenAnswer((_) async => mockResponse);
+
+      // Act
+      final result = await UnauthenticatedApiBackendService.getGeolocationInfo(
+        data: {'ip': '123.123.123.123'},
+        dio: mockDio,
+      );
+      // Assert
+      expect(result['countryCode'], equals('FR'));
+      expect(result['otherInfo'], equals('value'));
+      verify(mockDio.get(
+        captureThat(startsWith('https://api.allorigins.win/get?url=')),
+        queryParameters: {},
+        options: anyNamed('options'),
+      )).called(1);
+    });
+
+    test('GetGeolocationInfo returns default country code on failure when requested', () async {
+      when(mockDio.get(
+        any,
+        queryParameters: anyNamed('queryParameters'),
+        options: anyNamed('options'),
+      )).thenThrow(DioException(
+        requestOptions: RequestOptions(path: ''),
+        type: DioExceptionType.connectionTimeout,
+      ));
+
+      // Act
+      final result = await UnauthenticatedApiBackendService.getGeolocationInfo(
+        data: {'requested_info': 'countryCode'},
+        dio: mockDio,
+      );
+
+      // Assert
+      expect(result, equals('MA')); // or your default country code
+    });
+
+    test('GetGeolocationInfo returns null on failure when full info requested', () async {
+      when(mockDio.get(
+        any,
+        queryParameters: anyNamed('queryParameters'),
+        options: anyNamed('options'),
+      )).thenThrow(DioException(
+        requestOptions: RequestOptions(path: ''),
+        type: DioExceptionType.connectionTimeout,
+      ));
+
+      // Act
+      final result = await UnauthenticatedApiBackendService.getGeolocationInfo(
+        data: {}, // requesting full info
+        dio: mockDio,
+      );
+
+      // Assert
+      expect(result, isNull);
     });
 
     

@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/api/unauthenticated_api_service.dart';
 import 'package:frontend/storage/storage.dart';
 import 'package:image/image.dart' as img;
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:logger/logger.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart' as p;
@@ -269,6 +270,86 @@ String _extractFilenameFromUrl(String url, Response<List<int>> response) {
   return 'download_${DateTime.now().millisecondsSinceEpoch}';
 }
 
+
+/// Formats a phone number by removing any redundant leading zero after country code
+/// 
+/// Example: 
+/// - Input: +2120612345678 (Morocco with 0 after country code)
+/// - Output: +212612345678
+String formatPhoneNumber(PhoneNumber number) {
+  if (number.phoneNumber == null || number.phoneNumber!.isEmpty) {
+    return '';
+  }
+
+  String countryCode = number.dialCode ?? "";
+  String phoneNumber = number.phoneNumber ?? "";
+  // Remove redundant 0 after country code if present
+  if(phoneNumber.contains('${countryCode}0')){
+    phoneNumber = phoneNumber.replaceFirst('${countryCode}0', countryCode);
+  }
+  return phoneNumber;
+}
+
+// Parses a phone number string into a PhoneNumber object with region info
+/// 
+/// Returns null if parsing fails
+/// 
+/// Example:
+/// parsePhoneNumber('+14155552671') → PhoneNumber for US region
+Future<PhoneNumber?> parsePhoneNumber(String internationalNumber) async {
+  if (internationalNumber.isEmpty) {
+    return null;
+  }
+  try {
+    PhoneNumber number = await PhoneNumber.getRegionInfoFromPhoneNumber(
+      internationalNumber,
+    );
+    return number;
+  } catch (e) {
+    logMessage(e, "Error when parsing PhoneNumber from $internationalNumber", "e", "", true);
+    return null;
+  }
+}
+
+/// Complete list of ISO country codes
+const List<String> allCountryCodes = [
+  'AF', 'AL', 'DZ', 'AS', 'AD', 'AO', 'AI', 'AQ', 'AG', 'AR', 'AM', 'AW', 'AU',
+  'AT', 'AZ', 'BS', 'BH', 'BD', 'BB', 'BY', 'BE', 'BZ', 'BJ', 'BM', 'BT', 'BO',
+  'BA', 'BW', 'BR', 'IO', 'VG', 'BN', 'BG', 'BF', 'BI', 'KH', 'CM', 'CA', 'CV',
+  'BQ', 'KY', 'CF', 'TD', 'CL', 'CN', 'CX', 'CC', 'CO', 'KM', 'CK', 'CR', 'HR',
+  'CU', 'CW', 'CY', 'CZ', 'CD', 'DK', 'DJ', 'DM', 'DO', 'TL', 'EC', 'EG', 'SV',
+  'GQ', 'ER', 'EE', 'ET', 'FK', 'FO', 'FJ', 'FI', 'FR', 'GF', 'PF', 'GA', 'GM',
+  'GE', 'DE', 'GH', 'GI', 'GR', 'GL', 'GD', 'GP', 'GU', 'GT', 'GG', 'GN', 'GW',
+  'GY', 'HT', 'HN', 'HK', 'HU', 'IS', 'IN', 'ID', 'IR', 'IQ', 'IE', 'IM', 'IL',
+  'IT', 'CI', 'JM', 'JP', 'JE', 'JO', 'KZ', 'KE', 'KI', 'XK', 'KW', 'KG', 'LA',
+  'LV', 'LB', 'LS', 'LR', 'LY', 'LI', 'LT', 'LU', 'MO', 'MK', 'MG', 'MW', 'MY',
+  'MV', 'ML', 'MT', 'MH', 'MQ', 'MR', 'MU', 'YT', 'MX', 'FM', 'MD', 'MC', 'MN',
+  'ME', 'MS', 'MA', 'MZ', 'MM', 'NA', 'NR', 'NP', 'NL', 'NC', 'NZ', 'NI', 'NE',
+  'NG', 'NU', 'KP', 'MP', 'NO', 'OM', 'PK', 'PW', 'PS', 'PA', 'PG', 'PY', 'PE',
+  'PH', 'PL', 'PT', 'PR', 'QA', 'CG', 'RE', 'RO', 'RU', 'RW', 'BL', 'SH', 'KN',
+  'LC', 'MF', 'PM', 'VC', 'WS', 'SM', 'ST', 'SA', 'SN', 'RS', 'SC', 'SL', 'SG',
+  'SX', 'SK', 'SI', 'SB', 'SO', 'ZA', 'KR', 'SS', 'ES', 'LK', 'SD', 'SR', 'SE',
+  'CH', 'SY', 'TW', 'TJ', 'TZ', 'TH', 'TG', 'TK', 'TO', 'TT', 'TN', 'TR', 'TM',
+  'TC', 'TV', 'UG', 'UA', 'AE', 'GB', 'US', 'UY', 'UZ', 'VU', 'VA', 'VE', 'VN',
+  'WF', 'YE', 'ZM', 'ZW'
+];
+
+/// Returns a list of allowed country codes with optional exclusions
+/// 
+/// [excludedCountries] - List of country codes to exclude
+/// 
+/// Example:
+/// getAllowedCountries(excluded: ['IL']) → All countries except Israel
+List<String> getAllowedCuntries({List<String> excludedCountriesList=const []}) {
+  final List<String> excludedCountries = excludedCountriesList.isEmpty ? ['IL'] : excludedCountriesList; // Example: remove Israel
+
+
+  // Remove excluded countries
+  final allowedCountries = allCountryCodes.where((code) => !excludedCountries.contains(code)).toList();
+
+  return allowedCountries;
+}
+
 /// Logs out the user by clearing the storage and possibly navigating to a login page.
 /// [secureStorageService] - The service used for clearing user data.
 /// [storageService] - The service used for clearing user data.
@@ -384,7 +465,7 @@ String determineMimeType(String path, {Uint8List? imageBytes}) {
 /// as a whole.
 ///
 /// Parameters:
-///   - [stream]: The input stream of byte chunks (List<int>)
+///   - [stream]: The input stream of byte chunks (List int)
 ///
 /// Returns:
 ///   A [Future<Uint8List>] that completes with all stream data combined

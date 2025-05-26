@@ -1,6 +1,7 @@
 Create a .env file in frontend folder with this content:
     APP_NAME=Leaguer
     BACKEND_URL=http://192.168.94.239:8080
+    DEFAULT_COUNTRY_CODE="MA"
     DISABLE_LOG_MESSAGE="false"
     ENABLE_USERS_REGISTRATION="false"
     ENABLE_LOG_IN_WITH_GOOGLE="false"
