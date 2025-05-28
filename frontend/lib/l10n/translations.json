@@ -1,4 +1,9 @@
 {
+  "_gender": {
+    "ar": "اختر",
+    "en": "Select",
+    "fr": "Sélectionner"
+  },
   "A new verification link has been sent to your email address. Please verify your email before logging in.": {
     "ar": "تم إرسال رابط تحقق جديد إلى عنوان بريدك الإلكتروني. يرجى التحقق من بريدك الإلكتروني قبل تسجيل الدخول.",
     "en": "A new verification link has been sent to your email address. Please verify your email before logging in.",
