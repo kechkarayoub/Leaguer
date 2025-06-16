@@ -1,6 +1,6 @@
 from .models import User
 from .serializers import UserSerializer
-from .utils import send_verification_email, send_phone_number_verification_code
+from .utils import format_phone_number, send_verification_email, send_phone_number_verification_code
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
 from django.conf import settings
@@ -330,6 +330,10 @@ class UpdateProfileView(APIView):
         random_prefix = generate_random_code()
         data['email'] = random_prefix + data.get('email', '')
         data['username'] = random_prefix + data.get('username', '')
+        user_phone_number = data.get('user_phone_number')
+        formatted_user_phone_number = format_phone_number(user_phone_number)
+        if user.user_phone_number and user.user_phone_number == formatted_user_phone_number:
+            data['user_phone_number'] = ""
 
         # Create a dummy serializer for validation purposes only
         serializer = UserSerializer(data=data)
@@ -375,6 +379,7 @@ class UpdateProfileView(APIView):
         user.user_gender = user_gender
         user.user_image_url = user_image_url
         user.user_initials_bg_color = user_initials_bg_color
+        user.user_phone_number = user_phone_number
 
         user.save()
 

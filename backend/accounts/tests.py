@@ -1083,9 +1083,9 @@ class SendEmailVerificationsLinksCommandTests(TestCase):
 class UpdateProfileViewTest(TestCase):
     def setUp(self):
         # Create a test user
-        self.user = User.objects.create_user(username='testuser', email='testuser@example.com', password='testpassword')
-        self.user2 = User.objects.create_user(username='testuser2', email='testuser2@example.com', password='testpassword')
-        self.user3 = User.objects.create_user(username='testuser3', email='testuser3@example.com', password='testpassword')
+        self.user = User.objects.create_user(username='testuser', email='testuser@example.com', password='testpassword', user_phone_number='+212672937219')
+        self.user2 = User.objects.create_user(username='testuser2', email='testuser2@example.com', password='testpassword', user_phone_number='+212612505257')
+        self.user3 = User.objects.create_user(username='testuser3', email='testuser3@example.com', password='testpassword', user_phone_number='+21312345678')
 
         # The URL for the update profile view (you should change this to match your URL pattern)
         self.url = reverse('update-profile')
@@ -1196,6 +1196,7 @@ class UpdateProfileViewTest(TestCase):
             'current_language': 'en'
         }
 
+        self.assertIsNotNone(self.user2.user_phone_number)
         # Make a POST request to update the profile
         response = self.client.put(self.url, data)
 
@@ -1206,6 +1207,7 @@ class UpdateProfileViewTest(TestCase):
         self.user2.refresh_from_db()
         self.assertEqual(self.user2.first_name, 'John2')
         self.assertEqual(self.user2.last_name, 'Doe2')
+        self.assertIsNone(self.user2.user_phone_number)
         # inside your test method
         factory = APIRequestFactory()
         fake_request = factory.post(self.url)  # fake request just to satisfy the `authenticate` function
@@ -1214,6 +1216,74 @@ class UpdateProfileViewTest(TestCase):
         self.assertIsNotNone(not_authenticated_user)
         authenticated_user = authenticate(request, username=self.user2.username, password="newpassword")
         self.assertIsNone(authenticated_user)
+
+    def test_update_profile_with_same_phone_number(self):
+        # Log in first
+        self.authenticate_user()
+
+        # Prepare the data for the request
+        data = {
+            'first_name': 'John2',
+            'last_name': 'Doe2',
+            'user_birthday': '1990-01-01',
+            'user_gender': 'male',
+            'email': 'testuser@example.com',
+            'username': 'testuser',
+            'user_initials_bg_color': '#00FFFF',
+            'current_password': 'testpassword',
+            'new_password': 'newpassword',
+            'update_password': "false",
+            'image_updated': "false",
+            'current_language': 'en',
+            'user_phone_number': '+212672937219',
+        }
+
+        self.assertEqual(self.user.user_phone_number, '+212672937219')
+        # Make a POST request to update the profile
+        response = self.client.put(self.url, data)
+
+        # Assert that the response status code is HTTP 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Assert that the user's profile was updated in the database
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, 'John2')
+        self.assertEqual(self.user.last_name, 'Doe2')
+        self.assertEqual(self.user.user_phone_number, '+212672937219')
+
+    def test_update_profile_with_different_phone_number(self):
+        # Log in first
+        self.authenticate_user3()
+
+        # Prepare the data for the request
+        data = {
+            'first_name': 'John2',
+            'last_name': 'Doe2',
+            'user_birthday': '1990-01-01',
+            'user_gender': 'male',
+            'email': 'testuser3@example.com',
+            'username': 'testuser3',
+            'user_initials_bg_color': '#00FFFF',
+            'current_password': 'testpassword',
+            'new_password': 'newpassword',
+            'update_password': "false",
+            'image_updated': "false",
+            'current_language': 'en',
+            'user_phone_number': '+21312345699',
+        }
+
+        self.assertEqual(self.user3.user_phone_number, '+21312345678')
+        # Make a POST request to update the profile
+        response = self.client.put(self.url, data)
+
+        # Assert that the response status code is HTTP 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Assert that the user's profile was updated in the database
+        self.user3.refresh_from_db()
+        self.assertEqual(self.user3.first_name, 'John2')
+        self.assertEqual(self.user3.last_name, 'Doe2')
+        self.assertEqual(self.user3.user_phone_number, '+21312345699')
 
     def test_update_profile_with_invalid_password(self):
         # Log in first
