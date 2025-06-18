@@ -94,6 +94,44 @@ void main() async{
 
   });
 
+  group('GetDialCodeFromCountryCode', () {
+    test('Returns correct dial code for known countries', () {
+      expect(getDialCodeFromCountryCode('MA'), '+212');
+      expect(getDialCodeFromCountryCode('US'), '+1');
+      expect(getDialCodeFromCountryCode('FR'), '+33');
+    });
+
+    test('Is case-insensitive', () {
+      expect(getDialCodeFromCountryCode('ma'), '+212');
+      expect(getDialCodeFromCountryCode('Us'), '+1');
+    });
+
+    test('Returns default code for unknown country', () {
+      expect(getDialCodeFromCountryCode('ZZ'), '+212');
+      expect(getDialCodeFromCountryCode(''), '+212');
+    });
+
+  });
+
+  group('AddLeading0ToNumber', () {
+    test('Returns true for non-US/CA countries', () {
+      expect(addLeading0ToNumber('MA'), true);
+      expect(addLeading0ToNumber('FR'), true);
+    });
+
+    test('Returns false for US or CA', () {
+      expect(addLeading0ToNumber('US'), false);
+      expect(addLeading0ToNumber('CA'), false);
+    });
+
+    test('Is case-insensitive', () {
+      expect(addLeading0ToNumber('us'), false);
+      expect(addLeading0ToNumber('ca'), false);
+      expect(addLeading0ToNumber('Ma'), true);
+    });
+    
+  });
+
 
   group('Other functions', () {
     test('HexToColor converts hex string to Color object correctly', () {

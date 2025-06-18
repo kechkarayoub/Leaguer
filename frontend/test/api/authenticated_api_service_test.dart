@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/api/authenticated_api_service.dart';
 import 'package:frontend/api/unauthenticated_api_service.dart';
 import 'package:frontend/storage/storage.dart';
+import 'package:frontend/utils/utils.dart';
 import 'package:google_sign_in_mocks/google_sign_in_mocks.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -14,7 +15,6 @@ import '../mocks/mocks.mocks.dart';
 // Generate mock Dio class
 @GenerateMocks([Dio])
 
-class MockStorageService extends Mock implements StorageService {}
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -245,6 +245,63 @@ void main() async {
       )).called(1);
     });
   
+  });
+
+  group('HandleSessionExpired', () {
+    late AuthenticatedApiBackendService apiService; 
+    late AuthenticatedApiBackendService apiService2; 
+    late MockSecureStorageService mockSecureStorageService;
+    late MockStorageService mockStorageService;
+    late MockDio mockDio;
+    bool sessionExpiredCalled = false;
+    bool sessionExpiredCalled2 = false;
+    late ThirdPartyAuthService thirdPartyAuthService;
+    late MockFirebaseAuth mockAuth;
+    late MockGoogleSignIn mockGoogleSignIn;
+    String testBackendUrl = dotenv.env['BACKEND_URL']??"";
+    setUp(() async{
+      mockDio = MockDio();
+      mockSecureStorageService = MockSecureStorageService();
+      mockStorageService = MockStorageService();
+      mockAuth = MockFirebaseAuth();
+      mockGoogleSignIn = MockGoogleSignIn();
+      thirdPartyAuthService = ThirdPartyAuthService(auth: mockAuth, googleSignIn: mockGoogleSignIn);
+      // ✅ Stub `options` to prevent "MissingStubError: options"
+      when(mockDio.options).thenReturn(BaseOptions());
+
+      // ✅ Stub `interceptors` to prevent "MissingStubError: interceptors"
+      when(mockDio.interceptors).thenReturn(Interceptors());
+        // ✅ Stub `getAccessToken()` properly
+      when(mockSecureStorageService.getAccessToken())
+          .thenAnswer((_) async => 'mock_token');
+
+      apiService = AuthenticatedApiBackendService(
+        dio: mockDio,
+        secureStorageService: mockSecureStorageService,
+        storageService: mockStorageService,
+        onSessionExpired: () {
+          sessionExpiredCalled = true;
+        },
+        thirdPartyAuthService: thirdPartyAuthService,
+      );
+      apiService2 = AuthenticatedApiBackendService(
+        dio: mockDio,
+        secureStorageService: mockSecureStorageService,
+        storageService: mockStorageService,
+        thirdPartyAuthService: thirdPartyAuthService,
+      );
+    });
+
+    test('Calls onSessionExpired if provided', () async {
+      apiService.handleSessionExpired();
+      expect(sessionExpiredCalled, true);
+    });
+    test('Do not calls onSessionExpired if not provided and call logout instead', () async {
+      apiService2.handleSessionExpired(storageService: mockStorageService, secureStorageService: mockSecureStorageService, context: null, thirdPartyAuthService: thirdPartyAuthService);
+      expect(sessionExpiredCalled2, false);
+      verify(logout(mockStorageService, mockSecureStorageService, null, thirdPartyAuthService)).called(1);
+    });
+
   });
 
   group('UpdateProfile', () {

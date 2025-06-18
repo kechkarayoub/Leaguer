@@ -32,6 +32,7 @@ class AuthenticatedApiBackendService {
   final StorageService _storageService;
   final BuildContext? _providedCcontext;
   bool _isLoggingOut = false;
+  bool _isTokenRefreshing = false;
 
   /// Mockable session expiry callback for testing.
   final VoidCallback? onSessionExpired;
@@ -58,8 +59,13 @@ class AuthenticatedApiBackendService {
         return handler.next(options);
       },
       onError: (DioException error, handler) async {
+        // Check if it's an unauthorized error (401) when refreshing token
+        if (error.response?.statusCode == 401 && _isTokenRefreshing) {
+          _isTokenRefreshing = false;
+          handleSessionExpired();
+        }
         // Check if it's an unauthorized error (401)
-        if (error.response?.statusCode == 401) {
+        else if (error.response?.statusCode == 401) {
           bool refreshed = await refreshToken();
           if (refreshed) {
             // Create a NEW request options object
@@ -110,7 +116,7 @@ class AuthenticatedApiBackendService {
             }
           }
           else{
-            _handleSessionExpired();
+            handleSessionExpired();
           }
         }
         return handler.next(error);
@@ -145,9 +151,10 @@ class AuthenticatedApiBackendService {
   /// - No explicit throws, but logs errors and handles session expiration
   Future<bool> refreshToken() async {
     try {
+      _isTokenRefreshing = true;
       String? refreshToken = await _secureStorageService.getRefreshToken();
       if (refreshToken == null){
-        _handleSessionExpired();
+        handleSessionExpired();
       }
       final response = await _dio.post('$backendUrl/accounts/api/token/refresh/', data: {
         'refresh': refreshToken,
@@ -159,6 +166,7 @@ class AuthenticatedApiBackendService {
 
         // Save the new tokens
         await _secureStorageService.saveTokens(newAccessToken, newRefreshToken);
+        _isTokenRefreshing = false;
 
         return true;
       }
@@ -168,17 +176,29 @@ class AuthenticatedApiBackendService {
     return false;
   }
   
-  void _handleSessionExpired() async {
+  /// Handles user session expiration by either triggering a provided callback
+  /// or performing the logout process.
+  ///
+  /// - If `onSessionExpired` is set, it is called directly.
+  /// - If not, the function ensures the logout process runs only once,
+  ///   using `_isLoggingOut` to prevent multiple logouts.
+  /// - Logs the session expiration for debugging.
+  @visibleForTesting
+  void handleSessionExpired({StorageService? storageService, SecureStorageService? secureStorageService, BuildContext? context, ThirdPartyAuthService? thirdPartyAuthService}) async {
+    
     if (onSessionExpired != null) {
       onSessionExpired!(); // Call testable callback instead of UI code
       return;
     }
     if (!_isLoggingOut) {
       _isLoggingOut = true;
-      logout(_storageService, _secureStorageService, _context!, thirdPartyAuthService).then((_) {
+      try{
+        await logout(storageService??_storageService, secureStorageService??_secureStorageService, context??_context??_providedCcontext, thirdPartyAuthService??thirdPartyAuthService);
+        logMessage('Session expired. Please log in again.', "Auth", "e");
+      }
+      finally {
         _isLoggingOut = false;
-      });
-      logMessage('Session expired. Please log in again.', "Auth", "e");
+      }
     }
   }
 
@@ -188,12 +208,16 @@ class AuthenticatedApiBackendService {
   /// Update user profile by sending the provided data to the backend.
   ///
   /// Parameters:
-  /// - `formData`: The user profile data to be sent.
+  /// - `formData`: The user profile data to be sent. Should be a `FormData` or JSON object.
   /// - `dio`: Optional custom Dio HTTP client instance.
   ///
   /// Returns:
   /// - A `Map<String, dynamic>` containing the JSON response data if successful.
   ///
+  /// Handles:
+  /// - Status codes: 200, 400, 401, 409
+  /// - Dio network errors
+  /// - Timeouts and unexpected errors
   /// Throws:
   /// - Exception if the update profile fails or there is an error during the HTTP request.
   Future<Map<String, dynamic>> updateProfile({
@@ -212,13 +236,17 @@ class AuthenticatedApiBackendService {
         // Parse the JSON response and return it
         return response.data;
       } 
-      else if (response.statusCode == 400 || response.statusCode == 401) {
+      else if (response.statusCode == 400) {
         // Parse the JSON response and return it
         return response.data ?? {'message': "An unknown error occurred during the profile update. Please contact the technical team to resolve the issue."};
       } 
+      else if (response.statusCode == 401) {
+        // Parse the JSON response and return it
+        return {'success': false, 'message': 'An unknown error occurred during the profile update. Please contact the technical team to resolve the issue.'};
+      } 
       else if (response.statusCode == 409) {
         // Parse the JSON response and return it
-        return response.data ?? {'message': "An unknown conflict error occurred during the profile update. Please contact the technical team to resolve this issue."};
+        return response.data ?? {'success': false, 'message': "An unknown conflict error occurred during the profile update. Please contact the technical team to resolve this issue."};
       } 
       else {
         // Throw an exception if the response is not successful
@@ -232,13 +260,17 @@ class AuthenticatedApiBackendService {
       if (e.type == DioExceptionType.receiveTimeout) {
         return {'success': false, 'message': "Server took too long to respond (Update profile). Please try again later."};
       }
-      if (e.response?.statusCode == 400 || e.response?.statusCode == 401) {
+      if (e.response?.statusCode == 400) {
         // Parse the JSON response and return it
         return e.response?.data ?? {'message': "An unknown error occurred during the profile update. Please contact the technical team to resolve the issue."};
       } 
+      if (e.response?.statusCode == 401) {
+        // Parse the JSON response and return it
+        return {'success': false, 'message': 'An unknown error occurred during the profile update. Please contact the technical team to resolve the issue.'};
+      } 
       else if (e.response?.statusCode == 409) {
         // Parse the JSON response and return it
-        return e.response?.data ?? {'message': "An unknown conflict error occurred during the profile update. Please contact the technical team to resolve this issue."};
+        return e.response?.data ?? {'success': false, 'message': 'An unknown conflict error occurred during the profile update. Please contact the technical team to resolve this issue.'};
       } 
       logMessage(e, "Update profile error", "e");
       throw Exception('Failed to update profile: ${e.toString()}');

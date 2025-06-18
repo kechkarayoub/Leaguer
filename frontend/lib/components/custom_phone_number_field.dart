@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/l10n/l10n.dart';
+import 'package:frontend/utils/platform_detector.dart';
 import 'package:frontend/utils/utils.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:phone_numbers_parser/phone_numbers_parser.dart'  as phone_number_parser;
@@ -13,6 +14,21 @@ import 'package:phone_numbers_parser/phone_numbers_parser.dart'  as phone_number
 /// - Custom validation
 /// - Right-to-left (RTL) language support
 /// - Searchable country selector
+/// - Platform-specific behavior (disabling format on web)
+///
+/// Example usage:
+/// ```dart
+/// CustomPhoneNumberField(
+///   controller: _phoneController,
+///   l10n: AppLocalizations.of(context)!,
+///   labelKey: 'Phone Number',
+///   initialValue: PhoneNumber(isoCode: 'MA', phoneNumber: ''),
+///   onChanged: (text, number) => print(number.phoneNumber),
+/// )
+/// ```
+///
+/// This widget is stateful because it needs to react to changes in initial phone number
+/// and parsing controller text.
 class CustomPhoneNumberField extends StatefulWidget {
   /// Controller for the phone number text input
   final TextEditingController controller;
@@ -92,36 +108,57 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
   }
 
   /// Parses the controller text to update the initial phone number
-  Future<void> _parseControllerText() async {
+  ///
+  /// [updateInitialValue] determines whether to update `_initialValue`
+  /// [phoneNumberText] if provided will be parsed, otherwise controller.text is used
+  ///
+  /// If parsing fails, current value is kept and error is logged
+  Future<void> _parseControllerText({bool updateInitialValue=true, String? phoneNumberText}) async {
+    if ((phoneNumberText ?? widget.controller.text).trim().isEmpty) {
+      return;
+    }
     try {
-      final parsedNumber = phone_number_parser.PhoneNumber.parse(widget.controller.text);
+      final parsedNumber = phone_number_parser.PhoneNumber.parse(phoneNumberText ?? widget.controller.text);
       final number = PhoneNumber(
         isoCode: parsedNumber.isoCode.name,
         phoneNumber: parsedNumber.international,
       );
-      _updateInitialValue(number);
+      if(updateInitialValue){
+        _updateInitialValue(number);
+      }
+      if(parsedNumber.nsn[0] != "0" && addLeading0ToNumber(parsedNumber.isoCode.name)){
+        widget.controller.text = "0${parsedNumber.nsn}";
+      }
+      else{
+        widget.controller.text = parsedNumber.nsn;
+      }
     } catch (e) {
       // If parsing fails, keep the current value
-      logMessage(e, 'Failed to parse phone number');
+      logMessage(e, 'CustomPhoneNumberField._parseControllerText: Failed to parse phone number');
     }
   }
 
-  /// Initializes the phone number from controller text if needed
+  /// Initializes phone number based on either:
+  /// - If initialValue is null and controller has text
+  /// - If initialValue is provided but controller is empty
+  ///
+  /// This allows for syncing initial state when widget builds
   Future<void> _initializePhoneNumber() async {
     
     if (widget.initialValue.phoneNumber == null && widget.controller.text.isNotEmpty) {
       await _parseControllerText();
     }
     else if (widget.initialValue.phoneNumber != null && widget.controller.text.isEmpty) {
-      widget.controller.text = widget.initialValue.phoneNumber ?? "";
+      await _parseControllerText(updateInitialValue: false, phoneNumberText: widget.initialValue.phoneNumber);
     }
     isInitialized = true;
   }
 
 
   /// Updates the initial value and triggers a rebuild
+  /// if the new value is different
   void _updateInitialValue(PhoneNumber newValue) {
-    if (mounted) {
+    if (_initialValue != newValue && mounted) {
       setState(() {
         _initialValue = newValue;
       });
@@ -132,14 +169,12 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
   Widget build(BuildContext context) {
     final currentLanguage = Localizations.localeOf(context).languageCode;
     final theme = Theme.of(context);
-
+    final platform = getPlatformType();
     return Directionality(
       textDirection: currentLanguage == 'ar' ? TextDirection.ltr : TextDirection.ltr,
       child: InternationalPhoneNumberInput(
         key: widget.fieldKey != null ? Key(widget.fieldKey!) : null,
         onInputChanged: (PhoneNumber number) {
-          //widget.controller.text = number.phoneNumber ?? '';
-          widget.controller.text = number.phoneNumber ?? "";
           if (widget.onChanged != null) {
             widget.onChanged!(widget.controller.text, number);
           }
@@ -173,8 +208,9 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
         selectorTextStyle: theme.textTheme.bodyMedium?.copyWith(
           color: theme.textTheme.bodyMedium?.color,
         ),
+        // Disable 'as-you-type' formatting on the web to avoid the JavaScript error.
+        formatInput: platform != PlatformType.web,
         spaceBetweenSelectorAndTextField: 8,
-        formatInput: true,
         keyboardType: const TextInputType.numberWithOptions(
           signed: false,
           decimal: false,

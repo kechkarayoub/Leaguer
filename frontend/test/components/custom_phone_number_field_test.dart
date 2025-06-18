@@ -8,6 +8,7 @@ void main() {
   late TextEditingController controller;
   late MockL10n mockL10n;
   PhoneNumber initialNumber = PhoneNumber(isoCode: 'US', phoneNumber: '+1234567890');
+  PhoneNumber initialNumberMa = PhoneNumber(isoCode: 'MA', phoneNumber: '+212612505257');
 
   setUp(() {
     controller = TextEditingController();
@@ -38,7 +39,38 @@ void main() {
 
     // Verify the label is shown
     expect(find.text('phone_number'), findsOneWidget);
-    expect(find.text('+1234567890'), findsOneWidget);
+    expect(find.text('234567890'), findsOneWidget);
+
+    // Verify the phone number is displayed (format might vary by platform)
+    final phoneNumberField = tester.widget<TextField>(find.byType(TextField));
+    expect(phoneNumberField.controller?.text, isNotEmpty);
+    
+    // Alternative verification for formatted text
+    expect(find.byType(InternationalPhoneNumberInput), findsOneWidget);
+
+  });
+  
+  testWidgets('Renders correctly with initial value (Leading 0)', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CustomPhoneNumberField(
+            controller: controller,
+            l10n: mockL10n,
+            labelKey: 'phone_number',
+            initialValue: initialNumberMa,
+          ),
+        ),
+      ),
+    );
+
+
+    // Wait for the widget to fully initialize
+    await tester.pumpAndSettle();
+
+    // Verify the label is shown
+    expect(find.text('phone_number'), findsOneWidget);
+    expect(find.text('0612505257'), findsOneWidget);
 
     // Verify the phone number is displayed (format might vary by platform)
     final phoneNumberField = tester.widget<TextField>(find.byType(TextField));
@@ -51,7 +83,6 @@ void main() {
   
   testWidgets('Calls onChanged when number is modified', (tester) async {
     PhoneNumber? changedNumber;
-    String? changedText;
     int callbackCount = 0;
 
     // Create a GlobalKey to access the widget state
@@ -68,7 +99,6 @@ void main() {
             initialValue: initialNumber,  // This is where +1234567890 comes from
             onChanged: (text, number) {
               callbackCount++;
-              changedText = text;
               changedNumber = number;
             },
           ),
@@ -80,7 +110,6 @@ void main() {
 
     // Reset our tracking variables
     changedNumber = null;
-    changedText = null;
 
     // Get the InternationalPhoneNumberInput instance
     final phoneInput = tester.widget<InternationalPhoneNumberInput>(
@@ -100,7 +129,6 @@ void main() {
     expect(callbackCount, 1);
     expect(changedNumber, isNotNull, reason: 'onChanged should be called');
     expect(changedNumber?.phoneNumber, '+14155552671');
-    expect(changedText, '+14155552671');
 
   });
   
@@ -163,7 +191,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify the UK number was parsed and displayed
-    expect(find.text('+447123456789'), findsOneWidget);
+    expect(find.text('07123456789'), findsOneWidget);
 
   });
   

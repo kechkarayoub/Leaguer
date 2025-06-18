@@ -1,4 +1,4 @@
-import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -136,7 +136,7 @@ class MyApp extends StatelessWidget {
               l10n: l10n, userSession: userSession, storageService: storageService, secureStorageService: secureStorageService
             ),
             ProfilePage.routeName: (context) => ProfilePage(
-              l10n: l10n, userSession: userSession, storageService: storageService, secureStorageService: secureStorageService
+              l10n: l10n, userSession: userSession, storageService: storageService, secureStorageService: secureStorageService, providedContext: context,
             ),
             SignInPage.routeName: (context) => SignInPage(
               l10n: l10n, storageService: storageService, secureStorageService: secureStorageService, thirdPartyAuthService: thirdPartyAuthService,
