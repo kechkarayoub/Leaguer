@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/components/custom_button.dart';
 import 'package:frontend/components/custom_password_field.dart';
+import 'package:frontend/components/custom_phone_number_field.dart';
 import 'package:frontend/components/custom_text_field.dart';
 import 'package:frontend/api/authenticated_api_service.dart';
 import 'package:frontend/api/unauthenticated_api_service.dart';
@@ -10,11 +12,13 @@ import 'package:frontend/components/image_picker.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/storage/storage.dart';
 import 'package:frontend/utils/components.dart';
+import 'package:frontend/utils/platform_detector.dart';
 import 'package:frontend/utils/utils.dart';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:phone_numbers_parser/phone_numbers_parser.dart'  as phone_number_parser;
 
 
 /// ProfilePage displays and manages user profile information.
@@ -30,6 +34,9 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 /// - [userSession] containing current user data
 /// - [secureStorageService] for token management
 /// - [storageService] for local storage
+/// - [thirdPartyAuthService] for third party auth service
+/// - [authenticatedApiBackendService] for auth service api
+/// - [providedContext] for provided context
 class ProfilePage extends StatefulWidget {
   static const routeName = routeProfile;
   final L10n l10n;
@@ -38,8 +45,9 @@ class ProfilePage extends StatefulWidget {
   final StorageService storageService;
   final ThirdPartyAuthService? thirdPartyAuthService;
   final AuthenticatedApiBackendService? authenticatedApiBackendService;
+  final BuildContext? providedContext;
 
-  const ProfilePage({super.key, required this.l10n, required this.userSession, required this.storageService, required this.secureStorageService, this.thirdPartyAuthService, this.authenticatedApiBackendService,});
+  const ProfilePage({super.key, required this.l10n, required this.userSession, required this.storageService, required this.secureStorageService, this.thirdPartyAuthService, this.authenticatedApiBackendService, this.providedContext});
 
   @override
   ProfilePageState createState() => ProfilePageState();
@@ -61,12 +69,18 @@ class ProfilePageState extends State<ProfilePage> {
   // Controllers for input fields
   final TextEditingController _userBirthdayController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _userPhoneNumberController = TextEditingController();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _currentPasswordController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _newPasswordRepeatedController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
+
+  bool setPhoneNumberBasedOnCountry = true;
+  String isoCode = dotenv.env['DEFAULT_COUNTRY_CODE'] ?? 'MA';
+  late PhoneNumber completePhoneNumber = PhoneNumber(isoCode: isoCode);
+  final platform = getPlatformType();
 
   bool _dataInitialized = false;
   bool _imageUpdated = false;  // Stores if image modified
@@ -80,9 +94,11 @@ class ProfilePageState extends State<ProfilePage> {
   String? _successMessage;  // Stores the success
   String? _userBirthdayServerError;  // Stores the server error
   String? _emailServerError;  // Stores the server error
+  String? _userPhoneNumberServerError;  // Stores the server error
   String? _firstNameServerError;  // Stores the server error
   String? _lastNameServerError;  // Stores the server error
   String? _usernameServerError;  // Stores the server error
+  Dio dio = Dio();
 
   /// Opens date picker and updates birthday field
   /// 
@@ -91,9 +107,20 @@ class ProfilePageState extends State<ProfilePage> {
   /// - Date range constraints (1900 to today)
   /// - Localized date formatting
   Future<void> _selectDate(BuildContext context) async {
+    DateTime initialCalendarDate;
+
+    // If the birthday is already set, use that as the initial date for the calendar
+    if (_userBirthdayController.text.isNotEmpty) {
+      initialCalendarDate = _dateFormat.parse(_userBirthdayController.text);
+    } 
+    else {
+      // If no birthday is set, calculate a date 10 years ago from today
+      DateTime now = DateTime.now();
+      initialCalendarDate = DateTime(now.year - 16, now.month, now.day);
+    }
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _userBirthdayController.text.isNotEmpty  ? _dateFormat.parse(_userBirthdayController.text) : null,
+      initialDate: initialCalendarDate,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
       locale: Localizations.localeOf(context), // Add localization
@@ -117,7 +144,24 @@ class ProfilePageState extends State<ProfilePage> {
       secureStorageService: widget.secureStorageService,
       storageService: widget.storageService,
       thirdPartyAuthService: _thirdPartyAuthService,
+      providedContext: widget.providedContext,
     );
+    runAsynchron();
+  }
+  
+  void runAsynchron() async {
+    if(setPhoneNumberBasedOnCountry){
+      dynamic data = {
+        'requested_info': 'countryCode',
+      };
+      String isoCode2 = await UnauthenticatedApiBackendService.getGeolocationInfo(data: data, dio: dio);
+      isoCode = isoCode2;
+      completePhoneNumber = PhoneNumber(isoCode: isoCode);
+      setState(() {
+        isoCode = isoCode;
+        completePhoneNumber = completePhoneNumber;
+      });
+    }
   }
 
   @override
@@ -139,7 +183,19 @@ class ProfilePageState extends State<ProfilePage> {
       _firstNameController.text = widget.userSession["first_name"];
       _userBirthdayController.text = widget.userSession["user_birthday"] ?? "";
       _emailController.text = widget.userSession["email"];
-      _selectedUserGender = widget.userSession["user_gender"];
+      _userPhoneNumberController.text = widget.userSession["user_phone_number"] ?? "";
+      if(_userPhoneNumberController.text.isNotEmpty){
+        final parsedNumber = phone_number_parser.PhoneNumber.parse(_userPhoneNumberController.text);
+        setPhoneNumberBasedOnCountry = false;
+        completePhoneNumber = PhoneNumber(isoCode: parsedNumber.isoCode.name, phoneNumber: parsedNumber.international);
+        if(parsedNumber.nsn[0] != "0" && addLeading0ToNumber(parsedNumber.isoCode.name)){
+          _userPhoneNumberController.text = "0${parsedNumber.nsn}";
+        }
+        else{
+          _userPhoneNumberController.text = parsedNumber.nsn;
+        }
+      }
+      _selectedUserGender = widget.userSession["user_gender"]??"";
       _usernameController.text = widget.userSession["username"];
       userInitialsBgColor = (widget.userSession["user_initials_bg_color"] ?? "").isEmpty ? userInitialsBgColor : widget.userSession["user_initials_bg_color"];
       // if(widget.userSession["user_image_url"] != null){
@@ -299,7 +355,30 @@ class ProfilePageState extends State<ProfilePage> {
                         return null;
                       },
                     ),
-                    // Email or username text field
+                    CustomPhoneNumberField(
+                      controller: _userPhoneNumberController,
+                      errorText: _userPhoneNumberServerError,
+                      fieldKey: "user-phone-number",
+                      l10n: widget.l10n,
+                      labelKey: widget.l10n.translate("Phone number", currentLanguage),
+                      initialValue: completePhoneNumber,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return widget.l10n.translate("Please enter your phone number", currentLanguage);
+                        }
+                        final fullPhone = completePhoneNumber.phoneNumber;
+                        if (fullPhone == null || !RegExp(r'^\+\d{10,15}$').hasMatch(fullPhone)) {
+                          return widget.l10n.translate("Please enter a valid phone number", currentLanguage);
+                        }
+                        return null;
+                      },
+                      onChanged: (value, number) {
+                        completePhoneNumber = number;
+                        setState(() {
+                          _userPhoneNumberServerError = null; // Clear error on input change
+                        });
+                      },
+                    ),
                     SizedBox(height: 20),
                     CustomButton(
                       keyWidget: const Key('updatePassworButton'),
@@ -445,6 +524,7 @@ class ProfilePageState extends State<ProfilePage> {
     final firstName = _firstNameController.text;
     final lastName = _lastNameController.text;
     final email = _emailController.text;
+    final userPhoneNumber = formatPhoneNumber(completePhoneNumber);
     final currentPassword = _currentPasswordController.text;
     final newPassword = _newPasswordController.text;
     final username = _usernameController.text;
@@ -454,6 +534,7 @@ class ProfilePageState extends State<ProfilePage> {
       _errorMessage = null;
       _successMessage = null;
       _emailServerError = null;
+      _userPhoneNumberServerError = null;
       _currentPasswordErrorMessage = null;
       _isProfileUpdateApiSent = true;
       _usernameServerError = null;
@@ -471,6 +552,7 @@ class ProfilePageState extends State<ProfilePage> {
         "new_password": newPassword,
         "update_password": _updatePassword.toString(),
         "image_updated": _imageUpdated.toString(),
+        "user_phone_number": userPhoneNumber,
         "username": username,
       });
       
@@ -478,7 +560,7 @@ class ProfilePageState extends State<ProfilePage> {
         MultipartFile profileImage;
         final mimeType = getMimeType(_selectedImage!.path);
 
-        if (kIsWeb) {
+        if (platform == PlatformType.web) {
           // 🌐 Web: Convert file to bytes
           Uint8List bytes = await _selectedImage!.readAsBytes();
           profileImage = MultipartFile.fromBytes(
@@ -528,6 +610,9 @@ class ProfilePageState extends State<ProfilePage> {
             if(response["errors"]["email"] != null){
               _emailServerError = response["errors"]["email"][0];
             }
+            if(response["errors"]["user_phone_number"] != null){
+              _userPhoneNumberServerError = response["errors"]["user_phone_number"][0];
+            }
             if(response["errors"]["first_name"] != null){
               _firstNameServerError = response["errors"]["first_name"][0];
             }
@@ -562,6 +647,7 @@ class ProfilePageState extends State<ProfilePage> {
   void dispose() {
     _userBirthdayController.dispose();
     _emailController.dispose();
+    _userPhoneNumberController.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
     _currentPasswordController.dispose();
