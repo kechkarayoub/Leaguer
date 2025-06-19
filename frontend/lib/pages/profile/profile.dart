@@ -1,3 +1,5 @@
+
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -581,8 +583,14 @@ class ProfilePageState extends State<ProfilePage> {
           );
         } else {
           // 📱 Mobile: Use file path
+          final compressedFile = await compressAndResizeImage(
+            File(_selectedImage!.path),
+            width: 800,  // Target width
+            jpegQuality: 80,
+            maxDimension: 800,
+          );
           profileImage = await MultipartFile.fromFile(
-            _selectedImage!.path,
+            compressedFile.path,
             filename: _selectedImage!.name,
           );
         }

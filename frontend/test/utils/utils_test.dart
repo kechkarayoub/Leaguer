@@ -251,6 +251,15 @@ void main() async{
         await compressedJpg.delete();
       }
     });
+
+    test('Limits large dimensions to maxDimension', () async {
+      compressedJpg = await compressAndResizeImage(testJpgImage, jpegQuality: 50, width: 1000, height: 1000, maxDimension: 100);
+      final compressedImage = img.decodeImage(await compressedJpg.readAsBytes())!;
+  
+      expect(compressedImage.width, lessThanOrEqualTo(100));
+      expect(compressedImage.height, lessThanOrEqualTo(100));
+    });
+
   });
 
   group('CreateXFileFromUrl', () {

@@ -113,74 +113,114 @@ String getRandomHexColor() {
   return '#$redHex$greenHex$blueHex';
 }
 
-/// Compresses and resizes an image file while maintaining the original format.
+/// Compresses and resizes an image file, keeping original format if possible.
+/// Returns a new File with the processed image.
+/// 
+/// Parameters:
+/// - originalImage: the image to process (must exist)
+/// - width / height: optional target size (preserves aspect ratio if only one is given)
+/// - jpegQuality: JPEG compression quality (default: 70)
+/// - pngCompression: PNG compression level (default: 6)
+/// - maxDimension: max allowed width or height (default: 2000px)
 ///
-/// [originalImage]: The original image file to process.
-/// [width]: The desired width of the resized image (optional).
-/// [height]: The desired height of the resized image (optional).
-///
-/// Returns a new [File] containing the processed image.
-///
-/// Throws an [Exception] if the image cannot be decoded.
-Future<File> compressAndResizeImage(File originalImage, {int? width, int? height, int? jpegQuality, int? pngCompression}) async {
-  jpegQuality = jpegQuality ?? 50;
-  pngCompression = pngCompression ?? 6;
-  // Read the original image bytes
-  final originalBytes = await originalImage.readAsBytes();
+/// If any error occurs, returns the original image unchanged.
+Future<File> compressAndResizeImage(File originalImage, {int? width, int? height, int? jpegQuality=70, int? pngCompression=6, int maxDimension=2000}) async {
+  try {
+    // 1. Validate input
+    if (!await originalImage.exists()) {
+      throw Exception('File does not exist');
+    }
+    jpegQuality = jpegQuality ?? 50;
+    pngCompression = pngCompression ?? 6;
+    // Read the original image bytes
+    final originalBytes = await originalImage.readAsBytes();
+    if (originalBytes.isEmpty) throw Exception('Empty image file');
+    if (originalBytes.lengthInBytes > 50 * 1024 * 1024) {  // 50MB limit
+      throw Exception('Image too large');
+    }
 
-  // Decode the image
-  final image = img.decodeImage(originalBytes);
-  if (image == null) throw Exception('Unable to decode image');
+    // Decode the image
+    final image = img.decodeImage(originalBytes);
+    if (image == null) throw Exception('Unable to decode image');
 
-  // Get original dimensions
-  final originalWidth = image.width;
-  final originalHeight = image.height;
-  final aspectRatio = originalWidth / originalHeight;
 
-  // Resize the image based on provided dimensions
-  img.Image resizedImage = image;
-  if (width != null && height != null) {
-    // Resize to exact width and height
-    resizedImage = img.copyResize(image, width: width, height: height);
-  } 
-  else if (width != null) {
-    // Resize to the specified width while maintaining aspect ratio
-    height = (width / aspectRatio).round();
-    resizedImage = img.copyResize(image, width: width, height: height);
-  } 
-  else if (height != null) {
-    // Resize to the specified height while maintaining aspect ratio
-    width = (height * aspectRatio).round();
-    resizedImage = img.copyResize(image, width: width, height: height);
+    int targetWidth = image.width;
+    int targetHeight = image.height;
+    final aspectRatio = image.width / image.height;
+
+    if (width != null || height != null) {
+      if (width != null && height != null) {
+        targetWidth = width;
+        targetHeight = height;
+      } else if (width != null) {
+        targetWidth = width;
+        targetHeight = (width / aspectRatio).round();
+      } else {
+        targetHeight = height!;
+        targetWidth = (height * aspectRatio).round();
+      }
+
+      // Apply maximum dimension limit
+      if (targetWidth > maxDimension || targetHeight > maxDimension) {
+        if (targetWidth > targetHeight) {
+          targetWidth = maxDimension;
+          targetHeight = (maxDimension / aspectRatio).round();
+        } else {
+          targetHeight = maxDimension;
+          targetWidth = (maxDimension * aspectRatio).round();
+        }
+      }
+      // Apply maximum dimension limit a second time
+      if (targetWidth > maxDimension || targetHeight > maxDimension) {
+        if (targetWidth > targetHeight) {
+          targetWidth = maxDimension;
+          targetHeight = (maxDimension / aspectRatio).round();
+        } else {
+          targetHeight = maxDimension;
+          targetWidth = (maxDimension * aspectRatio).round();
+        }
+      }
+    }
+
+    final resizedImage = img.copyResize(
+      image,
+      width: targetWidth,
+      height: targetHeight,
+    );
+
+
+    // Determine the original image format from the file extension
+    final originalExtension = p.extension(originalImage.path).toLowerCase();
+    // Encode the processed image in the original format
+    List<int> encodedBytes;
+    switch (originalExtension) {
+      case '.jpg':
+      case '.jpeg':
+        encodedBytes = img.encodeJpg(resizedImage, quality: jpegQuality);
+        break;
+      case '.png':
+        encodedBytes = img.encodePng(resizedImage, level: pngCompression);
+        break;
+      case '.bmp':
+        encodedBytes = img.encodeBmp(resizedImage);
+        break;
+      case '.gif':
+        encodedBytes = img.encodeGif(resizedImage);
+        break;
+      default:
+        // Default to JPEG if the format is unsupported
+        encodedBytes = img.encodeJpg(resizedImage, quality: jpegQuality);
+    }
+    // Save the encoded bytes to a new file
+    final newFilePath = '${originalImage.path.replaceAll(originalExtension, "")}_processed$originalExtension';
+    final newFile = File(newFilePath)..writeAsBytesSync(encodedBytes);
+
+    return newFile;
+  } catch (e) {
+    // Fallback: Return original if compression fails
+    logMessage(e, 'Image compression failed', 'w');
+    return originalImage;
   }
-
-  // Determine the original image format from the file extension
-  final originalExtension = p.extension(originalImage.path).toLowerCase();
-  // Encode the processed image in the original format
-  List<int> encodedBytes;
-  switch (originalExtension) {
-    case '.jpg':
-    case '.jpeg':
-      encodedBytes = img.encodeJpg(resizedImage, quality: jpegQuality);
-      break;
-    case '.png':
-      encodedBytes = img.encodePng(resizedImage, level: pngCompression);
-      break;
-    case '.bmp':
-      encodedBytes = img.encodeBmp(resizedImage);
-      break;
-    case '.gif':
-      encodedBytes = img.encodeGif(resizedImage);
-      break;
-    default:
-      // Default to JPEG if the format is unsupported
-      encodedBytes = img.encodeJpg(resizedImage, quality: jpegQuality);
-  }
-  // Save the encoded bytes to a new file
-  final newFilePath = '${originalImage.path.replaceAll(originalExtension, "")}_processed$originalExtension';
-  final newFile = File(newFilePath)..writeAsBytesSync(encodedBytes);
-
-  return newFile;
 }
 
 
