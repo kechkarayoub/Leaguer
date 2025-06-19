@@ -65,6 +65,9 @@ class ProfilePageState extends State<ProfilePage> {
   bool _isProfileUpdateApiSent = false;  // Tracks if the API call is sent to prevent duplicate requests
   final _formKey = GlobalKey<FormState>(); // Form key for validation
 
+  final _nameDebouncer = Debouncer();
+  final _phoneNumberDebouncer = Debouncer();
+
   final DateFormat _dateFormat = DateFormat(dateFormat);
   // Controllers for input fields
   final TextEditingController _userBirthdayController = TextEditingController();
@@ -164,6 +167,28 @@ class ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  void _updateName(String lastNameValue, String firstNameValue, bool isLastName) {
+    _nameDebouncer.run(() {
+      setState(() {
+        if(isLastName){
+          _lastNameServerError = null;
+        }
+        else{
+          _firstNameServerError = null;
+        }
+        initials = getInitials(lastNameValue, firstNameValue);
+      });
+    });
+  }
+  void _updatePhoneNumber(PhoneNumber number) {
+    _phoneNumberDebouncer.run(() {
+      completePhoneNumber = number;
+      setState(() {
+        _userPhoneNumberServerError = null; // Clear error on input change
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // Handle null user session using post-frame callback
@@ -248,12 +273,7 @@ class ProfilePageState extends State<ProfilePage> {
                       fieldKey: "last-name",
                       l10n: widget.l10n,
                       labelKey: "Last name",
-                      onChanged: (value) {
-                        setState(() {
-                          _lastNameServerError = null;
-                          initials = getInitials(value, _firstNameController.text);
-                        });
-                      },
+                      onChanged: (value) => _updateName(value, _firstNameController.text, true),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return widget.l10n.translate("Please enter your last name", currentLanguage);
@@ -271,12 +291,7 @@ class ProfilePageState extends State<ProfilePage> {
                       key: const Key('first-name'),
                       l10n: widget.l10n,
                       labelKey: "First name",
-                      onChanged: (value) {
-                        setState(() {
-                          _firstNameServerError = null;
-                          initials = getInitials(_lastNameController.text, value);
-                        });
-                      },
+                      onChanged: (value) => _updateName(_lastNameController.text, value, false),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return widget.l10n.translate("Please enter your first name", currentLanguage);
@@ -373,10 +388,7 @@ class ProfilePageState extends State<ProfilePage> {
                         return null;
                       },
                       onChanged: (value, number) {
-                        completePhoneNumber = number;
-                        setState(() {
-                          _userPhoneNumberServerError = null; // Clear error on input change
-                        });
+                        _updatePhoneNumber(number);
                       },
                     ),
                     SizedBox(height: 20),
@@ -645,6 +657,8 @@ class ProfilePageState extends State<ProfilePage> {
 
   @override
   void dispose() {
+    _nameDebouncer.timer?.cancel();
+    _phoneNumberDebouncer.timer?.cancel();
     _userBirthdayController.dispose();
     _emailController.dispose();
     _userPhoneNumberController.dispose();

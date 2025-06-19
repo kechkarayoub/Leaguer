@@ -24,6 +24,46 @@ void main() async{
   // Initialize flutter_dotenv for tests
   await dotenv.load(fileName: ".env");
   
+  group('Debouncer', () {
+    test('Calls the action after delay', () async {
+      final debouncer = Debouncer(delay: Duration(milliseconds: 100));
+      bool actionCalled = false;
+
+      debouncer.run(() {
+        actionCalled = true;
+      });
+
+      // Wait less than delay, should not be called yet
+      await Future.delayed(Duration(milliseconds: 50));
+      expect(actionCalled, isFalse);
+
+      // Wait enough to exceed delay
+      await Future.delayed(Duration(milliseconds: 70));
+      expect(actionCalled, isTrue);
+
+    });
+
+    test('Cancels previous timer when run is called again quickly', () async {
+      final debouncer = Debouncer(delay: Duration(milliseconds: 100));
+      int callCount = 0;
+
+      debouncer.run(() {
+        callCount++;
+      });
+
+      // Run again before the first delay expires
+      await Future.delayed(Duration(milliseconds: 50));
+      debouncer.run(() {
+        callCount++;
+      });
+
+      // Wait enough to exceed total delay
+      await Future.delayed(Duration(milliseconds: 150));
+      expect(callCount, equals(1), reason: 'Only the last call should trigger');
+
+    });
+  });
+
 
   group('FormatPhoneNumber', () {
     test('Removes redundant zero after country code', () {

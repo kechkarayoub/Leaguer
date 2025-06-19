@@ -1,4 +1,5 @@
 
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data'; // Add this import for Uint8List
@@ -37,6 +38,21 @@ final RegExp letterStartRegExp = RegExp(r'^[a-zA-Z]');
 final RegExp nameRegExp = RegExp(r"^[a-zA-ZÀ-ÿ\s-]+$");
 final RegExp usernameRegExp = RegExp(r'^[a-zA-Z][a-zA-Z0-9_]{2,19}$');
 
+
+
+
+
+class Debouncer {
+  final Duration delay;
+  Timer? timer;
+
+  Debouncer({this.delay = const Duration(milliseconds: 400)});
+
+  void run(VoidCallback action) {
+    timer?.cancel();
+    timer = Timer(delay, action);
+  }
+}
 
 /// Converts a hex color string to a Flutter [Color] object.
 /// [hexColor] - The hex color string, which may optionally start with a '#'.
