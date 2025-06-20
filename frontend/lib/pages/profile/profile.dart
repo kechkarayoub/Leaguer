@@ -65,6 +65,7 @@ class ProfilePage extends StatefulWidget {
 /// - Image selection state
 class ProfilePageState extends State<ProfilePage> {
   bool _isProfileUpdateApiSent = false;  // Tracks if the API call is sent to prevent duplicate requests
+  bool _isImageProcessing = false;
   final _formKey = GlobalKey<FormState>(); // Form key for validation
 
   final _nameDebouncer = Debouncer();
@@ -91,6 +92,7 @@ class ProfilePageState extends State<ProfilePage> {
   bool _imageUpdated = false;  // Stores if image modified
   bool _updatePassword = false;
   XFile? _selectedImage;  // Stores the selected image
+  MultipartFile? profileImage;
   String initials = "";
   String userInitialsBgColor = getRandomHexColor();
   String? _currentPasswordErrorMessage;  // Stores the error message (if any)
@@ -160,12 +162,14 @@ class ProfilePageState extends State<ProfilePage> {
         'requested_info': 'countryCode',
       };
       String isoCode2 = await UnauthenticatedApiBackendService.getGeolocationInfo(data: data, dio: dio);
-      isoCode = isoCode2;
-      completePhoneNumber = PhoneNumber(isoCode: isoCode);
-      setState(() {
-        isoCode = isoCode;
-        completePhoneNumber = completePhoneNumber;
-      });
+      if(completePhoneNumber.phoneNumber == null){
+        isoCode = isoCode2;
+        completePhoneNumber = PhoneNumber(isoCode: isoCode);
+        setState(() {
+          isoCode = isoCode;
+          completePhoneNumber = completePhoneNumber;
+        });
+      }
     }
   }
 
@@ -256,19 +260,58 @@ class ProfilePageState extends State<ProfilePage> {
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: ImagePickerWidget(
+                        isProcessing: _isImageProcessing,
                         initials: initials,
                         userInitialsBgColor: userInitialsBgColor,
                         labelText: widget.l10n.translate(_selectedImage == null && widget.userSession["user_image_url"] == null ? "Select Profile Image" : "Change Profile Image", currentLanguage),
                         labelTextCamera: widget.l10n.translate(_selectedImage == null && widget.userSession["user_image_url"] == null ? "Take photo" : "Change photo", currentLanguage),
-                        onImageSelected: (XFile? image) {
+                        onImageSelected: (XFile? image) async {
+                          profileImage = null;
+                          
                           setState(() {
                             _selectedImage = image;
+                            profileImage = profileImage;
+                            _isImageProcessing = true;
                             _imageUpdated = true;
                           });
+                          try{
+                            if (_selectedImage != null) {
+                              if (platform == PlatformType.web) {
+                                // 🌐 Web: Convert file to bytes
+                                Uint8List bytes = await _selectedImage!.readAsBytes();
+                                profileImage = MultipartFile.fromBytes(
+                                  bytes,
+                                  filename: _selectedImage!.name,
+                                );
+                              } else {
+                                // 📱 Mobile: Use file path
+                                final compressedFile = await compressAndResizeImage(
+                                  File(_selectedImage!.path),
+                                  width: 800,  // Target width
+                                  jpegQuality: 80,
+                                  maxDimension: 800,
+                                );
+                                profileImage = await MultipartFile.fromFile(
+                                  compressedFile.path,
+                                  filename: _selectedImage!.name,
+                                );
+                              }
+                            }
+
+                          } 
+                          catch (e) {
+                            // Fallback: Use original image if compression fails
+                            setState(() => profileImage = profileImage);
+                          } 
+                          finally {
+                            setState(() => _isImageProcessing = false);
+                          }
+                          
                         },
                         initialImageUrl: widget.userSession["user_image_url"],
                       ),
                     ),
+                    
                     CustomTextFormField(
                       controller: _lastNameController,
                       errorText: _lastNameServerError,
@@ -498,9 +541,9 @@ class ProfilePageState extends State<ProfilePage> {
                       keyWidget: const Key('updateProfileButton'),
                       margin: EdgeInsets.only(bottom: 10),
                       text: widget.l10n.translate("Update profile", currentLanguage),
-                      showLoader: _isProfileUpdateApiSent,
-                      isEnabled: !_isProfileUpdateApiSent,
-                      onPressed: _isProfileUpdateApiSent ? null : () {
+                      showLoader: _isProfileUpdateApiSent || _isImageProcessing,
+                      isEnabled: !_isProfileUpdateApiSent && !_isImageProcessing,
+                      onPressed: _isProfileUpdateApiSent || _isImageProcessing ? null : () {
                         if (_formKey.currentState!.validate()) {
                           // Perform the profile data update logic
                           updateProfile(widget.storageService, currentLanguage, context, _authenticatedApiBackendService);
@@ -581,31 +624,8 @@ class ProfilePageState extends State<ProfilePage> {
         "username": username,
       });
       
-      if (_selectedImage != null) {
-        MultipartFile profileImage;
-        final mimeType = getMimeType(_selectedImage!.path);
-
-        if (platform == PlatformType.web) {
-          // 🌐 Web: Convert file to bytes
-          Uint8List bytes = await _selectedImage!.readAsBytes();
-          profileImage = MultipartFile.fromBytes(
-            bytes,
-            filename: _selectedImage!.name,
-          );
-        } else {
-          // 📱 Mobile: Use file path
-          final compressedFile = await compressAndResizeImage(
-            File(_selectedImage!.path),
-            width: 800,  // Target width
-            jpegQuality: 80,
-            maxDimension: 800,
-          );
-          profileImage = await MultipartFile.fromFile(
-            compressedFile.path,
-            filename: _selectedImage!.name,
-          );
-        }
-        formData.files.add(MapEntry('profile_image', profileImage));
+      if (profileImage != null) {
+        formData.files.add(MapEntry('profile_image', profileImage!));
       }
       final response = await authenticatedApiBackendService.updateProfile(formData: formData);
 
