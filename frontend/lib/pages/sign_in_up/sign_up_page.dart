@@ -104,6 +104,7 @@ class SignUpPageState extends State<SignUpPage> {
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: ImagePickerWidget(
+                        isProcessing: false,
                         initials: initials,
                         userInitialsBgColor: userInitialsBgColor,
                         labelText: widget.l10n.translate(_selectedImage == null ? "Select Profile Image" : "Change Profile Image", currentLanguage),

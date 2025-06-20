@@ -81,10 +81,12 @@ void main() {
     String? initialImageUrl,
     String? unknownUserImagePath = 'assets/images/unknown_user.png',
     ImagePicker? imagePicker,
+    bool isImageProcessing = false,
   }) {
     return MaterialApp(
       home: Scaffold(
         body: ImagePickerWidget(
+          isProcessing: isImageProcessing,
           onImageSelected: onImageSelected,
           initials: initials,
           userInitialsBgColor: userInitialsBgColor,
@@ -191,6 +193,28 @@ void main() {
 
     // After loading, the CircularProgressIndicator should disappear.
     expect(find.byType(CircularProgressIndicator), findsNothing);
+  });
+
+  testWidgets('Shows loading indicator while image is processing', (tester) async {
+
+    await tester.pumpWidget(buildTestWidget(
+      onImageSelected: (_) {},
+      initialImageUrl: 'https://example.com/slow_image.png',
+      isImageProcessing: true,
+    ));
+
+    // Check immediately after pumping (simulate a loading state).
+    // Depending on the behavior of your widget and the fake HTTP client,
+    // you might need to pump with a delay:
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 100));
+
+    // Check for the loading indicator (CircularProgressIndicator).
+    expect(find.byType(LinearProgressIndicator), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 2));
+
+    expect(find.byType(LinearProgressIndicator), findsOneWidget);
   });
 
   testWidgets('Displays default unknown user image when no initials or image are provided', (tester) async {

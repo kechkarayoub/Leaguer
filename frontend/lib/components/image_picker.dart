@@ -16,6 +16,7 @@ class ImagePickerWidget extends StatefulWidget {
   final double borderRadius;  // The border radius
   final double removeIconSize;  // The remove icon's size
   final ImagePicker? imagePicker; // The imagePicker instance
+  final bool isProcessing; // A flag that indicate if image is processing or not
 
   const ImagePickerWidget({
     super.key,
@@ -24,6 +25,7 @@ class ImagePickerWidget extends StatefulWidget {
     required this.labelText,
     required this.labelTextCamera,
     required this.onImageSelected,
+    required this.isProcessing,
     this.initialImageUrl,
     this.height = 100,
     this.width = 100,
@@ -50,7 +52,7 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
 
   // Method to pick an image from the gallery
   Future<void> _pickImage(ImageSource source) async {
-    if (isPicking) return; // Prevent rapid consecutive calls
+    if (isPicking || widget.isProcessing) return; // Prevent rapid consecutive calls
     isPicking = true;
     try {
       final pickedFile = await (widget.imagePicker ?? ImagePicker()).pickImage(source: source);
@@ -149,6 +151,17 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
                   ),
                 ),
               ),
+              if (widget.isProcessing)
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: LinearProgressIndicator(
+                    minHeight: 2,
+                    backgroundColor: Colors.transparent,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                  ),
+                ),
             ],
           )
         // Display the initial image if provided and image not removed
@@ -199,6 +212,17 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
                   ),
                 ),
               ),
+              if (widget.isProcessing)
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: LinearProgressIndicator(
+                    minHeight: 2,
+                    backgroundColor: Colors.transparent,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                  ),
+                ),
             ],
           )
         // Display the initials avatar if no image is selected and initials are provided
@@ -228,6 +252,7 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
                 children: [
                   Semantics(
                     label: widget.labelText,
+                    enabled: !widget.isProcessing,
                     child: TextButton(
                       onPressed: () => _pickImage(ImageSource.gallery),
                       child: Text(widget.labelText),
@@ -236,6 +261,7 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
                   if (platform == PlatformType.mobile)
                     Semantics(
                       label: widget.labelTextCamera,
+                      enabled: !widget.isProcessing,
                       child: TextButton(
                         onPressed: () => _pickImage(ImageSource.camera),
                         child: Text(widget.labelTextCamera),
