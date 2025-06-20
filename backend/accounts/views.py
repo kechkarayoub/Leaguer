@@ -6,7 +6,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
-from django.http import JsonResponse
+from django.http import JsonResponse, QueryDict
 from django.shortcuts import get_object_or_404
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.timezone import now
@@ -320,7 +320,8 @@ class UpdateProfileView(APIView):
             Response: The response containing the updated user data, any relevant tokens, and success/failure message.
         """
         user = request.user
-        data = request.data.copy()
+        data = QueryDict('', mutable=True)
+        data.update(request.data)
 
         # Get selected language or default to French
         current_language = data.get('current_language') or 'fr'
