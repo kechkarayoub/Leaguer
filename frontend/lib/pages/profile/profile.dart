@@ -437,21 +437,45 @@ class ProfilePageState extends State<ProfilePage> {
                       },
                     ),
                     SizedBox(height: 20),
-                    CustomButton(
-                      keyWidget: const Key('updatePassworButton'),
+                    AnimatedContainer(
+                      duration: Duration(milliseconds: 300),
                       margin: EdgeInsets.only(bottom: 10),
-                      text: widget.l10n.translate("Update password", currentLanguage),
-                      icon: Icon(
-                        _updatePassword ? Icons.arrow_upward : Icons.arrow_downward,
-                        color: Colors.white,
-                        size: 16,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        gradient: LinearGradient(
+                          colors: _updatePassword 
+                              ? [Colors.orange.shade600, Colors.red.shade400] 
+                              : [Colors.blue.shade600, Colors.blue.shade400],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _updatePassword = !_updatePassword;
-                          _successMessage = null;
-                        });
-                      },
+                      child: CustomButton(
+                        keyWidget: const Key('updatePassworButton'),
+                        margin: EdgeInsets.only(bottom: 0),
+                        text: widget.l10n.translate(_updatePassword ? "Hide password update" : "Update password", currentLanguage),
+                        icon: AnimatedSwitcher(
+                          duration: Duration(milliseconds: 300),
+                          child: Icon(
+                            _updatePassword ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                            color: Colors.white,
+                            key: ValueKey<bool>(_updatePassword),
+                          ),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _updatePassword = !_updatePassword;
+                            _successMessage = null;
+                          });
+                        },
+                        backgroundColor: _updatePassword ? Colors.orange.shade600 : Colors.blue.shade600,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                     if(_updatePassword)
                       CustomPasswordFormField(

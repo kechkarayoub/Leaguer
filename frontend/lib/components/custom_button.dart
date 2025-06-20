@@ -66,6 +66,10 @@ class CustomButton extends StatelessWidget {
   /// Useful for integration tests and widget identification.
   final Key? keyWidget;
 
+  final Color? backgroundColor; // Background color for button
+
+  final BorderRadiusGeometry? borderRadius; // Border radius for button
+
   /// Creates a [CustomButton].
   ///
   /// The [text] and [onPressed] parameters are required.
@@ -81,6 +85,8 @@ class CustomButton extends StatelessWidget {
     this.icon,
     this.margin,
     this.keyWidget,
+    this.backgroundColor,
+    this.borderRadius,
   });
 
   @override
@@ -88,6 +94,12 @@ class CustomButton extends StatelessWidget {
     return Container(
       margin: margin ?? const EdgeInsets.only(bottom: 10),
       child: ElevatedButton(
+        style: backgroundColor == null || borderRadius == null ? null : ElevatedButton.styleFrom(
+          backgroundColor: backgroundColor,
+          shape: borderRadius == null ? null : RoundedRectangleBorder(
+            borderRadius: borderRadius ?? BorderRadius.circular(8),
+          ),
+        ),
         key: keyWidget,
         onPressed: isEnabled ? onPressed : null,
         child: Row(

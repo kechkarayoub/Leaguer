@@ -159,6 +159,11 @@
     "en": "Hello",
     "fr": "Bonjour"
   },
+  "Hide password update": {
+    "ar": "إخفاء تحديث كلمة المرور",
+    "en": "Hide password update",
+    "fr": "Masquer la mise à jour du mot de passe"
+  },
   "Invalid credentials!": {
     "ar": "بيانات الدخول غير صحيحة!",
     "en": "Invalid credentials!",
