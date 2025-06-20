@@ -8,6 +8,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/api/unauthenticated_api_service.dart';
+import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/storage/storage.dart';
 import 'package:image/image.dart' as img;
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
@@ -854,3 +855,47 @@ Future<Uint8List> readStreamToBytes(Stream<List<int>>? stream) async {
     throw Exception('Failed to convert stream to bytes: $e');
   }
 }
+
+
+/// Displays a confirmation dialog with title and content.
+/// Returns true if user confirms, false if cancels or closes the dialog.
+/// 
+/// Parameters:
+/// - context: The BuildContext to display the dialog.
+/// - l10n: Your localization object (with .translate).
+/// - title: The title text key.
+/// - content: The content text key.
+/// - cancelText: The cancel button text key (default: "Cancel").
+/// - confirmText: The confirm button text key (default: "Confirm").
+/// 
+/// The dialog is not dismissible by tapping outside.
+Future<bool> showConfirmationDialog(
+  BuildContext context,
+  L10n l10n,
+  String title,
+  String content,
+  {String cancelText="Cancel", String confirmText="Confirm"}
+) async {
+  final currentLanguage = Localizations.localeOf(context).languageCode;
+  // Show dialog and wait for result (true/false), defaulting to false if null.
+  return (await showDialog<bool>(
+    context: context,
+    barrierDismissible: false, // Force user to choose a button
+    builder: (ctx) => AlertDialog(
+      title: Text(l10n.translate(title, currentLanguage)),
+      content: Text(l10n.translate(content, currentLanguage)),
+      actions: [
+        TextButton(
+          child: Text(l10n.translate(cancelText, currentLanguage)),
+          onPressed: () => Navigator.of(ctx).pop(false),
+        ),
+        TextButton(
+          child: Text(l10n.translate(confirmText, currentLanguage)),
+          onPressed: () => Navigator.of(ctx).pop(true),
+        ),
+      ],
+    ),
+  )) ?? false; // Return false if dismissed
+}
+
+

@@ -533,6 +533,17 @@ class ProfilePageState extends State<ProfilePage> {
   /// - Error/success states
   /// - Token updates if password changed
   void updateProfile(StorageService storageService, String currentLanguage, BuildContext context, AuthenticatedApiBackendService authenticatedApiBackendService) async {
+    
+    if (_updatePassword && 
+      !await showConfirmationDialog(
+        context,
+        widget.l10n,
+        "Change Password",
+        "Are you sure you want to update your password?",
+      )) {
+      return; // Exit if user cancels
+    }
+
     // Add your profile data update logic here, such as an HTTP request to your backend.
     final userBirthday = _userBirthdayController.text;
     final firstName = _firstNameController.text;

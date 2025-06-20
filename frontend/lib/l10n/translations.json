@@ -59,15 +59,30 @@
     "en": "An unknown conflict error occurred during the profile update. Please contact the technical team to resolve this issue.",
     "fr": "Une erreur de conflit inconnue s'est produite lors de la mise à jour du profil. Veuillez contacter l'équipe technique pour résoudre ce problème."
   },
+  "Are you sure you want to update your password?": {
+    "ar": "هل أنت متأكد أنك تريد تحديث كلمة المرور الخاصة بك؟",
+    "en": "Are you sure you want to update your password?",
+    "fr": "Êtes-vous sûr de vouloir mettre à jour votre mot de passe ?"
+  },
   "Birthday": {
     "ar": "تاريخ الميلاد",
     "en": "Birthday",
     "fr": "Date de n'aissance"
   },
+  "Cancel": {
+    "ar": "إلغاء",
+    "en": "Cancel",
+    "fr": "Annuler"
+  },
   "Cannot get user info from Google sign in api!": {
     "ar": "لا يمكن الحصول على معلومات المستخدم من واجهة برمجة تطبيقات تسجيل الدخول باستخدام جوجل!",
     "en": "Cannot get user info from Google sign in api!",
     "fr": "Impossible d'obtenir les informations de l'utilisateur depuis l'API Google Sign-In !"
+  },
+  "Change Password": {
+    "ar": "تغيير كلمة المرور",
+    "en": "Change Password",
+    "fr": "Modifier le mot de passe"
   },
   "Change photo": {
     "ar": "تغيير الصورة",
@@ -78,6 +93,11 @@
     "ar": "تغيير الصورة الشخصية",
     "en": "Change Profile Image",
     "fr": "Modifier la photo de profil"
+  },
+  "Confirm": {
+    "ar": "تأكيد",
+    "en": "Confirm",
+    "fr": "Confirmer"
   },
   "Connection Restored!": {
     "ar": "تمت استعادة الاتصال!",
