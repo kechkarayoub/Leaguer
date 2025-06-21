@@ -707,7 +707,7 @@ class ProfilePageState extends State<ProfilePage> {
         });
       }
     } catch (e) {
-      logMessage(e, "", "e", "", true);
+      logMessage(e, "", "e", "");
       setState(() {
         _errorMessage = "An error occurred while updating profile information. Please try again later.";  // Set the error message on unsuccessful profile update
           _isProfileUpdateApiSent = false;
