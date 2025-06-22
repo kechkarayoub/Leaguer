@@ -64,55 +64,57 @@ class ProfilePage extends StatefulWidget {
 /// - Error/success messages
 /// - Image selection state
 class ProfilePageState extends State<ProfilePage> {
-  bool _isProfileUpdateApiSent = false;  // Tracks if the API call is sent to prevent duplicate requests
-  bool _isImageProcessing = false;
-  final _formKey = GlobalKey<FormState>(); // Form key for validation
 
-  final _nameDebouncer = Debouncer();
-  final _phoneNumberDebouncer = Debouncer();
+  bool _dataInitialized = false;  /// Flag to ensure initial data is only loaded once.
+  bool _imageUpdated = false;  /// Flag to indicate if the profile image has been updated by the user.
+  bool _isImageProcessing = false;  /// Flag to indicate if an image is currently being processed (e.g., compressed, uploaded).
+  bool _isProfileUpdateApiSent = false;  /// Flag to track if the profile update API call is in progress.
+  bool _updatePassword = false;  /// Flag to control the visibility of password update fields.
+  bool setPhoneNumberBasedOnCountry = true;  /// Determines if the phone number should be set based on the user's country detected.
 
-  final DateFormat _dateFormat = DateFormat(dateFormat);
+  final _formKey = GlobalKey<FormState>();  /// Global key for the Form widget, used for validation.
+  final _nameDebouncer = Debouncer();  /// Debouncer for handling name input changes to prevent excessive rebuilds.
+  final _phoneNumberDebouncer = Debouncer();  /// Debouncer for handling phone number input changes.
+  final DateFormat _dateFormat = DateFormat(dateFormat);  /// Date format for displaying and parsing user birthdays.
+  final platform = getPlatformType();  /// Detects the current platform type (web, mobile, etc.).
   // Controllers for input fields
-  final TextEditingController _userBirthdayController = TextEditingController();
+  final TextEditingController _currentPasswordController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _userPhoneNumberController = TextEditingController();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _currentPasswordController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _newPasswordRepeatedController = TextEditingController();
+  final TextEditingController _userBirthdayController = TextEditingController();
+  final TextEditingController _userPhoneNumberController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
 
-  bool setPhoneNumberBasedOnCountry = true;
-  String isoCode = dotenv.env['DEFAULT_COUNTRY_CODE'] ?? 'MA';
-  late PhoneNumber completePhoneNumber = PhoneNumber(isoCode: isoCode);
-  final platform = getPlatformType();
+  String? _currentPasswordErrorMessage;  /// Error message for current password validation.
+  String? _errorMessage;  /// General error message displayed to the user.
+  String? _selectedUserGender;  /// The selected gender from the dropdown.
+  String? _successMessage;  /// General success message displayed to the user.
+  String initials = "";  /// User's initials derived from first and last name.
+  String isoCode = dotenv.env['DEFAULT_COUNTRY_CODE'] ?? 'MA';  /// The default ISO code for phone numbers, fallback to 'MA' if not in .env.
+  String userInitialsBgColor = getRandomHexColor();  /// Background color for user initials, randomly generated or from user session.
+  /// Server-side error messages for specific fields.
+  String? _emailServerError;
+  String? _firstNameServerError; 
+  String? _lastNameServerError; 
+  String? _userBirthdayServerError;
+  String? _userPhoneNumberServerError; 
+  String? _usernameServerError;
 
-  bool _dataInitialized = false;
-  bool _imageUpdated = false;  // Stores if image modified
-  bool _updatePassword = false;
-  XFile? _selectedImage;  // Stores the selected image
-  MultipartFile? profileImage;
-  String initials = "";
-  String userInitialsBgColor = getRandomHexColor();
-  String? _currentPasswordErrorMessage;  // Stores the error message (if any)
-  String? _errorMessage;  // Stores the error message (if any)
-  String? _selectedUserGender;  // Stores the selected gender
-  String? _successMessage;  // Stores the success
-  String? _userBirthdayServerError;  // Stores the server error
-  String? _emailServerError;  // Stores the server error
-  String? _userPhoneNumberServerError;  // Stores the server error
-  String? _firstNameServerError;  // Stores the server error
-  String? _lastNameServerError;  // Stores the server error
-  String? _usernameServerError;  // Stores the server error
-  Dio dio = Dio();
+  late PhoneNumber completePhoneNumber = PhoneNumber(isoCode: isoCode);  /// Holds the complete phone number, including country code.
+  
+  MultipartFile? profileImage;  /// The profile image as a MultipartFile, ready for API upload.
 
-  /// Opens date picker and updates birthday field
-  /// 
-  /// Handles:
-  /// - Initial date selection based on current value
-  /// - Date range constraints (1900 to today)
-  /// - Localized date formatting
+  XFile? _selectedImage;  /// The currently selected image file for upload.
+
+  Dio dio = Dio();  /// Dio instance for making HTTP requests.
+
+  /// Shows a date picker and updates the user's birthday text field.
+  ///
+  /// The initial date for the calendar is either the current birthday or
+  /// 16 years prior to the current date.
   Future<void> _selectDate(BuildContext context) async {
     DateTime initialCalendarDate;
 
@@ -139,13 +141,15 @@ class ProfilePageState extends State<ProfilePage> {
       });
     }
   }
-  
+
+  // Late initialization for API services, allowing them to be injected for testing.
   late ThirdPartyAuthService _thirdPartyAuthService; 
   late AuthenticatedApiBackendService _authenticatedApiBackendService; 
+
   @override
   void initState() {
     super.initState();
-    // Use the injected service or create a new one
+    // Initialize API services, prioritizing injected services for testing.
     _thirdPartyAuthService = widget.thirdPartyAuthService ?? ThirdPartyAuthService();
     _authenticatedApiBackendService = widget.authenticatedApiBackendService ?? AuthenticatedApiBackendService(
       secureStorageService: widget.secureStorageService,
@@ -156,6 +160,10 @@ class ProfilePageState extends State<ProfilePage> {
     runAsynchron();
   }
   
+  /// Asynchronously fetches geolocation info to set the default phone country code.
+  ///
+  /// This is only executed if `setPhoneNumberBasedOnCountry` is true and
+  /// `completePhoneNumber` has no number yet.
   void runAsynchron() async {
     if(setPhoneNumberBasedOnCountry){
       dynamic data = {
@@ -173,6 +181,9 @@ class ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  /// Updates the user's initials based on first and last name input.
+  ///
+  /// Uses a debouncer to prevent frequent updates while typing.
   void _updateName(String lastNameValue, String firstNameValue, bool isLastName) {
     _nameDebouncer.run(() {
       setState(() {
@@ -186,6 +197,9 @@ class ProfilePageState extends State<ProfilePage> {
       });
     });
   }
+  /// Updates the complete phone number object based on user input.
+  ///
+  /// Uses a debouncer to prevent frequent updates.
   void _updatePhoneNumber(PhoneNumber number) {
     _phoneNumberDebouncer.run(() {
       completePhoneNumber = number;
@@ -197,7 +211,7 @@ class ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Handle null user session using post-frame callback
+    // Redirects to sign-in if user session is null (unauthenticated).
     if (widget.userSession == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && !Navigator.of(context).userGestureInProgress) {
@@ -208,6 +222,8 @@ class ProfilePageState extends State<ProfilePage> {
     }
     
     String currentLanguage = Localizations.localeOf(context).languageCode;
+
+    // Initialize text field controllers with user session data on first build.
     if(!_dataInitialized){
       _dataInitialized = true;
       _lastNameController.text = widget.userSession["last_name"];
@@ -215,6 +231,8 @@ class ProfilePageState extends State<ProfilePage> {
       _userBirthdayController.text = widget.userSession["user_birthday"] ?? "";
       _emailController.text = widget.userSession["email"];
       _userPhoneNumberController.text = widget.userSession["user_phone_number"] ?? "";
+
+      // Parse and format phone number if it exists in session.
       if(_userPhoneNumberController.text.isNotEmpty){
         final parsedNumber = phone_number_parser.PhoneNumber.parse(_userPhoneNumberController.text);
         setPhoneNumberBasedOnCountry = false;
@@ -229,9 +247,6 @@ class ProfilePageState extends State<ProfilePage> {
       _selectedUserGender = widget.userSession["user_gender"]??"";
       _usernameController.text = widget.userSession["username"];
       userInitialsBgColor = (widget.userSession["user_initials_bg_color"] ?? "").isEmpty ? userInitialsBgColor : widget.userSession["user_initials_bg_color"];
-      // if(widget.userSession["user_image_url"] != null){
-      //   _selectedImage = createXFileFromUrl(widget.userSession["user_image_url"]) as XFile?;
-      // }
       initials = getInitials(_lastNameController.text, _firstNameController.text);
     }
     return Scaffold(
@@ -621,7 +636,7 @@ class ProfilePageState extends State<ProfilePage> {
     final newPassword = _newPasswordController.text;
     final username = _usernameController.text;
 
-
+    // Reset error/success messages and set loading state.
     setState(() {
       _errorMessage = null;
       _successMessage = null;
@@ -648,6 +663,7 @@ class ProfilePageState extends State<ProfilePage> {
         "username": username,
       });
       
+      // Add profile image to form data if selected.
       if (profileImage != null) {
         formData.files.add(MapEntry('profile_image', profileImage!));
       }
@@ -720,8 +736,11 @@ class ProfilePageState extends State<ProfilePage> {
 
   @override
   void dispose() {
+    // Cancel any active timers for debouncers to prevent memory leaks
     _nameDebouncer.timer?.cancel();
     _phoneNumberDebouncer.timer?.cancel();
+
+    // Dispose of all TextEditingControllers to free up resources.
     _userBirthdayController.dispose();
     _emailController.dispose();
     _userPhoneNumberController.dispose();
