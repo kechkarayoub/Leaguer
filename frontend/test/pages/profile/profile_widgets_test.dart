@@ -164,6 +164,42 @@ void main() async {
   
   });
 
+  group('Date selecton', () {
+    testWidgets('Birthday change when selected', (tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: ProfilePage(
+          l10n: mockL10n,
+          userSession: mockUserSession,
+          storageService: mockStorageService,
+          secureStorageService: mockSecureStorageService,
+          thirdPartyAuthService: thirdPartyAuthService,
+        ),
+      ));
+
+      // Wait for any async initialization (like runAsynchron)
+      await tester.pumpAndSettle();
+
+      // Tap on the button to open date picker
+      await tester.ensureVisible(find.byKey(Key('birthday')));
+      await tester.tap(find.byKey(Key('birthday')));
+      await tester.pumpAndSettle();
+      
+      // Select a date on the date picker
+      await tester.tap(find.text('15')); // e.g., tap on 15th day of the month
+      await tester.pumpAndSettle();
+
+      // Confirm the selection
+      await tester.tap(find.text('OK')); // or 'Confirm' depending on your locale
+      await tester.pumpAndSettle();
+
+
+      expect(find.widgetWithText(CustomTextFormField, 'Birthday'), findsOneWidget);
+      expect(tester.widget<CustomTextFormField>(find.widgetWithText(CustomTextFormField, 'Birthday')).controller.text, '1990-01-15');
+    
+    });
+
+  });
+
   group('Image picker', () {
     testWidgets('Image picker processes and updates profile image', (tester) async {
       // Mock the ImagePicker global instance if you directly call `ImagePicker().pickImage()`
@@ -187,8 +223,6 @@ void main() async {
       final imagePickerWidgetFinder = find.byType(ImagePickerWidget);
       expect(imagePickerWidgetFinder, findsOneWidget);
 
-      // Simulate selecting an image
-      final mockImage = MockXFile('path/to/test_image.jpg');
 
       // Trigger the onImageSelected callback of ImagePickerWidget
       // You'll need to access the `onImageSelected` callback.
