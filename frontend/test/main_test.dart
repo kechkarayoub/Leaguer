@@ -1,10 +1,11 @@
-
 import 'dart:io';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/api/unauthenticated_api_service.dart';
+import 'package:frontend/components/app_splash_screen.dart';
 import 'package:frontend/main.dart'; // Adjust the import path as needed
 import 'package:mockito/mockito.dart';
 import 'package:frontend/pages/sign_in_up/sign_in_page.dart';
@@ -67,7 +68,9 @@ void main() async{
 
     testWidgets('MyApp should render SignInPage when userSession is null', (WidgetTester tester) async {
       // Arrange
-      when(mockStorageService.storageNotifier).thenReturn(ValueNotifier({}));
+      final notifier = ValueNotifier({});
+      when(mockStorageService.storageNotifier).thenReturn(notifier);
+
 
       // Act
       await tester.runAsync(() async {
@@ -80,11 +83,23 @@ void main() async{
             thirdPartyAuthService: thirdPartyAuthService,
           ),
         );
-        await tester.pumpAndSettle();
       });
 
       // Assert
+      expect(find.byType(AppSplashScreen), findsOneWidget);
+          
+      notifier.value = {'user': null};
+      // Allow navigation and rebuilds to complete
+      await tester.pump(); // process the notifier change
+      await tester.pump(const Duration(milliseconds: 1000)); // let router animate
+      await tester.pump(const Duration(seconds: 3)); // let splash/navigate finish
+
       expect(find.byType(SignInPage), findsOneWidget);
+      // Clean up: dispose the widget tree to cancel timers
+      await tester.pumpWidget(Container());
+      await tester.pump(); // let disposals complete
+      await tester.pump(const Duration(seconds: 6)); // let any pending timers fire and be cancelled
+
     });
 
     testWidgets('MyApp should render DashboardPage when userSession is not null', (WidgetTester tester) async {
