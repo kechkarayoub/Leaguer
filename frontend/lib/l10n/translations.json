@@ -164,6 +164,11 @@
     "en": "Hide password update",
     "fr": "Masquer la mise à jour du mot de passe"
   },
+  "Home": {
+    "ar": "الصفحة الرئيسية",
+    "en": "Home",
+    "fr": "Page d'accueil"
+  },
   "Invalid credentials!": {
     "ar": "بيانات الدخول غير صحيحة!",
     "en": "Invalid credentials!",
@@ -223,6 +228,11 @@
     "ar": "عذرًا! أنت غير متصل. جاري إعادة الاتصال...",
     "en": "Oops! You're Offline. Attempting to reconnect....",
     "fr": "Oups ! Vous êtes hors ligne. Tentative de reconnexion..."
+  },
+  "Page Not Found": {
+    "ar": "الصفحة غير موجودة",
+    "en": "Page Not Found",
+    "fr": "Page non trouvée"
   },
   "Password": {
     "ar": "كلمة المرور",

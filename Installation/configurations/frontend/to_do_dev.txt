@@ -1,3 +1,5 @@
+- add arguments params like in signin page.
+- check if mounted before setstate
 - Optimizing images before upload.
 - Access to pages with urls on web.
 - Notifications && Push notifications.

@@ -1,1 +1,3 @@
 Get api keys for .env file.
+Change App name in .env.
+Change assets/image/logo_main.png.
