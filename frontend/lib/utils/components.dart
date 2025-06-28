@@ -5,6 +5,7 @@ import 'package:frontend/l10n/language_picker.dart';
 import 'package:frontend/pages/profile/profile.dart';
 import 'package:frontend/storage/storage.dart';
 import 'package:frontend/utils/utils.dart';
+import 'package:go_router/go_router.dart';
 
 
 /// Renders a Drawer menu with the ability to log out and select a language.
@@ -38,7 +39,7 @@ ListTile _buildProfileTile(L10n l10n, String currentLanguage, BuildContext conte
     title: Text(l10n.translate("Profile", currentLanguage)),
     onTap: () {
       Navigator.pop(context); // Close the drawer
-      Navigator.pushNamed(context, ProfilePage.routeName);
+      context.go(ProfilePage.routeName);
     },
   );
 }
@@ -63,7 +64,7 @@ Widget _buildDrawerHeader(L10n l10n, String currentLanguage) {
 /// Helper method to build the logout ListTile in the Drawer.
 ListTile _buildLogoutTile(L10n l10n, String currentLanguage, StorageService storageService, SecureStorageService secureStorageService, BuildContext context) {
   return ListTile(
-    leading: Icon(Icons.exit_to_app),
+    leading: Icon(Icons.logout),
     title: Text(l10n.translate("Logout", currentLanguage)), // Translating the "Logout" label
     onTap: () async{
       await logout(storageService, secureStorageService, context); // Handle logout action
