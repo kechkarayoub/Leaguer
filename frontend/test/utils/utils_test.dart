@@ -229,6 +229,9 @@ void main() async{
       if (await compressedPng.exists()) {
         await compressedPng.delete();
       }
+      // if (await compressedJpg.exists()) {
+      //   await compressedJpg.delete();
+      // }
     });
 
     test('PNG remains transparent after compression', () async {
@@ -258,6 +261,11 @@ void main() async{
   
       expect(compressedImage.width, lessThanOrEqualTo(100));
       expect(compressedImage.height, lessThanOrEqualTo(100));
+      
+      if (await compressedJpg.exists()) {
+        await compressedJpg.delete();
+      }
+      
     });
 
   });

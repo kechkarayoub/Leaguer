@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/api/unauthenticated_api_service.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/storage/storage.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image/image.dart' as img;
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:logger/logger.dart';
@@ -31,6 +32,7 @@ const String dateFormatLabel = 'YYYY-MM-DD';
 const String dateFormat = 'yyyy-MM-dd';
 const String defaultLanguage = "fr";
 const String routeDashboard = '/dashboard';
+const String routeHome = '/';
 const String routeProfile = '/profile';
 const String routeSignIn = '/sign-in';
 const String routeSignUp = '/sign-up';
@@ -714,18 +716,12 @@ Future<void> logout(StorageService storageService, SecureStorageService secureSt
 
   if (context?.mounted ?? false) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Navigator.of(context!).pushNamedAndRemoveUntil(
-        routeSignIn,
-        (Route<dynamic> route) => false,
-      );
+      context!.go(routeSignIn);
     });
   } 
   else if (buildContext != null && buildContext!.mounted) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Navigator.of(buildContext!).pushNamedAndRemoveUntil(
-        routeSignIn,
-        (Route<dynamic> route) => false,
-      );
+      context!.go(routeSignIn);
     });
   }
 }
