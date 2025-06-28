@@ -16,6 +16,7 @@ import 'package:frontend/storage/storage.dart';
 import 'package:frontend/utils/components.dart';
 import 'package:frontend/utils/platform_detector.dart';
 import 'package:frontend/utils/utils.dart';
+import 'package:go_router/go_router.dart';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -215,7 +216,7 @@ class ProfilePageState extends State<ProfilePage> {
     if (widget.userSession == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && !Navigator.of(context).userGestureInProgress) {
-          Navigator.pushReplacementNamed(context, routeSignIn);
+          context.go(routeSignIn);
         }
       });
       return Scaffold(body: Center(child: CircularProgressIndicator()));

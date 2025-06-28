@@ -9,6 +9,7 @@ import 'package:frontend/pages/sign_in_up/sign_in_page.dart';
 import 'package:frontend/storage/storage.dart';
 import 'package:frontend/utils/components.dart';
 import 'package:frontend/utils/utils.dart';
+import 'package:go_router/go_router.dart';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -293,7 +294,7 @@ class SignUpPageState extends State<SignUpPage> {
                       margin: EdgeInsets.only(bottom: 100),  // Add margin bottom here
                       text: widget.l10n.translate("Already have an account? Sign in", currentLanguage),
                       onPressed: () {
-                        Navigator.pushNamed(context, SignInPage.routeName);
+                        context.go(SignInPage.routeName);
                       },
                     )
                   ],
@@ -351,11 +352,8 @@ class SignUpPageState extends State<SignUpPage> {
             _errorMessage = null;  // Clear the error message on successful sign-in
             _isSignUpApiSent = false;
           });
-          Navigator.pushNamed(
-            context,
-            SignInPage.routeName,
-            arguments: {"username": response["username"]},
-          );
+          
+          context.go(SignInPage.routeName, extra: {"arguments": {"username": response["username"]}});
         }
         //widget.storageService.set(key: 'user', obj: response["user"], updateNotifier: true);
       }

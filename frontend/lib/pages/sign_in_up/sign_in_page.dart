@@ -15,6 +15,7 @@ import 'package:frontend/pages/dashboard/dashboard.dart';
 import 'package:frontend/storage/storage.dart';
 import 'package:frontend/utils/utils.dart';
 import 'package:frontend/utils/components.dart';
+import 'package:go_router/go_router.dart';
 
 class SignInPage extends StatefulWidget {
   static const routeName = routeSignIn;
@@ -22,8 +23,9 @@ class SignInPage extends StatefulWidget {
   final SecureStorageService secureStorageService;
   final StorageService storageService;
   final ThirdPartyAuthService? thirdPartyAuthService;
+  final Map<String, dynamic>? arguments;
 
-  const SignInPage({super.key, required this.l10n, required this.storageService, required this.secureStorageService, this.thirdPartyAuthService,});
+  const SignInPage({super.key, required this.l10n, required this.storageService, required this.secureStorageService, this.thirdPartyAuthService, this.arguments});
 
   @override
   SignInPageState createState() => SignInPageState();
@@ -86,20 +88,9 @@ class SignInPageState extends State<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
-    // // Handle null user session using post-frame callback
-    // final userSession = await widget.storageService.get('user');
-    // if (userSession != null) {
-    //   WidgetsBinding.instance.addPostFrameCallback((_) {
-    //     if (mounted && !Navigator.of(context).userGestureInProgress) {
-    //       Navigator.pushReplacementNamed(context, routeSignIn);
-    //     }
-    //   });
-    //   return Scaffold(body: Center(child: CircularProgressIndicator()));
-    // }
     String currentLanguage = Localizations.localeOf(context).languageCode;
     // Extract the email parameter if available from the previous screen
-    final arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
-    String username = arguments?["username"] ?? ""; // Extract the email parameter if available
+    String username = widget.arguments?["username"] ?? ""; // Extract the email parameter if available
     if(username.isNotEmpty){
       _emailUsernameController.text = username;
     }
@@ -178,7 +169,7 @@ class SignInPageState extends State<SignInPage> {
                         margin: EdgeInsets.only(bottom: showSignInWithGoogleButton || _showSendEmailVerificationLinkButton ? 20 : 100),
                         text: widget.l10n.translate("Don't have an account? Sign up", currentLanguage),
                         onPressed: () {
-                          Navigator.pushNamed(context, SignUpPage.routeName);
+                          context.go(SignUpPage.routeName);
                         },
                       ),
                     // send email verification link button
@@ -303,8 +294,7 @@ class SignInPageState extends State<SignInPage> {
         widget.storageService.set(key: 'user', obj: response["user"], updateNotifier: true);
         if (context != null && context.mounted) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            //Navigator.pushReplacementNamed(context, routeDashboard);
-            Navigator.pushNamed(context, routeDashboard);
+            context.go(routeDashboard);
           });
         }
       }
@@ -394,8 +384,7 @@ class SignInPageState extends State<SignInPage> {
               widget.storageService.set(key: 'user', obj: response["user"], updateNotifier: true);
               if (context != null && context.mounted) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  //Navigator.pushReplacementNamed(context, routeDashboard);
-                  Navigator.pushNamed(context, routeDashboard);
+                  context.go(routeDashboard);
                 });
               }
             }

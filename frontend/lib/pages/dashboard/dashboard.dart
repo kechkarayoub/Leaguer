@@ -3,6 +3,7 @@ import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/storage/storage.dart';
 import 'package:frontend/utils/components.dart';
 import 'package:frontend/utils/utils.dart';
+import 'package:go_router/go_router.dart';
 
 class DashboardPage extends StatefulWidget {
   static const routeName = routeDashboard;
@@ -25,7 +26,7 @@ class DashboardPageState extends State<DashboardPage> {
     if (widget.userSession == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && !Navigator.of(context).userGestureInProgress) {
-          Navigator.pushReplacementNamed(context, routeSignIn);
+          context.go(routeSignIn);
         }
       });
       return Scaffold(body: Center(child: CircularProgressIndicator()));
