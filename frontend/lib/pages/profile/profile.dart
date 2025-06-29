@@ -49,8 +49,9 @@ class ProfilePage extends StatefulWidget {
   final ThirdPartyAuthService? thirdPartyAuthService;
   final AuthenticatedApiBackendService? authenticatedApiBackendService;
   final BuildContext? providedContext;
+  final Map<String, dynamic>? arguments;
 
-  const ProfilePage({super.key, required this.l10n, required this.userSession, required this.storageService, required this.secureStorageService, this.thirdPartyAuthService, this.authenticatedApiBackendService, this.providedContext});
+  const ProfilePage({super.key, required this.l10n, required this.userSession, required this.storageService, required this.secureStorageService, this.thirdPartyAuthService, this.authenticatedApiBackendService, this.providedContext, this.arguments});
 
   @override
   ProfilePageState createState() => ProfilePageState();

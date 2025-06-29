@@ -30,8 +30,9 @@ class SignUpPage extends StatefulWidget {
   final L10n l10n;
   final SecureStorageService secureStorageService;
   final StorageService storageService;
+  final Map<String, dynamic>? arguments;
 
-  const SignUpPage({super.key, required this.l10n, required this.storageService, required this.secureStorageService});
+  const SignUpPage({super.key, required this.l10n, required this.storageService, required this.secureStorageService, this.arguments});
 
   @override
   SignUpPageState createState() => SignUpPageState();

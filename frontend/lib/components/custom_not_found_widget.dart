@@ -25,6 +25,7 @@ class CustomNotFoundWidget extends StatelessWidget {
   final VoidCallback onHome;
   /// Optional callback for Logout button.
   final VoidCallback? onLogout;
+  final Map<String, dynamic>? arguments;
 
   /// Creates a custom 404 Not Found widget.
   const CustomNotFoundWidget({
@@ -33,6 +34,7 @@ class CustomNotFoundWidget extends StatelessWidget {
     required this.isLoggedIn,
     required this.onHome,
     this.onLogout,
+    this.arguments,
   });
 
   @override

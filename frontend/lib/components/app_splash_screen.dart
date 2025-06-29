@@ -10,7 +10,8 @@ class AppSplashScreen extends StatelessWidget {
   final bool showLoader;
   /// The app name to display below the logo. If empty, no name is shown.
   final String appName;
-  const AppSplashScreen({super.key, required this.appName, this.showLoader = true});
+  final Map<String, dynamic>? arguments;
+  const AppSplashScreen({super.key, required this.appName, this.showLoader = true, this.arguments});
 
   @override
   Widget build(BuildContext context) {

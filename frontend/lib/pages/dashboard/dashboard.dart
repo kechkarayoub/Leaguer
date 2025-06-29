@@ -11,8 +11,9 @@ class DashboardPage extends StatefulWidget {
   final dynamic userSession;
   final SecureStorageService secureStorageService;
   final StorageService storageService;
+  final Map<String, dynamic>? arguments;
 
-  const DashboardPage({super.key, required this.l10n, required this.userSession, required this.storageService, required this.secureStorageService});
+  const DashboardPage({super.key, required this.l10n, required this.userSession, required this.storageService, required this.secureStorageService, this.arguments});
 
   @override
   DashboardPageState createState() => DashboardPageState();

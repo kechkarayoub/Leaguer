@@ -11,7 +11,6 @@ import 'package:frontend/components/custom_text_button.dart';
 import 'package:frontend/components/custom_text_field.dart';
 import 'package:frontend/l10n/l10n.dart';
 import 'package:frontend/pages/sign_in_up/sign_up_page.dart';
-import 'package:frontend/pages/dashboard/dashboard.dart';
 import 'package:frontend/storage/storage.dart';
 import 'package:frontend/utils/utils.dart';
 import 'package:frontend/utils/components.dart';

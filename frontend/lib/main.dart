@@ -100,6 +100,7 @@ GoRouter createAuthenticatedRouter(L10n l10n, dynamic storage, StorageService st
             userSession: userSession,
             storageService: storageService,
             secureStorageService: secureStorageService,
+            arguments: arguments,
           );
         } 
       ),
@@ -107,11 +108,14 @@ GoRouter createAuthenticatedRouter(L10n l10n, dynamic storage, StorageService st
       GoRoute(
         path: routeDashboard,
         builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          final arguments = extra?['arguments'] as Map<String, dynamic>?;
           return DashboardPage(
             l10n: l10n,
             userSession: userSession,
             storageService: storageService,
             secureStorageService: secureStorageService,
+            arguments: arguments,
           );
         }
       ),
@@ -119,12 +123,15 @@ GoRouter createAuthenticatedRouter(L10n l10n, dynamic storage, StorageService st
       GoRoute(
         path: routeProfile,
         builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          final arguments = extra?['arguments'] as Map<String, dynamic>?;
           return ProfilePage(
             l10n: l10n,
             userSession: userSession,
             storageService: storageService,
             secureStorageService: secureStorageService,
             providedContext: context,
+            arguments: arguments,
           );
         }
       ),
@@ -147,27 +154,35 @@ GoRouter createAuthenticatedRouter(L10n l10n, dynamic storage, StorageService st
       GoRoute(
         path: routeSignUp,
         builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          final arguments = extra?['arguments'] as Map<String, dynamic>?;
           return SignUpPage(
             l10n: l10n,
             storageService: storageService,
             secureStorageService: secureStorageService,
+            arguments: arguments,
           );
         }
       ),
     ],
     // Custom error page for not found routes
-    errorBuilder: (context, state) => Scaffold(
-      body: CustomNotFoundWidget(
-        l10n: l10n,
-        isLoggedIn: userSession != null,
-        onHome: () => context.go(routeHome),
-        onLogout: userSession != null
-            ? () async {
-                await logout(storageService, secureStorageService, context);
-              }
-            : null,
-      ),
-    ),
+    errorBuilder: (context, state) {
+      final extra = state.extra as Map<String, dynamic>?;
+      final arguments = extra?['arguments'] as Map<String, dynamic>?;
+      return Scaffold(
+        body: CustomNotFoundWidget(
+          l10n: l10n,
+          isLoggedIn: userSession != null,
+          onHome: () => context.go(routeHome),
+          onLogout: userSession != null
+              ? () async {
+                  await logout(storageService, secureStorageService, context);
+                }
+              : null,
+          arguments: arguments,
+        ),
+      );
+    }
   );
 }
 
@@ -210,10 +225,13 @@ GoRouter createUnautenticatedRouter(L10n l10n, dynamic storage, StorageService s
       GoRoute(
         path: routeSignUp,
         builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          final arguments = extra?['arguments'] as Map<String, dynamic>?;
           return SignUpPage(
             l10n: l10n,
             storageService: storageService,
             secureStorageService: secureStorageService,
+            arguments: arguments,
           );
         }
       ),
@@ -235,14 +253,22 @@ GoRouter createLoadingRouter(String appName) {
     routes: [
       GoRoute(
         path: '/:rest*',
-        builder: (context, state) => Scaffold(
-          body: AppSplashScreen(appName: appName,),
-        ),
+        builder: (context, state){
+          final extra = state.extra as Map<String, dynamic>?;
+          final arguments = extra?['arguments'] as Map<String, dynamic>?;
+          return Scaffold(
+            body: AppSplashScreen(appName: appName, arguments: arguments,),
+          );
+        }
       ),
     ],
-    errorBuilder: (context, state) => Scaffold(
-      body: AppSplashScreen(appName: appName,),
-    ),
+    errorBuilder: (context, state){
+      final extra = state.extra as Map<String, dynamic>?;
+      final arguments = extra?['arguments'] as Map<String, dynamic>?;
+      return Scaffold(
+        body: AppSplashScreen(appName: appName, arguments: arguments,),
+      );
+    }
   );
 }
 
