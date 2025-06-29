@@ -72,7 +72,7 @@ class SignUpPageState extends State<SignUpPage> {
       lastDate: DateTime.now(),
       locale: Localizations.localeOf(context), // Add localization
     );
-    if (picked != null) {
+    if (mounted && picked != null) {
       setState(() {
         _userBirthdayController.text = _dateFormat.format(picked);
         _userBirthdayServerError = null;
@@ -111,6 +111,7 @@ class SignUpPageState extends State<SignUpPage> {
                         labelText: widget.l10n.translate(_selectedImage == null ? "Select Profile Image" : "Change Profile Image", currentLanguage),
                         labelTextCamera: widget.l10n.translate(_selectedImage == null ? "Take photo" : "Change photo", currentLanguage),
                         onImageSelected: (XFile? image) {
+                          if(!mounted) return; // Ensure the widget is still mounted before proceeding
                           setState(() {
                             _selectedImage = image;
                           });
@@ -345,6 +346,7 @@ class SignUpPageState extends State<SignUpPage> {
       Dio dio = Dio();
       final response = await UnauthenticatedApiBackendService.signUpUser(formData: formData, dio: dio);
 
+      if(!mounted) return; // Ensure the widget is still mounted before proceeding
       // Assuming the response contains the username
       if(response["success"] && response["username"] != null){
         if (mounted){
@@ -388,10 +390,12 @@ class SignUpPageState extends State<SignUpPage> {
         });
       }
     } catch (e) {
-      setState(() {
-        _errorMessage = "An error occurred when sign up! Please try later.";  // Set the error message on unsuccessful sign-in
-          _isSignUpApiSent = false;
-      });
+      if(mounted){
+        setState(() {
+          _errorMessage = "An error occurred when sign up! Please try later.";  // Set the error message on unsuccessful sign-in
+            _isSignUpApiSent = false;
+        });
+      }
       // Handle any errors that occurred during the HTTP request
       logMessage('Sign-up error: $e');
     }

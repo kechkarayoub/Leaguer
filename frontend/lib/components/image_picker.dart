@@ -52,6 +52,7 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
 
   // Method to pick an image from the gallery
   Future<void> _pickImage(ImageSource source) async {
+    if(!mounted) return; // Ensure the widget is still mounted before proceeding
     if (isPicking || widget.isProcessing) return; // Prevent rapid consecutive calls
     isPicking = true;
     try {
@@ -74,6 +75,7 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
 
   // Method to remove the selected image
   void _removeImage() {
+    if(!mounted) return; // Ensure the widget is still mounted before proceeding
     setState(() {
       _selectedImage = null;  // Clear the selected image file
       _webImageUrl = null;
@@ -84,6 +86,7 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
 
   // This method is for testing purposes only
   void setSelectedImageForTest(XFile image) {
+    if(!mounted) return; // Ensure the widget is still mounted before proceeding
     setState(() {
       _selectedImage = image;
     });

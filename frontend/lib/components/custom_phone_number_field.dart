@@ -158,7 +158,7 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
   /// Updates the initial value and triggers a rebuild
   /// if the new value is different
   void _updateInitialValue(PhoneNumber newValue) {
-    if (_initialValue != newValue && mounted) {
+    if (mounted && _initialValue != newValue && mounted) {
       setState(() {
         _initialValue = newValue;
       });

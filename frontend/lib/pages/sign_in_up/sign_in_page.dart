@@ -225,6 +225,7 @@ class SignInPageState extends State<SignInPage> {
     try {
       final response = await UnauthenticatedApiBackendService.resendVerificationEmail(data: data, dio: dio);
 
+      if(!mounted) return; // Ensure the widget is still mounted before proceeding
       // Assuming the response contains the user session data
       if(response["success"]){
         setState(() {
@@ -248,11 +249,13 @@ class SignInPageState extends State<SignInPage> {
         });
       }
     } catch (e) {
-      setState(() {
-        _errorMessage = "An error occurred while resending the verification email";  // Set the error message on unsuccessful resend verification email
-        _successMessage = null;
-        _isResendVerificationEmailApiSent = false;
-      });
+      if(mounted){
+        setState(() {
+          _errorMessage = "An error occurred while resending the verification email";  // Set the error message on unsuccessful resend verification email
+          _successMessage = null;
+          _isResendVerificationEmailApiSent = false;
+        });
+      }
       // Handle any errors that occurred during the HTTP request
       logMessage('Sign-in error: $e');
     }
@@ -283,6 +286,7 @@ class SignInPageState extends State<SignInPage> {
     try {
       final response = await UnauthenticatedApiBackendService.signInUser(data: data, dio: dio);
 
+      if(!mounted) return; // Ensure the widget is still mounted before proceeding
       // Assuming the response contains the user session data
       if(response["success"] && response["user"] != null){
         setState(() {
@@ -315,11 +319,13 @@ class SignInPageState extends State<SignInPage> {
         });
       }
     } catch (e) {
-      setState(() {
-        _errorMessage = "An error occurred when log in!";  // Set the error message on unsuccessful sign-in
-        _successMessage = null;
-        _isSignInApiSent = false;
-      });
+      if(mounted){
+        setState(() {
+          _errorMessage = "An error occurred when log in!";  // Set the error message on unsuccessful sign-in
+          _successMessage = null;
+          _isSignInApiSent = false;
+        });
+      }
       // Handle any errors that occurred during the HTTP request
       logMessage('Sign-in error: $e');
     }
@@ -353,6 +359,7 @@ class SignInPageState extends State<SignInPage> {
       if(typeThirdPartyApiSent == "google"){
         UserCredential? userCredential = await _thirdPartyAuthService.signInWithGoogle();
         final User? user = userCredential?.user;
+        if(!mounted) return; // Ensure the widget is still mounted before proceeding
         if (user == null) {
           // The pop up is closed or canceled by the user
           setState(() {
@@ -373,6 +380,7 @@ class SignInPageState extends State<SignInPage> {
 
           try {
             final response = await UnauthenticatedApiBackendService.signInUserWithThirdParty(data: data, dio: dio);
+            if(!mounted) return; // Ensure the widget is still mounted before proceeding
             // Assuming the response contains the user session data
             if(response["success"] && response["user"] != null){
               setState(() {
@@ -390,6 +398,7 @@ class SignInPageState extends State<SignInPage> {
             }
             else if(!response["success"] && response["message"] != null){
               await _thirdPartyAuthService.signOut();
+              if(!mounted) return; // Ensure the widget is still mounted before proceeding
               setState(() {
                 _errorMessage = response["message"];  // Set the error message on unsuccessful sign-in with third party
                 _successMessage = null;
@@ -399,6 +408,7 @@ class SignInPageState extends State<SignInPage> {
             }
             else{
               await _thirdPartyAuthService.signOut();
+              if(!mounted) return; // Ensure the widget is still mounted before proceeding
               setState(() {
                 _errorMessage = "An error occurred when log in with $typeThirdPartyApiSent!";  // Set the error message on unsuccessful sign-in with third party
                 _successMessage = null;
@@ -408,6 +418,7 @@ class SignInPageState extends State<SignInPage> {
             }
           } catch (e) {
             await _thirdPartyAuthService.signOut();
+            if(!mounted) return; // Ensure the widget is still mounted before proceeding
             setState(() {
               _errorMessage = "An error occurred when log in with $typeThirdPartyApiSent!";  // Set the error message on unsuccessful sign-in with third party
               _successMessage = null;
@@ -422,21 +433,25 @@ class SignInPageState extends State<SignInPage> {
 
       
     }  on FirebaseAuthException catch (e) {
-      setState(() {
-        _errorMessage = e.code == "popup-closed-by-user" ? null : "An error occurred when log in with $typeThirdPartyApiSent!";  // Set the error message on unsuccessful sign-in with third party
-        _successMessage = null;
-        _isSignInThirdPartyApiSent = false;
-        typeThirdPartyApiSent = "";
-      });
+      if(mounted){
+        setState(() {
+          _errorMessage = e.code == "popup-closed-by-user" ? null : "An error occurred when log in with $typeThirdPartyApiSent!";  // Set the error message on unsuccessful sign-in with third party
+          _successMessage = null;
+          _isSignInThirdPartyApiSent = false;
+          typeThirdPartyApiSent = "";
+        });
+      }
       // Handle any errors that occurred during the HTTP request
       logMessage(e, 'Sign-in with $typeThirdPartyApiSent error:', "e");
     } catch (e) {
-      setState(() {
-        _errorMessage = e.toString() == "popup_closed" ? null : "An error occurred when log in with $typeThirdPartyApiSent!";  // Set the error message on unsuccessful sign-in with third party
-        _successMessage = null;
-        _isSignInThirdPartyApiSent = false;
-        typeThirdPartyApiSent = "";
-      });
+      if(mounted){
+        setState(() {
+          _errorMessage = e.toString() == "popup_closed" ? null : "An error occurred when log in with $typeThirdPartyApiSent!";  // Set the error message on unsuccessful sign-in with third party
+          _successMessage = null;
+          _isSignInThirdPartyApiSent = false;
+          typeThirdPartyApiSent = "";
+        });
+      }
       // Handle any errors that occurred during the HTTP request
       logMessage(e, 'Sign-in with $typeThirdPartyApiSent error:', "e");
     }

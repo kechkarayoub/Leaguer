@@ -135,7 +135,7 @@ class ProfilePageState extends State<ProfilePage> {
       lastDate: DateTime.now(),
       locale: Localizations.localeOf(context), // Add localization
     );
-    if (picked != null) {
+    if (mounted && picked != null) {
       setState(() {
         _userBirthdayController.text = _dateFormat.format(picked);
         _userBirthdayServerError = null;
@@ -171,7 +171,7 @@ class ProfilePageState extends State<ProfilePage> {
         'requested_info': 'countryCode',
       };
       String isoCode2 = await UnauthenticatedApiBackendService.getGeolocationInfo(data: data, dio: dio);
-      if(completePhoneNumber.phoneNumber == null){
+      if(mounted && completePhoneNumber.phoneNumber == null){
         isoCode = isoCode2;
         completePhoneNumber = PhoneNumber(isoCode: isoCode);
         setState(() {
@@ -187,6 +187,7 @@ class ProfilePageState extends State<ProfilePage> {
   /// Uses a debouncer to prevent frequent updates while typing.
   void _updateName(String lastNameValue, String firstNameValue, bool isLastName) {
     _nameDebouncer.run(() {
+      if(!mounted) return; // Ensure the widget is still mounted before proceeding
       setState(() {
         if(isLastName){
           _lastNameServerError = null;
@@ -203,6 +204,7 @@ class ProfilePageState extends State<ProfilePage> {
   /// Uses a debouncer to prevent frequent updates.
   void _updatePhoneNumber(PhoneNumber number) {
     _phoneNumberDebouncer.run(() {
+      if(!mounted) return; // Ensure the widget is still mounted before proceeding
       completePhoneNumber = number;
       setState(() {
         _userPhoneNumberServerError = null; // Clear error on input change
@@ -282,6 +284,7 @@ class ProfilePageState extends State<ProfilePage> {
                         labelText: widget.l10n.translate(_selectedImage == null && widget.userSession["user_image_url"] == null ? "Select Profile Image" : "Change Profile Image", currentLanguage),
                         labelTextCamera: widget.l10n.translate(_selectedImage == null && widget.userSession["user_image_url"] == null ? "Take photo" : "Change photo", currentLanguage),
                         onImageSelected: (XFile? image) async {
+                          if(!mounted) return; // Ensure the widget is still mounted before proceeding
                           profileImage = null;
                           
                           setState(() {
@@ -316,11 +319,15 @@ class ProfilePageState extends State<ProfilePage> {
 
                           } 
                           catch (e) {
-                            // Fallback: Use original image if compression fails
-                            setState(() => profileImage = profileImage);
+                            if(mounted){
+                              // Fallback: Use original image if compression fails
+                              setState(() => profileImage = profileImage);
+                            }
                           } 
                           finally {
-                            setState(() => _isImageProcessing = false);
+                            if(mounted){
+                              setState(() => _isImageProcessing = false);
+                            }
                           }
                           
                         },
@@ -670,6 +677,7 @@ class ProfilePageState extends State<ProfilePage> {
       }
       final response = await authenticatedApiBackendService.updateProfile(formData: formData);
 
+      if(!mounted) return; // Ensure the widget is still mounted before proceeding
       // Assuming the response contains the username
       if(response["success"]){
         bool updateTokens = _updatePassword && !response["wrong_password"];
@@ -725,10 +733,12 @@ class ProfilePageState extends State<ProfilePage> {
       }
     } catch (e) {
       logMessage(e, "", "e", "");
-      setState(() {
-        _errorMessage = "An error occurred while updating profile information. Please try again later.";  // Set the error message on unsuccessful profile update
+      if(mounted){
+        setState(() {
+          _errorMessage = "An error occurred while updating profile information. Please try again later.";  // Set the error message on unsuccessful profile update
           _isProfileUpdateApiSent = false;
-      });
+        });
+      }
     }
 
   }
