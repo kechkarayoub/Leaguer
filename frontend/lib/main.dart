@@ -345,6 +345,7 @@ class MyApp extends StatelessWidget {
 
         final authenticatedRooter = createAuthenticatedRouter(l10n, storage, storageService, secureStorageService, thirdPartyAuthService);
         return MaterialApp.router(
+          restorationScopeId: 'authenticated_app',
           builder: (context, child) {
             return Scaffold(
               appBar: AppBar(

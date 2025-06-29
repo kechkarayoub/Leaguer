@@ -63,9 +63,15 @@ void main() {
     });
 
     test('StorageNotifier updates when a value is changed', () async {
-      await storageService.set(key: 'user', obj: {"id": 123}, updateNotifier: true);
-      
-      expect(storageService.storageNotifier.value['user'], {"id": 123});
+      await storageService.set(key: 'user', obj: {"id": 199}, updateNotifier: true);
+      expect(storageService.storageNotifier.value['user'], {"id": 199});
+      await storageService.set(key: 'user', obj: {"id": 188}, updateNotifier: true, notifierToUpdate: "all");
+      expect(storageService.storageNotifier.value['user'], {"id": 188});
+      await storageService.set(key: 'user', obj: {"id": 177}, updateNotifier: true, notifierToUpdate: "storage");
+      expect(storageService.storageNotifier.value['user'], {"id": 177});
+      await storageService.set(key: 'user', obj: {"id": 166}, updateNotifier: true, notifierToUpdate: "user_info");
+      expect(storageService.storageNotifier.value['user'], {"id": 177});
+      expect(storageService.storageUserInfoNotifier.value, {"id": 166});
     });
   });
 

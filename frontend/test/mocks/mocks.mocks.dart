@@ -87,9 +87,9 @@ class MockStorageService extends _i1.Mock implements _i9.StorageService {
           as _i2.ValueNotifier<dynamic>);
 
   @override
-  _i10.Future<void> clear({bool? updateNotifier = true}) =>
+  _i10.Future<void> clear({bool? updateNotifier = true, String? notifierToUpdate = "storage"}) =>
       (super.noSuchMethod(
-            Invocation.method(#clear, [], {#updateNotifier: updateNotifier}),
+            Invocation.method(#clear, [], {#updateNotifier: updateNotifier, #notifierToUpdate: notifierToUpdate}),
             returnValue: _i10.Future<void>.value(),
             returnValueForMissingStub: _i10.Future<void>.value(),
           )
@@ -107,11 +107,13 @@ class MockStorageService extends _i1.Mock implements _i9.StorageService {
   _i10.Future<void> remove({
     required String? key,
     bool? updateNotifier = false,
+    String? notifierToUpdate = "storage",
   }) =>
       (super.noSuchMethod(
             Invocation.method(#remove, [], {
               #key: key,
               #updateNotifier: updateNotifier,
+              #notifierToUpdate: notifierToUpdate,
             }),
             returnValue: _i10.Future<void>.value(),
             returnValueForMissingStub: _i10.Future<void>.value(),
@@ -123,12 +125,14 @@ class MockStorageService extends _i1.Mock implements _i9.StorageService {
     required String? key,
     required dynamic obj,
     bool? updateNotifier = false,
+    String? notifierToUpdate = "storage",
   }) =>
       (super.noSuchMethod(
             Invocation.method(#set, [], {
               #key: key,
               #obj: obj,
               #updateNotifier: updateNotifier,
+              #notifierToUpdate: notifierToUpdate,
             }),
             returnValue: _i10.Future<void>.value(),
             returnValueForMissingStub: _i10.Future<void>.value(),

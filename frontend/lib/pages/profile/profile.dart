@@ -694,7 +694,8 @@ class ProfilePageState extends State<ProfilePage> {
         if(updateTokens){
           widget.secureStorageService.saveTokens(response["access_token"], response["refresh_token"]);
         }
-        widget.storageService.set(key: 'user', obj: response["user"], updateNotifier: true);
+        // widget.userSession = response["user"];
+        widget.storageService.set(key: 'user', obj: response["user"], updateNotifier: true, notifierToUpdate: "user_info");
       }
       else if(!response["success"] && response["message"] != null){
         
