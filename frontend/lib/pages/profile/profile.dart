@@ -68,6 +68,7 @@ class ProfilePage extends StatefulWidget {
 class ProfilePageState extends State<ProfilePage> {
 
   bool _dataInitialized = false;  /// Flag to ensure initial data is only loaded once.
+  bool _imageRemoved = false;  /// Flag to indicate if the user has removed the profile image.
   bool _imageUpdated = false;  /// Flag to indicate if the profile image has been updated by the user.
   bool _isImageProcessing = false;  /// Flag to indicate if an image is currently being processed (e.g., compressed, uploaded).
   bool _isProfileUpdateApiSent = false;  /// Flag to track if the profile update API call is in progress.
@@ -283,11 +284,14 @@ class ProfilePageState extends State<ProfilePage> {
                         isProcessing: _isImageProcessing,
                         initials: initials,
                         userInitialsBgColor: userInitialsBgColor,
-                        labelText: widget.l10n.translate(_selectedImage == null && widget.userSession["user_image_url"] == null ? "Select Profile Image" : "Change Profile Image", currentLanguage),
-                        labelTextCamera: widget.l10n.translate(_selectedImage == null && widget.userSession["user_image_url"] == null ? "Take photo" : "Take a new photo", currentLanguage),
+                        labelText: widget.l10n.translate(_selectedImage == null && (_imageRemoved || widget.userSession["user_image_url"] == null) ? "Select Profile Image" : "Change Profile Image", currentLanguage),
+                        labelTextCamera: widget.l10n.translate(_selectedImage == null && (_imageRemoved || widget.userSession["user_image_url"] == null) ? "Take photo" : "Take a new photo", currentLanguage),
                         onImageSelected: (XFile? image) async {
                           if(!mounted) return; // Ensure the widget is still mounted before proceeding
                           profileImage = null;
+                          if(image == null) {
+                            _imageRemoved = true; // Reset user image URL if no image is selected
+                          }
                           
                           setState(() {
                             _selectedImage = image;
