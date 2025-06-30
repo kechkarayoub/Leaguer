@@ -187,6 +187,22 @@ staticfiles/
 
 # Node.js (Flutter web)
 node_modules/
+frontend/node_modules/
+# IDE files
+frontend/.vscode/
+
+
+# macOS/Windows/Linux system files
+frontend/Thumbs.db
+
+
+frontend/android/local.properties
+
+
+# Android build artifacts (already present)
+frontend/android/app/build/
+frontend/android/.gradle/
+frontend/android/app/.cxx/
 
 # Flutter
 .flutter/
@@ -298,6 +314,20 @@ app/*.iml
 app/build/
 local.properties
 
+# Flutter build artifacts
+frontend/build/
+frontend/web/build/
+frontend/linux/build/
+frontend/macos/build/
+frontend/windows/build/
+
+# Dart/Flutter tool artifacts
+frontend/.dart_tool/
+frontend/.flutter-plugins
+frontend/.flutter-plugins-dependencies
+frontend/.pub/
+frontend/.packages
+
 # Other
 *.swo
 *.lock
@@ -377,11 +407,7 @@ frontend/.idea/
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
-frontend/.dart_tool/
-frontend/.flutter-plugins
-frontend/.flutter-plugins-dependencies
 .pub-cache/
-frontend/.pub/
 /build/
 
 # Symbolication related
