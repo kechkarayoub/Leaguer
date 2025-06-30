@@ -253,6 +253,7 @@ class ProfilePageState extends State<ProfilePage> {
       userInitialsBgColor = (widget.userSession["user_initials_bg_color"] ?? "").isEmpty ? userInitialsBgColor : widget.userSession["user_initials_bg_color"];
       initials = getInitials(_lastNameController.text, _firstNameController.text);
     }
+    double maxWidth = MediaQuery.of(context).size.width * 0.9;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.l10n.translate("Profile", currentLanguage)),
@@ -269,8 +270,8 @@ class ProfilePageState extends State<ProfilePage> {
               key: _formKey,
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width * 0.9, // 90% of screen width
-                  minWidth: 400, // Optional: Set a minimum width if needed
+                  maxWidth: maxWidth, // 90% of screen width
+                  minWidth: maxWidth < 400 ? maxWidth : 400, // Optional: Set a minimum width if needed
                   maxHeight: double.infinity,
                 ),
                 child: Column(
@@ -283,7 +284,7 @@ class ProfilePageState extends State<ProfilePage> {
                         initials: initials,
                         userInitialsBgColor: userInitialsBgColor,
                         labelText: widget.l10n.translate(_selectedImage == null && widget.userSession["user_image_url"] == null ? "Select Profile Image" : "Change Profile Image", currentLanguage),
-                        labelTextCamera: widget.l10n.translate(_selectedImage == null && widget.userSession["user_image_url"] == null ? "Take photo" : "Change photo", currentLanguage),
+                        labelTextCamera: widget.l10n.translate(_selectedImage == null && widget.userSession["user_image_url"] == null ? "Take photo" : "Take a new photo", currentLanguage),
                         onImageSelected: (XFile? image) async {
                           if(!mounted) return; // Ensure the widget is still mounted before proceeding
                           profileImage = null;
@@ -598,6 +599,7 @@ class ProfilePageState extends State<ProfilePage> {
                         }
                       },
                     ),
+                    SizedBox(height: 40),
                   ],
                 ),
               ),
@@ -695,7 +697,7 @@ class ProfilePageState extends State<ProfilePage> {
           widget.secureStorageService.saveTokens(response["access_token"], response["refresh_token"]);
         }
         // widget.userSession = response["user"];
-        widget.storageService.set(key: 'user', obj: response["user"], updateNotifier: true, notifierToUpdate: "user_info");
+        widget.storageService.set(key: 'user', obj: response["user"], updateNotifier: true, notifierToUpdate: "all");
       }
       else if(!response["success"] && response["message"] != null){
         

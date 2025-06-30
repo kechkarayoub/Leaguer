@@ -11,7 +11,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class StorageService {
   /// Notifier to track storage changes and refresh the app state.
   final ValueNotifier<dynamic> _storageNotifier = ValueNotifier<dynamic>({});
-  final ValueNotifier<dynamic> _storageUserInfoNotifier = ValueNotifier<dynamic>({});
 
   static final StorageService _instance = StorageService._internal();
 
@@ -21,7 +20,6 @@ class StorageService {
   /// Private constructor for singleton pattern.
   StorageService._internal() {
     _initStorages();
-    _initStorageUserInfoNotifier();
   }
 
   /// Updates the notifier with the current stored values.
@@ -33,9 +31,6 @@ class StorageService {
         "current_language": await get("current_language"),
         "user": await get("user"),
       };
-      if (notifierToUpdate == "all" || notifierToUpdate == "user_info") {
-        _storageUserInfoNotifier.value = state["user"];
-      }
       if (notifierToUpdate == "all" || notifierToUpdate == "storage") {
         _storageNotifier.value = state; // Notify listeners of the new state.
       } 
@@ -52,10 +47,6 @@ class StorageService {
   /// Initializes the storage notifier with existing stored values.
   Future<void> _initStorageNotifier() async {
     await _updateNotifier(notifierToUpdate: "storage");
-  }
-  /// Initializes the user info storage notifier with existing stored values.
-  Future<void> _initStorageUserInfoNotifier() async {
-    await _updateNotifier(notifierToUpdate: "user_info");
   }
 
   /// Clears all stored data and updates the notifier if required.
@@ -133,7 +124,6 @@ class StorageService {
   
   /// Provides access to the storages notifier to track storage changes.
   ValueNotifier<dynamic> get storageNotifier => _storageNotifier;
-  ValueNotifier<dynamic> get storageUserInfoNotifier => _storageUserInfoNotifier;
   
 }
 

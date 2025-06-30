@@ -70,8 +70,7 @@ void main() {
       await storageService.set(key: 'user', obj: {"id": 177}, updateNotifier: true, notifierToUpdate: "storage");
       expect(storageService.storageNotifier.value['user'], {"id": 177});
       await storageService.set(key: 'user', obj: {"id": 166}, updateNotifier: true, notifierToUpdate: "user_info");
-      expect(storageService.storageNotifier.value['user'], {"id": 177});
-      expect(storageService.storageUserInfoNotifier.value, {"id": 166});
+      expect(storageService.storageNotifier.value['user'], {"id": 166});
     });
   });
 

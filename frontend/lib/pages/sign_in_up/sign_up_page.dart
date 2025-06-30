@@ -110,7 +110,7 @@ class SignUpPageState extends State<SignUpPage> {
                         initials: initials,
                         userInitialsBgColor: userInitialsBgColor,
                         labelText: widget.l10n.translate(_selectedImage == null ? "Select Profile Image" : "Change Profile Image", currentLanguage),
-                        labelTextCamera: widget.l10n.translate(_selectedImage == null ? "Take photo" : "Change photo", currentLanguage),
+                        labelTextCamera: widget.l10n.translate(_selectedImage == null ? "Take photo" : "Take a new photo", currentLanguage),
                         onImageSelected: (XFile? image) {
                           if(!mounted) return; // Ensure the widget is still mounted before proceeding
                           setState(() {

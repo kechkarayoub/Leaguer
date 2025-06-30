@@ -165,6 +165,14 @@ GoRouter createAuthenticatedRouter(L10n l10n, dynamic storage, StorageService st
         }
       ),
     ],
+    // Redirect all other routes to sign in
+    redirect: (context, state) {
+      // If not on routeSignIn or routeSignUp, always redirect to /sign-in
+      if (state.uri.path == routeSignIn || state.uri.path == routeSignUp) {
+        return routeHome;
+      }
+      return null;
+    },
     // Custom error page for not found routes
     errorBuilder: (context, state) {
       final extra = state.extra as Map<String, dynamic>?;
@@ -239,7 +247,7 @@ GoRouter createUnautenticatedRouter(L10n l10n, dynamic storage, StorageService s
     // Redirect all other routes to sign in
     redirect: (context, state) {
       // If not on routeSignIn or routeSignUp, always redirect to /sign-in
-      if (state.path != routeSignIn && state.path != routeSignUp) {
+      if (state.uri.path != routeSignIn && state.uri.path != routeSignUp) {
         return routeSignIn;
       }
       return null;
@@ -274,105 +282,114 @@ GoRouter createLoadingRouter(String appName) {
 
 
 /// The root widget of the application.
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final L10n l10n;
   final SecureStorageService secureStorageService;
   final StorageService storageService;
   final WakelockService? wakelockService;
   final ThirdPartyAuthService? thirdPartyAuthService;
   const MyApp({
-      super.key, required this.l10n, required this.storageService, required this.secureStorageService, this.wakelockService, this.thirdPartyAuthService
-    });
+    super.key,
+    required this.l10n,
+    required this.storageService,
+    required this.secureStorageService,
+    this.wakelockService,
+    this.thirdPartyAuthService,
+  });
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  GoRouter? _router;
+  GoRouter? _loadingRouter;
+  GoRouter? _authenticatedRouter;
+  GoRouter? _unauthenticatedRouter;
+  dynamic _lastUserSession;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.storageService.storageNotifier.addListener(_onStorageChanged);
+    _updateRouter();
+  }
+
+  void _onStorageChanged() {
+    final storage = widget.storageService.storageNotifier.value;
+    final userSession = storage?['user'];
+    _lastUserSession = userSession;
+    _updateRouter();
+    setState(() {});
+  }
+
+  void _updateRouter() {
+    final storage = widget.storageService.storageNotifier.value;
+    final userSession = storage?['user'];
+    _loadingRouter ??= createLoadingRouter(dotenv.env['APP_NAME'] ?? 'App');
+    if (storage == null || storage.isEmpty) {
+      _router = _loadingRouter;
+    } 
+    else if (userSession == null) {
+      _unauthenticatedRouter ??= createUnautenticatedRouter(
+        widget.l10n,
+        storage,
+        widget.storageService,
+        widget.secureStorageService,
+        widget.thirdPartyAuthService,
+      );
+      _router = _unauthenticatedRouter;
+    } else {
+      _authenticatedRouter ??= createAuthenticatedRouter(
+        widget.l10n,
+        storage,
+        widget.storageService,
+        widget.secureStorageService,
+        widget.thirdPartyAuthService,
+      );
+      _router = _authenticatedRouter;
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.storageService.storageNotifier.removeListener(_onStorageChanged);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     String appName = dotenv.env['APP_NAME'] ?? 'App';
-    return ValueListenableBuilder<dynamic>(
-      valueListenable: storageService.storageNotifier,
-      builder: (context, storage, _) {
-        // Show loading spinner while storage is initializing
-        if (storage == null || storage.isEmpty) {
-          final loadingRouter = createLoadingRouter(appName);
-          return MaterialApp.router(
-            builder: (context, child) {
-              return Scaffold(
-                appBar: AppBar(
-                ),
-                body: child,
-              );
-            },
-              // Show debug banner only in development mode
-            debugShowCheckedModeBanner: dotenv.env['PIPLINE'] == "development",
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-            ),
-            routerConfig: loadingRouter,
-          );
-      
-        }
-        // Retrieve user session and current language from storage
-        dynamic userSession = storage['user'];
-        String currentLanguage = storage['current_language'] ?? defaultLanguage;
-
-        if (userSession == null) {
-          final unauthenticatedRooter = createUnautenticatedRouter(l10n, storage, storageService, secureStorageService, thirdPartyAuthService);
-          return MaterialApp.router(
-            builder: (context, child) {
-              return Scaffold(
-                appBar: AppBar(
-                  title: Text(appName),
-                ),
-                body: ConnectionStatusWidget(l10n: l10n, wakelockService: wakelockService, child: child!),
-              );
-            },
-            // Show debug banner only in development mode
-            debugShowCheckedModeBanner: dotenv.env['PIPLINE'] == "development",
-            locale: Locale(currentLanguage),
-            localizationsDelegates: [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: l10n.supportedLocales,
-            title: appName,
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-            ),
-            routerConfig: unauthenticatedRooter,
-          );
-        
-        }
-
-        final authenticatedRooter = createAuthenticatedRouter(l10n, storage, storageService, secureStorageService, thirdPartyAuthService);
-        return MaterialApp.router(
-          restorationScopeId: 'authenticated_app',
-          builder: (context, child) {
-            return Scaffold(
-              appBar: AppBar(
-                title: Text(appName),
-              ),
-              body: ConnectionStatusWidget(l10n: l10n, wakelockService: wakelockService, child: child!),
-            );
-          },
-          // Show debug banner only in development mode
-          debugShowCheckedModeBanner: dotenv.env['PIPLINE'] == "development",
-          locale: Locale(currentLanguage),
-          localizationsDelegates: [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: l10n.supportedLocales,
-          title: appName,
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
+    final storage = widget.storageService.storageNotifier.value;
+    final currentLanguage = storage?['current_language'] ?? defaultLanguage;
+    return MaterialApp.router(
+      restorationScopeId: _lastUserSession != null ? 'authenticated_app' : null,
+      builder: (context, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(appName),
           ),
-          routerConfig: authenticatedRooter,
+          body: ConnectionStatusWidget(
+            l10n: widget.l10n,
+            wakelockService: widget.wakelockService,
+            child: child!,
+          ),
         );
-      
       },
+      debugShowCheckedModeBanner: dotenv.env['PIPLINE'] == "development",
+      locale: Locale(currentLanguage),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: widget.l10n.supportedLocales,
+      title: appName,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      routerConfig: _router!,
     );
   }
-
 }
 

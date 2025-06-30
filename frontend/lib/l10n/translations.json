@@ -84,11 +84,6 @@
     "en": "Change Password",
     "fr": "Modifier le mot de passe"
   },
-  "Change photo": {
-    "ar": "تغيير الصورة",
-    "en": "Change photo",
-    "fr": "Changer la photo"
-  },
   "Change Profile Image": {
     "ar": "تغيير الصورة الشخصية",
     "en": "Change Profile Image",
@@ -393,6 +388,11 @@
     "ar": "التسجيل",
     "en": "Sign Up",
     "fr": "S'inscrire"
+  },
+  "Take a new photo": {
+    "ar": "التقاط صورة جديدة",
+    "en": "Take a new photo",
+    "fr": "Prendre une nouvelle photo"
   },
   "Take photo": {
     "ar": "التقط صورة",
