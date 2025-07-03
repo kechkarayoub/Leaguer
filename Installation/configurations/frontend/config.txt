@@ -17,3 +17,5 @@ Create a .env file in frontend folder with this content:
     GOOGLE_SIGN_IN_WEB_CLIENT_ID="..."
     IS_TEST="false"
     PIPLINE="development"
+    WS_BACKEND_HOST="localhost"
+    WS_BACKEND_PORT=6379

@@ -29,3 +29,6 @@ Add or change logo image and icon:
     Logo: backend/static/images/logo.pmg
 
 Check backend/leaguer/settings/local.py and set appropriate settings in backend/leaguer/settings/production.py
+
+For websockets:
+    Check CHANNEL_LAYERS in backend/leaguer/settings/production.py

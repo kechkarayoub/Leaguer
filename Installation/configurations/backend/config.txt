@@ -27,9 +27,13 @@ In the root directory backend, add file .env that contains:
     EMAIL_HOST_USER="leaguerdev@gmail.com"
     EMAIL_HOST_PASSWORD="as_default_keyboard"  # Use an App Password
     DEFAULT_FROM_EMAIL="leaguerdev@gmail.com"
+    REDIS_CONTAINER_EXTERNAL_PORT=6379
+    REDIS_CONTAINER_INTERNAL_PORT=6379
     WHATSAPP_INSTANCE_ID="id_xxxx"
     WHATSAPP_INSTANCE_TOKEN="xxxx"
     WHATSAPP_INSTANCE_URL="https://waapi.app/api/v1/instances/id_xxxx/client/action/send-message"
+    WS_INTERNAL_PORT=9000
+    WS_EXTERNAL_PORT=9000
 
 
 Generate .po Files:
@@ -58,4 +62,18 @@ Firebase firebase-service-account.json:
             Under "Firebase Admin SDK", click Generate new private key. This will download a JSON file (firebase-service-account.json).
             Move the JSON file to your Django project: /your-django-project/firebase-service-account.json
         DO NOT commit this file to GitHub or version control for security reasons.
+
+
+In the root directory backend; add supervisor.conf file that contains:
+    [supervisord]
+    nodaemon=true
+
+    [program:django]
+    command=python manage.py runserver host:djangoPort
+    directory=/app
+
+    [program:daphne]
+    command=daphne -b host -p WSPort leaguer.asgi:application
+    directory=/app
+
 
