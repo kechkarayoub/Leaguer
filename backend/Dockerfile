@@ -24,3 +24,6 @@ RUN pip install -r requirements.txt
 # Set the command to run our web service using Gunicorn, binding it to 0.0.0.0 and the PORT environment variable
 #CMD ["gunicorn", "server.wsgi:application", "--bind", "0.0.0.0:${PORT}"]
 #CMD ["python", "manage.py", "runserver", "0.0.0.0:${PORT}"]
+CMD ["daphne", "-b", "0.0.0.0", "-p", "${WS_INTERNAL_PORT}", "leaguer.asgi:application"]
+# If prod comment previous line and uncomment the next line
+#CMD ["supervisord", "-c", "/app/supervisord.conf"]

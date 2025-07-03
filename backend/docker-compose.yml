@@ -24,15 +24,27 @@ services:
       - .:/app
     ports:
       - ${DJANGO_CONTAINER_EXTERNAL_PORT}:${DJANGO_CONTAINER_INTERNAL_PORT}
+      - ${WS_INTERNAL_PORT}:${WS_EXTERNAL_PORT}
     image: backend:leaguer
     depends_on:
       - postgres
+      - redis
     container_name: backend_container
-#    command: python manage.py runserver 0.0.0.0:${DJANGO_CONTAINER_INTERNAL_PORT}
-    command: tail -f /dev/null
+    # command: python manage.py runserver 0.0.0.0:${DJANGO_CONTAINER_INTERNAL_PORT} # To run django
+    # command: daphne -b 0.0.0.0 -p ${WS_INTERNAL_PORT} leaguer.asgi:application # To run daphne
+    command: supervisord -c /app/supervisord.conf # To run supervisord (django $$ daphne)
+    # command: tail -f /dev/null # To keep the container running
     environment:
       - DATABASE_URL=postgres://${DB_USER_NM}:${DB_USER_PW}@postgres:${DB_CONTAINER_INTERNAL_PORT}/${DB_NAME}
+      - REDIS_URL=redis://redis:${REDIS_CONTAINER_EXTERNAL_PORT}/0
     #  - PIPLINE=${PIPLINE}
+  redis:
+    image: redis:7
+    container_name: redis_container
+    networks:
+      - leaguer-network
+    ports:
+      - ${REDIS_CONTAINER_EXTERNAL_PORT}:${REDIS_CONTAINER_INTERNAL_PORT}
 networks:
   leaguer-network:
 
