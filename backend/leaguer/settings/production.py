@@ -24,6 +24,25 @@ def get_secret(secret_id, backup=None):
 TEST = 'test' in sys.argv
 
 
+# Set the ASGI application entry point for Django Channels
+ASGI_APPLICATION = 'leaguer.asgi.application'
+
+
+# Get Redis connection info from environment variables
+REDIS_PORT = get_secret("REDIS_CONTAINER_INTERNAL_PORT")
+REDIS_URL = get_secret("REDIS_URL")
+# Configure Django Channels to use Redis as the channel layer backend
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            # Use the REDIS_URL for connecting to the Redis server
+            "hosts": [REDIS_URL],
+        },
+    },
+}
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 PARENT_DIR = Path(__file__).resolve().parent.parent.parent
@@ -64,6 +83,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'accounts',
+    'channels',
     'i18n_switcher',
     'corsheaders',
 ]

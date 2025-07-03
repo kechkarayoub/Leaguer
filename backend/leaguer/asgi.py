@@ -7,10 +7,24 @@ For more information on this file, see
 https://docs.djangoproject.com/en/5.1/howto/deployment/asgi/
 """
 
+from channels.auth import AuthMiddlewareStack
+from channels.routing import ProtocolTypeRouter, URLRouter
+from django.core.asgi import get_asgi_application
+import leaguer.ws_routing
 import os
 
-from django.core.asgi import get_asgi_application
 
+# Set the default Django settings module for the 'asgi' application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'leaguer.settings')
 
-application = get_asgi_application()
+# Define the ASGI application with support for both HTTP and WebSocket protocols
+application = ProtocolTypeRouter({
+    # Route traditional HTTP requests to Django's ASGI application
+    "http": get_asgi_application(),
+    # Route WebSocket requests to the Channels AuthMiddleware and URLRouter
+    "websocket": AuthMiddlewareStack(
+        URLRouter(
+            leaguer.ws_routing.websocket_urlpatterns # WebSocket URL patterns
+        )
+    ),
+})

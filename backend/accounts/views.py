@@ -11,7 +11,9 @@ from django.shortcuts import get_object_or_404
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.timezone import now
 from django.utils.translation import activate, gettext_lazy as _
+from firebase_admin import auth
 from leaguer.utils import generate_random_code, upload_file, remove_file
+from leaguer.ws_utils import notify_profile_update
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -19,8 +21,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 import datetime
-from firebase_admin import auth
-
 import logging
 import os
 import firebase_config
@@ -402,6 +402,8 @@ class UpdateProfileView(APIView):
         # Prepare response
         user_data = user.to_login_dict()
         message = _('Your profile has been updated successfully.')
+        # Notify all connected clients (via WebSocket) that the user's profile has changed
+        notify_profile_update(user.id, user_data, password_updated=access_token is not None)
         return Response({
                 'message': message,
                 "access_token": access_token,

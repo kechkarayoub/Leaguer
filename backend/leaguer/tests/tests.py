@@ -1,7 +1,7 @@
-from .utils import (execute_native_query, generate_random_code, get_all_timezones, get_email_base_context,
+from ..utils import (execute_native_query, generate_random_code, get_all_timezones, get_email_base_context,
                     get_geolocation_info, get_local_datetime, remove_file, send_whatsapp, send_phone_message,
                     upload_file)
-from .views import get_geolocation
+from ..views import get_geolocation
 from accounts.models import User
 from datetime import datetime, timezone
 from django.conf import settings
@@ -28,7 +28,7 @@ class EnvFileTest(TestCase):
 
     def test_env_file_exists(self):
         """Test that the .env file exists in the project root."""
-        env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
+        env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), '.env')
         self.assertTrue(os.path.exists(env_path), "⚠️ .env file is missing!")
 
     def test_required_env_variables(self):
