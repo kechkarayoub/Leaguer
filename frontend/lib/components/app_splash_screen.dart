@@ -18,41 +18,43 @@ class AppSplashScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: primaryColor,
       body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Responsive logo: max 80% width, 60% height, up to 300x300
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final maxWidth = constraints.maxWidth * 0.8;
-                final maxHeight = constraints.maxHeight * 0.6;
-                return Image.asset(
-                  'assets/images/logo_main.png',
-                  width: maxWidth.clamp(0, 300),
-                  height: maxHeight.clamp(0, 300),
-                  fit: BoxFit.contain,
-                );
-              },
-            ),
-            // App name (if provided)
-            if(appName.isNotEmpty) 
-              const SizedBox(height: 24),
-            if(appName.isNotEmpty)
-              Text(
-                appName,
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  color: primaryTextTitleColor, // or your brand color
-                  letterSpacing: 1.2,
-                ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Responsive logo: max 80% width, 60% height, up to 300x300
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final maxWidth = constraints.maxWidth * 0.8;
+                  final maxHeight = constraints.maxHeight * 0.6;
+                  return Image.asset(
+                    'assets/images/logo_main.png',
+                    width: maxWidth.clamp(0, 300),
+                    height: maxHeight.clamp(0, 300),
+                    fit: BoxFit.contain,
+                  );
+                },
               ),
-            // Optional loading spinner
-            if (showLoader) 
-              const SizedBox(height: 32),
-            if (showLoader) 
-              const CircularProgressIndicator(),
-          ],
+              // App name (if provided)
+              if(appName.isNotEmpty) 
+                const SizedBox(height: 24),
+              if(appName.isNotEmpty)
+                Text(
+                  appName,
+                  style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: primaryTextTitleColor, // or your brand color
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              // Optional loading spinner
+              if (showLoader) 
+                const SizedBox(height: 32),
+              if (showLoader) 
+                const CircularProgressIndicator(),
+            ],
+          ),
         ),
       ),
     );
