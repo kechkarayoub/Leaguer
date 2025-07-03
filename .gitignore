@@ -421,3 +421,9 @@ app.*.map.json
 # Firebase config:
 backend/firebase-service-account.json
 **/firebase-service-account.json
+
+
+# supervisord config:
+backend/supervisord.conf
+**/supervisord.conf
+
