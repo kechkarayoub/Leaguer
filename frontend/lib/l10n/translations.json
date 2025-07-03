@@ -329,6 +329,11 @@
     "en": "Profile",
     "fr": "Profil"
   },
+  "Profile WebSocket connection failed. Some real-time features may not work.": {
+    "ar": "تعذّر إنشاء الاتصال الفوري بصفحة الملف الشخصي. قد تتعطل بعض الخصائص الفورية.",
+    "en": "Profile WebSocket connection failed. Some real-time features may not work.",
+    "fr": "La connexion WebSocket du profil a échoué. Certaines fonctionnalités en temps réel peuvent ne pas fonctionner."
+  },
   "Re-enter your new password": {
     "ar": "أدخل كلمة المرور الجديدة مرة أخرى",
     "en": "Re-enter your new password",

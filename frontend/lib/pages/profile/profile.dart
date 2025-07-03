@@ -22,6 +22,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:phone_numbers_parser/phone_numbers_parser.dart'  as phone_number_parser;
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 
 /// ProfilePage displays and manages user profile information.
@@ -50,8 +51,13 @@ class ProfilePage extends StatefulWidget {
   final AuthenticatedApiBackendService? authenticatedApiBackendService;
   final BuildContext? providedContext;
   final Map<String, dynamic>? arguments;
+  final WebSocketChannel? profileChannel;
 
-  const ProfilePage({super.key, required this.l10n, required this.userSession, required this.storageService, required this.secureStorageService, this.thirdPartyAuthService, this.authenticatedApiBackendService, this.providedContext, this.arguments});
+  const ProfilePage({
+    super.key, required this.l10n, required this.userSession, required this.storageService, 
+    required this.secureStorageService, this.thirdPartyAuthService, this.authenticatedApiBackendService,
+    this.providedContext, this.arguments, this.profileChannel
+  });
 
   @override
   ProfilePageState createState() => ProfilePageState();

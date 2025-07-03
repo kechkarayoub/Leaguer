@@ -16,6 +16,7 @@ import 'package:google_sign_in_mocks/google_sign_in_mocks.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 import './profile_test.mocks.dart';
 import '../../mocks/mocks.mocks.dart';
 import '../../mocks/test_helper.dart';
@@ -42,6 +43,7 @@ void main() async {
   late MockGoogleSignIn mockGoogleSignIn;
   late MockDio mockDio;
   late MockAuthenticatedApiBackendService mockAuthenticatedApiBackendService; 
+  late WebSocketChannel? profileChannel;
   
   const mockUserSession = {
     "first_name": "John",
@@ -71,6 +73,7 @@ void main() async {
     when(mockDio.interceptors).thenReturn(Interceptors());
     mockL10n = MockL10n();
     mockAuthenticatedApiBackendService = MockAuthenticatedApiBackendService();
+    profileChannel = null;
     
       // ✅ Stub `getAccessToken()` properly
     when(mockSecureStorageService.getAccessToken())
@@ -89,6 +92,7 @@ void main() async {
           storageService: mockStorageService,
           secureStorageService: mockSecureStorageService,
           thirdPartyAuthService: thirdPartyAuthService,
+          profileChannel: profileChannel,
         ),
       ));
 
@@ -173,6 +177,7 @@ void main() async {
           storageService: mockStorageService,
           secureStorageService: mockSecureStorageService,
           thirdPartyAuthService: thirdPartyAuthService,
+          profileChannel: profileChannel,
         ),
       ));
 
@@ -215,6 +220,7 @@ void main() async {
             storageService: mockStorageService,
             authenticatedApiBackendService: mockAuthenticatedApiBackendService,
             thirdPartyAuthService: thirdPartyAuthService,
+            profileChannel: profileChannel,
           ),
         ),
       );
@@ -266,6 +272,7 @@ void main() async {
             storageService: mockStorageService,
             authenticatedApiBackendService: mockAuthenticatedApiBackendService,
             thirdPartyAuthService: thirdPartyAuthService,
+            profileChannel: profileChannel,
           ),
         ),
       );
@@ -299,6 +306,7 @@ void main() async {
             storageService: mockStorageService,
             authenticatedApiBackendService: mockAuthenticatedApiBackendService,
             thirdPartyAuthService: thirdPartyAuthService,
+            profileChannel: profileChannel,
           ),
         ),
       );
@@ -372,6 +380,7 @@ void main() async {
             storageService: mockStorageService,
             authenticatedApiBackendService: mockAuthenticatedApiBackendService,
             thirdPartyAuthService: thirdPartyAuthService,
+            profileChannel: profileChannel,
           ),
         ),
       );

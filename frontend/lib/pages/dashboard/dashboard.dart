@@ -4,6 +4,7 @@ import 'package:frontend/storage/storage.dart';
 import 'package:frontend/utils/components.dart';
 import 'package:frontend/utils/utils.dart';
 import 'package:go_router/go_router.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class DashboardPage extends StatefulWidget {
   static const routeName = routeDashboard;
@@ -12,8 +13,12 @@ class DashboardPage extends StatefulWidget {
   final SecureStorageService secureStorageService;
   final StorageService storageService;
   final Map<String, dynamic>? arguments;
+  final WebSocketChannel? profileChannel;
 
-  const DashboardPage({super.key, required this.l10n, required this.userSession, required this.storageService, required this.secureStorageService, this.arguments});
+  const DashboardPage({
+    super.key, required this.l10n, required this.userSession, required this.storageService, 
+    required this.secureStorageService, this.arguments, this.profileChannel
+  });
 
   @override
   DashboardPageState createState() => DashboardPageState();
