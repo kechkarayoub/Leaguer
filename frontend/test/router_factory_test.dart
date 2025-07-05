@@ -1,20 +1,25 @@
-
 import 'mocks/test_helper.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
-import 'package:frontend/pages/dashboard/dashboard.dart';
-import 'package:frontend/pages/sign_in_up/sign_in_page.dart';
-import 'package:frontend/components/app_splash_screen.dart';
 import 'package:frontend/api/unauthenticated_api_service.dart';
+import 'package:frontend/components/app_splash_screen.dart';
 import 'package:frontend/main.dart';
+import 'package:frontend/pages/dashboard/dashboard.dart';
+import 'package:frontend/pages/profile/profile.dart';
+import 'package:frontend/pages/sign_in_up/sign_in_page.dart';
 import 'package:frontend/storage/storage.dart';
-import 'package:mockito/mockito.dart';
+import 'package:frontend/utils/utils.dart';
 import 'package:google_sign_in_mocks/google_sign_in_mocks.dart';
-import 'package:flutter/material.dart';
+import 'package:mockito/mockito.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class MockStorageService extends Mock implements StorageService {}
 class MockSecureStorageService extends Mock implements SecureStorageService {}
+
+
+class MockWebSocketChannel extends Mock implements WebSocketChannel {}
 
 void main() {
   
@@ -29,6 +34,19 @@ void main() {
     late ThirdPartyAuthService thirdPartyAuthService;
     late MockFirebaseAuth mockAuth;
     late MockGoogleSignIn mockGoogleSignIn;
+    late WebSocketChannel? profileChannel;
+
+    const mockUserSession = {
+      "first_name": "John",
+      "last_name": "Doe",
+      "email": "john@example.com",
+      "username": "johndoe",
+      "user_birthday": "1990-01-01",
+      "user_gender": "male",
+      "user_image_url": "http://example.com/image.jpg",
+      "user_initials_bg_color": "#FF0000",
+      "user_phone_number": "+212612505257",
+    };
 
     setUp(() {
       mockL10n = MockL10n();
@@ -37,12 +55,14 @@ void main() {
       mockAuth = MockFirebaseAuth();
       mockGoogleSignIn = MockGoogleSignIn();
       thirdPartyAuthService = ThirdPartyAuthService(auth: mockAuth, googleSignIn: mockGoogleSignIn);
+      profileChannel = null;
     });
 
     testWidgets('CreateAuthenticatedRouter navigates to DashboardPage', (WidgetTester tester) async {
       final storage = {'user': {'id': 1}};
       final router = createAuthenticatedRouter(
         mockL10n, storage, mockStorageService, mockSecureStorageService, thirdPartyAuthService,
+        profileChannel: profileChannel,
       );
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
       await tester.pumpAndSettle();
@@ -66,5 +86,21 @@ void main() {
       expect(find.byType(AppSplashScreen), findsOneWidget);
     });
   
+    testWidgets('ProfilePage receives profileChannel when authenticated', (WidgetTester tester) async {
+      final storage = {'user': mockUserSession};
+      final mockProfileChannel = MockWebSocketChannel();
+      final router = createAuthenticatedRouter(
+        mockL10n, storage, mockStorageService, mockSecureStorageService, thirdPartyAuthService,
+        profileChannel: mockProfileChannel,
+      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+      router.go(routeProfile);
+      await tester.pumpAndSettle();
+      final profilePage = tester.widget<ProfilePage>(find.byType(ProfilePage));
+      expect(profilePage.profileChannel, mockProfileChannel);
+    });
+
   });
+  
 }

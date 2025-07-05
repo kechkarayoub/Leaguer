@@ -26,6 +26,7 @@ import '../../mocks/test_helper.dart';
 @GenerateMocks([AuthenticatedApiBackendService])
 
 class MockXFile extends Mock implements XFile {
+  @override
   final String path;
   MockXFile(this.path);
   @override
