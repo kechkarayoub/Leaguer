@@ -1,3 +1,6 @@
+- Update profile when receive websocket message for only other client, not for the one hwo sent the action
+- When log in the url on web should move to dashboard not profile.
+- When profile updated, it should be updated in other client also.
 - add arguments params like in signin page.
 - check if mounted before setstate
 - Optimizing images before upload.
