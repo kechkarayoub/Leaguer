@@ -26,6 +26,8 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 BuildContext? buildContext;
 
+const int bannerMessageDefaultDuration = 5;
+const int waitForChannelsConnectionDuration = 5;
 // Regular expressions for input validation
 final RegExp alphNumUnderscoreRegExp = RegExp(r'^[a-zA-Z][a-zA-Z0-9_]*$');
 const String dateFormatLabel = 'YYYY-MM-DD';
