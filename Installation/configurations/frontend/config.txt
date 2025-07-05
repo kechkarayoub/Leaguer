@@ -5,7 +5,7 @@ Create a .env file in frontend folder with this content:
     DISABLE_LOG_MESSAGE="false"
     ENABLE_USERS_REGISTRATION="false"
     ENABLE_LOG_IN_WITH_GOOGLE="false"
-    FIREBASE_WEB_API_KEY="..."="..."
+    FIREBASE_WEB_API_KEY="..."
     FIREBASE_WEB_APP_ID="..."
     FIREBASE_WEB_AUTH_DOMAIN="..."
     FIREBASE_WEB_MEASUREMENT_ID="..."
@@ -17,5 +17,6 @@ Create a .env file in frontend folder with this content:
     GOOGLE_SIGN_IN_WEB_CLIENT_ID="..."
     IS_TEST="false"
     PIPLINE="development"
+    USE_WEBSOCKETS="true"
     WS_BACKEND_HOST="localhost"
     WS_BACKEND_PORT=6379

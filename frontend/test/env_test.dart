@@ -22,6 +22,7 @@ void main() {
     'GOOGLE_SIGN_IN_WEB_CLIENT_ID',
     'IS_TEST',
     'PIPLINE',
+    'USE_WEBSOCKETS'
     'WS_BACKEND_HOST',
     'WS_BACKEND_PORT',
   ];
