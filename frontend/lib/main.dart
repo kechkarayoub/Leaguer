@@ -341,8 +341,10 @@ class _MyAppState extends State<MyApp> {
   void _onStorageChanged() {
     final storage = widget.storageService.storageNotifier.value;
     final userSession = storage?['user'];
+    // isNewConnectedUser will used to force recreation of _authenticatedRouter
+    bool isNewConnectedUser = _lastUserSession == null && userSession != null;
     _lastUserSession = userSession;
-    _updateRouter();
+    _updateRouter(isNewConnectedUser: isNewConnectedUser);
     setState(() {});
   }
 
@@ -436,7 +438,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   // Update the router based on authentication state and storage
-  void _updateRouter() {
+  void _updateRouter({bool isNewConnectedUser = false}) {
     final storage = widget.storageService.storageNotifier.value;
     final userSession = storage?['user'];
     bool useWebsockets = dotenv.env['USE_WEBSOCKETS']?.toLowerCase() == 'true';  
@@ -457,14 +459,16 @@ class _MyAppState extends State<MyApp> {
       );
       _router = _unauthenticatedRouter;
     } else {
-      _authenticatedRouter ??= createAuthenticatedRouter(
-        widget.l10n,
-        storage,
-        widget.storageService,
-        widget.secureStorageService,
-        widget.thirdPartyAuthService,
-        profileChannel: _profileChannel,
-      );
+      if(isNewConnectedUser || _authenticatedRouter == null) {
+        _authenticatedRouter = createAuthenticatedRouter(
+          widget.l10n,
+          storage,
+          widget.storageService,
+          widget.secureStorageService,
+          widget.thirdPartyAuthService,
+          profileChannel: _profileChannel,
+        );
+      }
       _router = _authenticatedRouter;
     }
   }
