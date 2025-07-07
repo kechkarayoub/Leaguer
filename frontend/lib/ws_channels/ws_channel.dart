@@ -20,7 +20,7 @@ WebSocketChannel? createChannel(String backendHost, int port, String path) {
 
 /// Async helper to connect and wait for the first event (message or error).
 /// Returns the channel if a message is received, or null if error/timeout.
-Future<WebSocketChannel?> connectAndWaitForFirstEvent(String host, int port, String path, {Duration timeout = const Duration(seconds: waitForChannelsConnectionDuration)}) async {
+Future<WebSocketChannel?> connectAndWaitForFirstEvent(String host, int port, String path, Function(String message) onMessage, {Duration timeout = const Duration(seconds: waitForChannelsConnectionDuration)}) async {
   final channel = createChannel(host, port, path);
   final completer = Completer<WebSocketChannel?>();
   late StreamSubscription sub;
@@ -28,7 +28,9 @@ Future<WebSocketChannel?> connectAndWaitForFirstEvent(String host, int port, Str
     (message) {
       if (!completer.isCompleted) {
         completer.complete(channel);
-        sub.cancel();
+      }
+      else{
+        onMessage(message); // Call the provided callback with the message
       }
     },
     onError: (error) {

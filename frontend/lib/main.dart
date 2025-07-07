@@ -2,6 +2,7 @@
 // Handles routing, localization, storage, and platform-specific setup.
 import 'dart:async'; // For Timer
 import 'dart:convert'; // For jsonDecode
+import 'package:collection/collection.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -341,10 +342,11 @@ class _MyAppState extends State<MyApp> {
   void _onStorageChanged() {
     final storage = widget.storageService.storageNotifier.value;
     final userSession = storage?['user'];
-    // isNewConnectedUser will used to force recreation of _authenticatedRouter
-    bool isNewConnectedUser = _lastUserSession == null && userSession != null;
+    // isUserDataChanged will used to force recreation of _authenticatedRouter
+    bool isUserDataChanged = !const DeepCollectionEquality().equals(_lastUserSession, userSession);
+    bool saveLastLocation = userSession != null;
     _lastUserSession = userSession;
-    _updateRouter(isNewConnectedUser: isNewConnectedUser);
+    _updateRouter(isUserDataChanged: isUserDataChanged, saveLastLocation: saveLastLocation);
     setState(() {});
   }
 
@@ -354,6 +356,7 @@ class _MyAppState extends State<MyApp> {
       _closeChannels();
     }
     else{
+      _closeChannels();
       _createChannels(userSession);
     }
   }
@@ -373,6 +376,24 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  void onProfileChannelMessage(String message) {
+    // Reset ping timer on every message
+    _wsPingTimers['profile_channel']?.cancel();
+    _wsPingTimers['profile_channel'] = startWebSocketPing(_profileChannel!);
+    final data = jsonDecode(message);
+    // Only update user session if the message is a profile update
+    if (data['type'] == 'profile_update') {
+      final newProfileData = data['new_profile_data'];
+      // Update the user session in storage
+      widget.storageService.set(
+        key: 'user',
+        obj: newProfileData,
+        updateNotifier: true,
+        notifierToUpdate: 'storage',
+      );
+    }
+  }
+
   // Create and manage the profile WebSocket channel for the current user
   Future<void> _createChannels(dynamic userSession) async {
     if(_profileChannel == null){
@@ -380,7 +401,13 @@ class _MyAppState extends State<MyApp> {
         dotenv.env['WS_BACKEND_HOST'] ?? 'localhost',
         int.parse(dotenv.env['WS_BACKEND_PORT'] ?? '9000'),
         'profile/${userSession['id']}',
+        onProfileChannelMessage,
       );
+      if(widget.isTest && channel != null){
+        channel.stream.listen((message) {
+          onProfileChannelMessage(message);
+        }); 
+      }
       _profileChannel = channel;
       if (_profileChannel == null) {
         _showWsErrorBanner('profile_channel', 'Profile WebSocket connection failed. Some real-time features may not work.');
@@ -397,25 +424,6 @@ class _MyAppState extends State<MyApp> {
         _profileChannel!.sink.done.catchError((error) {
           logMessage('Profile WebSocket sink error: $error', "Profile WebSocket sink error", "e");
           _showWsErrorBanner('profile_channel', 'Profile WebSocket connection failed. Some real-time features may not work.');
-        });
-        // Listen for incoming messages and update user session if needed
-        listenToChannel(_profileChannel!, (message) {
-          // Reset ping timer on every message
-          _wsPingTimers['profile_channel']?.cancel();
-          _wsPingTimers['profile_channel'] = startWebSocketPing(_profileChannel!);
-          final data = jsonDecode(message);
-          // Only update user session if the message is a profile update
-          if (data['type'] == 'profile_update') {
-            final newProfileData = data['new_profile_data'];
-            // final passwordUpdated = data['password_updated']; // Unused, can be removed
-            // Update the user session in storage
-            widget.storageService.set(
-              key: 'user',
-              obj: newProfileData,
-              updateNotifier: true,
-              notifierToUpdate: 'storage',
-            );
-          }
         });
       }
     }
@@ -438,7 +446,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   // Update the router based on authentication state and storage
-  void _updateRouter({bool isNewConnectedUser = false}) {
+  void _updateRouter({bool isUserDataChanged = false, bool saveLastLocation = false}) {
     final storage = widget.storageService.storageNotifier.value;
     final userSession = storage?['user'];
     bool useWebsockets = dotenv.env['USE_WEBSOCKETS']?.toLowerCase() == 'true';  
@@ -459,7 +467,12 @@ class _MyAppState extends State<MyApp> {
       );
       _router = _unauthenticatedRouter;
     } else {
-      if(isNewConnectedUser || _authenticatedRouter == null) {
+      if(isUserDataChanged || _authenticatedRouter == null) {
+        String? lastLocation;
+        if(saveLastLocation && _authenticatedRouter != null){
+          // Try to get the current location from the old router
+          lastLocation = _router!.routerDelegate.currentConfiguration.fullPath;
+        }
         _authenticatedRouter = createAuthenticatedRouter(
           widget.l10n,
           storage,
@@ -468,8 +481,21 @@ class _MyAppState extends State<MyApp> {
           widget.thirdPartyAuthService,
           profileChannel: _profileChannel,
         );
+        _router = _authenticatedRouter;
+            // --- Restore previous location if possible ---
+        if (lastLocation != null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            final ctx = navigatorKey.currentContext;
+            String? currentLocation = _router!.routerDelegate.currentConfiguration.fullPath;
+            if (ctx != null && currentLocation != lastLocation) {
+              GoRouter.of(ctx).go(lastLocation!);
+            }
+          });
+        }
       }
-      _router = _authenticatedRouter;
+      else{
+        _router = _authenticatedRouter;
+      }
     }
   }
 
