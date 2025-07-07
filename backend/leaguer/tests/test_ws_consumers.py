@@ -70,6 +70,22 @@ class ProfileConsumerTest(TransactionTestCase):
                 "type": "profile_update",
                 "new_profile_data": new_profile_data,
                 "password_updated": True,
+                "device_id": None,
+            }
+            self.assertEqual(data, expected_response)
+
+            # Call the function to notify profile update
+            new_profile_data = {"id": user_id, "name": "Integration Test"}
+            await notify_profile_update_async(user_id, new_profile_data, password_updated=True, device_id="device_123")
+
+            # The consumer should send the new profile data back
+            response = await communicator.receive_from()
+            data = json.loads(response)
+            expected_response = {
+                "type": "profile_update",
+                "new_profile_data": new_profile_data,
+                "password_updated": True,
+                "device_id": "device_123",
             }
             self.assertEqual(data, expected_response)
 

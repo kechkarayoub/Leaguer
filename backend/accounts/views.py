@@ -402,8 +402,10 @@ class UpdateProfileView(APIView):
         # Prepare response
         user_data = user.to_login_dict()
         message = _('Your profile has been updated successfully.')
+        # Get device ID from request headers or data to exclude from WebSocket updates
+        device_id = request.headers.get('X-Device-ID')
         # Notify all connected clients (via WebSocket) that the user's profile has changed
-        notify_profile_update(user.id, user_data, password_updated=access_token is not None)
+        notify_profile_update(user.id, user_data, password_updated=access_token is not None, device_id=device_id)
         return Response({
                 'message': message,
                 "access_token": access_token,

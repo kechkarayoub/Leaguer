@@ -70,6 +70,18 @@ ALLOWED_HOSTS = ['*']
 # Allowed origins
 CORS_ALLOWED_ORIGINS = []
 # CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'x-device-id',
+]
 
 # Application definition
 
@@ -80,12 +92,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
     'accounts',
     'channels',
     'i18n_switcher',
-    'corsheaders',
 ]
 
 SIMPLE_JWT = {
