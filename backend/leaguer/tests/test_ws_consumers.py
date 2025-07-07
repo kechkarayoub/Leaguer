@@ -37,7 +37,11 @@ class ProfileConsumerTest(TransactionTestCase):
             # The consumer should send the new profile data back
             response = await communicator.receive_from()
             data = json.loads(response)
-            self.assertEqual(data, new_profile_data)
+            expected_response = {
+                "type": "profile_update",
+                "new_profile_data": new_profile_data,
+            }
+            self.assertEqual(data, expected_response)
 
             # Disconnect and ensure it completes without error
             disconnect_result = await communicator.disconnect()
@@ -62,7 +66,12 @@ class ProfileConsumerTest(TransactionTestCase):
             # The consumer should send the new profile data back
             response = await communicator.receive_from()
             data = json.loads(response)
-            self.assertEqual(data, new_profile_data)
+            expected_response = {
+                "type": "profile_update",
+                "new_profile_data": new_profile_data,
+                "password_updated": True,
+            }
+            self.assertEqual(data, expected_response)
 
             await communicator.disconnect()
 

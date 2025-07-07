@@ -35,4 +35,4 @@ class ProfileConsumer(AsyncWebsocketConsumer):
         Called when a profile update event is sent to the group.
         Sends the new profile data to the client.
         """
-        await self.send(text_data=json.dumps(event["new_profile_data"]))
+        await self.send(text_data=json.dumps(event))
