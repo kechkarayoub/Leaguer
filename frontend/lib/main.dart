@@ -1,5 +1,17 @@
 // Main entry point and app configuration for the Flutter application.
 // Handles routing, localization, storage, and platform-specific setup.
+//
+// **Device ID Integration:**
+// This application implements device-specific identification to support
+// multi-device synchronization and prevent duplicate updates. Key features:
+//
+// - **Unique Device IDs**: Each device gets a persistent, unique identifier
+// - **HTTP Request Tracking**: All API calls include device ID in headers
+// - **WebSocket Message Filtering**: Prevents processing own updates via WebSocket
+// - **Multi-Device Sync**: Real-time updates sync across devices except sender
+//
+// The DeviceIdService automatically handles device ID generation, storage,
+// and integration with API services for seamless multi-device support.
 import 'dart:async'; // For Timer
 import 'dart:convert'; // For jsonDecode
 import 'package:collection/collection.dart';
@@ -20,6 +32,7 @@ import 'package:frontend/pages/dashboard/dashboard.dart';
 import 'package:frontend/pages/profile/profile.dart';
 import 'package:frontend/pages/sign_in_up/sign_in_page.dart';
 import 'package:frontend/pages/sign_in_up/sign_up_page.dart';
+import 'package:frontend/services/device_id_service.dart'; // Device ID service for multi-device sync
 import 'package:frontend/storage/storage.dart';
 import 'package:frontend/utils/platform_detector.dart';
 import 'package:frontend/utils/utils.dart';
@@ -376,20 +389,51 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  void onProfileChannelMessage(String message) {
-    // Reset ping timer on every message
+  /// Handles incoming WebSocket messages from the profile channel
+  /// 
+  /// This method processes real-time profile updates while preventing
+  /// duplicate processing on the device that initiated the change.
+  /// 
+  /// **Device ID Filtering Logic:**
+  /// - Compares the sender's device ID with the current device's ID
+  /// - Ignores messages from the same device to prevent duplicate updates
+  /// - Only processes messages from other devices for multi-device sync
+  /// 
+  /// **Message Processing:**
+  /// - Resets the WebSocket ping timer to keep connection alive
+  /// - Parses incoming JSON message data
+  /// - Updates local user session if it's a profile update from another device
+  void onProfileChannelMessage(String message) async {
+    // Reset ping timer on every message to maintain connection
     _wsPingTimers['profile_channel']?.cancel();
     _wsPingTimers['profile_channel'] = startWebSocketPing(_profileChannel!);
+    
+    // Parse the incoming WebSocket message
     final data = jsonDecode(message);
-    // Only update user session if the message is a profile update
+    
+    // **DEVICE ID FILTERING**: Prevent processing messages from the same device
+    // This ensures that when a user updates their profile on this device,
+    // they don't receive their own update back through the WebSocket
+    final deviceId = await DeviceIdService.instance.getDeviceId();
+    final senderDeviceId = data['device_id'];
+    
+    // If this message came from the current device, ignore it
+    // Note: Only compare if senderDeviceId is not null (for backward compatibility)
+    if(senderDeviceId != null && deviceId == senderDeviceId){
+      return; // Skip processing to prevent duplicate updates
+    }
+    
+    // Process profile updates from other devices
     if (data['type'] == 'profile_update') {
       final newProfileData = data['new_profile_data'];
-      // Update the user session in storage
+      
+      // Update the local user session with data from another device
+      // This enables real-time synchronization across multiple devices
       widget.storageService.set(
-        key: 'user',
+        key: "user",
         obj: newProfileData,
         updateNotifier: true,
-        notifierToUpdate: 'storage',
+        notifierToUpdate: "storage",
       );
     }
   }

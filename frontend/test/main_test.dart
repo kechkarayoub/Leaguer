@@ -9,13 +9,14 @@ import 'package:frontend/api/unauthenticated_api_service.dart';
 import 'package:frontend/components/app_splash_screen.dart';
 import 'package:frontend/components/message_banner.dart';
 import 'package:frontend/main.dart'; // Adjust the import path as needed
-import 'package:mockito/mockito.dart';
 import 'package:frontend/pages/sign_in_up/sign_in_page.dart';
 import 'package:frontend/pages/dashboard/dashboard.dart';
+import 'package:frontend/services/device_id_service.dart'; // Device ID service for multi-device sync
 import 'package:frontend/utils/platform_detector.dart';
 import 'package:frontend/utils/utils.dart';
 import 'package:google_sign_in_mocks/google_sign_in_mocks.dart';
 import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import './main_test.mocks.dart';
 import './mocks/mocks.mocks.dart';
@@ -221,7 +222,7 @@ void main() async{
       expect(find.byType(DashboardPage), findsOneWidget);
     });
 
-    testWidgets('Handles profile_update message and updates storage', (WidgetTester tester) async {
+    testWidgets('Handles profile_update message and updates storage when device id not sent', (WidgetTester tester) async {
       final notifier = ValueNotifier({'user': mockUserSession});
       when(mockStorageService.storageNotifier).thenReturn(notifier);
 
@@ -243,13 +244,81 @@ void main() async{
         await tester.pump(); // process the notifier change
         await tester.pump(const Duration(milliseconds: 1000)); // let router animate
         await tester.pumpAndSettle();
+        await Future.delayed(Duration(seconds: 2));
         if(useWebsockets){
           verify(mockStorageService.set(key:"user", obj: {"last_name": "new_last_name"}, updateNotifier: true, notifierToUpdate: "storage")).called(1);
         }
         else{
           verifyNever(mockStorageService.set(key:"user", obj: {"last_name": "new_last_name"}, updateNotifier: true, notifierToUpdate: "storage"));
         }
+      });
+    });
 
+    testWidgets('Handles profile_update message and updates storage when device id is sent and it is different to the sender device id', (WidgetTester tester) async {
+      final notifier = ValueNotifier({'user': mockUserSession});
+      when(mockStorageService.storageNotifier).thenReturn(notifier);
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(
+          MyApp(
+            l10n: mockL10n,
+            storageService: mockStorageService,
+            secureStorageService: mockSecureStorageService,
+            wakelockService: mockWakelockService,
+            thirdPartyAuthService: thirdPartyAuthService,
+            profileChannel: mockProfileChannel,
+            isTest: true, // Use the mock profile channel for testing
+          ),
+        );
+        // Simulate incoming profile_update message
+        final message = '{"type": "profile_update", "new_profile_data": {"last_name": "new_last_name"}, "device_id": "other_device_id"}';
+        mockProfileController.add(message);
+        await tester.pump(); // process the notifier change
+        await tester.pump(const Duration(milliseconds: 1000)); // let router animate
+        await tester.pumpAndSettle();
+        await Future.delayed(Duration(seconds: 2));
+        if(useWebsockets){
+          verify(mockStorageService.set(key:"user", obj: {"last_name": "new_last_name"}, updateNotifier: true, notifierToUpdate: "storage")).called(1);
+        }
+        else{
+          verifyNever(mockStorageService.set(key:"user", obj: {"last_name": "new_last_name"}, updateNotifier: true, notifierToUpdate: "storage"));
+        }
+      });
+    });
+
+    testWidgets('Handles profile_update message and updates storage when device id is sent and it is equal to the sender device id', (WidgetTester tester) async {
+      final notifier = ValueNotifier({'user': mockUserSession});
+      when(mockStorageService.storageNotifier).thenReturn(notifier);
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(
+          MyApp(
+            l10n: mockL10n,
+            storageService: mockStorageService,
+            secureStorageService: mockSecureStorageService,
+            wakelockService: mockWakelockService,
+            thirdPartyAuthService: thirdPartyAuthService,
+            profileChannel: mockProfileChannel,
+            isTest: true, // Use the mock profile channel for testing
+          ),
+        );
+        // Simulate sender device id
+        final senderDeviceId = await DeviceIdService.instance.getDeviceId();
+        
+        // Simulate incoming profile_update message
+        final message = '{"type": "profile_update", "new_profile_data": {"last_name": "new_last_name"}, "device_id": "$senderDeviceId"}';
+
+        mockProfileController.add(message);
+        await tester.pump(); // process the notifier change
+        await tester.pump(const Duration(milliseconds: 1000)); // let router animate
+        await tester.pumpAndSettle();
+        await Future.delayed(Duration(seconds: 2));
+        if(useWebsockets){
+          verifyNever(mockStorageService.set(key:"user", obj: {"last_name": "new_last_name"}, updateNotifier: true, notifierToUpdate: "storage"));
+        }
+        else{
+          verifyNever(mockStorageService.set(key:"user", obj: {"last_name": "new_last_name"}, updateNotifier: true, notifierToUpdate: "storage"));
+        }
       });
     });
 
