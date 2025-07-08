@@ -119,6 +119,111 @@ void main() {
       verify(mockStorage.delete(key: 'refresh_token')).called(1);
     });
 
+    test('Should store and retrieve generic values using set/get methods', () async {
+      const testKey = 'test_key';
+      const testValue = 'test_value';
+
+      // // Mock write operation
+      // when(mockStorage.write(key: testKey, value: testValue))
+      //     .thenAnswer((_) async => {});
+
+      await secureStorageService.set(key: testKey, value: testValue);
+
+      verify(mockStorage.write(key: testKey, value: testValue)).called(1);
+
+      // Mock read operation
+      when(mockStorage.read(key: testKey))
+          .thenAnswer((_) async => testValue);
+
+      final result = await secureStorageService.get(key: testKey);
+
+      verify(mockStorage.read(key: testKey)).called(1);
+      expect(result, equals(testValue));
+    });
+
+    test('Should return null when getting non-existent key', () async {
+      const nonExistentKey = 'non_existent_key';
+
+      when(mockStorage.read(key: nonExistentKey))
+          .thenAnswer((_) async => null);
+
+      final result = await secureStorageService.get(key: nonExistentKey);
+
+      verify(mockStorage.read(key: nonExistentKey)).called(1);
+      expect(result, isNull);
+    });
+
+    test('Should remove generic values using remove method', () async {
+      const testKey = 'test_key_to_remove';
+
+      when(mockStorage.delete(key: testKey))
+          .thenAnswer((_) async {});
+
+      await secureStorageService.remove(key: testKey);
+
+      verify(mockStorage.delete(key: testKey)).called(1);
+    });
+
+    test('Should clear generic values using deleteAll', () async {
+
+      when(mockStorage.deleteAll())
+          .thenAnswer((_) async {});
+
+      await secureStorageService.clear();
+
+      verify(mockStorage.deleteAll()).called(1);
+    });
+
+    test('Should handle multiple generic operations correctly', () async {
+      const key1 = 'key1';
+      const key2 = 'key2';
+      const value1 = 'value1';
+      const value2 = 'value2';
+
+      // Mock write operations
+      when(mockStorage.write(key: key1, value: value1))
+          .thenAnswer((_) async => {});
+      when(mockStorage.write(key: key2, value: value2))
+          .thenAnswer((_) async => {});
+
+      // Mock read operations
+      when(mockStorage.read(key: key1))
+          .thenAnswer((_) async => value1);
+      when(mockStorage.read(key: key2))
+          .thenAnswer((_) async => value2);
+
+      // Set multiple values
+      await secureStorageService.set(key: key1, value: value1);
+      await secureStorageService.set(key: key2, value: value2);
+
+      // Verify writes
+      verify(mockStorage.write(key: key1, value: value1)).called(1);
+      verify(mockStorage.write(key: key2, value: value2)).called(1);
+
+      // Get multiple values
+      final result1 = await secureStorageService.get(key: key1);
+      final result2 = await secureStorageService.get(key: key2);
+
+      // Verify reads
+      verify(mockStorage.read(key: key1)).called(1);
+      verify(mockStorage.read(key: key2)).called(1);
+
+      expect(result1, equals(value1));
+      expect(result2, equals(value2));
+
+      // Mock delete operations
+      when(mockStorage.delete(key: key1)).thenAnswer((_) async {});
+      when(mockStorage.delete(key: key2)).thenAnswer((_) async {});
+
+      // Remove one value
+      await secureStorageService.remove(key: key1);
+      verify(mockStorage.delete(key: key1)).called(1);
+
+      // Verify key2 still exists by reading it
+      final result2AfterDelete = await secureStorageService.get(key: key2);
+      expect(result2AfterDelete, equals(value2));
+    });
+
   });
 
 }

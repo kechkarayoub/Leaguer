@@ -44,10 +44,6 @@ class StorageService {
   Future<void> _initStorages() async {
     await _updateNotifier(notifierToUpdate: "all");
   }
-  /// Initializes the storage notifier with existing stored values.
-  Future<void> _initStorageNotifier() async {
-    await _updateNotifier(notifierToUpdate: "storage");
-  }
 
   /// Clears all stored data and updates the notifier if required.
   Future<void> clear({bool updateNotifier=true, String notifierToUpdate = "storage"}) async {
@@ -170,6 +166,26 @@ class SecureStorageService {
   Future<void> clearTokens() async {
     await _storage.delete(key: 'access_token');
     await _storage.delete(key: 'refresh_token');
+  }
+
+  // Generic read method
+  Future<String?> get({required String key}) async {
+    return await _storage.read(key: key);
+  }
+
+  // Generic write method
+  Future<void> set({required String key, required String value}) async {
+    await _storage.write(key: key, value: value);
+  }
+
+  // Generic write method
+  Future<void> remove({required String key}) async {
+    await _storage.delete(key: key);
+  }
+
+  // Generic write method
+  Future<void> clear() async {
+    await _storage.deleteAll();
   }
 }
 
