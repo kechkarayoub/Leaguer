@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:frontend/services/device_id_service.dart';
 import 'package:frontend/utils/platform_detector.dart';
 import 'package:frontend/utils/utils.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -85,6 +86,11 @@ class UnauthenticatedApiBackendService {
     /// This service handles communication with the backend API.
   static String backendUrl = dotenv.env['BACKEND_URL'] ?? 'Backend URL not found';
     
+  /// Helper method to add device ID to HTTP requests
+  static Future<void> addDeviceIdToRequest(Dio dio) async {
+    final deviceId = await DeviceIdService.instance.getDeviceId();
+    dio.options.headers['X-Device-ID'] = deviceId;
+  }
   
   /// Get geolocation info from user IP.
   ///
@@ -235,6 +241,10 @@ class UnauthenticatedApiBackendService {
       headers: {'Content-Type': 'application/json'},
     )); // Utiliser le client par défaut si aucun n'est fourni
     final url = '$backendUrl/accounts/sign-in/';
+    
+    // Add device ID to request
+    await addDeviceIdToRequest(dio);
+    
     try{
       final response = await dio.post(
         url,
@@ -296,6 +306,10 @@ class UnauthenticatedApiBackendService {
       headers: {'Content-Type': 'application/json'},
     )); // Utiliser le client par défaut si aucun n'est fourni
     final url = '$backendUrl/accounts/sign-in-third-party/';
+    
+    // Add device ID to request
+    await addDeviceIdToRequest(dio);
+    
     try{
       final response = await dio.post(
         url,
@@ -352,6 +366,10 @@ class UnauthenticatedApiBackendService {
   }) async {
     dio ??= Dio(); // Utiliser le client par défaut si aucun n'est fourni
     final url = '$backendUrl/accounts/sign-up/';
+    
+    // Add device ID to request
+    final deviceId = await DeviceIdService.instance.getDeviceId();
+    
     try{
       final response = await dio.post(
         url,
@@ -359,6 +377,7 @@ class UnauthenticatedApiBackendService {
         options: Options(
           headers: {
             "Content-Type": "multipart/form-data",
+            "X-Device-ID": deviceId,
           },
         ),
       );

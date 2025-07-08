@@ -62,6 +62,10 @@ void main() {
       // Initialize the mock Dio
       mockDio = MockDio();
       backendUrl = dotenv.env['BACKEND_URL'] ?? '';
+      
+      // Mock the options property to avoid MissingStubError
+      final mockOptions = BaseOptions();
+      when(mockDio.options).thenReturn(mockOptions);
 
       // Save original values
       originalPipeline = dotenv.env['PIPLINE'];
@@ -229,6 +233,10 @@ void main() {
       // Initialize the mock Dio
       mockDio = MockDio();
       backendUrl = dotenv.env['BACKEND_URL'] ?? '';
+      
+      // Mock the options property to avoid MissingStubError
+      final mockOptions = BaseOptions();
+      when(mockDio.options).thenReturn(mockOptions);
     });
 
     test('signInUser returns data when the response is successful', () async {
@@ -531,6 +539,10 @@ void main() {
       // Initialize the mock Dio
       mockDio = MockDio();
       backendUrl = dotenv.env['BACKEND_URL'] ?? '';
+      
+      // Mock the options property to avoid MissingStubError
+      final mockOptions = BaseOptions();
+      when(mockDio.options).thenReturn(mockOptions);
     });
 
     test('Sign in user with third party returns data when the response is successful', () async {
@@ -796,6 +808,10 @@ void main() {
       // Initialize the mock Dio
       mockDio = MockDio();
       backendUrl = dotenv.env['BACKEND_URL'] ?? '';
+      
+      // Mock the options property to avoid MissingStubError
+      final mockOptions = BaseOptions();
+      when(mockDio.options).thenReturn(mockOptions);
     });
 
     test('ResendVerificationEmail success', () async {

@@ -2,6 +2,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:frontend/api/unauthenticated_api_service.dart';
+import 'package:frontend/services/device_id_service.dart';
 import 'package:frontend/utils/utils.dart';
 import 'package:frontend/storage/storage.dart';
 
@@ -127,12 +128,16 @@ class AuthenticatedApiBackendService {
   /// Getter to always fetch the latest available context
   BuildContext? get _context => navigatorKey.currentContext??_providedCcontext;
 
-  /// Attaches the access token to each request if available.
+  /// Attaches the access token and device ID to each request if available.
   Future<void> attachAccessToken(RequestOptions options) async {
     String? accessToken = await _secureStorageService.getAccessToken();
     if (accessToken != null) {
       options.headers['Authorization'] = 'Bearer $accessToken';
     }
+    
+    // Add device ID to all requests
+    final deviceId = await DeviceIdService.instance.getDeviceId();
+    options.headers['X-Device-ID'] = deviceId;
   }
 
   /// Attempts to refresh the access token using the stored refresh token.
