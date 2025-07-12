@@ -52,7 +52,6 @@ dependencies:
   image_picker: ^1.1.2
   intl: ^0.20.2
   intl_phone_number_input: ^0.7.4
-  libphonenumber_plugin: ^0.3.3
   logger: ^2.5.0
   mime: ^2.0.0
   path: ^1.9.1
