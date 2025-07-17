@@ -18,6 +18,9 @@ __pycache__/
 frontend/.metadata
 frontend/Workspace
 
+frontend_flutter/.metadata
+frontend_flutter/Workspace
+
 # Fichiers de log
 *.log
 *.log.*
@@ -178,7 +181,7 @@ pip-wheel-metadata/
 # not to ignore:
 !hquality_backend/dev_keys/hqualitydev_drive_storage.json
 
-!frontend/lib/
+!frontend_flutter/lib/
 
 # Dossiers générés par Django
 media/
@@ -188,21 +191,24 @@ staticfiles/
 # Node.js (Flutter web)
 node_modules/
 frontend/node_modules/
+frontend_flutter/node_modules/
 # IDE files
 frontend/.vscode/
+frontend_flutter/.vscode/
 
 
 # macOS/Windows/Linux system files
 frontend/Thumbs.db
+frontend_flutter/Thumbs.db
 
 
-frontend/android/local.properties
+frontend_flutter/android/local.properties
 
 
 # Android build artifacts (already present)
-frontend/android/app/build/
-frontend/android/.gradle/
-frontend/android/app/.cxx/
+frontend_flutter/android/app/build/
+frontend_flutter/android/.gradle/
+frontend_flutter/android/app/.cxx/
 
 # Flutter
 .flutter/
@@ -315,18 +321,18 @@ app/build/
 local.properties
 
 # Flutter build artifacts
-frontend/build/
-frontend/web/build/
-frontend/linux/build/
-frontend/macos/build/
-frontend/windows/build/
+frontend_flutter/build/
+frontend_flutter/web/build/
+frontend_flutter/linux/build/
+frontend_flutter/macos/build/
+frontend_flutter/windows/build/
 
 # Dart/Flutter tool artifacts
-frontend/.dart_tool/
-frontend/.flutter-plugins
-frontend/.flutter-plugins-dependencies
-frontend/.pub/
-frontend/.packages
+frontend_flutter/.dart_tool/
+frontend_flutter/.flutter-plugins
+frontend_flutter/.flutter-plugins-dependencies
+frontend_flutter/.pub/
+frontend_flutter/.packages
 
 # Other
 *.swo
@@ -366,17 +372,17 @@ frontend/.packages
 **/ios/Flutter/flutter_assets/
 **/ios/Flutter/flutter_export_environment.sh
 **/ios/ServiceDefinitions.json
-frontend/ios/Runner/GeneratedPluginRegistrant.*
+frontend_flutter/ios/Runner/GeneratedPluginRegistrant.*
 
 
 
 
 # Firebase configuration
-frontend/android/app/google-services.json
-frontend/ios/Runner/GoogleService-Info.plist
-frontend/ios/GoogleService-Info.plist
-frontend/macos/Runner/GoogleService-Info.plist
-frontend/macos/GoogleService-Info.plist
+frontend_flutter/android/app/google-services.json
+frontend_flutter/ios/Runner/GoogleService-Info.plist
+frontend_flutter/ios/GoogleService-Info.plist
+frontend_flutter/macos/Runner/GoogleService-Info.plist
+frontend_flutter/macos/GoogleService-Info.plist
 
 
 # Miscellaneous
@@ -385,8 +391,13 @@ frontend/*.log
 frontend/*.pyc
 frontend/*.swp
 frontend/.DS_Store
+frontend_flutter/*.log
+frontend_flutter/*.pyc
+frontend_flutter/*.swp
+frontend_flutter/.DS_Store
 .atom/
 frontend/.build/
+frontend_flutter/.build/
 .buildlog/
 .history
 .svn/
@@ -398,6 +409,10 @@ frontend/*.iml
 frontend/*.ipr
 frontend/*.iws
 frontend/.idea/
+frontend_flutter/*.iml
+frontend_flutter/*.ipr
+frontend_flutter/*.iws
+frontend_flutter/.idea/
 
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line

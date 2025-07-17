@@ -1,6 +1,0 @@
-To create mocks: flutter pub run build_runner build
-
-
-
-TODO:
-    Test upload image function in utils/utils.dart

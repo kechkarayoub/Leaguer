@@ -1,0 +1,2 @@
+C:/Users/PC/Desktop/Leaguer/frontend_flutter/android/app/.cxx/Debug/3f1m6x45/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/PC/Desktop/Leaguer/frontend_flutter/android/app/.cxx/Debug/3f1m6x45/armeabi-v7a/CMakeFiles/rebuild_cache.dir
