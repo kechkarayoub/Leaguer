@@ -38,9 +38,11 @@ dependencies:
   english_words: ^4.0.0
   firebase_auth: ^5.5.1
   firebase_core: ^3.12.1
+  firebase_messaging: ^15.1.6
   flutter:
     sdk: flutter
   flutter_dotenv: ^5.2.1
+  flutter_local_notifications: ^18.0.1
   flutter_localizations:
     sdk: flutter
   flutter_secure_storage: ^9.2.4
@@ -60,6 +62,7 @@ dependencies:
   provider: ^6.1.2
   shared_preferences: ^2.5.2
   wakelock_plus: ^1.2.10
+  web: ^1.1.1
   web_socket_channel: ^3.0.3
 
   # The following adds the Cupertino Icons font to your application.

@@ -10,6 +10,7 @@ Install gettext:
 In the root directory backend, add file .env that contains:
     ENABLE_EMAIL_VERIFICATION="false"
     ENABLE_PHONE_NUMBER_VERIFICATION="false"
+    ENABLE_PUSH_NOTIFICATIONS=true
     DB_CONTAINER_EXTERNAL_PORT=5434
     DB_CONTAINER_INTERNAL_PORT=5432
     DB_IP=postgres
@@ -32,8 +33,8 @@ In the root directory backend, add file .env that contains:
     WHATSAPP_INSTANCE_ID="id_xxxx"
     WHATSAPP_INSTANCE_TOKEN="xxxx"
     WHATSAPP_INSTANCE_URL="https://waapi.app/api/v1/instances/id_xxxx/client/action/send-message"
-    WS_INTERNAL_PORT=9000
     WS_EXTERNAL_PORT=9000
+    WS_INTERNAL_PORT=9000
 
 
 Generate .po Files:

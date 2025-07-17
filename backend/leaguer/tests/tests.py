@@ -58,8 +58,8 @@ class EnvFileTest(TestCase):
             "WHATSAPP_INSTANCE_ID",
             "WHATSAPP_INSTANCE_TOKEN",
             "WHATSAPP_INSTANCE_URL",
-            "WS_INTERNAL_PORT",
             "WS_EXTERNAL_PORT",
+            "WS_INTERNAL_PORT",
         ]
 
         missing_vars = [var for var in required_vars if not config(var, None)]

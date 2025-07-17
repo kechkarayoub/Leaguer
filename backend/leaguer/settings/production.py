@@ -300,8 +300,7 @@ ENABLE_PHONE_NUMBER_VERIFICATION = get_secret("ENABLE_PHONE_NUMBER_VERIFICATION"
 MEDIA_URL = '/media/'
 
 # FIREBASE CREDENTIALS PATH
-FIREBASE_CREDENTIALS_PATH = os.path.join(BASE_DIR, "firebase-service-account.json")
-print(FIREBASE_CREDENTIALS_PATH)
+FIREBASE_CREDENTIALS_PATH = os.path.join(PARENT_DIR, "firebase-service-account.json")
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
