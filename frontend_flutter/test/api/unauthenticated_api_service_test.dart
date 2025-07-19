@@ -54,14 +54,14 @@ void main() {
   group('UnauthenticatedApiBackendService: getGeolocationInfo', () {
     late MockDio mockDio;
     String backendUrl = '';
-    String endpoint = '/geolocation';
+    String endpoint = '/api/geolocation';
     String? originalPipeline;
     String? originalBackendUrl;
 
     setUp(() {
       // Initialize the mock Dio
       mockDio = MockDio();
-      backendUrl = dotenv.env['BACKEND_URL'] ?? '';
+      backendUrl = dotenv.env['BACKEND_ENDPOINT'] ?? '';
       
       // Mock the options property to avoid MissingStubError
       final mockOptions = BaseOptions();
@@ -69,13 +69,13 @@ void main() {
 
       // Save original values
       originalPipeline = dotenv.env['PIPLINE'];
-      originalBackendUrl = dotenv.env['BACKEND_URL'];
+      originalBackendUrl = dotenv.env['BACKEND_ENDPOINT'];
     });
 
     tearDown(() {
       // Restore original values
       dotenv.env['PIPLINE'] = originalPipeline ?? "";
-      dotenv.env['BACKEND_URL'] = originalBackendUrl ?? "";
+      dotenv.env['BACKEND_ENDPOINT'] = originalBackendUrl ?? "";
     });
 
     test('GetGeolocationInfo returns country code successfully', () async {
@@ -148,7 +148,7 @@ void main() {
     test('GetGeolocationInfo uses allorigins in development', () async {
       // Arrange - Set development environment
       dotenv.env['PIPLINE'] = 'development';
-      dotenv.env['BACKEND_URL'] = 'https://api.example.com';
+      dotenv.env['BACKEND_ENDPOINT'] = 'https://api.example.com';
       
       final mockResponse = Response(
         requestOptions: RequestOptions(path: 'https://api.allorigins.win/get'),
@@ -232,7 +232,7 @@ void main() {
     setUp(() {
       // Initialize the mock Dio
       mockDio = MockDio();
-      backendUrl = dotenv.env['BACKEND_URL'] ?? '';
+      backendUrl = dotenv.env['BACKEND_ENDPOINT'] ?? '';
       
       // Mock the options property to avoid MissingStubError
       final mockOptions = BaseOptions();
@@ -538,7 +538,7 @@ void main() {
     setUp(() {
       // Initialize the mock Dio
       mockDio = MockDio();
-      backendUrl = dotenv.env['BACKEND_URL'] ?? '';
+      backendUrl = dotenv.env['BACKEND_ENDPOINT'] ?? '';
       
       // Mock the options property to avoid MissingStubError
       final mockOptions = BaseOptions();
@@ -807,7 +807,7 @@ void main() {
     setUp(() {
       // Initialize the mock Dio
       mockDio = MockDio();
-      backendUrl = dotenv.env['BACKEND_URL'] ?? '';
+      backendUrl = dotenv.env['BACKEND_ENDPOINT'] ?? '';
       
       // Mock the options property to avoid MissingStubError
       final mockOptions = BaseOptions();

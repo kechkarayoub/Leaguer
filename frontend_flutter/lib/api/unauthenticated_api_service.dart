@@ -84,7 +84,7 @@ class ThirdPartyAuthService {
 
 class UnauthenticatedApiBackendService {
     /// This service handles communication with the backend API.
-  static String backendUrl = dotenv.env['BACKEND_URL'] ?? 'Backend URL not found';
+  static String backendUrl = dotenv.env['BACKEND_ENDPOINT'] ?? 'Backend URL not found';
     
   /// Helper method to add device ID to HTTP requests
   static Future<void> addDeviceIdToRequest(Dio dio) async {
@@ -112,13 +112,13 @@ class UnauthenticatedApiBackendService {
     String defaultCountryCode = dotenv.env['DEFAULT_COUNTRY_CODE'] ?? 'MA';
     
     bool isDevelopment = (dotenv.env['PIPLINE'] ?? 'production') == "development";
-    bool isProductionUrl = (dotenv.env['BACKEND_URL'] ?? 'localhost').contains(".com");
+    bool isProductionUrl = (dotenv.env['BACKEND_ENDPOINT'] ?? 'localhost').contains(".com");
     
-    String url = '$backendUrl/geolocation';
+    String url = '$backendUrl/api/geolocation';
     Map<String, dynamic> queryParams = {...data};
     if (isDevelopment && isProductionUrl) {
       final params = data.entries.map((e) => '${e.key}=${e.value}').join('&');
-      url = 'https://api.allorigins.win/get?url=${Uri.encodeComponent('$backendUrl/geolocation?$params')}';
+      url = 'https://api.allorigins.win/get?url=${Uri.encodeComponent('$backendUrl/api/geolocation?$params')}';
       queryParams = {};
     }
     try{

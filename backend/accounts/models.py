@@ -41,8 +41,14 @@ class User(AbstractUser):
         ordering = ['last_name', 'first_name']  # Default ordering
         verbose_name = _("User")
         verbose_name_plural = _("Users")
+        indexes = [
+            models.Index(fields=['last_login']),
+            models.Index(fields=['date_joined']),
+            models.Index(fields=['is_staff']),
+            models.Index(fields=['is_superuser']),
+        ]
 
-    current_language = models.CharField(choices=settings.LANGUAGES, default=settings.LANGUAGE_CODE, max_length=10, verbose_name=_("Current language"))
+    current_language = models.CharField(choices=settings.LANGUAGES, db_index=True, default=settings.LANGUAGE_CODE, max_length=10, verbose_name=_("Current language"))
     email = models.EmailField(db_index=True, verbose_name=_("Email"), unique=True)
     first_name = models.CharField(db_index=True, max_length=150, verbose_name=_("First name"))
     is_active = models.BooleanField(db_index=True, default=True, verbose_name=_("Is active"))
@@ -52,12 +58,12 @@ class User(AbstractUser):
     last_name = models.CharField(db_index=True, max_length=150, verbose_name=_("Last name"))
     nbr_phone_number_verification_code_used = models.IntegerField(default=0, verbose_name=_("Number of phone number's verification code used"))
     user_address = models.TextField(blank=True, null=True, verbose_name=_("Address"))
-    user_birthday = models.DateField(blank=True, null=True, verbose_name=_("Birthday"))
+    user_birthday = models.DateField(blank=True, db_index=True, null=True, verbose_name=_("Birthday"))
     user_cin = models.CharField(blank=True, db_index=True, max_length=150, null=True, verbose_name=_("CIN"), unique=True)
-    user_country = models.CharField(blank=True, max_length=100, null=True, verbose_name=_("Country"))
+    user_country = models.CharField(blank=True, db_index=True, max_length=100, null=True, verbose_name=_("Country"))
     user_gender = models.CharField(blank=True, choices=GENDERS_CHOICES, db_index=True, default="", max_length=10, verbose_name=_("GENDER"))
     user_image_url = models.URLField(blank=True, max_length=500, null=True, verbose_name=_("Image url"))
-    user_initials_bg_color = models.CharField(blank=True, db_index=True, max_length=15, null=True, verbose_name=_("Initials background color"))
+    user_initials_bg_color = models.CharField(blank=True, max_length=15, null=True, verbose_name=_("Initials background color"))
     user_phone_number = models.CharField(db_index=True, blank=True, max_length=15, null=True, verbose_name=_("Phone number"), unique=True)
     user_phone_number_verification_code = models.CharField(blank=True, max_length=6, null=True, verbose_name=_("Phone number's verification code"))
     user_phone_number_verification_code_generated_at = models.DateTimeField(blank=True, null=True, verbose_name=_("Phone number's verification code generation date"))

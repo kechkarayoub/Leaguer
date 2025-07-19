@@ -24,7 +24,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 /// - [ThirdPartyAuthService] for third-party authentication
 class AuthenticatedApiBackendService {
   /// Backend API base URL, loaded from environment variables
-  static String backendUrl = dotenv.env['BACKEND_URL'] ?? 'Backend URL not found';
+  static String backendUrl = dotenv.env['BACKEND_ENDPOINT'] ?? 'Backend URL not found';
     
   
   /// Constructor: Initializes Dio and sets up request interceptors.

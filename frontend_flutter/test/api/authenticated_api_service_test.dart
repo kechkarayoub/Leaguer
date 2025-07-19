@@ -98,7 +98,7 @@ void main() async {
     late ThirdPartyAuthService thirdPartyAuthService;
     late MockFirebaseAuth mockAuth;
     late MockGoogleSignIn mockGoogleSignIn;
-    String testBackendUrl = dotenv.env['BACKEND_URL']??"";
+    String testBackendUrl = dotenv.env['BACKEND_ENDPOINT']??"";
     setUp(() async{
       mockDio = MockDio();
       mockSecureStorageService = MockSecureStorageService();
@@ -258,7 +258,7 @@ void main() async {
     late ThirdPartyAuthService thirdPartyAuthService;
     late MockFirebaseAuth mockAuth;
     late MockGoogleSignIn mockGoogleSignIn;
-    String testBackendUrl = dotenv.env['BACKEND_URL']??"";
+    String testBackendUrl = dotenv.env['BACKEND_ENDPOINT']??"";
     setUp(() async{
       mockDio = MockDio();
       mockSecureStorageService = MockSecureStorageService();
@@ -312,7 +312,7 @@ void main() async {
     late ThirdPartyAuthService thirdPartyAuthService;
     late MockFirebaseAuth mockAuth;
     late MockGoogleSignIn mockGoogleSignIn;
-    String testBackendUrl = dotenv.env['BACKEND_URL']??"";
+    String testBackendUrl = dotenv.env['BACKEND_ENDPOINT']??"";
 
     setUp(() {
       mockDio = MockDio();

@@ -5,7 +5,7 @@ void main() {
   // List of required keys
   final requiredKeys = [
     'APP_NAME',
-    'BACKEND_URL',
+    'BACKEND_ENDPOINT',
     'DEFAULT_COUNTRY_CODE',
     'DISABLE_LOG_MESSAGE',
     'ENABLE_USERS_REGISTRATION',

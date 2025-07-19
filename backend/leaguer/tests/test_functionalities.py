@@ -34,8 +34,12 @@ class EnvFileTest(TestCase):
     def test_required_env_variables(self):
         """Test that all required environment variables are set."""
         required_vars = [
-            "ENABLE_EMAIL_VERIFICATION",
-            "ENABLE_PHONE_NUMBER_VERIFICATION",
+            "ALLOWED_HOSTS",
+            "API_BURST_LIMIT",
+            "API_RATE_LIMIT",
+            "BACKEND_ENDPOINT",
+            "CORS_ALLOW_ALL_ORIGINS",
+            "CORS_ALLOWED_ORIGINS",
             "DB_CONTAINER_EXTERNAL_PORT",
             "DB_CONTAINER_INTERNAL_PORT",
             "DB_IP",
@@ -43,18 +47,27 @@ class EnvFileTest(TestCase):
             "DB_ROOT_PASSWORD",
             "DB_USER_NM",
             "DB_USER_PW",
+            "DEFAULT_FROM_EMAIL",
             "DJANGO_CONTAINER_EXTERNAL_PORT",
             "DJANGO_CONTAINER_INTERNAL_PORT",
-            "PIPLINE",
             "DJANGO_SECRET_KEY",
             "EMAIL_HOST",
             "EMAIL_PORT",
-            "EMAIL_USE_TLS",
-            "EMAIL_HOST_USER",
             "EMAIL_HOST_PASSWORD",
-            "DEFAULT_FROM_EMAIL",
+            "EMAIL_HOST_USER",
+            "EMAIL_USE_TLS",
+            "ENABLE_EMAIL_VERIFICATION",
+            "ENABLE_PHONE_NUMBER_VERIFICATION",
+            "FIREBASE_PROJECT_ID",
+            "FIREBASE_VAPID_KEY",
+            "FRONTEND_ENDPOINT",
+            "PERFORMANCE_MONITORING",
+            "PIPLINE",
             "REDIS_CONTAINER_EXTERNAL_PORT",
             "REDIS_CONTAINER_INTERNAL_PORT",
+            "REDIS_URL",
+            "TECHNICAL_SERVICE_EMAIL",
+            "USE_DEBUG_TOOLBAR",
             "WHATSAPP_INSTANCE_ID",
             "WHATSAPP_INSTANCE_TOKEN",
             "WHATSAPP_INSTANCE_URL",
@@ -71,7 +84,7 @@ class LeaguerConfigTest(TestCase):
         pass
 
     def test_firebase_credentials_path(self):
-        self.assertEqual(settings.FIREBASE_CREDENTIALS_PATH, os.path.join(settings.PARENT_DIR, "firebase-service-account.json"))
+        self.assertEqual(str(settings.FIREBASE_CREDENTIALS_PATH), os.path.join(settings.PARENT_DIR, "firebase-service-account.json"))
         self.assertTrue(os.path.exists(settings.FIREBASE_CREDENTIALS_PATH), True)
 
 
@@ -360,7 +373,6 @@ class GeolocationViewTests(TestCase):
         data = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(data.get("error"), 'Geolocation service unavailable. Try again later.')
         self.assertEqual(data.get("error"), _('Geolocation service unavailable. Try again later.'))
 
 
