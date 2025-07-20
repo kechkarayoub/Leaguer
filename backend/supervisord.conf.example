@@ -80,6 +80,7 @@ stdout_logfile=/var/log/supervisor/django.out.log
 # Maximum size of log files before rotation
 stderr_logfile_maxbytes=10MB
 stdout_logfile_maxbytes=10MB
+environment=DJANGO_SETTINGS_MODULE="leaguer.settings"
 
 # Number of backup log files to keep
 stderr_logfile_backups=5
@@ -129,6 +130,7 @@ stdout_logfile=/var/log/supervisor/daphne.out.log
 # Maximum size of log files before rotation
 stderr_logfile_maxbytes=10MB
 stdout_logfile_maxbytes=10MB
+environment=DJANGO_SETTINGS_MODULE="leaguer.settings"
 
 # Number of backup log files to keep
 stderr_logfile_backups=5
@@ -157,6 +159,7 @@ priority=20
 # stdout_logfile=/var/log/supervisor/celery_worker.out.log
 # stderr_logfile_maxbytes=10MB
 # stdout_logfile_maxbytes=10MB
+# environment=DJANGO_SETTINGS_MODULE="leaguer.settings"
 # stderr_logfile_backups=5
 # stdout_logfile_backups=5
 # redirect_stderr=false
@@ -177,6 +180,7 @@ priority=20
 # stdout_logfile=/var/log/supervisor/celery_beat.out.log
 # stderr_logfile_maxbytes=10MB
 # stdout_logfile_maxbytes=10MB
+# environment=DJANGO_SETTINGS_MODULE="leaguer.settings"
 # stderr_logfile_backups=5
 # stdout_logfile_backups=5
 # redirect_stderr=false
@@ -202,6 +206,7 @@ priority=999
 # stdout_logfile=/var/log/supervisor/gunicorn.out.log
 # stderr_logfile_maxbytes=10MB
 # stdout_logfile_maxbytes=10MB
+# environment=DJANGO_SETTINGS_MODULE="leaguer.settings"
 # stderr_logfile_backups=5
 # stdout_logfile_backups=5
 # redirect_stderr=false

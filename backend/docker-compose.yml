@@ -35,7 +35,8 @@ services:
     environment:
       - DATABASE_URL=postgres://${DB_USER_NM}:${DB_USER_PW}@postgres:${DB_CONTAINER_INTERNAL_PORT}/${DB_NAME}
       - REDIS_URL=redis://redis:${REDIS_CONTAINER_EXTERNAL_PORT}/0
-    #  - PIPLINE=${PIPLINE}
+      - DJANGO_SETTINGS_MODULE=leaguer.settings
+      - PIPLINE=${PIPLINE}
   redis:
     image: redis:7
     container_name: redis_container
