@@ -126,7 +126,7 @@ CORS_ALLOWED_ORIGIN_1=http://localhost:3000
 CORS_ALLOWED_ORIGIN_2=http://localhost:8082
 
 # Endpoints
-BACKEND_ENDPOINT=http://localhost:8000
+BACKEND_ENDPOINT=http://localhost:8080
 FRONTEND_ENDPOINT=http://localhost:3000
 
 # Debug

@@ -1,28 +1,33 @@
-# Use Python 3.12.2 image based on Debian Bullseye in its slim variant as the base image
-FROM python:3.12.2-slim-bullseye
+# ✅ Base image: Python 3.12.2 on Debian Bookworm slim (secure & stable)
+FROM python:3.12.2-slim-bookworm
 
-# Set an environment variable to unbuffer Python output, aiding in logging and debugging
-ENV PYTHONBUFFERED=1
+# ✅ Environment
+ENV PYTHONBUFFERED=1 \
+    DEBIAN_FRONTEND=noninteractive
 
-# Define an environment variable for the web service's port, commonly used in cloud services
+# ✅ Update, upgrade, and install system dependencies in one RUN
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        gettext \
+        supervisor \
+        # (add other deps if needed, e.g. libpq-dev for PostgreSQL)
+    && apt-get autoremove -y && apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Set the working directory within the container to /app for any subsequent commands
+# ✅ Set working directory
 WORKDIR /app
 
-# Create necessary directories for supervisor logs
+# ✅ Create logs folder for supervisor
 RUN mkdir -p /var/log/supervisor
 
-# Copy the entire current directory contents into the container at /app
+# ✅ Copy project files
 COPY . /app/
 
-# Install gettext and other system dependencies
-RUN apt-get update && apt-get install -y gettext && rm -rf /var/lib/apt/lists/*
-
-# Upgrade pip to ensure we have the latest version for installing dependencies
-RUN pip install --upgrade pip
-
-# Install dependencies from the requirements.txt file to ensure our Python environment is ready
-RUN pip install -r requirements.txt
+# ✅ Upgrade pip & install Python dependencies
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Set the command to run our web service using Gunicorn, binding it to 0.0.0.0 and the PORT environment variable
 #CMD ["gunicorn", "server.wsgi:application", "--bind", "0.0.0.0:${PORT}"]
