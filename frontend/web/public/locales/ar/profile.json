@@ -1,78 +1,78 @@
 {
-  "title": "إعدادات الملف الشخصي",
-  "subtitle": "إدارة إعدادات حسابك وتفضيلاتك",
-  "myProfile": "ملفي الشخصي",
   "editProfile": "تحرير الملف الشخصي",
-  "viewProfile": "عرض الملف الشخصي",
-  "tabs": {
-    "profile": "معلومات الملف الشخصي",
-    "security": "الأمان"
+  "messages": {
+    "deactivateConfirm": "هل أنت متأكد من رغبتك في إلغاء تفعيل حسابك؟",
+    "deleteConfirm": "هل أنت متأكد من رغبتك في حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.",
+    "passwordChanged": "تم تغيير كلمة المرور بنجاح",
+    "passwordError": "فشل في تغيير كلمة المرور",
+    "updateError": "فشل في تحديث الملف الشخصي",
+    "updateSuccess": "تم تحديث الملف الشخصي بنجاح"
+  },
+  "myProfile": "ملفي الشخصي",
+  "preferences": {
+    "auto": "تلقائي",
+    "dark": "داكن",
+    "language": "اللغة",
+    "light": "فاتح",
+    "notifications": "الإشعارات",
+    "privacy": "إعدادات الخصوصية",
+    "theme": "المظهر",
+    "timezone": "المنطقة الزمنية",
+    "title": "التفضيلات"
   },
   "profile": {
-    "title": "المعلومات الشخصية",
-    "description": "تحديث تفاصيلك الشخصية ومعلومات الاتصال",
+    "bio": "السيرة الذاتية",
+    "birthDate": "تاريخ الميلاد",
     "change_photo": "تغيير الصورة",
-    "photo_hint": "JPG أو PNG أو GIF. الحد الأقصى للحجم 2 ميجابايت.",
+    "description": "تحديث تفاصيلك الشخصية ومعلومات الاتصال",
+    "email": "عنوان البريد الإلكتروني",
+    "email_placeholder": "أدخل بريدك الإلكتروني",
     "first_name": "الاسم الأول",
     "first_name_placeholder": "أدخل اسمك الأول",
     "last_name": "اسم العائلة",
     "last_name_placeholder": "أدخل اسم عائلتك",
-    "username": "اسم المستخدم",
-    "email": "عنوان البريد الإلكتروني",
-    "email_placeholder": "أدخل بريدك الإلكتروني",
-    "phone": "رقم الهاتف",
-    "birthDate": "تاريخ الميلاد",
-    "bio": "السيرة الذاتية",
     "location": "الموقع",
-    "website": "الموقع الإلكتروني",
+    "phone": "رقم الهاتف",
+    "photo_hint": "JPG أو PNG أو GIF. الحد الأقصى للحجم 2 ميجابايت.",
+    "save_changes": "حفظ التغييرات",
+    "title": "المعلومات الشخصية",
     "updating": "جاري التحديث...",
-    "save_changes": "حفظ التغييرات"
+    "username": "اسم المستخدم",
+    "website": "الموقع الإلكتروني"
   },
   "security": {
-    "title": "تغيير كلمة المرور",
-    "description": "قم بتحديث كلمة المرور لحماية حسابك",
-    "current_password": "كلمة المرور الحالية",
-    "current_password_placeholder": "أدخل كلمة المرور الحالية",
-    "new_password": "كلمة المرور الجديدة",
-    "new_password_placeholder": "أدخل كلمة المرور الجديدة",
+    "change_password": "تغيير كلمة المرور",
+    "changing": "جاري تغيير كلمة المرور...",
     "confirm_password": "تأكيد كلمة المرور الجديدة",
     "confirm_password_placeholder": "تأكيد كلمة المرور الجديدة",
-    "changing": "جاري تغيير كلمة المرور...",
-    "change_password": "تغيير كلمة المرور",
-    "twoFactor": "المصادقة الثنائية",
-    "enable2FA": "تفعيل المصادقة الثنائية",
+    "current_password": "كلمة المرور الحالية",
+    "current_password_placeholder": "أدخل كلمة المرور الحالية",
+    "description": "قم بتحديث كلمة المرور لحماية حسابك",
     "disable2FA": "إلغاء المصادقة الثنائية",
+    "enable2FA": "تفعيل المصادقة الثنائية",
     "loginHistory": "تاريخ تسجيل الدخول",
-    "sessions": "الجلسات النشطة"
-  },
-  "preferences": {
-    "title": "التفضيلات",
-    "language": "اللغة",
-    "timezone": "المنطقة الزمنية",
-    "notifications": "الإشعارات",
-    "privacy": "إعدادات الخصوصية",
-    "theme": "المظهر",
-    "light": "فاتح",
-    "dark": "داكن",
-    "auto": "تلقائي"
+    "new_password": "كلمة المرور الجديدة",
+    "new_password_placeholder": "أدخل كلمة المرور الجديدة",
+    "sessions": "الجلسات النشطة",
+    "title": "تغيير كلمة المرور",
+    "twoFactor": "المصادقة الثنائية"
   },
   "social": {
-    "title": "الحسابات الاجتماعية",
     "connect": "ربط",
-    "disconnect": "قطع الاتصال",
     "connected": "متصل",
-    "notConnected": "غير متصل",
-    "google": "Google",
+    "disconnect": "قطع الاتصال",
     "facebook": "Facebook",
-    "twitter": "Twitter",
-    "github": "GitHub"
+    "github": "GitHub",
+    "google": "Google",
+    "notConnected": "غير متصل",
+    "title": "الحسابات الاجتماعية",
+    "twitter": "Twitter"
   },
-  "messages": {
-    "updateSuccess": "تم تحديث الملف الشخصي بنجاح",
-    "updateError": "فشل في تحديث الملف الشخصي",
-    "passwordChanged": "تم تغيير كلمة المرور بنجاح",
-    "passwordError": "فشل في تغيير كلمة المرور",
-    "deleteConfirm": "هل أنت متأكد من رغبتك في حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.",
-    "deactivateConfirm": "هل أنت متأكد من رغبتك في إلغاء تفعيل حسابك؟"
-  }
+  "subtitle": "إدارة إعدادات حسابك وتفضيلاتك",
+  "tabs": {
+    "profile": "معلومات الملف الشخصي",
+    "security": "الأمان"
+  },
+  "title": "إعدادات الملف الشخصي",
+  "viewProfile": "عرض الملف الشخصي"
 }

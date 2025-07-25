@@ -1,68 +1,68 @@
 {
-  "unexpected_error": "حدث خطأ ما",
+  "authentication": {
+    "accountDisabled": "تم تعطيل الحساب",
+    "accountLocked": "تم قفل الحساب",
+    "invalidCredentials": "بريد إلكتروني أو كلمة مرور غير صحيحة",
+    "loginRequired": "يرجى تسجيل الدخول للمتابعة",
+    "sessionExpired": "انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى.",
+    "title": "خطأ في المصادقة",
+    "tokenExpired": "انتهت صلاحية رمز المصادقة",
+    "unauthorized": "غير مخول لك الوصول إلى هذا المورد"
+  },
   "error_description": "حدث خطأ غير متوقع. يرجى تحديث الصفحة.",
   "error_details": "تفاصيل الخطأ",
-  "reload_page": "إعادة تحميل الصفحة",
-  "go_back": "العودة",
-  "network_error": "حدث خطأ في الشبكة",
-  "server_error": "حدث خطأ في الخادم",
-  "validation_error": "خطأ في التحقق",
-  "not_found": "المورد غير موجود",
-  "unauthorized": "غير مخول لك الوصول إلى هذا المورد",
   "forbidden": "الوصول إلى هذا المورد محظور",
-  "try_again": "يرجى المحاولة مرة أخرى",
+  "form": {
+    "invalidData": "يرجى التحقق من البيانات المدخلة والمحاولة مرة أخرى",
+    "invalidFormat": "تنسيق غير صحيح",
+    "missingFields": "يرجى ملء جميع الحقول المطلوبة",
+    "submissionFailed": "فشل في إرسال النموذج",
+    "title": "خطأ في النموذج"
+  },
+  "general": {
+    "accessDenied": "الوصول مرفوض",
+    "contactSupport": "إذا استمرت المشكلة، يرجى الاتصال بالدعم",
+    "notFound": "الصفحة غير موجودة",
+    "somethingWentWrong": "حدث خطأ ما",
+    "title": "خطأ",
+    "tryAgain": "يرجى المحاولة مرة أخرى",
+    "unknown": "حدث خطأ غير معروف"
+  },
+  "go_back": "العودة",
   "network": {
-    "title": "خطأ في الشبكة",
     "message": "غير قادر على الاتصال بالخادم. يرجى التحقق من اتصالك بالإنترنت.",
     "offline": "أنت حالياً غير متصل بالإنترنت",
-    "timeout": "انتهت مهلة الطلب",
+    "retry": "إعادة المحاولة",
     "serverError": "حدث خطأ في الخادم",
-    "retry": "إعادة المحاولة"
+    "timeout": "انتهت مهلة الطلب",
+    "title": "خطأ في الشبكة"
   },
-  "authentication": {
-    "title": "خطأ في المصادقة",
-    "invalidCredentials": "بريد إلكتروني أو كلمة مرور غير صحيحة",
-    "accountLocked": "تم قفل الحساب",
-    "accountDisabled": "تم تعطيل الحساب",
-    "sessionExpired": "انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى.",
-    "unauthorized": "غير مخول لك الوصول إلى هذا المورد",
-    "tokenExpired": "انتهت صلاحية رمز المصادقة",
-    "loginRequired": "يرجى تسجيل الدخول للمتابعة"
-  },
-  "validation": {
-    "title": "خطأ في التحقق",
-    "required": "هذا الحقل مطلوب",
-    "invalidEmail": "يرجى إدخال عنوان بريد إلكتروني صحيح",
-    "invalidPassword": "يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل",
-    "passwordMismatch": "كلمات المرور غير متطابقة",
-    "invalidPhone": "يرجى إدخال رقم هاتف صحيح",
-    "invalidUrl": "يرجى إدخال رابط صحيح",
-    "fileTooLarge": "حجم الملف كبير جداً",
-    "fileTypeNotSupported": "نوع الملف غير مدعوم"
-  },
+  "network_error": "حدث خطأ في الشبكة",
+  "not_found": "المورد غير موجود",
+  "reload_page": "إعادة تحميل الصفحة",
   "server": {
-    "title": "خطأ في الخادم",
+    "badRequest": "طلب خاطئ",
+    "forbidden": "الوصول محظور",
     "internal": "خطأ داخلي في الخادم",
     "maintenance": "الخادم تحت الصيانة",
     "notFound": "المورد غير موجود",
-    "forbidden": "الوصول محظور",
-    "badRequest": "طلب خاطئ",
+    "title": "خطأ في الخادم",
     "tooManyRequests": "طلبات كثيرة جداً. يرجى المحاولة لاحقاً."
   },
-  "general": {
-    "title": "خطأ",
-    "unknown": "حدث خطأ غير معروف",
-    "tryAgain": "يرجى المحاولة مرة أخرى",
-    "contactSupport": "إذا استمرت المشكلة، يرجى الاتصال بالدعم",
-    "somethingWentWrong": "حدث خطأ ما",
-    "notFound": "الصفحة غير موجودة",
-    "accessDenied": "الوصول مرفوض"
+  "server_error": "حدث خطأ في الخادم",
+  "try_again": "يرجى المحاولة مرة أخرى",
+  "unauthorized": "غير مخول لك الوصول إلى هذا المورد",
+  "unexpected_error": "حدث خطأ ما",
+  "validation": {
+    "fileTooLarge": "حجم الملف كبير جداً",
+    "fileTypeNotSupported": "نوع الملف غير مدعوم",
+    "invalidEmail": "يرجى إدخال عنوان بريد إلكتروني صحيح",
+    "invalidPassword": "يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل",
+    "invalidPhone": "يرجى إدخال رقم هاتف صحيح",
+    "invalidUrl": "يرجى إدخال رابط صحيح",
+    "passwordMismatch": "كلمات المرور غير متطابقة",
+    "required": "هذا الحقل مطلوب",
+    "title": "خطأ في التحقق"
   },
-  "form": {
-    "title": "خطأ في النموذج",
-    "invalidData": "يرجى التحقق من البيانات المدخلة والمحاولة مرة أخرى",
-    "submissionFailed": "فشل في إرسال النموذج",
-    "missingFields": "يرجى ملء جميع الحقول المطلوبة",
-    "invalidFormat": "تنسيق غير صحيح"
-  }
+  "validation_error": "خطأ في التحقق"
 }

@@ -1,68 +1,68 @@
 {
-  "unexpected_error": "Quelque chose s'est mal passé",
+  "authentication": {
+    "accountDisabled": "Le compte a été désactivé",
+    "accountLocked": "Le compte a été verrouillé",
+    "invalidCredentials": "E-mail ou mot de passe invalide",
+    "loginRequired": "Veuillez vous connecter pour continuer",
+    "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
+    "title": "Erreur d'authentification",
+    "tokenExpired": "Le jeton d'authentification a expiré",
+    "unauthorized": "Vous n'êtes pas autorisé à accéder à cette ressource"
+  },
   "error_description": "Une erreur inattendue s'est produite. Veuillez actualiser la page.",
   "error_details": "Détails de l'erreur",
-  "reload_page": "Recharger la page",
-  "go_back": "Retour",
-  "network_error": "Erreur réseau survenue",
-  "server_error": "Erreur serveur survenue",
-  "validation_error": "Erreur de validation",
-  "not_found": "Ressource non trouvée",
-  "unauthorized": "Vous n'êtes pas autorisé à accéder à cette ressource",
   "forbidden": "L'accès à cette ressource est interdit",
-  "try_again": "Veuillez réessayer",
+  "form": {
+    "invalidData": "Veuillez vérifier votre saisie et réessayer",
+    "invalidFormat": "Format invalide",
+    "missingFields": "Veuillez remplir tous les champs requis",
+    "submissionFailed": "Échec de la soumission du formulaire",
+    "title": "Erreur de formulaire"
+  },
+  "general": {
+    "accessDenied": "Accès refusé",
+    "contactSupport": "Si le problème persiste, veuillez contacter le support",
+    "notFound": "Page non trouvée",
+    "somethingWentWrong": "Quelque chose s'est mal passé",
+    "title": "Erreur",
+    "tryAgain": "Veuillez réessayer",
+    "unknown": "Une erreur inconnue s'est produite"
+  },
+  "go_back": "Retour",
   "network": {
-    "title": "Erreur réseau",
     "message": "Impossible de se connecter au serveur. Veuillez vérifier votre connexion internet.",
     "offline": "Vous êtes actuellement hors ligne",
-    "timeout": "Délai d'attente dépassé",
+    "retry": "Réessayer",
     "serverError": "Erreur serveur survenue",
-    "retry": "Réessayer"
+    "timeout": "Délai d'attente dépassé",
+    "title": "Erreur réseau"
   },
-  "authentication": {
-    "title": "Erreur d'authentification",
-    "invalidCredentials": "E-mail ou mot de passe invalide",
-    "accountLocked": "Le compte a été verrouillé",
-    "accountDisabled": "Le compte a été désactivé",
-    "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
-    "unauthorized": "Vous n'êtes pas autorisé à accéder à cette ressource",
-    "tokenExpired": "Le jeton d'authentification a expiré",
-    "loginRequired": "Veuillez vous connecter pour continuer"
-  },
-  "validation": {
-    "title": "Erreur de validation",
-    "required": "Ce champ est requis",
-    "invalidEmail": "Veuillez entrer une adresse e-mail valide",
-    "invalidPassword": "Le mot de passe doit contenir au moins 8 caractères",
-    "passwordMismatch": "Les mots de passe ne correspondent pas",
-    "invalidPhone": "Veuillez entrer un numéro de téléphone valide",
-    "invalidUrl": "Veuillez entrer une URL valide",
-    "fileTooLarge": "La taille du fichier est trop importante",
-    "fileTypeNotSupported": "Type de fichier non pris en charge"
-  },
+  "network_error": "Erreur réseau survenue",
+  "not_found": "Ressource non trouvée",
+  "reload_page": "Recharger la page",
   "server": {
-    "title": "Erreur serveur",
+    "badRequest": "Mauvaise requête",
+    "forbidden": "Accès interdit",
     "internal": "Erreur interne du serveur",
     "maintenance": "Le serveur est en maintenance",
     "notFound": "Ressource non trouvée",
-    "forbidden": "Accès interdit",
-    "badRequest": "Mauvaise requête",
+    "title": "Erreur serveur",
     "tooManyRequests": "Trop de requêtes. Veuillez réessayer plus tard."
   },
-  "general": {
-    "title": "Erreur",
-    "unknown": "Une erreur inconnue s'est produite",
-    "tryAgain": "Veuillez réessayer",
-    "contactSupport": "Si le problème persiste, veuillez contacter le support",
-    "somethingWentWrong": "Quelque chose s'est mal passé",
-    "notFound": "Page non trouvée",
-    "accessDenied": "Accès refusé"
+  "server_error": "Erreur serveur survenue",
+  "try_again": "Veuillez réessayer",
+  "unauthorized": "Vous n'êtes pas autorisé à accéder à cette ressource",
+  "unexpected_error": "Quelque chose s'est mal passé",
+  "validation": {
+    "fileTooLarge": "La taille du fichier est trop importante",
+    "fileTypeNotSupported": "Type de fichier non pris en charge",
+    "invalidEmail": "Veuillez entrer une adresse e-mail valide",
+    "invalidPassword": "Le mot de passe doit contenir au moins 8 caractères",
+    "invalidPhone": "Veuillez entrer un numéro de téléphone valide",
+    "invalidUrl": "Veuillez entrer une URL valide",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "required": "Ce champ est requis",
+    "title": "Erreur de validation"
   },
-  "form": {
-    "title": "Erreur de formulaire",
-    "invalidData": "Veuillez vérifier votre saisie et réessayer",
-    "submissionFailed": "Échec de la soumission du formulaire",
-    "missingFields": "Veuillez remplir tous les champs requis",
-    "invalidFormat": "Format invalide"
-  }
+  "validation_error": "Erreur de validation"
 }
