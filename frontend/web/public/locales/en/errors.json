@@ -1,0 +1,68 @@
+{
+  "unexpected_error": "Something went wrong",
+  "error_description": "An unexpected error occurred. Please try refreshing the page.",
+  "error_details": "Error Details",
+  "reload_page": "Reload Page",
+  "go_back": "Go Back",
+  "network_error": "Network error occurred",
+  "server_error": "Server error occurred",
+  "validation_error": "Validation error",
+  "not_found": "Resource not found",
+  "unauthorized": "You are not authorized to access this resource",
+  "forbidden": "Access to this resource is forbidden",
+  "try_again": "Please try again",
+  "network": {
+    "title": "Network Error",
+    "message": "Unable to connect to the server. Please check your internet connection.",
+    "offline": "You are currently offline",
+    "timeout": "Request timed out",
+    "serverError": "Server error occurred",
+    "retry": "Retry"
+  },
+  "authentication": {
+    "title": "Authentication Error",
+    "invalidCredentials": "Invalid email or password",
+    "accountLocked": "Account has been locked",
+    "accountDisabled": "Account has been disabled",
+    "sessionExpired": "Your session has expired. Please sign in again.",
+    "unauthorized": "You are not authorized to access this resource",
+    "tokenExpired": "Authentication token has expired",
+    "loginRequired": "Please sign in to continue"
+  },
+  "validation": {
+    "title": "Validation Error",
+    "required": "This field is required",
+    "invalidEmail": "Please enter a valid email address",
+    "invalidPassword": "Password must be at least 8 characters long",
+    "passwordMismatch": "Passwords do not match",
+    "invalidPhone": "Please enter a valid phone number",
+    "invalidUrl": "Please enter a valid URL",
+    "fileTooLarge": "File size is too large",
+    "fileTypeNotSupported": "File type is not supported"
+  },
+  "server": {
+    "title": "Server Error",
+    "internal": "Internal server error",
+    "maintenance": "Server is under maintenance",
+    "notFound": "Resource not found",
+    "forbidden": "Access forbidden",
+    "badRequest": "Bad request",
+    "tooManyRequests": "Too many requests. Please try again later."
+  },
+  "general": {
+    "title": "Error",
+    "unknown": "An unknown error occurred",
+    "tryAgain": "Please try again",
+    "contactSupport": "If the problem persists, please contact support",
+    "somethingWentWrong": "Something went wrong",
+    "notFound": "Page not found",
+    "accessDenied": "Access denied"
+  },
+  "form": {
+    "title": "Form Error",
+    "invalidData": "Please check your input and try again",
+    "submissionFailed": "Form submission failed",
+    "missingFields": "Please fill in all required fields",
+    "invalidFormat": "Invalid format"
+  }
+}

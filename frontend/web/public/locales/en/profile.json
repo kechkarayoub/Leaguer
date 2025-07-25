@@ -1,0 +1,78 @@
+{
+  "title": "Profile Settings",
+  "subtitle": "Manage your account settings and preferences",
+  "myProfile": "My Profile",
+  "editProfile": "Edit Profile",
+  "viewProfile": "View Profile",
+  "tabs": {
+    "profile": "Profile Information",
+    "security": "Security"
+  },
+  "profile": {
+    "title": "Personal Information",
+    "description": "Update your personal details and contact information",
+    "change_photo": "Change Photo",
+    "photo_hint": "JPG, PNG or GIF. Max size 2MB.",
+    "first_name": "First Name",
+    "first_name_placeholder": "Enter your first name",
+    "last_name": "Last Name",
+    "last_name_placeholder": "Enter your last name",
+    "username": "Username",
+    "email": "Email Address",
+    "email_placeholder": "Enter your email",
+    "phone": "Phone Number",
+    "birthDate": "Date of Birth",
+    "bio": "Biography",
+    "location": "Location",
+    "website": "Website",
+    "updating": "Updating...",
+    "save_changes": "Save Changes"
+  },
+  "security": {
+    "title": "Change Password",
+    "description": "Update your password to keep your account secure",
+    "current_password": "Current Password",
+    "current_password_placeholder": "Enter current password",
+    "new_password": "New Password",
+    "new_password_placeholder": "Enter new password",
+    "confirm_password": "Confirm New Password",
+    "confirm_password_placeholder": "Confirm new password",
+    "changing": "Changing password...",
+    "change_password": "Change Password",
+    "twoFactor": "Two-Factor Authentication",
+    "enable2FA": "Enable 2FA",
+    "disable2FA": "Disable 2FA",
+    "loginHistory": "Login History",
+    "sessions": "Active Sessions"
+  },
+  "preferences": {
+    "title": "Preferences",
+    "language": "Language",
+    "timezone": "Timezone",
+    "notifications": "Notifications",
+    "privacy": "Privacy Settings",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "auto": "Auto"
+  },
+  "social": {
+    "title": "Social Accounts",
+    "connect": "Connect",
+    "disconnect": "Disconnect",
+    "connected": "Connected",
+    "notConnected": "Not Connected",
+    "google": "Google",
+    "facebook": "Facebook",
+    "twitter": "Twitter",
+    "github": "GitHub"
+  },
+  "messages": {
+    "updateSuccess": "Profile updated successfully",
+    "updateError": "Failed to update profile",
+    "passwordChanged": "Password changed successfully",
+    "passwordError": "Failed to change password",
+    "deleteConfirm": "Are you sure you want to delete your account? This action cannot be undone.",
+    "deactivateConfirm": "Are you sure you want to deactivate your account?"
+  }
+}

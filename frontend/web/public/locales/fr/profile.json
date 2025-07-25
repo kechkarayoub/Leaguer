@@ -1,0 +1,78 @@
+{
+  "title": "Paramètres du profil",
+  "subtitle": "Gérez les paramètres et préférences de votre compte",
+  "myProfile": "Mon profil",
+  "editProfile": "Modifier le profil",
+  "viewProfile": "Voir le profil",
+  "tabs": {
+    "profile": "Informations du profil",
+    "security": "Sécurité"
+  },
+  "profile": {
+    "title": "Informations personnelles",
+    "description": "Mettez à jour vos détails personnels et informations de contact",
+    "change_photo": "Changer la photo",
+    "photo_hint": "JPG, PNG ou GIF. Taille max 2MB.",
+    "first_name": "Prénom",
+    "first_name_placeholder": "Entrez votre prénom",
+    "last_name": "Nom de famille",
+    "last_name_placeholder": "Entrez votre nom de famille",
+    "username": "Nom d'utilisateur",
+    "email": "Adresse e-mail",
+    "email_placeholder": "Entrez votre e-mail",
+    "phone": "Numéro de téléphone",
+    "birthDate": "Date de naissance",
+    "bio": "Biographie",
+    "location": "Localisation",
+    "website": "Site web",
+    "updating": "Mise à jour...",
+    "save_changes": "Sauvegarder les modifications"
+  },
+  "security": {
+    "title": "Changer le mot de passe",
+    "description": "Mettez à jour votre mot de passe pour sécuriser votre compte",
+    "current_password": "Mot de passe actuel",
+    "current_password_placeholder": "Entrez le mot de passe actuel",
+    "new_password": "Nouveau mot de passe",
+    "new_password_placeholder": "Entrez le nouveau mot de passe",
+    "confirm_password": "Confirmer le nouveau mot de passe",
+    "confirm_password_placeholder": "Confirmez le nouveau mot de passe",
+    "changing": "Changement du mot de passe...",
+    "change_password": "Changer le mot de passe",
+    "twoFactor": "Authentification à deux facteurs",
+    "enable2FA": "Activer 2FA",
+    "disable2FA": "Désactiver 2FA",
+    "loginHistory": "Historique de connexion",
+    "sessions": "Sessions actives"
+  },
+  "preferences": {
+    "title": "Préférences",
+    "language": "Langue",
+    "timezone": "Fuseau horaire",
+    "notifications": "Notifications",
+    "privacy": "Paramètres de confidentialité",
+    "theme": "Thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "auto": "Auto"
+  },
+  "social": {
+    "title": "Comptes sociaux",
+    "connect": "Connecter",
+    "disconnect": "Déconnecter",
+    "connected": "Connecté",
+    "notConnected": "Non connecté",
+    "google": "Google",
+    "facebook": "Facebook",
+    "twitter": "Twitter",
+    "github": "GitHub"
+  },
+  "messages": {
+    "updateSuccess": "Profil mis à jour avec succès",
+    "updateError": "Échec de la mise à jour du profil",
+    "passwordChanged": "Mot de passe changé avec succès",
+    "passwordError": "Échec du changement de mot de passe",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action ne peut pas être annulée.",
+    "deactivateConfirm": "Êtes-vous sûr de vouloir désactiver votre compte ?"
+  }
+}

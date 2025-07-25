@@ -1,0 +1,67 @@
+{
+  "title": "Dashboard",
+  "welcome_back": "Welcome back",
+  "user": "User",
+  "ready_to_play": "Ready to dominate today's matches?",
+  "total_games": "Total Games",
+  "wins": "Wins",
+  "losses": "Losses",
+  "win_rate": "Win Rate",
+  "recent_games": "Recent Games",
+  "achievements": "Achievements",
+  "view_all": "View All",
+  "no_recent_games": "No recent games",
+  "no_achievements": "No achievements yet",
+  "start_new_game": "Start New Game",
+  "find_opponents": "Find Opponents",
+  "join_tournament": "Join Tournament",
+  "win": "Win",
+  "loss": "Loss",
+  "overview": {
+    "title": "Overview",
+    "stats": "Statistics",
+    "recent": "Recent Activity",
+    "notifications": "Notifications"
+  },
+  "stats": {
+    "total": "Total",
+    "active": "Active",
+    "pending": "Pending",
+    "completed": "Completed",
+    "growth": "Growth",
+    "change": "Change",
+    "thisMonth": "This month",
+    "lastMonth": "Last month",
+    "thisWeek": "This week",
+    "today": "Today"
+  },
+  "actions": {
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "create": "Create New",
+    "manage": "Manage",
+    "configure": "Configure",
+    "export": "Export",
+    "import": "Import",
+    "refresh": "Refresh Data"
+  },
+  "tables": {
+    "noData": "No data available",
+    "loading": "Loading data...",
+    "error": "Failed to load data",
+    "empty": "No items found",
+    "rowsPerPage": "Rows per page",
+    "of": "of",
+    "page": "Page"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markRead": "Mark as read",
+    "markAllRead": "Mark all as read",
+    "noNotifications": "No notifications",
+    "newMessage": "New message",
+    "systemUpdate": "System update",
+    "reminder": "Reminder"
+  }
+}

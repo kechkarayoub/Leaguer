@@ -1,0 +1,67 @@
+{
+  "title": "لوحة القيادة",
+  "welcome_back": "مرحباً بعودتك",
+  "user": "المستخدم",
+  "ready_to_play": "هل أنت مستعد للهيمنة على مباريات اليوم؟",
+  "total_games": "إجمالي الألعاب",
+  "wins": "الانتصارات",
+  "losses": "الهزائم",
+  "win_rate": "معدل الفوز",
+  "recent_games": "الألعاب الأخيرة",
+  "achievements": "الإنجازات",
+  "view_all": "عرض الكل",
+  "no_recent_games": "لا توجد ألعاب حديثة",
+  "no_achievements": "لا توجد إنجازات بعد",
+  "start_new_game": "بدء لعبة جديدة",
+  "find_opponents": "العثور على خصوم",
+  "join_tournament": "الانضمام للبطولة",
+  "win": "فوز",
+  "loss": "هزيمة",
+  "overview": {
+    "title": "نظرة عامة",
+    "stats": "الإحصائيات",
+    "recent": "النشاط الأخير",
+    "notifications": "الإشعارات"
+  },
+  "stats": {
+    "total": "المجموع",
+    "active": "نشط",
+    "pending": "قيد الانتظار",
+    "completed": "مكتمل",
+    "growth": "النمو",
+    "change": "التغيير",
+    "thisMonth": "هذا الشهر",
+    "lastMonth": "الشهر الماضي",
+    "thisWeek": "هذا الأسبوع",
+    "today": "اليوم"
+  },
+  "actions": {
+    "view": "عرض",
+    "edit": "تحرير",
+    "delete": "حذف",
+    "create": "إنشاء جديد",
+    "manage": "إدارة",
+    "configure": "تكوين",
+    "export": "تصدير",
+    "import": "استيراد",
+    "refresh": "تحديث البيانات"
+  },
+  "tables": {
+    "noData": "لا توجد بيانات متاحة",
+    "loading": "جاري تحميل البيانات...",
+    "error": "فشل في تحميل البيانات",
+    "empty": "لم يتم العثور على عناصر",
+    "rowsPerPage": "صفوف في الصفحة",
+    "of": "من",
+    "page": "صفحة"
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "markRead": "وضع علامة كمقروء",
+    "markAllRead": "وضع علامة على الكل كمقروء",
+    "noNotifications": "لا توجد إشعارات",
+    "newMessage": "رسالة جديدة",
+    "systemUpdate": "تحديث النظام",
+    "reminder": "تذكير"
+  }
+}

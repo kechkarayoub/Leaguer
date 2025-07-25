@@ -1,0 +1,78 @@
+{
+  "title": "إعدادات الملف الشخصي",
+  "subtitle": "إدارة إعدادات حسابك وتفضيلاتك",
+  "myProfile": "ملفي الشخصي",
+  "editProfile": "تحرير الملف الشخصي",
+  "viewProfile": "عرض الملف الشخصي",
+  "tabs": {
+    "profile": "معلومات الملف الشخصي",
+    "security": "الأمان"
+  },
+  "profile": {
+    "title": "المعلومات الشخصية",
+    "description": "تحديث تفاصيلك الشخصية ومعلومات الاتصال",
+    "change_photo": "تغيير الصورة",
+    "photo_hint": "JPG أو PNG أو GIF. الحد الأقصى للحجم 2 ميجابايت.",
+    "first_name": "الاسم الأول",
+    "first_name_placeholder": "أدخل اسمك الأول",
+    "last_name": "اسم العائلة",
+    "last_name_placeholder": "أدخل اسم عائلتك",
+    "username": "اسم المستخدم",
+    "email": "عنوان البريد الإلكتروني",
+    "email_placeholder": "أدخل بريدك الإلكتروني",
+    "phone": "رقم الهاتف",
+    "birthDate": "تاريخ الميلاد",
+    "bio": "السيرة الذاتية",
+    "location": "الموقع",
+    "website": "الموقع الإلكتروني",
+    "updating": "جاري التحديث...",
+    "save_changes": "حفظ التغييرات"
+  },
+  "security": {
+    "title": "تغيير كلمة المرور",
+    "description": "قم بتحديث كلمة المرور لحماية حسابك",
+    "current_password": "كلمة المرور الحالية",
+    "current_password_placeholder": "أدخل كلمة المرور الحالية",
+    "new_password": "كلمة المرور الجديدة",
+    "new_password_placeholder": "أدخل كلمة المرور الجديدة",
+    "confirm_password": "تأكيد كلمة المرور الجديدة",
+    "confirm_password_placeholder": "تأكيد كلمة المرور الجديدة",
+    "changing": "جاري تغيير كلمة المرور...",
+    "change_password": "تغيير كلمة المرور",
+    "twoFactor": "المصادقة الثنائية",
+    "enable2FA": "تفعيل المصادقة الثنائية",
+    "disable2FA": "إلغاء المصادقة الثنائية",
+    "loginHistory": "تاريخ تسجيل الدخول",
+    "sessions": "الجلسات النشطة"
+  },
+  "preferences": {
+    "title": "التفضيلات",
+    "language": "اللغة",
+    "timezone": "المنطقة الزمنية",
+    "notifications": "الإشعارات",
+    "privacy": "إعدادات الخصوصية",
+    "theme": "المظهر",
+    "light": "فاتح",
+    "dark": "داكن",
+    "auto": "تلقائي"
+  },
+  "social": {
+    "title": "الحسابات الاجتماعية",
+    "connect": "ربط",
+    "disconnect": "قطع الاتصال",
+    "connected": "متصل",
+    "notConnected": "غير متصل",
+    "google": "Google",
+    "facebook": "Facebook",
+    "twitter": "Twitter",
+    "github": "GitHub"
+  },
+  "messages": {
+    "updateSuccess": "تم تحديث الملف الشخصي بنجاح",
+    "updateError": "فشل في تحديث الملف الشخصي",
+    "passwordChanged": "تم تغيير كلمة المرور بنجاح",
+    "passwordError": "فشل في تغيير كلمة المرور",
+    "deleteConfirm": "هل أنت متأكد من رغبتك في حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.",
+    "deactivateConfirm": "هل أنت متأكد من رغبتك في إلغاء تفعيل حسابك؟"
+  }
+}

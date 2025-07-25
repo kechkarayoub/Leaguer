@@ -1,0 +1,690 @@
+{
+  "app": {
+    "name": "Leaguer",
+    "welcome": "Bienvenue sur Leaguer",
+    "tagline": "Votre plateforme communautaire sportive",
+    "allRightsReserved": "Tous droits réservés.",
+    "user": "Utilisateur",
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "retry": "Réessayer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "close": "Fermer",
+    "open": "Ouvrir",
+    "submit": "Soumettre",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "clear": "Effacer",
+    "reset": "Réinitialiser",
+    "refresh": "Actualiser",
+    "update": "Mettre à jour",
+    "create": "Créer",
+    "add": "Ajouter",
+    "remove": "Supprimer",
+    "yes": "Oui",
+    "no": "Non",
+    "ok": "OK",
+    "remember": "Se souvenir de moi"
+  },
+  "navigation": {
+    "home": "Accueil",
+    "dashboard": "Tableau de bord",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "help": "Aide",
+    "about": "À propos",
+    "contact": "Contact",
+    "logout": "Se déconnecter"
+  },
+  "form": {
+    "required": "Ce champ est requis",
+    "invalid": "Valeur invalide",
+    "email": {
+      "label": "Email",
+      "placeholder": "Entrez votre email",
+      "invalid": "Veuillez entrer une adresse email valide"
+    },
+    "emailOrUsername": {
+      "label": "Email ou Nom d'utilisateur",
+      "placeholder": "Entrez votre email ou nom d'utilisateur",
+      "invalid": "Veuillez entrer une adresse email ou un nom d'utilisateur valide"
+    },
+    "password": {
+      "label": "Mot de passe",
+      "placeholder": "Entrez votre mot de passe",
+      "confirm": "Confirmer le mot de passe",
+      "mismatch": "Les mots de passe ne correspondent pas",
+      "weak": "Le mot de passe est trop faible",
+      "requirements": "Le mot de passe doit contenir au moins 8 caractères et inclure au moins une lettre majuscule, une lettre minuscule et un chiffre"
+    },
+    "name": {
+      "first": "Prénom",
+      "last": "Nom de famille",
+      "username": "Nom d'utilisateur",
+      "full": "Nom complet"
+    },
+    "phone": {
+      "label": "Numéro de téléphone",
+      "placeholder": "Entrez votre numéro de téléphone",
+      "invalid": "Veuillez entrer un numéro de téléphone valide"
+    }
+  },
+  "validation": {
+    "required": "{{field}} est requis",
+    "min": "{{field}} doit contenir au moins {{min}} caractères",
+    "max": "{{field}} ne doit pas dépasser {{max}} caractères",
+    "email": "Veuillez entrer une adresse email valide",
+    "phone": "Veuillez entrer un numéro de téléphone valide",
+    "url": "Veuillez entrer une URL valide",
+    "number": "Veuillez entrer un nombre valide",
+    "integer": "Veuillez entrer un entier valide",
+    "date": "Veuillez entrer une date valide",
+    "time": "Veuillez entrer une heure valide"
+  },
+  "time": {
+    "now": "maintenant",
+    "seconds": "{{count}} seconde_plural",
+    "minutes": "{{count}} minute_plural",
+    "hours": "{{count}} heure_plural",
+    "days": "{{count}} jour_plural",
+    "weeks": "{{count}} semaine_plural",
+    "months": "{{count}} mois_plural",
+    "years": "{{count}} année_plural",
+    "ago": "il y a {{time}}",
+    "in": "dans {{time}}"
+  },
+  "connection": {
+    "online": "Connecté",
+    "offline": "Hors ligne",
+    "connecting": "Connexion...",
+    "reconnecting": "Reconnexion...",
+    "failed": "Échec de la connexion",
+    "lost": "Connexion perdue"
+  },
+  "language": {
+    "select": "Sélectionner la langue",
+    "current": "Langue actuelle",
+    "english": "Anglais",
+    "french": "Français",
+    "arabic": "العربية",
+    "change": "Changer de langue"
+  },
+  "footer": {
+    "quickLinks": "Liens rapides",
+    "about": "À propos de nous",
+    "features": "Fonctionnalités",
+    "contact": "Contact",
+    "support": "Support",
+    "help": "Centre d'aide",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation",
+    "cookies": "Cookies",
+    "followUs": "Suivez-nous"
+  },
+  "about": {
+    "ourMission": "Notre Mission",
+    "missionText": "Chez Leaguer, nous croyons en l'union des communautés sportives. Notre plateforme connecte les athlètes, les équipes et les passionnés de sport, en fournissant des outils pour organiser, participer et exceller dans diverses activités sportives.",
+    "whatWeOffer": "Ce Que Nous Offrons",
+    "teamManagement": "Gestion d'Équipe",
+    "teamManagementDesc": "Créez et gérez des équipes sportives, suivez les statistiques des joueurs et organisez les activités d'équipe.",
+    "eventOrganization": "Organisation d'Événements",
+    "eventOrganizationDesc": "Organisez des tournois, des matchs et des événements sportifs avec des outils de planification et de gestion faciles.",
+    "communityBuilding": "Construction de Communauté",
+    "communityBuildingDesc": "Connectez-vous avec d'autres athlètes, partagez des expériences et construisez des relations durables au sein de la communauté sportive.",
+    "ourValues": "Nos Valeurs",
+    "excellence": "Excellence",
+    "excellenceDesc": "Nous efforcer d'être les meilleurs dans tout ce que nous faisons",
+    "community": "Communauté",
+    "communityDesc": "Construire des connexions qui durent au-delà du jeu",
+    "innovation": "Innovation",
+    "innovationDesc": "Utiliser la technologie pour améliorer l'expérience sportive",
+    "inclusivity": "Inclusivité",
+    "inclusivityDesc": "Accueillir les athlètes de tous niveaux et origines",
+    "getInTouch": "Entrez en Contact",
+    "contactText": "Vous avez des questions ou voulez en savoir plus ? Nous aimerions avoir de vos nouvelles ! Contactez notre équipe pour le support, les partenariats ou les demandes générales."
+  },
+  "features": {
+    "title": "Fonctionnalités Puissantes pour les Communautés Sportives",
+    "subtitle": "Tout ce dont vous avez besoin pour gérer, organiser et développer votre communauté sportive",
+    "coreFeatures": "Fonctionnalités Principales",
+    "teamManagement": "Gestion d'Équipe",
+    "teamManagementDesc": "Créez et gérez des équipes, suivez les listes de joueurs, surveillez les statistiques de performance et organisez les activités d'équipe facilement.",
+    "eventOrganization": "Organisation d'Événements",
+    "eventOrganizationDesc": "Planifiez des tournois, des matchs et des séances d'entraînement. Envoyez des rappels automatisés et gérez la logistique des événements sans effort.",
+    "communication": "Communication en Temps Réel",
+    "communicationDesc": "Restez connecté avec la messagerie instantanée, les annonces d'équipe et les discussions de groupe. Ne manquez jamais les mises à jour importantes.",
+    "analytics": "Analyses de Performance",
+    "analyticsDesc": "Suivez des statistiques détaillées, analysez les tendances de performance et générez des rapports complets pour les joueurs et les équipes.",
+    "tournaments": "Gestion de Tournois",
+    "tournamentsDesc": "Créez et gérez des tournois avec génération de brackets, suivi des scores et planification automatisée.",
+    "mobileApp": "Application Mobile",
+    "mobileAppDesc": "Accédez à toutes les fonctionnalités en déplacement avec nos applications mobiles natives pour iOS et Android.",
+    "advancedFeatures": "Fonctionnalités Avancées",
+    "liveTracking": "Suivi de Match en Direct",
+    "liveTrackingDesc": "Mises à jour des scores en temps réel, commentaires en direct et statistiques de match instantanées.",
+    "integration": "Intégrations Tierces",
+    "integrationDesc": "Connectez-vous avec les trackers de fitness populaires, les systèmes de paiement et les plateformes de médias sociaux.",
+    "security": "Sécurité Avancée",
+    "securityDesc": "Sécurité de niveau entreprise avec chiffrement des données, authentification sécurisée et contrôles de confidentialité.",
+    "getStarted": "Prêt à Commencer ?",
+    "getStartedDesc": "Rejoignez des milliers de communautés sportives qui utilisent déjà Leaguer pour gérer leurs équipes et événements.",
+    "freeTrial": "Essai gratuit de 30 jours",
+    "noSetupFee": "Aucun frais d'installation",
+    "support": "Support client 24/7"
+  },
+  "contact": {
+    "title": "Entrez en Contact",
+    "subtitle": "Vous avez des questions ou besoin d'aide ? Nous sommes là pour vous aider ! Envoyez-nous un message et nous vous répondrons dès que possible.",
+    "info": {
+      "title": "Informations de Contact",
+      "email": "Support par Email",
+      "emailDesc": "Obtenez de l'aide avec votre compte, facturation ou problèmes techniques",
+      "responseTime": "Temps de Réponse",
+      "responseTimeValue": "Dans les 24 heures",
+      "responseTimeDesc": "Nous répondons à toutes les demandes dans un jour ouvrable",
+      "support": "Support Disponible",
+      "supportTime": "Lundi - Vendredi, 9h - 18h EST",
+      "supportDesc": "Notre équipe de support est là pour vous aider pendant les heures d'ouverture"
+    },
+    "form": {
+      "title": "Envoyez-nous un Message",
+      "name": "Nom Complet",
+      "namePlaceholder": "Entrez votre nom complet",
+      "email": "Adresse Email",
+      "emailPlaceholder": "Entrez votre adresse email",
+      "subject": "Sujet",
+      "subjectPlaceholder": "Sélectionnez un sujet",
+      "subjectOptions": {
+        "support": "Support Technique",
+        "billing": "Facturation et Compte",
+        "feature": "Demande de Fonctionnalité",
+        "partnership": "Partenariat",
+        "other": "Autre"
+      },
+      "message": "Message",
+      "messagePlaceholder": "Dites-nous comment nous pouvons vous aider...",
+      "messageMinLength": "Le message doit contenir au moins 10 caractères",
+      "send": "Envoyer le Message",
+      "sending": "Envoi en cours...",
+      "successTitle": "Message Envoyé avec Succès !",
+      "successMessage": "Merci de nous avoir contactés. Nous vous répondrons dans les 24 heures."
+    }
+  },
+  "helpCenter": {
+    "title": "Centre d'Aide",
+    "searchPlaceholder": "Rechercher de l'aide...",
+    "searchButton": "Rechercher",
+    "noResults": "Aucun article trouvé pour votre recherche.",
+    "noResultsSuggestion": "Essayez des mots-clés différents ou consultez nos articles populaires ci-dessous.",
+    "categories": {
+      "gettingStarted": "Commencer",
+      "accountSettings": "Paramètres du Compte",
+      "teamsManagement": "Gestion des Équipes",
+      "troubleshooting": "Dépannage",
+      "billingPayments": "Facturation et Paiements",
+      "privacySecurity": "Confidentialité et Sécurité"
+    },
+    "popularArticles": "Articles Populaires",
+    "allCategories": "Toutes les Catégories",
+    "faqs": {
+      "gettingStarted": {
+        "howToCreateAccount": {
+          "question": "Comment créer un compte ?",
+          "answer": "Pour créer un compte, cliquez sur le bouton 'S'inscrire' en haut à droite de notre page d'accueil. Remplissez votre email, créez un mot de passe et vérifiez votre adresse email pour commencer."
+        },
+        "howToJoinTeam": {
+          "question": "Comment rejoindre une équipe ?",
+          "answer": "Vous pouvez rejoindre une équipe en recevant une invitation d'un gestionnaire d'équipe ou en recherchant des équipes publiques dans votre région. Allez dans 'Équipes' de votre tableau de bord et utilisez la fonction de recherche ou parcourez les équipes disponibles."
+        },
+        "profileSetup": {
+          "question": "Comment configurer mon profil ?",
+          "answer": "Après avoir créé votre compte, allez dans les paramètres de votre profil pour ajouter vos informations personnelles, préférences sportives, niveau de compétence et photo de profil. Un profil complet aide les autres joueurs et équipes à vous trouver."
+        }
+      },
+      "accountSettings": {
+        "changePassword": {
+          "question": "Comment changer mon mot de passe ?",
+          "answer": "Allez dans les Paramètres du Compte, cliquez sur 'Sécurité' et sélectionnez 'Changer le Mot de Passe'. Vous devrez entrer votre mot de passe actuel puis en créer un nouveau."
+        },
+        "updateEmail": {
+          "question": "Comment mettre à jour mon adresse email ?",
+          "answer": "Dans les Paramètres du Compte, allez dans 'Informations Personnelles' et cliquez sur 'Modifier' à côté de votre adresse email. Vous devrez vérifier la nouvelle adresse email avant que le changement prenne effet."
+        },
+        "notificationSettings": {
+          "question": "Comment gérer mes préférences de notification ?",
+          "answer": "Visitez vos Paramètres du Compte et cliquez sur 'Notifications'. Ici vous pouvez choisir quels types de notifications vous souhaitez recevoir par email, notifications push ou SMS."
+        }
+      },
+      "teamsManagement": {
+        "createTeam": {
+          "question": "Comment créer une nouvelle équipe ?",
+          "answer": "Allez dans votre tableau de bord et cliquez sur 'Créer une Équipe'. Remplissez les détails de votre équipe incluant le nom, sport, localisation et description de l'équipe. Vous pouvez ensuite inviter des joueurs à rejoindre votre équipe."
+        },
+        "invitePlayers": {
+          "question": "Comment inviter des joueurs dans mon équipe ?",
+          "answer": "En tant que gestionnaire d'équipe, allez sur la page de votre équipe et cliquez sur 'Inviter des Joueurs'. Vous pouvez envoyer des invitations par email ou partager le code d'invitation de votre équipe avec des membres potentiels."
+        },
+        "manageRoster": {
+          "question": "Comment gérer la liste de mon équipe ?",
+          "answer": "Dans votre panneau de gestion d'équipe, vous pouvez voir tous les membres de l'équipe, assigner des rôles (capitaine, co-capitaine), gérer le statut des joueurs (actif, inactif) et retirer des joueurs si nécessaire."
+        }
+      },
+      "troubleshooting": {
+        "loginIssues": {
+          "question": "Je ne peux pas me connecter à mon compte",
+          "answer": "D'abord, vérifiez que vous utilisez le bon email et mot de passe. Si vous avez oublié votre mot de passe, utilisez le lien 'Mot de passe oublié'. Si les problèmes persistent, videz le cache de votre navigateur ou essayez un navigateur différent."
+        },
+        "notificationsNotWorking": {
+          "question": "Je ne reçois pas de notifications",
+          "answer": "Vérifiez vos paramètres de notification pour vous assurer qu'elles sont activées. Vérifiez aussi que votre adresse email est correcte et consultez votre dossier spam/courrier indésirable. Pour les notifications mobiles, assurez-vous que l'application a la permission d'envoyer des notifications."
+        },
+        "performanceIssues": {
+          "question": "L'application fonctionne lentement",
+          "answer": "Essayez d'actualiser la page ou de redémarrer l'application. Videz le cache de votre navigateur et assurez-vous d'avoir une connexion internet stable. Si les problèmes persistent, essayez un navigateur différent ou mettez à jour votre navigateur actuel."
+        }
+      },
+      "billingPayments": {
+        "subscriptionPlans": {
+          "question": "Quels plans d'abonnement sont disponibles ?",
+          "answer": "Nous offrons des plans Gratuit, Premium et Équipe. Le plan Gratuit inclut les fonctionnalités de base, Premium ajoute des analyses avancées et un support prioritaire, tandis que les plans Équipe incluent des outils de gestion supplémentaires et des limites plus élevées."
+        },
+        "changePaymentMethod": {
+          "question": "Comment mettre à jour ma méthode de paiement ?",
+          "answer": "Allez dans les Paramètres du Compte, sélectionnez 'Facturation' et cliquez sur 'Méthodes de Paiement'. Vous pouvez ajouter une nouvelle carte, mettre à jour les informations de paiement existantes ou définir une carte différente comme méthode de paiement principale."
+        },
+        "refundPolicy": {
+          "question": "Quelle est votre politique de remboursement ?",
+          "answer": "Nous offrons une garantie de remboursement de 30 jours pour tous les abonnements payants. Si vous n'êtes pas satisfait, contactez notre équipe de support dans les 30 jours suivant votre achat pour un remboursement complet."
+        }
+      },
+      "privacySecurity": {
+        "dataProtection": {
+          "question": "Comment protégez-vous mes données personnelles ?",
+          "answer": "Nous utilisons des mesures de chiffrement et de sécurité standard de l'industrie pour protéger vos données. Nous ne vendons jamais vos informations personnelles et ne partageons les données que comme décrit dans notre Politique de Confidentialité."
+        },
+        "deleteAccount": {
+          "question": "Comment supprimer mon compte ?",
+          "answer": "Pour supprimer votre compte, allez dans les Paramètres du Compte, sélectionnez 'Confidentialité et Sécurité' et cliquez sur 'Supprimer le Compte'. Notez que cette action est permanente et ne peut pas être annulée."
+        },
+        "whoCanSeeProfile": {
+          "question": "Qui peut voir les informations de mon profil ?",
+          "answer": "Vous pouvez contrôler la visibilité de votre profil dans les Paramètres de Confidentialité. Vous pouvez choisir de rendre votre profil public, visible uniquement aux membres de l'équipe ou complètement privé."
+        }
+      }
+    },
+    "contactSupport": {
+      "title": "Besoin d'Aide Supplémentaire ?",
+      "description": "Vous ne trouvez pas ce que vous cherchez ? Notre équipe de support est là pour vous aider avec toutes vos questions ou problèmes.",
+      "button": "Contacter le Support",
+      "email": "support@leaguer.com",
+      "responseTime": "Nous répondons généralement dans les 24 heures"
+    }
+  },
+  "privacy": {
+    "title": "Politique de Confidentialité",
+    "lastUpdated": "Dernière mise à jour :",
+    "introduction": {
+      "title": "Introduction",
+      "text": "Chez {{companyName}}, nous nous engageons à protéger votre vie privée et à assurer la sécurité de vos informations personnelles. Cette Politique de Confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous utilisez notre plateforme communautaire sportive."
+    },
+    "informationWeCollect": {
+      "title": "Informations que Nous Collectons",
+      "personalInfo": {
+        "title": "Informations Personnelles",
+        "text": "Nous pouvons collecter des informations personnelles que vous nous fournissez volontairement lorsque vous créez un compte, créez un profil, rejoignez des équipes ou nous contactez. Cela peut inclure :",
+        "items": {
+          "name": "Nom et informations de contact (adresse e-mail, numéro de téléphone)",
+          "profile": "Informations de profil (âge, préférences sportives, niveau de compétence)",
+          "photos": "Photos de profil et autres images que vous téléchargez",
+          "location": "Informations de localisation (si vous choisissez de les partager)"
+        }
+      },
+      "automaticInfo": {
+        "title": "Informations Collectées Automatiquement",
+        "text": "Nous collectons automatiquement certaines informations lorsque vous accédez et utilisez notre plateforme :",
+        "items": {
+          "usage": "Données d'utilisation et analyses",
+          "device": "Informations sur l'appareil et le type de navigateur",
+          "ip": "Adresse IP et données de localisation",
+          "cookies": "Cookies et technologies de suivi similaires"
+        }
+      }
+    },
+    "howWeUse": {
+      "title": "Comment Nous Utilisons Vos Informations",
+      "text": "Nous utilisons les informations que nous collectons aux fins suivantes :",
+      "items": {
+        "provide": "Pour fournir, exploiter et maintenir notre plateforme",
+        "improve": "Pour améliorer, personnaliser et étendre nos services",
+        "communicate": "Pour communiquer avec vous et fournir un support client",
+        "connect": "Pour vous aider à vous connecter avec d'autres joueurs et équipes",
+        "notifications": "Pour vous envoyer des notifications concernant votre compte et vos activités",
+        "security": "Pour surveiller et analyser les modèles d'utilisation à des fins de sécurité",
+        "legal": "Pour nous conformer aux obligations légales et protéger nos droits"
+      }
+    },
+    "informationSharing": {
+      "title": "Partage et Divulgation d'Informations",
+      "text": "Nous ne vendons, n'échangeons ou ne transférons pas vos informations personnelles à des tiers sans votre consentement, sauf dans les circonstances suivantes :",
+      "items": {
+        "consent": "Avec votre consentement explicite",
+        "service": "Avec des prestataires de services de confiance qui nous aident à exploiter notre plateforme",
+        "legal": "Lorsque requis par la loi ou pour protéger nos droits et notre sécurité",
+        "business": "En relation avec un transfert d'entreprise ou une fusion"
+      }
+    },
+    "dataSecurity": {
+      "title": "Sécurité des Données",
+      "text": "Nous mettons en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos informations personnelles contre l'accès non autorisé, l'altération, la divulgation ou la destruction. Cependant, aucune méthode de transmission sur Internet ou de stockage électronique n'est sûre à 100%."
+    },
+    "yourRights": {
+      "title": "Vos Droits de Confidentialité",
+      "text": "Vous avez les droits suivants concernant vos informations personnelles :",
+      "items": {
+        "access": "Accéder et examiner vos informations personnelles",
+        "correct": "Corriger les informations inexactes ou incomplètes",
+        "delete": "Demander la suppression de vos informations personnelles",
+        "restrict": "Restreindre ou vous opposer à certains traitements de vos informations",
+        "portability": "Demander la portabilité des données",
+        "withdraw": "Retirer votre consentement le cas échéant"
+      }
+    },
+    "cookies": {
+      "title": "Cookies et Technologies de Suivi",
+      "text": "Nous utilisons des cookies et des technologies de suivi similaires pour améliorer votre expérience sur notre plateforme. Vous pouvez contrôler les paramètres des cookies via les préférences de votre navigateur."
+    },
+    "childrens": {
+      "title": "Confidentialité des Enfants",
+      "text": "Notre plateforme n'est pas destinée aux enfants de moins de 13 ans. Nous ne collectons pas sciemment d'informations personnelles auprès d'enfants de moins de 13 ans. Si vous apprenez qu'un enfant nous a fourni des informations personnelles, veuillez nous contacter."
+    },
+    "international": {
+      "title": "Transferts Internationaux de Données",
+      "text": "Vos informations peuvent être transférées et traitées dans des pays autres que le vôtre. Nous nous assurons que des garanties appropriées sont en place pour protéger vos informations conformément à cette Politique de Confidentialité."
+    },
+    "changes": {
+      "title": "Modifications de cette Politique de Confidentialité",
+      "text": "Nous pouvons mettre à jour cette Politique de Confidentialité de temps à autre. Nous vous informerons de tout changement important en publiant la nouvelle Politique de Confidentialité sur cette page et en mettant à jour la date de \"Dernière mise à jour\"."
+    },
+    "contact": {
+      "title": "Nous Contacter",
+      "text": "Si vous avez des questions concernant cette Politique de Confidentialité ou nos pratiques de confidentialité, veuillez nous contacter :",
+      "email": "E-mail :",
+      "address": "Adresse :"
+    },
+    "footer": {
+      "text": "En utilisant {{companyName}}, vous reconnaissez avoir lu et compris cette Politique de Confidentialité et acceptez la collecte et l'utilisation de vos informations comme décrit ici."
+    }
+  },
+  "terms": {
+    "title": "Conditions d'Utilisation",
+    "lastUpdated": "Dernière mise à jour :",
+    "introduction": {
+      "title": "Introduction",
+      "text": "Bienvenue sur {{companyName}} ! Ces Conditions d'Utilisation (\"Conditions\") régissent votre utilisation de notre plateforme communautaire sportive et de nos services. En accédant ou en utilisant notre plateforme, vous acceptez d'être lié par ces Conditions."
+    },
+    "acceptance": {
+      "title": "Acceptation des Conditions",
+      "text": "En créant un compte, en accédant ou en utilisant nos services, vous reconnaissez avoir lu, compris et accepté d'être lié par ces Conditions et notre Politique de Confidentialité. Si vous n'acceptez pas ces Conditions, vous ne pouvez pas utiliser nos services."
+    },
+    "eligibility": {
+      "title": "Éligibilité",
+      "text": "Pour utiliser nos services, vous devez :",
+      "items": {
+        "age": "Avoir au moins 13 ans (ou l'âge minimum requis dans votre juridiction)",
+        "capacity": "Avoir la capacité juridique de conclure cet accord",
+        "compliance": "Respecter toutes les lois et réglementations applicables",
+        "accuracy": "Fournir des informations exactes et complètes lors de l'inscription"
+      }
+    },
+    "accountRegistration": {
+      "title": "Inscription et Sécurité du Compte",
+      "text": "Lorsque vous créez un compte chez nous, vous devez fournir des informations exactes, complètes et à jour. Vous êtes responsable de :",
+      "items": {
+        "security": "Maintenir la sécurité de votre compte et mot de passe",
+        "activities": "Toutes les activités qui se produisent sous votre compte",
+        "notify": "Nous informer immédiatement de toute utilisation non autorisée de votre compte",
+        "update": "Maintenir les informations de votre compte exactes et à jour"
+      }
+    },
+    "useOfServices": {
+      "title": "Utilisation des Services",
+      "text": "Notre plateforme fournit des outils et services pour vous aider à vous connecter avec d'autres passionnés de sport, créer et rejoindre des équipes, et participer à des activités sportives. Vous ne pouvez utiliser nos services qu'à des fins légales.",
+      "permitted": {
+        "title": "Utilisations Autorisées",
+        "items": {
+          "connect": "Se connecter avec d'autres joueurs et équipes",
+          "create": "Créer et gérer des équipes sportives",
+          "participate": "Participer à des activités et événements sportifs",
+          "share": "Partager du contenu et des expériences liés au sport"
+        }
+      },
+      "prohibited": {
+        "title": "Utilisations Interdites",
+        "items": {
+          "illegal": "Utiliser la plateforme à des fins illégales ou non autorisées",
+          "harass": "Harceler, abuser ou nuire à d'autres utilisateurs",
+          "spam": "Envoyer du spam, des communications non sollicitées ou s'engager dans des activités commerciales",
+          "impersonate": "Usurper l'identité d'autrui ou fournir de fausses informations",
+          "violate": "Violer des lois, règlements ou droits de tiers",
+          "interfere": "Interférer avec ou perturber la plateforme ou les serveurs"
+        }
+      }
+    },
+    "userContent": {
+      "title": "Contenu Utilisateur",
+      "text": "Vous pouvez soumettre, télécharger ou publier du contenu sur notre plateforme (\"Contenu Utilisateur\"). Vous conservez la propriété de votre Contenu Utilisateur, mais vous nous accordez certains droits pour l'utiliser.",
+      "license": {
+        "title": "Licence sur le Contenu Utilisateur",
+        "text": "En soumettant du Contenu Utilisateur, vous nous accordez une licence mondiale, non exclusive, libre de redevances pour utiliser, reproduire, modifier, adapter, publier, traduire et distribuer votre contenu en relation avec nos services."
+      },
+      "responsibilities": {
+        "title": "Vos Responsabilités",
+        "text": "Vous êtes seul responsable de votre Contenu Utilisateur et devez vous assurer qu'il :",
+        "items": {
+          "legal": "Ne viole aucune loi ou réglementation",
+          "rights": "N'enfreint pas les droits de tiers",
+          "appropriate": "Est approprié et non offensant ou nuisible",
+          "accurate": "Est exact et non trompeur"
+        }
+      }
+    },
+    "privacy": {
+      "title": "Confidentialité et Protection des Données",
+      "text": "Votre vie privée est importante pour nous. Notre collecte et utilisation d'informations personnelles sont régies par notre Politique de Confidentialité, qui est incorporée dans ces Conditions par référence."
+    },
+    "intellectualProperty": {
+      "title": "Propriété Intellectuelle",
+      "text": "La plateforme et son contenu, ses fonctionnalités et sa fonctionnalité appartiennent à {{companyName}} et sont protégés par les lois internationales sur le droit d'auteur, les marques de commerce et autres propriétés intellectuelles."
+    },
+    "payments": {
+      "title": "Paiements et Abonnements",
+      "text": "Certaines fonctionnalités de notre plateforme peuvent nécessiter un paiement. En effectuant un paiement, vous acceptez nos conditions de facturation et nos politiques.",
+      "items": {
+        "authorization": "Vous nous autorisez à débiter votre méthode de paiement pour les frais applicables",
+        "accuracy": "Vous êtes responsable de fournir des informations de paiement exactes",
+        "cancellation": "Vous pouvez annuler votre abonnement à tout moment via les paramètres de votre compte",
+        "refunds": "Les remboursements sont soumis à notre politique de remboursement"
+      }
+    },
+    "disclaimers": {
+      "title": "Avis de Non-responsabilité",
+      "text": "Nos services sont fournis \"en l'état\" et \"selon la disponibilité\" sans garanties d'aucune sorte. Nous déclinons toutes garanties, expresses ou implicites, y compris mais sans s'y limiter la qualité marchande, l'adéquation à un usage particulier et la non-violation."
+    },
+    "limitation": {
+      "title": "Limitation de Responsabilité",
+      "text": "Dans toute la mesure permise par la loi, {{companyName}} ne sera pas responsable de tous dommages indirects, accessoires, spéciaux, consécutifs ou punitifs, ou de toute perte de profits ou de revenus."
+    },
+    "termination": {
+      "title": "Résiliation",
+      "text": "Nous pouvons résilier ou suspendre votre compte et l'accès à nos services à tout moment, avec ou sans motif, et avec ou sans préavis. Vous pouvez également résilier votre compte à tout moment."
+    },
+    "governingLaw": {
+      "title": "Droit Applicable",
+      "text": "Ces Conditions sont régies et interprétées conformément aux lois de la juridiction où notre société est constituée, sans égard aux principes de conflit de lois."
+    },
+    "changes": {
+      "title": "Modifications de ces Conditions",
+      "text": "Nous nous réservons le droit de modifier ces Conditions à tout moment. Nous vous informerons des changements importants en publiant les Conditions mises à jour sur notre plateforme et en mettant à jour la date de \"Dernière mise à jour\"."
+    },
+    "contact": {
+      "title": "Nous Contacter",
+      "text": "Si vous avez des questions concernant ces Conditions d'Utilisation, veuillez nous contacter :",
+      "email": "E-mail :",
+      "address": "Adresse :"
+    },
+    "footer": {
+      "text": "En utilisant {{companyName}}, vous reconnaissez avoir lu et compris ces Conditions d'Utilisation et acceptez d'être lié par elles."
+    }
+  },
+  "cookies": {
+    "title": "Politique des Cookies",
+    "lastUpdated": "Dernière mise à jour :",
+    "introduction": {
+      "title": "Que sont les Cookies ?",
+      "text": "Cette Politique des Cookies explique comment {{companyName}} utilise les cookies et technologies de suivi similaires lorsque vous visitez notre plateforme communautaire sportive. Nous utilisons les cookies pour améliorer votre expérience, analyser les modèles d'utilisation et fournir du contenu personnalisé."
+    },
+    "whatAreCookies": {
+      "title": "Comprendre les Cookies",
+      "text": "Les cookies sont de petits fichiers texte stockés sur votre appareil lorsque vous visitez un site web. Ils aident les sites web à se souvenir d'informations sur votre visite, comme vos paramètres préférés et votre statut de connexion, ce qui peut rendre votre prochaine visite plus facile et le site plus utile pour vous."
+    },
+    "typesOfCookies": {
+      "title": "Types de Cookies que Nous Utilisons",
+      "essential": {
+        "title": "Cookies Essentiels",
+        "text": "Ces cookies sont nécessaires au bon fonctionnement du site web. Ils permettent des fonctionnalités de base comme la sécurité, la gestion du réseau et l'accessibilité.",
+        "items": {
+          "authentication": "Authentification utilisateur et gestion de session",
+          "security": "Sécurité et prévention de la fraude",
+          "functionality": "Fonctionnalité de base du site web et navigation",
+          "preferences": "Vos préférences de consentement pour les cookies"
+        }
+      },
+      "performance": {
+        "title": "Cookies de Performance",
+        "text": "Ces cookies collectent des informations sur la façon dont vous utilisez notre site web, nous aidant à comprendre et améliorer les performances.",
+        "items": {
+          "analytics": "Analyses du site web et statistiques d'utilisation",
+          "errors": "Suivi des erreurs et surveillance des performances",
+          "optimization": "Optimisation du site web et tests A/B",
+          "speed": "Vitesse de chargement et métriques de performance"
+        }
+      },
+      "functional": {
+        "title": "Cookies Fonctionnels",
+        "text": "Ces cookies permettent des fonctionnalités améliorées et la personnalisation, comme se souvenir de vos préférences et paramètres.",
+        "items": {
+          "language": "Préférences de langue et de région",
+          "settings": "Paramètres d'interface utilisateur et personnalisations",
+          "content": "Contenu personnalisé et recommandations",
+          "forms": "Données de formulaire et saisies utilisateur"
+        }
+      },
+      "targeting": {
+        "title": "Cookies de Ciblage",
+        "text": "Ces cookies sont utilisés pour diffuser des publicités et du contenu marketing pertinents basés sur vos intérêts et comportements.",
+        "items": {
+          "advertising": "Publicité ciblée et campagnes marketing",
+          "social": "Intégration et partage sur les réseaux sociaux",
+          "tracking": "Suivi inter-sites et analyse comportementale",
+          "retargeting": "Campagnes de reciblage et remarketing"
+        }
+      }
+    },
+    "thirdParty": {
+      "title": "Cookies de Tiers",
+      "text": "Nous pouvons utiliser des services tiers qui placent des cookies sur notre site web. Ces services nous aident à fournir de meilleures fonctionnalités et à analyser les performances du site web.",
+      "items": {
+        "analytics": "Google Analytics pour l'analyse du site web et le suivi du comportement utilisateur",
+        "social": "Plateformes de réseaux sociaux pour les fonctionnalités de partage et d'intégration",
+        "payment": "Processeurs de paiement pour la gestion sécurisée des transactions",
+        "support": "Services de support client et de chat"
+      }
+    },
+    "duration": {
+      "title": "Combien de Temps Durent les Cookies ?",
+      "text": "Les cookies ont différentes durées de vie selon leur but :",
+      "items": {
+        "session": {
+          "title": "Cookies de Session :",
+          "text": "Ceux-ci sont temporaires et sont supprimés quand vous fermez votre navigateur"
+        },
+        "persistent": {
+          "title": "Cookies Persistants :",
+          "text": "Ceux-ci restent sur votre appareil pendant une période définie ou jusqu'à ce que vous les supprimiez"
+        },
+        "longTerm": {
+          "title": "Cookies à Long Terme :",
+          "text": "Certains cookies peuvent durer jusqu'à 2 ans pour se souvenir de vos préférences"
+        }
+      }
+    },
+    "managing": {
+      "title": "Gérer Vos Préférences de Cookies",
+      "text": "Vous avez plusieurs options pour gérer les cookies sur notre site web :",
+      "consent": {
+        "title": "Bannière de Consentement aux Cookies",
+        "text": "Lors de votre première visite sur notre site web, vous verrez une bannière de consentement aux cookies où vous pouvez choisir quels types de cookies accepter ou rejeter."
+      },
+      "browser": {
+        "title": "Paramètres du Navigateur",
+        "text": "Vous pouvez contrôler et supprimer les cookies via les paramètres de votre navigateur. La plupart des navigateurs vous permettent de :",
+        "items": {
+          "view": "Voir et supprimer les cookies existants",
+          "block": "Bloquer les cookies de sites web spécifiques",
+          "disable": "Désactiver tous les cookies (peut affecter les fonctionnalités du site)",
+          "notify": "Recevoir des notifications quand des cookies sont placés"
+        }
+      }
+    },
+    "browserInstructions": {
+      "title": "Instructions Spécifiques par Navigateur",
+      "text": "Voici des liens vers les instructions de gestion des cookies pour les navigateurs populaires :",
+      "chrome": "Paramètres Cookies Chrome",
+      "firefox": "Paramètres Cookies Firefox",
+      "safari": "Paramètres Cookies Safari",
+      "edge": "Paramètres Cookies Edge"
+    },
+    "impact": {
+      "title": "Impact de la Désactivation des Cookies",
+      "text": "Veuillez noter que la désactivation de certains cookies peut affecter votre expérience sur notre site web :",
+      "items": {
+        "functionality": "Certaines fonctionnalités peuvent ne pas fonctionner correctement ou être indisponibles",
+        "personalization": "Le contenu personnalisé et les recommandations peuvent ne pas s'afficher",
+        "preferences": "Vos préférences et paramètres peuvent ne pas être mémorisés",
+        "analytics": "Nous ne pourrons peut-être pas améliorer nos services basés sur les modèles d'utilisation"
+      }
+    },
+    "updates": {
+      "title": "Mises à Jour de cette Politique",
+      "text": "Nous pouvons mettre à jour cette Politique des Cookies de temps en temps pour refléter les changements technologiques, législatifs ou de nos pratiques commerciales. Nous vous informerons de tout changement significatif en mettant à jour la date \"Dernière mise à jour\" en haut de cette politique."
+    },
+    "contact": {
+      "title": "Nous Contacter",
+      "text": "Si vous avez des questions sur notre utilisation des cookies ou cette Politique des Cookies, veuillez nous contacter :",
+      "email": "E-mail :"
+    },
+    "footer": {
+      "text": "En continuant à utiliser {{companyName}}, vous reconnaissez avoir lu et compris cette Politique des Cookies et consentez à notre utilisation des cookies comme décrit ici."
+    }
+  },
+  "actions": {
+    "close": "Fermer"
+  },
+  "messages": {
+    "login_success": "Connexion réussie",
+    "login_success_remembered": "Connexion réussie. Vous resterez connecté.",
+    "login_failed": "Échec de la connexion",
+    "logout_success": "Déconnexion réussie",
+    "register_success": "Inscription réussie",
+    "register_failed": "Échec de l'inscription",
+    "profile_updated": "Profil mis à jour avec succès",
+    "profile_update_failed": "Échec de la mise à jour du profil"
+  }
+}
