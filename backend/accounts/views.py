@@ -1,6 +1,6 @@
 from .models import User
 from .serializers import UserSerializer
-from .utils import format_phone_number, send_verification_email, send_phone_number_verification_code
+from .utils import format_phone_number, send_verification_email, send_phone_number_verification_code, send_password_reset_email, validate_password_reset_token
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
 from django.conf import settings
@@ -23,6 +23,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 import datetime
 import logging
 import os
+from google.auth.transport import requests
+from google.oauth2 import id_token
 import firebase_config
 
 # Get a logger instance
@@ -189,24 +191,51 @@ class SignInThirdPartyView(APIView):
         """
         email = request.data.get("email")
         current_language = request.data.get("selected_language") or 'fr'
-        id_token = request.data.get("id_token")
+        token_value = request.data.get("id_token")
         type_third_party = request.data.get("type_third_party")
-
+        from_platform = request.data.get("from_platform") or 'web'
+        
         activate(current_language)
 
-        if not email or not type_third_party or not id_token:
+        if not email or not type_third_party or not token_value:
             return Response(
                 {"message": _("Email, Id token and Third party type are required"), "success": False},
                 status=status.HTTP_400_BAD_REQUEST
             )
         try:
-            # Verify the token using Firebase Admin SDK
+            # For Google OAuth, validate the token using Google OAuth verification
             if type_third_party == "google":
-                decoded_token = auth.verify_id_token(id_token)
-                email = decoded_token.get('email') == email and email
+                try:
+                    # The token you receive is a Google OAuth ID token, not a Firebase token
+                    # Use Google OAuth verification instead of Firebase
+                    request_adapter = requests.Request()
+                    
+                    # Your Google OAuth client ID (the audience in the token)
+                    GOOGLE_CLIENT_ID = getattr(settings, 'GOOGLE_SIGN_IN_WEB_CLIENT_ID', None)
+                    
+                    # Verify the Google OAuth ID token
+                    idinfo = id_token.verify_oauth2_token(token_value, request_adapter, GOOGLE_CLIENT_ID)
+                    
+                    # Check if the token is valid and email matches
+                    verified_email = idinfo.get('email')
+                    email_verified = idinfo.get('email_verified', False)
+                    
+                    if verified_email == email and email_verified:
+                        email = verified_email
+                        logger.info(f"Successfully verified Google OAuth token for email: {email}")
+                    else:
+                        logger.warning(f"Email mismatch or not verified: provided={email}, token={verified_email}, verified={email_verified}")
+                        email = None
+                        
+                except Exception as google_error:
+                    logger.error(f"Google OAuth token verification failed: {str(google_error)}")
+                    email = None
             else:
+                # For other third-party providers, implement similar verification
+                logger.warning(f"Third-party provider '{type_third_party}' not implemented yet")
                 email = None
-        except:
+        except Exception as e:
+            logger.error(f"Unexpected error during token verification: {str(e)}")
             email = None
         user = User.objects.filter(email=email).first()
 
@@ -244,6 +273,134 @@ class SignInThirdPartyView(APIView):
             }, status=status.HTTP_200_OK)
         else:
             return Response({"message": _("Invalid credentials"), "success": False}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ForgotPasswordView(APIView):
+    """
+    API endpoint for requesting password reset.
+    Sends a password reset email to the user if the email exists.
+    """
+    permission_classes = [AllowAny]
+
+    # noinspection PyMethodMayBeStatic
+    def post(self, request):
+        """
+        Handles password reset request.
+
+        Request Body:
+        - email_or_username (str): User's email address or username.
+        - selected_language (str, optional): Language preference.
+
+        Response:
+        - Success: Confirmation message (always success for security).
+        - Note: For security, always returns success even if email/username doesn't exist.
+        """
+        email_or_username = request.data.get("email_or_username")
+        current_language = request.data.get("selected_language") or 'fr'
+
+        activate(current_language)
+
+        if not email_or_username:
+            return Response(
+                {"message": _("Email or username is required"), "success": False},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Always return success message for security (don't reveal if email/username exists)
+        success_message = _("If an account with this email or username exists, you will receive a password reset link shortly.")
+        
+        try:
+            # Check if user exists with this email or username
+            user = None
+            if "@" in email_or_username:
+                # It's likely an email
+                user = User.objects.filter(email=email_or_username, is_active=True, is_user_deleted=False).first()
+            else:
+                # It's likely a username, find user by username and get their email
+                user = User.objects.filter(username=email_or_username, is_active=True, is_user_deleted=False).first()
+
+
+            if user:
+                # Set user's language for email
+                if user.current_language != current_language:
+                    user.current_language = current_language
+                    user.save()
+                
+                # Send password reset email
+                send_password_reset_email(user)
+                
+        except Exception as e:
+            # Log the error but don't expose it to the user
+            logger.error(f"Error sending password reset email: {str(e)}")
+
+        return Response({
+            "message": success_message,
+            "success": True,
+        }, status=status.HTTP_200_OK)
+
+
+class ResetPasswordView(APIView):
+    """
+    API endpoint for resetting password using the token from email.
+    """
+    permission_classes = [AllowAny]
+
+    # noinspection PyMethodMayBeStatic
+    def post(self, request):
+        """
+        Handles password reset with token.
+
+        Request Body:
+        - uid (str): Base64 encoded user ID.
+        - token (str): Password reset token.
+        - new_password (str): New password.
+        - selected_language (str, optional): Language preference.
+
+        Response:
+        - Success: Confirmation of password reset.
+        - Failure: Error messages with proper status codes.
+        """
+        uid = request.data.get("uid")
+        token = request.data.get("token")
+        new_password = request.data.get("new_password")
+        current_language = request.data.get("selected_language") or 'fr'
+
+        activate(current_language)
+
+        if not uid or not token or not new_password:
+            return Response(
+                {"message": _("All fields are required"), "success": False},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Validate the token and get user
+        is_valid, user, error_message = validate_password_reset_token(uid, token)
+        
+        if not is_valid:
+            return Response({
+                "message": _(error_message) if error_message else _("Invalid or expired reset token. Please request a new password reset."),
+                "success": False,
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Activate user's language
+            activate(user.current_language)
+            
+            # Reset password
+            user.set_password(new_password)
+            user.save()
+            
+            return Response({
+                "message": _("Password has been reset successfully. You can now log in with your new password."),
+                "success": True,
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            logger.error(f"Error resetting password: {str(e)}")
+            return Response({
+                "message": _("An error occurred while resetting your password. Please try again."),
+                "success": False,
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # class SignUpView(APIView):

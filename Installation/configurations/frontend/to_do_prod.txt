@@ -1,3 +1,11 @@
-Get api keys for .env file.
-Change App name in .env.
-Change assets/image/logo_main.png.
+Change variables in .env.
+Change "Leaguer\frontend\web\src\logo.png".
+Change "Leaguer\frontend\web\src\logo.svg".
+Change "Leaguer\frontend\web\public\android-chrome-192x192.png".
+Change "Leaguer\frontend\web\public\android-chrome-512x512.png".
+Change "Leaguer\frontend\web\public\apple-touch-icon.png".
+Change "Leaguer\frontend\web\public\favicon.ico".
+Change "Leaguer\frontend\web\public\favicon-16x16.png".
+Change "Leaguer\frontend\web\public\favicon-32x32.png".
+Change "Leaguer\frontend\web\public\logo192.png".
+Change "Leaguer\frontend\web\public\logo512.png".

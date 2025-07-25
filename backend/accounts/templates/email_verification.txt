@@ -7,4 +7,4 @@ Hello {{ first_name }},
 Thank you for registering. Please verify your email by clicking the link below:
 {% endblocktrans %}
 
-{{ verification_url }}
+{{ verification_url|safe }}

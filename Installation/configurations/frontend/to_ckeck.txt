@@ -1,0 +1,6 @@
+AboutUsModal.tsx and its translations.
+FeaturesModal.tsx and its translations.
+HelpCenterModal.tsx and its translations.
+PrivacyPolicyModal.tsx and its translations.
+TermsOfServiceModal.tsx and its translations.
+CookiesPolicyModal.tsx and its translations.

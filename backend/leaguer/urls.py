@@ -7,7 +7,7 @@ from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path, re_path
-from .views import get_geolocation, health_check, api_info
+from .views import get_geolocation, health_check, api_info, contact_message_create
 
 
 # API endpoints (no i18n)
@@ -15,6 +15,7 @@ api_patterns = [
     path('api/health/', health_check, name='health_check'),
     path('api/info/', api_info, name='api_info'),
     path('api/geolocation/', get_geolocation, name="geolocation_info"),
+    path('api/contact/', contact_message_create, name='contact_message_create'),
     path('accounts/', include('accounts.urls')),
 ]
 

@@ -147,3 +147,114 @@ def send_phone_number_verification_code(user, handle_send_phone_number_verificat
     user.save()
     return 200, (uid, verification_code)
 
+
+def send_password_reset_email(user, handle_send_email_error=False, do_not_mock_api=False):
+    """
+    Sends a password reset email to the user.
+
+    Args:
+        user (User): The user object to send the email to.
+        handle_send_email_error (bool): Flag to simulate an intentional error for testing.
+        do_not_mock_api (bool): Flag to api even if it is for testing.
+
+    Returns:
+        tuple: A tuple containing the status code (int) and token data (tuple).
+    """
+    # Generate user's token
+    token_ = default_token_generator.make_token(user)
+    # Get current timestamp as str
+    timestamp_str = str(now().timestamp())
+    # Generate final token that contains timestamp for expiration validation
+    token = token_ + "_*_" + timestamp_str
+    # Encode user's id
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+    # Build the password reset URL
+    # This url is for frontend and it not the backend url: accounts/reset-password
+    reset_url = f"{settings.FRONTEND_ENDPOINT}/auth/reset-password?uid={uid}&token={token}"
+
+    # Render the email content
+    subject = _("Password Reset Request")
+    # Get emails common context
+    context = get_email_base_context()
+    # Add custom context to password reset email
+    context.update({
+        "email_title": _("Password Reset Request"), "user": user, "reset_url": reset_url,
+    })
+    text_content = render_to_string("password_reset.txt", context)  # Plain text fallback
+    html_content = render_to_string("password_reset.html", context)  # HTML content
+
+    # Send the email
+    try:
+
+        if settings.DEBUG or settings.TEST:
+            print("html_content")
+            print(html_content)
+        # This is for testing send email's error from third party
+        if handle_send_email_error:
+            err = int("text")
+        if settings.TEST and do_not_mock_api is False:
+            return 200, (uid, token)
+        email = EmailMultiAlternatives(subject, text_content, context.get('from_email'), [user.email])
+        email.attach_alternative(html_content, "text/html")
+        email.send()
+    except (
+        SMTPAuthenticationError, SMTPSenderRefused, SMTPRecipientsRefused, SMTPDataError,
+        SMTPException, UnicodeEncodeError, TypeError, ValueError, OverflowError, Exception
+    ) as e:
+        # Save the error in the log
+        logger.error("Error while sending password reset email: %s", str(e), exc_info=True)
+        return 500, (uid, token)
+
+    return 200, (uid, token)
+
+
+def validate_password_reset_token(uid, token):
+    """
+    Validates a password reset token.
+
+    Args:
+        uid (str): The base64 encoded user ID.
+        token (str): The password reset token.
+
+    Returns:
+        tuple: (is_valid, user, error_message)
+    """
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+    
+    try:
+        # Decode user id
+        user_id = urlsafe_base64_decode(uid).decode()
+        user = User.objects.get(pk=user_id)
+    except (TypeError, ValueError, OverflowError, UnicodeDecodeError, User.DoesNotExist):
+        return False, None, "Invalid user"
+
+    # Check if user is active
+    if not user.is_active:
+        return False, None, "User account is disabled"
+
+    # Split token to get the actual token and timestamp
+    try:
+        token_parts = token.split("_*_")
+        if len(token_parts) != 2:
+            return False, None, "Invalid token format"
+        
+        actual_token, timestamp_str = token_parts
+        timestamp = float(timestamp_str)
+    except (ValueError, IndexError):
+        return False, None, "Invalid token format"
+
+    # Check if token is expired (24 hours)
+    current_timestamp = now().timestamp()
+    token_age_hours = (current_timestamp - timestamp) / 3600
+    
+    if token_age_hours > 24:  # 24 hours expiration
+        return False, None, "Token has expired"
+
+    # Verify the token
+    if not default_token_generator.check_token(user, actual_token):
+        return False, None, "Invalid token"
+
+    return True, user, None
+

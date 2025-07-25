@@ -99,3 +99,52 @@ def api_info(request):
         "timezone": settings.TIME_ZONE,
     }, status=status.HTTP_200_OK)
 
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def contact_message_create(request):
+    """
+    Create a new contact message.
+    
+    POST /api/contact/
+    
+    Request Body:
+        - name (str): Full name of the person
+        - email (str): Email address for response
+        - subject (str): Subject category (support, billing, feature, partnership, other)
+        - message (str): The message content (min 10 characters)
+    
+    Returns:
+        201: Message created successfully
+        400: Validation errors
+    """
+    from .serializers import ContactMessageSerializer
+    
+    try:
+        serializer = ContactMessageSerializer(data=request.data, context={'request': request})
+        
+        if serializer.is_valid():
+            contact_message = serializer.save()
+            
+            # Log the contact message creation
+            logger.info(f"Contact message created: ID {contact_message.id} from {contact_message.email}")
+            
+            return Response({
+                'success': True,
+                'message': _('Your message has been sent successfully. We will get back to you within 24 hours.'),
+                'id': contact_message.id
+            }, status=status.HTTP_201_CREATED)
+        else:
+            return Response({
+                'success': False,
+                'message': _('Please correct the errors below.'),
+                'errors': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+            
+    except Exception as e:
+        logger.error(f"Error creating contact message: {str(e)}")
+        return Response({
+            'success': False,
+            'message': _('An error occurred while sending your message. Please try again later.')
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+

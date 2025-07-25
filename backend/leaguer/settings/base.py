@@ -143,6 +143,9 @@ LOCALE_PATHS = [
 BACKEND_ENDPOINT = get_secret("BACKEND_ENDPOINT")
 FRONTEND_ENDPOINT = get_secret("FRONTEND_ENDPOINT", "")
 
+# Google OAuth settings
+GOOGLE_SIGN_IN_WEB_CLIENT_ID = get_secret("GOOGLE_SIGN_IN_WEB_CLIENT_ID", "")
+
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = f"{BACKEND_ENDPOINT}/static/" # this is for showing images in email in dev environement
 STATIC_URL = '/static/'
@@ -207,7 +210,7 @@ CORS_ALLOW_HEADERS = [
 ]
 
 # Application constants
-COMPANY_ADDRESS = "400 AV ZERKTOUNI, BOURGONE, CASABLANCA, MOROCCO"
+COMPANY_ADDRESS = get_secret("COMPANY_ADDRESS", "")
 APPLICATION_NAME = "LEAGUER"
 DEFAULT_PHONE_NUMBER_COUNTRY_CODE = "MA"
 MINIMUM_AGE_ALLOWED_FOR_USERS = 12
