@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-24 23:23+0000\n"
+"POT-Creation-Date: 2025-07-26 12:04+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,16 +17,191 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+#: admin.py:79
+#, python-format
+msgid "%(count)d message(s) marked as in progress."
+msgstr "%(count)d message(s) marqués comme en cours."
 
-#: settings/common.py:213
+#: admin.py:81
+msgid "Mark as in progress"
+msgstr "Marquer comme en cours"
+
+#: admin.py:90
+#, python-format
+msgid "%(count)d message(s) marked as resolved."
+msgstr "%(count)d message(s) marqués comme résolus."
+
+#: admin.py:92
+msgid "Mark as resolved"
+msgstr "Marquer comme résolu"
+
+#: admin.py:101
+#, python-format
+msgid "%(count)d message(s) marked as closed."
+msgstr "%(count)d message(s) marqués comme fermés."
+
+#: admin.py:103
+msgid "Mark as closed"
+msgstr "Marquer comme fermé"
+
+#: models.py:12
+msgid "Technical Support"
+msgstr "Support technique"
+
+#: models.py:13
+msgid "Billing & Account"
+msgstr "Facturation et compte"
+
+#: models.py:14
+msgid "Feature Request"
+msgstr "Demande de fonctionnalité"
+
+#: models.py:15
+msgid "Partnership"
+msgstr "Partenariat"
+
+#: models.py:16
+msgid "Other"
+msgstr "Autre"
+
+#: models.py:20
+msgid "New"
+msgstr "Nouveau"
+
+#: models.py:21
+msgid "In Progress"
+msgstr "En cours"
+
+#: models.py:22
+msgid "Resolved"
+msgstr "Résolu"
+
+#: models.py:23
+msgid "Closed"
+msgstr "Fermé"
+
+#: models.py:29
+msgid "Full Name"
+msgstr "Nom complet"
+
+#: models.py:30
+msgid "The full name of the person contacting us"
+msgstr "Le nom complet de la personne qui nous contacte"
+
+#: models.py:34
+msgid "Email Address"
+msgstr "Adresse e-mail"
+
+#: models.py:35
+msgid "Email address for response"
+msgstr "Adresse e-mail pour la réponse"
+
+#: models.py:41
+msgid "Subject"
+msgstr "Sujet"
+
+#: models.py:42
+msgid "Category of the inquiry"
+msgstr "Catégorie de la demande"
+
+#: models.py:47
+msgid "Message"
+msgstr "Message"
+
+#: models.py:48
+msgid "The detailed message from the user"
+msgstr "Le message détaillé de l'utilisateur"
+
+#: models.py:56
+msgid "Status"
+msgstr "Statut"
+
+#: models.py:57
+msgid "Current status of the message"
+msgstr "Statut actuel du message"
+
+#: models.py:63
+msgid "Created At"
+msgstr "Créé le"
+
+#: models.py:64
+msgid "When the message was submitted"
+msgstr "Quand le message a été soumis"
+
+#: models.py:69
+msgid "Updated At"
+msgstr "Mis à jour le"
+
+#: models.py:70
+msgid "When the message was last updated"
+msgstr "Quand le message a été mis à jour pour la dernière fois"
+
+#: models.py:79
+msgid "User"
+msgstr "Utilisateur"
+
+#: models.py:80
+msgid "Associated user account if logged in"
+msgstr "Compte utilisateur associé si connecté"
+
+#: models.py:86
+msgid "Admin Notes"
+msgstr "Notes administrateur"
+
+#: models.py:87
+msgid "Internal notes for administrators"
+msgstr "Notes internes pour les administrateurs"
+
+#: models.py:93
+msgid "Contact Message"
+msgstr "Message de contact"
+
+#: models.py:94
+msgid "Contact Messages"
+msgstr "Messages de contact"
+
+#: serializers.py:29
+msgid "Message must be at least 10 characters long"
+msgstr "Le message doit contenir au moins 10 caractères"
+
+#: serializers.py:39
+msgid "Name is required"
+msgstr "Le nom est requis"
+
+#: services.py:43 tests/test_functionalities.py:376
+msgid "Geolocation service unavailable. Try again later."
+msgstr "Service de géolocalisation indisponible. Veuillez réessayer plus tard."
+
+#: services.py:83
+msgid "Geolocation service unavailable"
+msgstr "Service de géolocalisation indisponible"
+
+#: services.py:105
+#, python-brace-format
+msgid "Your verification code is: {code}"
+msgstr "Votre code de vérification est : {code}"
+
+#: services.py:114
+msgid "Failed to send verification code"
+msgstr "Échec de l'envoi du code de vérification"
+
+#: services.py:120
+msgid "Message sending service unavailable"
+msgstr "Service d'envoi de messages indisponible"
+
+#: services.py:145
+msgid "Bulk message sending failed"
+msgstr "Échec de l'envoi de messages groupés"
+
+#: settings/base.py:131
 msgid "Arabic"
 msgstr "Arabe"
 
-#: settings/common.py:214
+#: settings/base.py:132
 msgid "English"
 msgstr "Anglais"
 
-#: settings/common.py:215
+#: settings/base.py:133
 msgid "French"
 msgstr "Français"
 
@@ -35,38 +210,81 @@ msgstr "Français"
 msgid "%(current_year)s © %(app_name)s. All rights reserved."
 msgstr "%(current_year)s © %(app_name)s. Tous droits réservés."
 
-#: utils.py:55 utils.py:94
+#: tests/test_functionalities.py:167 tests/test_functionalities.py:177
+#: utils.py:58 utils.py:117
 msgid "Select"
 msgstr "Sélectionner"
 
-#: utils.py:94
+#: utils.py:117
 msgid "Apple"
 msgstr "Apple"
 
-#: utils.py:94
+#: utils.py:117
 msgid "Default"
-msgstr "Default"
+msgstr "Défaut"
 
-#: utils.py:94
+#: utils.py:117
 msgid "Facebook"
 msgstr "Facebook"
 
-#: utils.py:94
+#: utils.py:117
 msgid "Google"
 msgstr "Google"
 
-#: utils.py:95
+#: utils.py:118
 msgid "Sms"
 msgstr "Sms"
 
-#: utils.py:95
+#: utils.py:118
 msgid "Yahoo"
 msgstr "Yahoo"
 
-#: utils.py:95
+#: utils.py:118
 msgid "Whatsapp"
 msgstr "Whatsapp"
 
-#: utils.py:95
+#: utils.py:118
 msgid "X"
 msgstr "X"
+
+#: views.py:64
+msgid "An unexpected error occurred"
+msgstr "Une erreur inattendue s'est produite"
+
+#: views.py:134
+msgid ""
+"Your message has been sent successfully. We will get back to you within 24 "
+"hours."
+msgstr "Votre message a été envoyé avec succès. Nous vous répondrons sous 24 heures."
+
+#: views.py:140
+msgid "Please correct the errors below."
+msgstr "Veuillez corriger les erreurs ci-dessous."
+
+#: views.py:148
+msgid "An error occurred while sending your message. Please try again later."
+msgstr "Une erreur s'est produite lors de l'envoi de votre message. Veuillez réessayer plus tard."
+
+#: ws_consumers.py:77
+msgid "Connected to profile updates"
+msgstr "Connecté aux mises à jour du profil"
+
+#: ws_consumers.py:104
+msgid "Unknown message type"
+msgstr "Type de message inconnu"
+
+#: ws_consumers.py:107
+msgid "Invalid JSON format"
+msgstr "Format JSON invalide"
+
+#: ws_consumers.py:110
+msgid "Internal server error"
+msgstr "Erreur interne du serveur"
+
+#: ws_consumers.py:133
+msgid "Error processing profile update"
+msgstr "Erreur lors du traitement de la mise à jour du profil"
+
+#: ws_consumers.py:149
+msgid "Error processing notification"
+msgstr "Erreur lors du traitement de la notification"

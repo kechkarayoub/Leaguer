@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-04 23:07+0000\n"
+"POT-Creation-Date: 2025-07-26 12:03+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,18 +17,17 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
 #: admin.py:24
 msgid "Personal Info"
-msgstr "Personal Info"
+msgstr ""
 
 #: admin.py:31
 msgid "Permissions"
-msgstr "Permissions"
+msgstr ""
 
 #: admin.py:38
 msgid "Important Dates"
-msgstr "Important Dates"
+msgstr ""
 
 #: apps.py:8
 msgid "Accounts"
@@ -42,91 +41,91 @@ msgstr ""
 msgid "Users"
 msgstr ""
 
-#: models.py:45
+#: models.py:51
 msgid "Current language"
 msgstr ""
 
-#: models.py:46
+#: models.py:52
 msgid "Email"
 msgstr ""
 
-#: models.py:47
+#: models.py:53
 msgid "First name"
 msgstr ""
 
-#: models.py:48
+#: models.py:54
 msgid "Is active"
 msgstr ""
 
-#: models.py:49
-msgid "Is email validated"
-msgstr ""
-
-#: models.py:50
+#: models.py:55
 msgid "Is deleted"
 msgstr ""
 
-#: models.py:51
-msgid "Is phone number validated"
-msgstr ""
-
-#: models.py:52
-msgid "Last name"
-msgstr ""
-
-#: models.py:53
-msgid "Number of phone number's verification code used"
-msgstr ""
-
-#: models.py:54
-msgid "Address"
-msgstr ""
-
-#: models.py:55
-msgid "Birthday"
-msgstr ""
-
 #: models.py:56
-msgid "CIN"
+msgid "Is email validated"
 msgstr ""
 
 #: models.py:57
-msgid "Country"
+msgid "Is phone number validated"
 msgstr ""
 
 #: models.py:58
-msgid "GENDER"
+msgid "Last name"
 msgstr ""
 
 #: models.py:59
-msgid "Image url"
+msgid "Number of phone number's verification code used"
 msgstr ""
 
 #: models.py:60
-msgid "Initials background color"
+msgid "Address"
 msgstr ""
 
 #: models.py:61
-msgid "Phone number"
+msgid "Birthday"
 msgstr ""
 
 #: models.py:62
-msgid "Phone number's verification code"
+msgid "CIN"
 msgstr ""
 
 #: models.py:63
-msgid "Phone number's verification code generation date"
+msgid "Country"
 msgstr ""
 
 #: models.py:64
-msgid "Phone number to verify"
+msgid "GENDER"
 msgstr ""
 
 #: models.py:65
-msgid "Phone number verified by"
+msgid "Image url"
 msgstr ""
 
 #: models.py:66
+msgid "Initials background color"
+msgstr ""
+
+#: models.py:67
+msgid "Phone number"
+msgstr ""
+
+#: models.py:68
+msgid "Phone number's verification code"
+msgstr ""
+
+#: models.py:69
+msgid "Phone number's verification code generation date"
+msgstr ""
+
+#: models.py:70
+msgid "Phone number to verify"
+msgstr ""
+
+#: models.py:71
+msgid "Phone number verified by"
+msgstr ""
+
+#: models.py:72
 msgid "Time zone"
 msgstr ""
 
@@ -142,6 +141,10 @@ msgstr ""
 
 #: serializers.py:70
 msgid "The minimum age allowed for users is: "
+msgstr ""
+
+#: services.py:240
+msgid "Verify your email address"
 msgstr ""
 
 #: templates/email_verification.html:4
@@ -168,7 +171,7 @@ msgid ""
 "If you did not sign up for this account, you can safely ignore this email."
 msgstr ""
 
-#: templates/email_verification.txt:2
+#: templates/email_verification.txt:2 templates/password_reset.txt:2
 #, python-format
 msgid ""
 "\n"
@@ -180,6 +183,54 @@ msgid ""
 "\n"
 "Thank you for registering. Please verify your email by clicking the link "
 "below:\n"
+msgstr ""
+
+#: templates/password_reset.html:4 utils.py:177 utils.py:182
+msgid "Password Reset Request"
+msgstr ""
+
+#: templates/password_reset.html:7
+#, python-format
+msgid "Hello, %(first_name)s!"
+msgstr ""
+
+#: templates/password_reset.html:8
+msgid ""
+"You have requested to reset your password. Please click the link below to "
+"reset your password:"
+msgstr ""
+
+#: templates/password_reset.html:10
+msgid "Reset Password"
+msgstr ""
+
+#: templates/password_reset.html:12
+msgid "This link will expire in 24 hours."
+msgstr ""
+
+#: templates/password_reset.html:13
+msgid ""
+"If you did not request this password reset, you can safely ignore this email."
+msgstr ""
+
+#: templates/password_reset.txt:6
+msgid ""
+"\n"
+"You have requested to reset your password. Please click the link below to "
+"reset your password:\n"
+msgstr ""
+
+#: templates/password_reset.txt:12
+msgid ""
+"\n"
+"This link will expire in 24 hours.\n"
+msgstr ""
+
+#: templates/password_reset.txt:16
+msgid ""
+"\n"
+"If you did not request this password reset, you can safely ignore this "
+"email.\n"
 msgstr ""
 
 #: templates/sms_verification.txt:2
@@ -205,132 +256,160 @@ msgstr ""
 msgid "Verify Your Email Address"
 msgstr ""
 
-#: views.py:60
+#: views.py:62
 msgid "User id is required"
 msgstr ""
 
-#: views.py:70
+#: views.py:72
 msgid "Your email is already verified. Try to sign in."
 msgstr ""
 
-#: views.py:78
+#: views.py:80
 msgid ""
 "Email not sent. Please contact the technical team to resolve your issue."
 msgstr ""
 
-#: views.py:80
+#: views.py:82
 msgid ""
 "A new verification link has been sent to your email address. Please verify "
 "your email before logging in."
 msgstr ""
 
-#: views.py:114
+#: views.py:116
 msgid "Email/Username and password are required"
 msgstr ""
 
-#: views.py:127 views.py:217
+#: views.py:129 views.py:246
 msgid ""
 "Your account is deleted. Please contact the technical team to resolve your "
 "issue."
 msgstr ""
 
-#: views.py:135 views.py:225
+#: views.py:137 views.py:254
 msgid ""
 "Your account is inactive. Please contact the technical team to resolve your "
 "issue."
 msgstr ""
 
-#: views.py:143
+#: views.py:145
 msgid ""
 "Your email is not yet verified. Please verify your email address before sign "
 "in."
 msgstr ""
 
-#: views.py:163 views.py:165 views.py:246
+#: views.py:165 views.py:167 views.py:275
 msgid "Invalid credentials"
 msgstr ""
 
-#: views.py:199
+#: views.py:202
 msgid "Email, Id token and Third party type are required"
 msgstr ""
 
-#: views.py:338
+#: views.py:305
+msgid "Email or username is required"
+msgstr ""
+
+#: views.py:310
+msgid ""
+"If an account with this email or username exists, you will receive a "
+"password reset link shortly."
+msgstr ""
+
+#: views.py:372
+msgid "All fields are required"
+msgstr ""
+
+#: views.py:381
+msgid "Invalid or expired reset token. Please request a new password reset."
+msgstr ""
+
+#: views.py:394
+msgid ""
+"Password has been reset successfully. You can now log in with your new "
+"password."
+msgstr ""
+
+#: views.py:401
+msgid "An error occurred while resetting your password. Please try again."
+msgstr ""
+
+#: views.py:499
 msgid ""
 "Your profile could not be updated due to the errors listed above. Please "
 "correct them and try again."
 msgstr ""
 
-#: views.py:366
+#: views.py:527
 msgid "Image upload failed."
 msgstr ""
 
-#: views.py:399
+#: views.py:561
 msgid "Your profile has been updated successfully."
 msgstr ""
 
-#: views.py:425 views.py:572
+#: views.py:591 views.py:738
 msgid "Missing required parameters."
 msgstr ""
 
-#: views.py:435
+#: views.py:601
 msgid "You should add a phone number before validate it!"
 msgstr ""
 
-#: views.py:441
+#: views.py:607
 #, python-brace-format
 msgid ""
 "This phone number already verified for another user. Please contact the "
 "technical service at {technical_service_email} to resolve your problem."
 msgstr ""
 
-#: views.py:448
+#: views.py:614
 msgid "Invalid verification code."
 msgstr ""
 
-#: views.py:451
+#: views.py:617
 msgid "Phone number already verified."
 msgstr ""
 
-#: views.py:453
+#: views.py:619
 msgid "Phone number verified successfully."
 msgstr ""
 
-#: views.py:458
+#: views.py:624
 msgid "A new verification code will be sent to your phone number."
 msgstr ""
 
-#: views.py:461
+#: views.py:627
 msgid "Expired verification code."
 msgstr ""
 
-#: views.py:465
+#: views.py:631
 #, python-brace-format
 msgid ""
 "Your sms verification code quota has been exceeded. Please contact the "
 "technical service at {technical_service_email} to resolve your problem."
 msgstr ""
 
-#: views.py:468
+#: views.py:634
 msgid "Invalid code."
 msgstr ""
 
-#: views.py:585
+#: views.py:751
 msgid "Invalid verification link."
 msgstr ""
 
-#: views.py:589
+#: views.py:755
 msgid "Email already verified."
 msgstr ""
 
-#: views.py:591
+#: views.py:757
 msgid "Email verified successfully."
 msgstr ""
 
-#: views.py:595
+#: views.py:761
 msgid ""
 "Expired token. A new verification email will be sent to your email address."
 msgstr ""
 
-#: views.py:598
+#: views.py:764
 msgid "Invalid token."
 msgstr ""

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-25 22:27+0000\n"
+"POT-Creation-Date: 2025-07-26 12:03+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,15 +18,22 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
-#: views.py:19
-msgid "URL path for language switch is empty"
-msgstr "مسار URL لتغيير اللغة فارغ"
+#: templates/i18n_switcher/language_selector.html:4
+msgid "Language"
+msgstr "اللغة"
 
-#: views.py:21
-msgid "URL path for language switch does not start with \"/\""
-msgstr "مسار URL لتغيير اللغة لا يبدأ بـ \"/\""
+#: views.py:69
+msgid "Language switched successfully"
+msgstr "تم تغيير اللغة بنجاح"
 
-#: views.py:23
-#, python-format
-msgid "%s is not a supported language code"
-msgstr "ليس رمز لغة مدعوم %s"
+#: views.py:76
+msgid "Unsupported language selected"
+msgstr "تم اختيار لغة غير مدعومة"
+
+#: views.py:81
+msgid "Invalid URL for language switch"
+msgstr "رابط غير صالح لتغيير اللغة"
+
+#: views.py:86
+msgid "Language switch failed"
+msgstr "فشل تغيير اللغة"
