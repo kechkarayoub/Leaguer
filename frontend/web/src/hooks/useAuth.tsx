@@ -95,9 +95,9 @@ const useAuth = () => {
     queryKey: ['user', 'profile'],
     queryFn: async () => {
       // Check both session and local storage for user data
-      let storedUser = await secureStorage.getSessionItem('user_data');
+      let storedUser = await secureStorage.getSessionItem('user');
       if (!storedUser) {
-        storedUser = await secureStorage.getItem('user_data');
+        storedUser = await secureStorage.getItem('user');
       }
       
       if (storedUser) {
@@ -137,12 +137,12 @@ const useAuth = () => {
         // Session storage - cleared when browser closes
         await secureStorage.setSessionItem('access_token', data.access_token);
         await secureStorage.setSessionItem('refresh_token', data.refresh_token);
-        await secureStorage.setSessionItem('user_data', JSON.stringify(data.user));
+        await secureStorage.setSessionItem('user', JSON.stringify(data.user));
       } else {
         // Local storage - persistent across browser sessions
         await secureStorage.setItem('access_token', data.access_token);
         await secureStorage.setItem('refresh_token', data.refresh_token);
-        await secureStorage.setItem('user_data', JSON.stringify(data.user));
+        await secureStorage.setItem('user', JSON.stringify(data.user));
       }
       
       // Update auth state
@@ -184,7 +184,7 @@ const useAuth = () => {
       await secureStorage.setItem('refresh_token', data.refresh_token);
       
       // Store user data for profile queries
-      await secureStorage.setItem('user_data', JSON.stringify(data.user));
+      await secureStorage.setItem('user', JSON.stringify(data.user));
       
       // Update auth state
       setIsAuthenticated(true);
@@ -214,9 +214,10 @@ const useAuth = () => {
     } finally {
       // Clear stored data from both storages
       await apiService.clearTokens();
-      await secureStorage.removeItem('user_data');
-      await secureStorage.removeSessionItem('user_data');
+      await secureStorage.removeItem('user');
+      await secureStorage.removeSessionItem('user');
       await secureStorage.clearSession(); // Clear all session data
+      await secureStorage.clear(); // Clear all session data
       
       // Update auth state
       setIsAuthenticated(false);
@@ -242,7 +243,7 @@ const useAuth = () => {
       queryClient.setQueryData(['user', 'profile'], data.user);
       
       // Store updated user data
-      await secureStorage.setItem('user_data', JSON.stringify(data.user));
+      await secureStorage.setItem('user', JSON.stringify(data.user));
       
       toast.success(t('messages.profile_updated'));
     },
@@ -305,7 +306,7 @@ const useAuth = () => {
       await secureStorage.setItem('refresh_token', data.refresh_token);
       
       // Store user data for profile queries
-      await secureStorage.setItem('user_data', JSON.stringify(data.user));
+      await secureStorage.setItem('user', JSON.stringify(data.user));
       
       // Update auth state
       setIsAuthenticated(true);

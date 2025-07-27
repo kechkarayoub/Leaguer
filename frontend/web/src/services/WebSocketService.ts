@@ -70,7 +70,10 @@ class WebSocketService {
     });
 
     try {
-      const accessToken = await this.secureStorage.getItem('access_token');
+
+      const accessTokenFromSession = await this.secureStorage.getSessionItem('access_token');
+      const accessTokenFromLocal = await this.secureStorage.getItem('access_token');
+      const accessToken = accessTokenFromSession || accessTokenFromLocal;
       const deviceId = await this.deviceIdService.getDeviceId();
 
       this.socket = io(config.wsEndpoint, {
