@@ -8,7 +8,7 @@
  * - Connection state management
  */
 
-import { io, Socket } from 'socket.io-client';
+// No socket.io-client: use native WebSocket
 import config from '../config/config';
 import DeviceIdService from './DeviceIdService';
 import SecureStorageService from './SecureStorageService';
@@ -32,7 +32,7 @@ type ConnectionStateHandler = (state: ConnectionState) => void;
 
 class WebSocketService {
   private static instance: WebSocketService;
-  private socket: Socket | null = null;
+  private socket: WebSocket | null = null;
   private deviceIdService: DeviceIdService;
   private secureStorage: SecureStorageService;
   private messageHandlers: Map<string, MessageHandler[]> = new Map();
@@ -60,7 +60,7 @@ class WebSocketService {
    * Connect to WebSocket server
    */
   public async connect(): Promise<void> {
-    if (this.socket?.connected) {
+    if (this.socket && (this.socket.readyState === WebSocket.OPEN || this.socket.readyState === WebSocket.CONNECTING)) {
       return;
     }
 
@@ -70,25 +70,28 @@ class WebSocketService {
     });
 
     try {
-
       const accessTokenFromSession = await this.secureStorage.getSessionItem('access_token');
       const accessTokenFromLocal = await this.secureStorage.getItem('access_token');
       const accessToken = accessTokenFromSession || accessTokenFromLocal;
+      const userFromSession = await this.secureStorage.getSessionItem('user');
+      const userFromLocal = await this.secureStorage.getItem('user');
+      const userString = userFromSession || userFromLocal;
+      const user = userString ? JSON.parse(userString) : null;
       const deviceId = await this.deviceIdService.getDeviceId();
 
-      this.socket = io(config.wsEndpoint, {
-        auth: {
-          token: accessToken,
-          deviceId: deviceId,
-        },
-        transports: ['websocket'],
-        upgrade: true,
-        reconnection: true,
-        reconnectionAttempts: 5,
-        reconnectionDelay: 1000,
-        reconnectionDelayMax: 5000,
-      });
+      if (!user?.id) {
+        throw new Error('User ID not found');
+      }
 
+      // Build query params for authentication
+      const params = new URLSearchParams({
+        token: accessToken || '',
+        deviceId: deviceId || '',
+      });
+      // ws://host:port/ws/profile/<user_id>/?token=...&deviceId=...
+      const wsUrl = `${config.wsEndpoint}/ws/profile/${user.id}/?${params.toString()}`.replace('http','ws').replace('https','wss');
+
+      this.socket = new WebSocket(wsUrl);
       this.setupEventHandlers();
     } catch (error) {
       this.updateConnectionState({
@@ -104,7 +107,7 @@ class WebSocketService {
    */
   public disconnect(): void {
     if (this.socket) {
-      this.socket.disconnect();
+      this.socket.close();
       this.socket = null;
     }
 
@@ -122,7 +125,7 @@ class WebSocketService {
   private setupEventHandlers(): void {
     if (!this.socket) return;
 
-    this.socket.on('connect', () => {
+    this.socket.onopen = () => {
       console.log('WebSocket connected');
       this.updateConnectionState({
         isConnected: true,
@@ -130,46 +133,34 @@ class WebSocketService {
         error: null,
         reconnectAttempts: 0,
       });
-    });
+    };
 
-    this.socket.on('disconnect', (reason) => {
-      console.log('WebSocket disconnected:', reason);
+    this.socket.onclose = (event) => {
+      console.log('WebSocket disconnected:', event.reason);
       this.updateConnectionState({
         isConnected: false,
         isConnecting: false,
-        error: `Disconnected: ${reason}`,
+        error: `Disconnected: ${event.reason || event.code}`,
       });
-    });
+    };
 
-    this.socket.on('connect_error', (error) => {
-      console.error('WebSocket connection error:', error);
+    this.socket.onerror = (event) => {
+      console.error('WebSocket connection error:', event);
       this.updateConnectionState({
         isConnecting: false,
-        error: error.message,
+        error: 'WebSocket error',
         reconnectAttempts: this.connectionState.reconnectAttempts + 1,
       });
-    });
+    };
 
-    this.socket.on('reconnect_attempt', (attemptNumber) => {
-      console.log(`WebSocket reconnection attempt ${attemptNumber}`);
-      this.updateConnectionState({
-        isConnecting: true,
-        reconnectAttempts: attemptNumber,
-      });
-    });
-
-    this.socket.on('reconnect_failed', () => {
-      console.error('WebSocket reconnection failed');
-      this.updateConnectionState({
-        isConnecting: false,
-        error: 'Reconnection failed',
-      });
-    });
-
-    // Handle incoming messages
-    this.socket.onAny((eventName, message) => {
-      this.handleIncomingMessage(eventName, message);
-    });
+    this.socket.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        this.handleIncomingMessage(data.type, data);
+      } catch (err) {
+        console.error('Error parsing WebSocket message:', err);
+      }
+    };
   }
 
   /**
@@ -210,18 +201,19 @@ class WebSocketService {
    * Send message to server
    */
   public async send(eventName: string, data: any): Promise<void> {
-    if (!this.socket?.connected) {
+    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
       throw new Error('WebSocket not connected');
     }
 
     const deviceId = await this.deviceIdService.getDeviceId();
     const message = {
+      type: eventName,
       ...data,
       deviceId,
       timestamp: new Date().toISOString(),
     };
 
-    this.socket.emit(eventName, message);
+    this.socket.send(JSON.stringify(message));
   }
 
   /**

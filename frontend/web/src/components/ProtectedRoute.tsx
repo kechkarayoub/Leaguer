@@ -9,9 +9,15 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import LoadingSpinner from './LoadingSpinner';
+import WebSocketService from '../services/WebSocketService';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
+}
+
+const initializeWebsocket = async () => {
+  const webSocketService = WebSocketService.getInstance();
+  await webSocketService.connect();
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
@@ -32,6 +38,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       />
     );
   }
+
+  
+  // initializeWebsocket();
 
   return <>{children}</>;
 };
