@@ -43,6 +43,7 @@ class WebSocketService {
     error: null,
     reconnectAttempts: 0,
   };
+  private pingIntervalId: NodeJS.Timeout | null = null;
 
   private constructor() {
     this.deviceIdService = DeviceIdService.getInstance();
@@ -93,6 +94,7 @@ class WebSocketService {
 
       this.socket = new WebSocket(wsUrl);
       this.setupEventHandlers();
+      this.startPing();
     } catch (error) {
       this.updateConnectionState({
         isConnecting: false,
@@ -110,13 +112,42 @@ class WebSocketService {
       this.socket.close();
       this.socket = null;
     }
-
+    this.stopPing();
     this.updateConnectionState({
       isConnected: false,
       isConnecting: false,
       error: null,
       reconnectAttempts: 0,
     });
+  }
+  /**
+   * Start sending ping messages every 30 seconds to keep the connection alive
+   */
+  private startPing(): void {
+    this.stopPing();
+    this.pingIntervalId = setInterval(async () => {
+      if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+        try {
+          const deviceId = await this.deviceIdService.getDeviceId();
+          const accessTokenFromSession = await this.secureStorage.getSessionItem('access_token');
+          const accessTokenFromLocal = await this.secureStorage.getItem('access_token');
+          const accessToken = accessTokenFromSession || accessTokenFromLocal;
+          this.socket.send(JSON.stringify({ type: 'ping', deviceId, token: accessToken || '', timestamp: new Date().toISOString() }));
+        } catch (err) {
+          // Ignore ping errors
+        }
+      }
+    }, 30000); // 30 seconds
+  }
+
+  /**
+   * Stop the ping interval
+   */
+  private stopPing(): void {
+    if (this.pingIntervalId) {
+      clearInterval(this.pingIntervalId);
+      this.pingIntervalId = null;
+    }
   }
 
   /**
