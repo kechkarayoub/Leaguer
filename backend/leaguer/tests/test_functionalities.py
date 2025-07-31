@@ -1,6 +1,6 @@
 from ..utils import (execute_native_query, generate_random_code, get_all_timezones, get_email_base_context,
                     get_geolocation_info, get_local_datetime, remove_file, send_whatsapp, send_phone_message,
-                    upload_file)
+                    upload_file, generate_random_string)
 from ..views import get_geolocation
 from accounts.models import User
 from datetime import datetime, timezone
@@ -89,6 +89,25 @@ class LeaguerConfigTest(TestCase):
 
 
 class LeaguerUtilsTest(TestCase):
+    def test_generate_random_string_default_length(self):
+        s = generate_random_string()
+        self.assertEqual(len(s), 10)
+        self.assertTrue(s.isalnum())
+
+    def test_generate_random_string_custom_length(self):
+        for length in [1, 5, 20, 50]:
+            s = generate_random_string(length)
+            self.assertEqual(len(s), length)
+            self.assertTrue(s.isalnum())
+
+    def test_generate_random_string_zero_length(self):
+        s = generate_random_string(0)
+        self.assertEqual(s, "")
+
+    def test_generate_random_string_negative_length(self):
+        s = generate_random_string(-5)
+        self.assertEqual(s, "")
+
     def setUp(self):
         self.factory = RequestFactory()
         self.user = User.objects.create_user(

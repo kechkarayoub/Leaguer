@@ -12,6 +12,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.timezone import now
 from django.utils.translation import activate, gettext_lazy as _
 from firebase_admin import auth
+from accounts.services import UserService
 from leaguer.utils import generate_random_code, upload_file, remove_file
 from leaguer.ws_utils import notify_profile_update
 from rest_framework import status
@@ -175,7 +176,7 @@ class SignInThirdPartyView(APIView):
     permission_classes = [AllowAny]
 
     # noinspection PyMethodMayBeStatic
-    def post(self, request):
+    def post(self, request, user=None):
         """
         Handles user login authentication.
 
@@ -196,48 +197,48 @@ class SignInThirdPartyView(APIView):
         from_platform = request.data.get("from_platform") or 'web'
         
         activate(current_language)
-
-        if not email or not type_third_party or not token_value:
-            return Response(
-                {"message": _("Email, Id token and Third party type are required"), "success": False},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        try:
-            # For Google OAuth, validate the token using Google OAuth verification
-            if type_third_party == "google":
-                try:
-                    # The token you receive is a Google OAuth ID token, not a Firebase token
-                    # Use Google OAuth verification instead of Firebase
-                    request_adapter = requests.Request()
-                    
-                    # Your Google OAuth client ID (the audience in the token)
-                    GOOGLE_CLIENT_ID = getattr(settings, 'GOOGLE_SIGN_IN_WEB_CLIENT_ID', None)
-                    
-                    # Verify the Google OAuth ID token
-                    idinfo = id_token.verify_oauth2_token(token_value, request_adapter, GOOGLE_CLIENT_ID)
-                    
-                    # Check if the token is valid and email matches
-                    verified_email = idinfo.get('email')
-                    email_verified = idinfo.get('email_verified', False)
-                    
-                    if verified_email == email and email_verified:
-                        email = verified_email
-                        logger.info(f"Successfully verified Google OAuth token for email: {email}")
-                    else:
-                        logger.warning(f"Email mismatch or not verified: provided={email}, token={verified_email}, verified={email_verified}")
-                        email = None
+        if user is None:
+            if not email or not type_third_party or not token_value:
+                return Response(
+                    {"message": _("Email, Id token and Third party type are required"), "success": False},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            try:
+                # For Google OAuth, validate the token using Google OAuth verification
+                if type_third_party == "google":
+                    try:
+                        # The token you receive is a Google OAuth ID token, not a Firebase token
+                        # Use Google OAuth verification instead of Firebase
+                        request_adapter = requests.Request()
                         
-                except Exception as google_error:
-                    logger.error(f"Google OAuth token verification failed: {str(google_error)}")
+                        # Your Google OAuth client ID (the audience in the token)
+                        GOOGLE_CLIENT_ID = getattr(settings, 'GOOGLE_SIGN_IN_WEB_CLIENT_ID', None)
+                        
+                        # Verify the Google OAuth ID token
+                        idinfo = id_token.verify_oauth2_token(token_value, request_adapter, GOOGLE_CLIENT_ID)
+                        
+                        # Check if the token is valid and email matches
+                        verified_email = idinfo.get('email')
+                        email_verified = idinfo.get('email_verified', False)
+                        
+                        if verified_email == email and email_verified:
+                            email = verified_email
+                            logger.info(f"Successfully verified Google OAuth token for email: {email}")
+                        else:
+                            logger.warning(f"Email mismatch or not verified: provided={email}, token={verified_email}, verified={email_verified}")
+                            email = None
+                            
+                    except Exception as google_error:
+                        logger.error(f"Google OAuth token verification failed: {str(google_error)}")
+                        email = None
+                else:
+                    # For other third-party providers, implement similar verification
+                    logger.warning(f"Third-party provider '{type_third_party}' not implemented yet")
                     email = None
-            else:
-                # For other third-party providers, implement similar verification
-                logger.warning(f"Third-party provider '{type_third_party}' not implemented yet")
+            except Exception as e:
+                logger.error(f"Unexpected error during token verification: {str(e)}")
                 email = None
-        except Exception as e:
-            logger.error(f"Unexpected error during token verification: {str(e)}")
-            email = None
-        user = User.objects.filter(email=email).first()
+            user = User.objects.filter(email=email).first()
 
         if user is not None:
             if user.is_user_deleted is True:
@@ -403,47 +404,170 @@ class ResetPasswordView(APIView):
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# class SignUpView(APIView):
-#     permission_classes = [AllowAny]
-#     def post(self, request, *args, **kwargs):
-#         data = request.data.copy()
-#         logging.error("data")
-#         logging.error(data)
-#         current_language = data.get('current_language') or 'fr'
-#         activate(current_language)
-#         profile_image = request.FILES.get('profile_image')
-#         serializer = UserSerializer(data=data)
-#         if serializer.is_valid():
-#             image_url = None
-#             if profile_image:
-#                 # Define upload path
-#                 file_path = os.path.join('profile_images', f'profile_{profile_image.name}')
-#                 saved_path = default_storage.save(file_path, ContentFile(profile_image.read()))
-#                 # Generate full URL
-#                 image_url = f"{request.build_absolute_uri(settings.MEDIA_URL)}{saved_path}"
-#                 logger.info(f"file_path: {file_path}")
-#
-#             data['image_url'] = image_url
-#             serializer = UserSerializer(data=data)
-#             user = None
-#             if serializer.is_valid():
-#                 user = serializer.save()
-#             message = _('Your account is created successfully. Log in with your username and password.')
-#             if settings.ENABLE_EMAIL_VERIFICATION is True and user.is_user_email_validated is False:
-#                 message = _('Your account has been successfully created. You can log in once you validate your email via the link sent to your email address.')
-#             return Response({
-#                     'message': message,
-#                     'success': True,
-#                     'username': user.username
-#                 }, status=status.HTTP_201_CREATED,
-#             )
-#         logging.error("88888888888888888")
-#         logging.error(serializer.errors)
-#         message = _("We cannot create your account due to the following errors. Please correct them and try again.")
-#         return Response(
-#             {'message': message, 'errors': serializer.errors, 'success': False, },
-#             status=status.HTTP_409_CONFLICT
-#         )
+class SignUpView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        """
+        Handles user registration.
+        Accepts both 'selected_language' and 'current_language' for localization.
+        Normalizes user input and creates a new user if data is valid.
+        Sends email verification if enabled in settings.
+        """
+        data = request.data.copy()
+
+        # Accept both 'selected_language' and 'current_language' from frontend
+        current_language = data.get('selected_language') or data.get('current_language') or 'fr'
+        activate(current_language)
+
+        # Normalize first and last name: remove extra spaces
+        def normalize_name(name):
+            return ' '.join(name.split()) if name else ''
+
+        data['first_name'] = normalize_name(data.get('first_name'))
+        data['last_name'] = normalize_name(data.get('last_name'))
+        data['username'] = data.get('username', '').strip()
+        data['email'] = data.get('email', '').strip()
+        data['password'] = data.get('password', '')
+
+        # Profile image upload is currently disabled; enable if needed
+        # profile_image = request.FILES.get('profile_image')
+        # image_url = None
+        # if profile_image:
+        #     file_path = os.path.join('profile_images', f'profile_{profile_image.name}')
+        #     saved_path = default_storage.save(file_path, ContentFile(profile_image.read()))
+        #     image_url = f"{request.build_absolute_uri(settings.MEDIA_URL)}{saved_path}"
+        #     logger.info(f"file_path: {file_path}")
+        # if image_url:
+        #     data['image_url'] = image_url
+
+        serializer = UserSerializer(data=data)
+        user = None
+        if serializer.is_valid():
+            user = serializer.save()
+            # Set password securely after user is created
+            user.set_password(data['password'])
+            user.save()
+            message = _('Your account is created successfully. Log in with your username and password.')
+            # Send verification email if enabled and user is not validated
+            if getattr(settings, 'ENABLE_EMAIL_VERIFICATION', False) and not getattr(user, 'is_user_email_validated', False):
+                send_verification_email(user)
+                message = _('Your account has been successfully created. You can log in once you validate your email via the link sent to your email address.')
+            return Response({
+                'message': message,
+                'success': True,
+                'username': user.username
+            }, status=status.HTTP_201_CREATED)
+
+        # Log serializer errors for debugging
+        logger.error("User registration failed: %s", serializer.errors)
+        message = _("We cannot create your account due to the following errors. Please correct them and try again.")
+        return Response(
+            {'message': message, 'errors': serializer.errors, 'success': False},
+            status=status.HTTP_409_CONFLICT
+        )
+
+
+class SignUpThirdPartyView(APIView):
+    """
+    API endpoint for user registration using third party.
+    If credentials are valid, returns JWT tokens (access & refresh).
+    """
+    permission_classes = [AllowAny]
+
+    # noinspection PyMethodMayBeStatic
+    def post(self, request):
+        """
+        Handles user registration via third-party providers (Google, etc).
+        Validates the third-party token, normalizes input, and creates a new user if needed.
+        Returns JWT tokens and user data on success.
+        """
+        current_language = request.data.get("selected_language") or 'fr'
+        email = request.data.get("email")
+        first_name = request.data.get("first_name")
+        from_platform = request.data.get("from_platform") or 'web'
+        last_name = request.data.get("last_name")
+        token_value = request.data.get("id_token")
+        type_third_party = request.data.get("type_third_party")
+        user_image_url = request.data.get("user_image_url") or ""
+
+        activate(current_language)
+
+        # Validate required fields
+        if not email or not type_third_party or not token_value:
+            return Response(
+                {"message": _("Email, Id token and Third party type are required"), "success": False},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        email_verified = False
+        try:
+            # Google OAuth token validation
+            if type_third_party == "google":
+                try:
+                    request_adapter = requests.Request()
+                    GOOGLE_CLIENT_ID = getattr(settings, 'GOOGLE_SIGN_IN_WEB_CLIENT_ID', None)
+                    idinfo = id_token.verify_oauth2_token(token_value, request_adapter, GOOGLE_CLIENT_ID)
+                    verified_email = idinfo.get('email')
+                    email_verified = idinfo.get('email_verified', False)
+                    if verified_email == email and email_verified:
+                        email = verified_email
+                        logger.info(f"Successfully verified Google OAuth token for email: {email}")
+                    else:
+                        logger.warning(f"Email mismatch or not verified: provided={email}, token={verified_email}, verified={email_verified}")
+                        email = None
+                except Exception as google_error:
+                    logger.error(f"Google OAuth token verification failed: {str(google_error)}")
+                    email = None
+            else:
+                # Placeholder for other providers
+                logger.warning(f"Third-party provider '{type_third_party}' not implemented yet")
+                email = None
+        except Exception as e:
+            logger.error(f"Unexpected error during token verification: {str(e)}")
+            email = None
+
+        if not email_verified:
+            return Response({
+                "message": _("Unable to verify your account with the provided third-party credentials. Please check your information or try a different sign-up method."),
+                "success": False
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.filter(email=email).first()
+
+        if user is not None:
+            # If user exists, delegate to sign-in logic
+            return SignInThirdPartyView().post(request, user=user)
+        else:
+            # Create new user with normalized names and generated username
+            def normalize_name(name):
+                return ' '.join(name.split()) if name else ''
+            username = UserService.generate_unique_username(email=email, first_name=first_name, last_name=last_name)
+            data = {
+                'first_name': normalize_name(first_name),
+                'last_name': normalize_name(last_name),
+                'username': username,
+                'email': email,
+                'user_image_url': user_image_url or "",
+                'is_user_email_validated': True,
+            }
+            serializer = UserSerializer(data=data)
+            if serializer.is_valid():
+                user = serializer.save()
+                refresh = RefreshToken.for_user(user)
+                user_data = user.to_login_dict()
+                return Response({
+                    "access_token": str(refresh.access_token),
+                    "refresh_token": str(refresh),
+                    "success": True,
+                    "user": user_data,
+                    "is_new_user": True,
+                }, status=status.HTTP_200_OK)
+            # Log serializer errors for debugging
+            logger.error("Third-party signup failed: %s", serializer.errors)
+            return Response({
+                "message": _("Unable to create or authenticate your account with the provided third-party credentials. Please check your information or try a different sign-up method."),
+                "success": False
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateProfileView(APIView):

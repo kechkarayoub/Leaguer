@@ -11,6 +11,7 @@ import logging
 import os
 import random
 import requests
+import string
 
 
 # Get a logger instance
@@ -51,6 +52,16 @@ def generate_random_code(nbr_digit=6):
     min_number = 10 ** (nbr_digit - 1)
     max_number = 10 ** nbr_digit - 1
     return f"{random.randint(min_number, max_number)}"
+
+
+def generate_random_string(length=10):
+    """
+    Generate a random string.
+    :param length:
+    :return: generated string
+    """
+    characters = string.ascii_letters + string.digits  # a-z, A-Z, 0-9
+    return ''.join(random.choice(characters) for _ in range(length))
 
 
 def get_all_timezones(as_list=False):

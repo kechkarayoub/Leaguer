@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-26 12:03+0100\n"
+"POT-Creation-Date: 2025-07-31 23:03+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,6 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
 #: admin.py:24
 msgid "Personal Info"
 msgstr "معلومات شخصية"
@@ -144,7 +145,7 @@ msgstr "يجب أن يبدأ رقم الهاتف بعلامة '+' متبوعة �
 msgid "The minimum age allowed for users is: "
 msgstr "الحد الأدنى للعمر المسموح به للمستخدمين هو: "
 
-#: services.py:240
+#: services.py:312
 msgid "Verify your email address"
 msgstr "قم بتأكيد عنوان بريدك الإلكتروني"
 
@@ -170,21 +171,26 @@ msgstr "تحقق من البريد الإلكتروني"
 #: templates/email_verification.html:12
 msgid ""
 "If you did not sign up for this account, you can safely ignore this email."
-msgstr "إذا لم تقم بالتسجيل لهذا الحساب، يمكنك تجاهل هذا البريد الإلكتروني بأمان."
+msgstr ""
+"إذا لم تقم بالتسجيل لهذا الحساب، يمكنك تجاهل هذا البريد الإلكتروني بأمان."
 
 #: templates/email_verification.txt:2 templates/password_reset.txt:2
 #, python-format
 msgid ""
 "\n"
 "Hello %(first_name)s,\n"
-msgstr "\nمرحبًا %(first_name)s،\n"
+msgstr ""
+"\n"
+"مرحبًا %(first_name)s،\n"
 
 #: templates/email_verification.txt:6
 msgid ""
 "\n"
 "Thank you for registering. Please verify your email by clicking the link "
 "below:\n"
-msgstr "\nشكرًا لتسجيلك. يرجى التحقق من بريدك الإلكتروني بالنقر على الرابط أدناه:\n"
+msgstr ""
+"\n"
+"شكرًا لتسجيلك. يرجى التحقق من بريدك الإلكتروني بالنقر على الرابط أدناه:\n"
 
 #: templates/password_reset.html:4 utils.py:177 utils.py:182
 msgid "Password Reset Request"
@@ -199,7 +205,9 @@ msgstr "مرحبًا، %(first_name)s!"
 msgid ""
 "You have requested to reset your password. Please click the link below to "
 "reset your password:"
-msgstr "لقد طلبت إعادة تعيين كلمة المرور الخاصة بك. يرجى النقر على الرابط أدناه لإعادة تعيينها:"
+msgstr ""
+"لقد طلبت إعادة تعيين كلمة المرور الخاصة بك. يرجى النقر على الرابط أدناه "
+"لإعادة تعيينها:"
 
 #: templates/password_reset.html:10
 msgid "Reset Password"
@@ -212,34 +220,46 @@ msgstr "سينتهي صلاحية هذا الرابط خلال 24 ساعة."
 #: templates/password_reset.html:13
 msgid ""
 "If you did not request this password reset, you can safely ignore this email."
-msgstr "إذا لم تطلب إعادة تعيين كلمة المرور هذه، يمكنك تجاهل هذا البريد الإلكتروني بأمان."
+msgstr ""
+"إذا لم تطلب إعادة تعيين كلمة المرور هذه، يمكنك تجاهل هذا البريد الإلكتروني "
+"بأمان."
 
 #: templates/password_reset.txt:6
 msgid ""
 "\n"
 "You have requested to reset your password. Please click the link below to "
 "reset your password:\n"
-msgstr "\nلقد طلبت إعادة تعيين كلمة المرور الخاصة بك. يرجى النقر على الرابط أدناه لإعادة تعيينها:\n"
+msgstr ""
+"\n"
+"لقد طلبت إعادة تعيين كلمة المرور الخاصة بك. يرجى النقر على الرابط أدناه "
+"لإعادة تعيينها:\n"
 
 #: templates/password_reset.txt:12
 msgid ""
 "\n"
 "This link will expire in 24 hours.\n"
-msgstr "\nسينتهي صلاحية هذا الرابط خلال 24 ساعة.\n"
+msgstr ""
+"\n"
+"سينتهي صلاحية هذا الرابط خلال 24 ساعة.\n"
 
 #: templates/password_reset.txt:16
 msgid ""
 "\n"
 "If you did not request this password reset, you can safely ignore this "
 "email.\n"
-msgstr "\nإذا لم تطلب إعادة تعيين كلمة المرور هذه، يمكنك تجاهل هذا البريد الإلكتروني بأمان.\n"
+msgstr ""
+"\n"
+"إذا لم تطلب إعادة تعيين كلمة المرور هذه، يمكنك تجاهل هذا البريد الإلكتروني "
+"بأمان.\n"
 
 #: templates/sms_verification.txt:2
 #, python-format
 msgid ""
 "Your verification code is %(verification_code)s. Please use it to confirm "
 "your number. Thank you."
-msgstr "رمز التحقق الخاص بك هو %(verification_code)s. يرجى استخدامه لتأكيد رقمك. شكرًا لك."
+msgstr ""
+"رمز التحقق الخاص بك هو %(verification_code)s. يرجى استخدامه لتأكيد رقمك. "
+"شكرًا لك."
 
 #: utils.py:18
 msgid "Select"
@@ -257,160 +277,216 @@ msgstr "ذكر"
 msgid "Verify Your Email Address"
 msgstr "تحقق من عنوان بريدك الإلكتروني"
 
-#: views.py:62
+#: views.py:63
 msgid "User id is required"
 msgstr "مطلوب معرف المستخدم"
 
-#: views.py:72
+#: views.py:73
 msgid "Your email is already verified. Try to sign in."
 msgstr "تم التحقق من بريدك الإلكتروني بالفعل. حاول تسجيل الدخول."
 
-#: views.py:80
+#: views.py:81
 msgid ""
 "Email not sent. Please contact the technical team to resolve your issue."
-msgstr "لم يتم إرسال البريد الإلكتروني. يرجى التواصل مع الفريق التقني لحل مشكلتك."
+msgstr ""
+"لم يتم إرسال البريد الإلكتروني. يرجى التواصل مع الفريق التقني لحل مشكلتك."
 
-#: views.py:82
+#: views.py:83
 msgid ""
 "A new verification link has been sent to your email address. Please verify "
 "your email before logging in."
-msgstr "تم إرسال رابط تحقق جديد إلى بريدك الإلكتروني. يرجى التحقق من بريدك الإلكتروني قبل تسجيل الدخول."
+msgstr ""
+"تم إرسال رابط تحقق جديد إلى بريدك الإلكتروني. يرجى التحقق من بريدك "
+"الإلكتروني قبل تسجيل الدخول."
 
-#: views.py:116
+#: views.py:117
 msgid "Email/Username and password are required"
 msgstr "البريد الإلكتروني/اسم المستخدم وكلمة المرور مطلوبة"
 
-#: views.py:129 views.py:246
+#: views.py:130 views.py:247
 msgid ""
 "Your account is deleted. Please contact the technical team to resolve your "
 "issue."
 msgstr "تم حذف حسابك. يرجى التواصل مع الفريق التقني لحل مشكلتك."
 
-#: views.py:137 views.py:254
+#: views.py:138 views.py:255
 msgid ""
 "Your account is inactive. Please contact the technical team to resolve your "
 "issue."
 msgstr "حسابك غير نشط. يرجى التواصل مع الفريق التقني لحل مشكلتك."
 
-#: views.py:145
+#: views.py:146
 msgid ""
 "Your email is not yet verified. Please verify your email address before sign "
 "in."
-msgstr "لم يتم التحقق من بريدك الإلكتروني بعد. يرجى التحقق من بريدك الإلكتروني قبل تسجيل الدخول."
+msgstr ""
+"لم يتم التحقق من بريدك الإلكتروني بعد. يرجى التحقق من بريدك الإلكتروني قبل "
+"تسجيل الدخول."
 
-#: views.py:165 views.py:167 views.py:275
+#: views.py:166 views.py:168 views.py:276
 msgid "Invalid credentials"
 msgstr "بيانات الاعتماد غير صحيحة"
 
-#: views.py:202
+#: views.py:203 views.py:499
 msgid "Email, Id token and Third party type are required"
 msgstr "البريد الإلكتروني، رمز الهوية ونوع الطرف الثالث مطلوبة"
 
-#: views.py:305
+#: views.py:306
 msgid "Email or username is required"
 msgstr "البريد الإلكتروني أو اسم المستخدم مطلوب"
 
-#: views.py:310
+#: views.py:311
 msgid ""
 "If an account with this email or username exists, you will receive a "
 "password reset link shortly."
-msgstr "إذا كان هناك حساب بهذا البريد الإلكتروني أو اسم المستخدم، ستتلقى رابط إعادة تعيين كلمة المرور قريبًا."
+msgstr ""
+"إذا كان هناك حساب بهذا البريد الإلكتروني أو اسم المستخدم، ستتلقى رابط إعادة "
+"تعيين كلمة المرور قريبًا."
 
-#: views.py:372
+#: views.py:373
 msgid "All fields are required"
 msgstr "جميع الحقول مطلوبة"
 
-#: views.py:381
+#: views.py:382
 msgid "Invalid or expired reset token. Please request a new password reset."
-msgstr "رمز إعادة تعيين كلمة المرور غير صالح أو منتهي الصلاحية. يرجى طلب إعادة تعيين كلمة مرور جديدة."
+msgstr ""
+"رمز إعادة تعيين كلمة المرور غير صالح أو منتهي الصلاحية. يرجى طلب إعادة تعيين "
+"كلمة مرور جديدة."
 
-#: views.py:394
+#: views.py:395
 msgid ""
 "Password has been reset successfully. You can now log in with your new "
 "password."
-msgstr "تمت إعادة تعيين كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة."
+msgstr ""
+"تمت إعادة تعيين كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول باستخدام كلمة "
+"المرور الجديدة."
 
-#: views.py:401
+#: views.py:402
 msgid "An error occurred while resetting your password. Please try again."
 msgstr "حدث خطأ أثناء إعادة تعيين كلمة المرور. يرجى المحاولة مرة أخرى."
 
-#: views.py:499
+
+#: views.py:451
+msgid ""
+"Your account is created successfully. Log in with your username and password."
+msgstr ""
+"تم إنشاء حسابك بنجاح. قم بتسجيل الدخول باستخدام اسم المستخدم وكلمة المرور الخاصة بك."
+
+
+#: views.py:455
+msgid ""
+"Your account has been successfully created. You can log in once you validate "
+"your email via the link sent to your email address."
+msgstr ""
+"تم إنشاء حسابك بنجاح. يمكنك تسجيل الدخول بعد تفعيل بريدك الإلكتروني من خلال الرابط المرسل إلى بريدك."
+
+
+#: views.py:464
+msgid ""
+"We cannot create your account due to the following errors. Please correct "
+"them and try again."
+msgstr ""
+"تعذر إنشاء حسابك بسبب الأخطاء التالية. يرجى تصحيحها والمحاولة مرة أخرى."
+
+
+#: views.py:531
+msgid ""
+"Unable to verify your account with the provided third-party credentials. "
+"Please check your information or try a different sign-up method."
+msgstr ""
+"تعذر التحقق من حسابك باستخدام بيانات الطرف الثالث المقدمة. يرجى التحقق من معلوماتك أو تجربة طريقة تسجيل أخرى."
+
+
+#: views.py:568
+msgid ""
+"Unable to create or authenticate your account with the provided third-party "
+"credentials. Please check your information or try a different sign-up method."
+msgstr ""
+"تعذر إنشاء أو توثيق حسابك باستخدام بيانات الطرف الثالث المقدمة. يرجى التحقق من معلوماتك أو تجربة طريقة تسجيل أخرى."
+
+#: views.py:623
 msgid ""
 "Your profile could not be updated due to the errors listed above. Please "
 "correct them and try again."
-msgstr "تعذر تحديث ملفك الشخصي بسبب الأخطاء المذكورة أعلاه. يرجى تصحيحها والمحاولة مرة أخرى."
+msgstr ""
+"تعذر تحديث ملفك الشخصي بسبب الأخطاء المذكورة أعلاه. يرجى تصحيحها والمحاولة "
+"مرة أخرى."
 
-#: views.py:527
+#: views.py:651
 msgid "Image upload failed."
 msgstr "فشل تحميل الصورة."
 
-#: views.py:561
+#: views.py:685
 msgid "Your profile has been updated successfully."
 msgstr "تم تحديث ملفك الشخصي بنجاح."
 
-#: views.py:591 views.py:738
+#: views.py:715 views.py:862
 msgid "Missing required parameters."
 msgstr "المعلمات المطلوبة مفقودة."
 
-#: views.py:601
+#: views.py:725
 msgid "You should add a phone number before validate it!"
 msgstr "يجب عليك إضافة رقم هاتف قبل التحقق منه!"
 
-#: views.py:607
+#: views.py:731
 #, python-brace-format
 msgid ""
 "This phone number already verified for another user. Please contact the "
 "technical service at {technical_service_email} to resolve your problem."
-msgstr "تم التحقق من رقم الهاتف هذا لمستخدم آخر بالفعل. يرجى التواصل مع الخدمة التقنية على {technical_service_email} لحل مشكلتك."
+msgstr ""
+"تم التحقق من رقم الهاتف هذا لمستخدم آخر بالفعل. يرجى التواصل مع الخدمة "
+"التقنية على {technical_service_email} لحل مشكلتك."
 
-#: views.py:614
+#: views.py:738
 msgid "Invalid verification code."
 msgstr "رمز التحقق غير صالح."
 
-#: views.py:617
+#: views.py:741
 msgid "Phone number already verified."
 msgstr "تم التحقق من رقم الهاتف بالفعل."
 
-#: views.py:619
+#: views.py:743
 msgid "Phone number verified successfully."
 msgstr "تم التحقق من رقم الهاتف بنجاح."
 
-#: views.py:624
+#: views.py:748
 msgid "A new verification code will be sent to your phone number."
 msgstr "سيتم إرسال رمز تحقق جديد إلى رقم هاتفك."
 
-#: views.py:627
+#: views.py:751
 msgid "Expired verification code."
 msgstr "رمز التحقق منتهي الصلاحية."
 
-#: views.py:631
+#: views.py:755
 #, python-brace-format
 msgid ""
 "Your sms verification code quota has been exceeded. Please contact the "
 "technical service at {technical_service_email} to resolve your problem."
-msgstr "تم تجاوز حصة رموز التحقق عبر الرسائل القصيرة الخاصة بك. يرجى التواصل مع الخدمة التقنية على {technical_service_email} لحل مشكلتك."
+msgstr ""
+"تم تجاوز حصة رموز التحقق عبر الرسائل القصيرة الخاصة بك. يرجى التواصل مع "
+"الخدمة التقنية على {technical_service_email} لحل مشكلتك."
 
-#: views.py:634
+#: views.py:758
 msgid "Invalid code."
 msgstr "رمز غير صالح."
 
-#: views.py:751
+#: views.py:875
 msgid "Invalid verification link."
 msgstr "رابط التحقق غير صالح."
 
-#: views.py:755
+#: views.py:879
 msgid "Email already verified."
 msgstr "تم التحقق من البريد الإلكتروني بالفعل."
 
-#: views.py:757
+#: views.py:881
 msgid "Email verified successfully."
 msgstr "تم التحقق من البريد الإلكتروني بنجاح."
 
-#: views.py:761
+#: views.py:885
 msgid ""
 "Expired token. A new verification email will be sent to your email address."
 msgstr "انتهت صلاحية الرمز. سيتم إرسال بريد تحقق جديد إلى بريدك الإلكتروني."
 
-#: views.py:764
+#: views.py:888
 msgid "Invalid token."
 msgstr "رمز غير صالح."

@@ -8,6 +8,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.mail import EmailMultiAlternatives
+from django.db.models.functions import Lower
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -22,7 +23,7 @@ from .exceptions import (
     VerificationCodeException, UserDeleteException, ProfileException
 )
 from .utils import format_phone_number, GENDERS_CHOICES
-from leaguer.utils import generate_random_code, get_email_base_context, send_phone_message
+from leaguer.utils import generate_random_code, generate_random_string, get_email_base_context, send_phone_message
 import logging
 import os
 import datetime
@@ -87,6 +88,77 @@ class UserService:
         except Exception as e:
             logger.error(f"User creation failed: {str(e)}")
             raise UserRegistrationException(f"User creation failed: {str(e)}")
+    
+    @staticmethod
+    def generate_unique_username(email="", first_name="", last_name=""):
+        """
+        Generate a unique username based on user information.
+
+        Args:
+            email (str): User email address
+            first_name (str): User first name
+            last_name (str): User last name
+
+        Returns:
+            str: Generated unique username
+
+        This method tries to generate a username using combinations of first name, last name, and email prefix.
+        It checks for uniqueness in the database and appends numbers or random strings if needed.
+        """
+        email = email.strip().lower()
+        first_name = first_name.strip().lower()
+        last_name = last_name.strip().lower()
+
+        # Build possible username candidates from user info
+        possible_usernames_base = []
+        if last_name and first_name:
+            possible_usernames_base.extend([
+                f"{last_name}{first_name}",
+                f"{first_name}{last_name}",
+                f"{last_name}.{first_name}",
+                f"{first_name}.{last_name}",
+                f"{last_name[0]}{first_name}",
+                f"{first_name[0]}{last_name}",
+                f"{last_name[0]}.{first_name}",
+                f"{first_name[0]}.{last_name}",
+                f"{last_name}",
+                f"{first_name}",
+            ])
+        elif last_name:
+            possible_usernames_base.append(f"{last_name}")
+        elif first_name:
+            possible_usernames_base.append(f"{first_name}")
+        if email:
+            possible_usernames_base.append(email.split('@')[0])
+
+        # Try base candidates
+        candidates = list(possible_usernames_base)
+        if candidates:
+            exists = set(User.objects.annotate(username_lower=Lower('username')).filter(username_lower__in=candidates).values_list('username', flat=True))
+            # If all taken, try with '1' and '2' suffixes
+            if len(exists) == len(candidates):
+                candidates = [pu + "1" for pu in possible_usernames_base]
+                exists = set(User.objects.annotate(username_lower=Lower('username')).filter(username_lower__in=candidates).values_list('username', flat=True))
+                if len(exists) == len(candidates):
+                    candidates = [pu + "2" for pu in possible_usernames_base]
+                    exists = set(User.objects.annotate(username_lower=Lower('username')).filter(username_lower__in=candidates).values_list('username', flat=True))
+            for candidate in candidates:
+                if candidate not in exists:
+                    return candidate
+
+        # Fallback: username_1 to username_20
+        for i in range(1, 21):
+            candidate = f"username_{i}"
+            if not User.objects.filter(username__iexact=candidate).exists():
+                return candidate
+
+        # Last resort: random string usernames
+        for _ in range(20):
+            candidate = generate_random_string()
+            if not User.objects.filter(username__iexact=candidate).exists():
+                return candidate
+
+        return email
     
     @staticmethod
     def update_user(user, update_data):

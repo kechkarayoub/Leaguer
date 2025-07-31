@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-26 12:03+0100\n"
+"POT-Creation-Date: 2025-07-31 23:10+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
 #: admin.py:24
 msgid "Personal Info"
 msgstr ""
@@ -143,7 +144,7 @@ msgstr ""
 msgid "The minimum age allowed for users is: "
 msgstr ""
 
-#: services.py:240
+#: services.py:312
 msgid "Verify your email address"
 msgstr ""
 
@@ -256,160 +257,189 @@ msgstr ""
 msgid "Verify Your Email Address"
 msgstr ""
 
-#: views.py:62
+#: views.py:63
 msgid "User id is required"
 msgstr ""
 
-#: views.py:72
+#: views.py:73
 msgid "Your email is already verified. Try to sign in."
 msgstr ""
 
-#: views.py:80
+#: views.py:81
 msgid ""
 "Email not sent. Please contact the technical team to resolve your issue."
 msgstr ""
 
-#: views.py:82
+#: views.py:83
 msgid ""
 "A new verification link has been sent to your email address. Please verify "
 "your email before logging in."
 msgstr ""
 
-#: views.py:116
+#: views.py:117
 msgid "Email/Username and password are required"
 msgstr ""
 
-#: views.py:129 views.py:246
+#: views.py:130 views.py:247
 msgid ""
 "Your account is deleted. Please contact the technical team to resolve your "
 "issue."
 msgstr ""
 
-#: views.py:137 views.py:254
+#: views.py:138 views.py:255
 msgid ""
 "Your account is inactive. Please contact the technical team to resolve your "
 "issue."
 msgstr ""
 
-#: views.py:145
+#: views.py:146
 msgid ""
 "Your email is not yet verified. Please verify your email address before sign "
 "in."
 msgstr ""
 
-#: views.py:165 views.py:167 views.py:275
+#: views.py:166 views.py:168 views.py:276
 msgid "Invalid credentials"
 msgstr ""
 
-#: views.py:202
+#: views.py:203 views.py:499
 msgid "Email, Id token and Third party type are required"
 msgstr ""
 
-#: views.py:305
+#: views.py:306
 msgid "Email or username is required"
 msgstr ""
 
-#: views.py:310
+#: views.py:311
 msgid ""
 "If an account with this email or username exists, you will receive a "
 "password reset link shortly."
 msgstr ""
 
-#: views.py:372
+#: views.py:373
 msgid "All fields are required"
 msgstr ""
 
-#: views.py:381
+#: views.py:382
 msgid "Invalid or expired reset token. Please request a new password reset."
 msgstr ""
 
-#: views.py:394
+#: views.py:395
 msgid ""
 "Password has been reset successfully. You can now log in with your new "
 "password."
 msgstr ""
 
-#: views.py:401
+#: views.py:402
 msgid "An error occurred while resetting your password. Please try again."
 msgstr ""
 
-#: views.py:499
+#: views.py:451
+msgid ""
+"Your account is created successfully. Log in with your username and password."
+msgstr ""
+
+#: views.py:455
+msgid ""
+"Your account has been successfully created. You can log in once you validate "
+"your email via the link sent to your email address."
+msgstr ""
+
+#: views.py:464
+msgid ""
+"We cannot create your account due to the following errors. Please correct "
+"them and try again."
+msgstr ""
+
+#: views.py:531
+msgid ""
+"Unable to verify your account with the provided third-party credentials. "
+"Please check your information or try a different sign-up method."
+msgstr ""
+
+#: views.py:568
+msgid ""
+"Unable to create or authenticate your account with the provided third-party "
+"credentials. Please check your information or try a different sign-up method."
+msgstr ""
+
+#: views.py:623
 msgid ""
 "Your profile could not be updated due to the errors listed above. Please "
 "correct them and try again."
 msgstr ""
 
-#: views.py:527
+#: views.py:651
 msgid "Image upload failed."
 msgstr ""
 
-#: views.py:561
+#: views.py:685
 msgid "Your profile has been updated successfully."
 msgstr ""
 
-#: views.py:591 views.py:738
+#: views.py:715 views.py:862
 msgid "Missing required parameters."
 msgstr ""
 
-#: views.py:601
+#: views.py:725
 msgid "You should add a phone number before validate it!"
 msgstr ""
 
-#: views.py:607
+#: views.py:731
 #, python-brace-format
 msgid ""
 "This phone number already verified for another user. Please contact the "
 "technical service at {technical_service_email} to resolve your problem."
 msgstr ""
 
-#: views.py:614
+#: views.py:738
 msgid "Invalid verification code."
 msgstr ""
 
-#: views.py:617
+#: views.py:741
 msgid "Phone number already verified."
 msgstr ""
 
-#: views.py:619
+#: views.py:743
 msgid "Phone number verified successfully."
 msgstr ""
 
-#: views.py:624
+#: views.py:748
 msgid "A new verification code will be sent to your phone number."
 msgstr ""
 
-#: views.py:627
+#: views.py:751
 msgid "Expired verification code."
 msgstr ""
 
-#: views.py:631
+#: views.py:755
 #, python-brace-format
 msgid ""
 "Your sms verification code quota has been exceeded. Please contact the "
 "technical service at {technical_service_email} to resolve your problem."
 msgstr ""
 
-#: views.py:634
+#: views.py:758
 msgid "Invalid code."
 msgstr ""
 
-#: views.py:751
+#: views.py:875
 msgid "Invalid verification link."
 msgstr ""
 
-#: views.py:755
+#: views.py:879
 msgid "Email already verified."
 msgstr ""
 
-#: views.py:757
+#: views.py:881
 msgid "Email verified successfully."
 msgstr ""
 
-#: views.py:761
+#: views.py:885
 msgid ""
 "Expired token. A new verification email will be sent to your email address."
 msgstr ""
 
-#: views.py:764
+#: views.py:888
 msgid "Invalid token."
 msgstr ""
