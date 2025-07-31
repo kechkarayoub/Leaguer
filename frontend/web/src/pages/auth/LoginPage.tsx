@@ -24,13 +24,16 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const from = location.state?.from?.pathname || '/dashboard';
+  const prefilledEmail = location.state?.email || '';
+  const prefilledUsername = location.state?.username || '';
+
 
   // Create validation schema with translations
   const loginSchema: yup.ObjectSchema<LoginCredentials> = yup.object({
     email_or_username: yup
       .string()
-      .required(t('common:validation.required', { field: t('common:form.name.username') }))
-      .min(3, t('common:validation.min', { field: t('common:form.name.username'), min: 3 })),
+      .required(t('common:validation.required', { field: t('common:form.username.label') }))
+      .min(3, t('common:validation.min', { field: t('common:form.username.label'), min: 3 })),
     password: yup
       .string()
       .min(6, t('common:validation.min', { field: t('common:form.password.label'), min: 6 }))
@@ -46,7 +49,7 @@ const LoginPage: React.FC = () => {
   } = useForm<LoginCredentials>({
     resolver: yupResolver(loginSchema),
     defaultValues: {
-      email_or_username: '',
+      email_or_username: prefilledUsername || prefilledEmail,
       password: '',
       rememberMe: false,
     },
@@ -126,7 +129,7 @@ const LoginPage: React.FC = () => {
             {/* Username or Email field */}
             <div className="form-group">
               <label className="form-label required" htmlFor="email_or_username">
-                {t('common:form.name.username')} / {t('common:form.email.label')}
+                {t('common:form.username.label')} / {t('common:form.email.label')}
               </label>
               <input
                 {...register('email_or_username')}

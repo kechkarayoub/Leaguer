@@ -36,8 +36,9 @@ export interface RegisterCredentials {
   email: string;
   password: string;
   confirmPassword: string;
-  firstName?: string;
-  lastName?: string;
+  firstName: string;
+  lastName: string;
+  username: string;
 }
 
 export interface SocialLoginCredentials {
@@ -48,12 +49,24 @@ export interface SocialLoginCredentials {
   selected_language?: string;
 }
 
+export interface SocialRegisterCredentials {
+  email: string;
+  id_token: string;
+  type_third_party: 'google' | 'facebook' | 'apple';
+  from_platform: 'web' | 'android' | 'ios';
+  selected_language?: string;
+  first_name: string; // Optional for registration
+  last_name: string; // Optional for registration
+  user_image_url?: string; // Optional for registration
+}
+
 interface AuthResponse {
   user: User;
   access_token: string;
   refresh_token: string;
   success: boolean;
   message?: string;
+  is_new_user?: boolean; // Added to indicate if this is a new user registration
 }
 
 // Create service instances
@@ -165,37 +178,76 @@ const useAuth = () => {
     },
   });
 
-  // Register mutation - TODO: Uncomment when backend SignUpView is implemented
   const registerMutation = useMutation({
     mutationFn: async (credentials: RegisterCredentials): Promise<AuthResponse> => {
       // Add current language to register request
       const registerData = {
-        ...credentials,
+        email: credentials.email.trim(),
+        password: credentials.password,
+        first_name: credentials.firstName.trim(),
+        last_name: credentials.lastName.trim(),
+        username: credentials.username.trim(),
         selected_language: i18n.language,
       };
-      // TODO: Backend SignUpView is currently commented out
-      throw new Error('Registration functionality not yet implemented in backend');
-      // const response = await apiService.post('/accounts/sign-up/', registerData);
-      // return response.data;
+      const response = await apiService.post('/accounts/sign-up/', registerData);
+      return response.data;
     },
     onSuccess: async (data) => {
       // Store tokens (backend returns access_token and refresh_token)
-      await secureStorage.setItem('access_token', data.access_token);
-      await secureStorage.setItem('refresh_token', data.refresh_token);
+      // await secureStorage.setItem('access_token', data.access_token);
+      // await secureStorage.setItem('refresh_token', data.refresh_token);
       
-      // Store user data for profile queries
-      await secureStorage.setItem('user', JSON.stringify(data.user));
+      // // Store user data for profile queries
+      // await secureStorage.setItem('user', JSON.stringify(data.user));
       
-      // Update auth state
-      setIsAuthenticated(true);
+      // // Update auth state
+      // setIsAuthenticated(true);
       
-      // Update user data in cache
-      queryClient.setQueryData(['user', 'profile'], data.user);
+      // // Update user data in cache
+      // queryClient.setQueryData(['user', 'profile'], data.user);
       
       // Connect WebSocket
-      await webSocketService.connect();
-      
+      // await webSocketService.connect();
+
       toast.success(t('messages.register_success'));
+    },
+    onError: (error: any) => {
+      const message = error?.message || t('messages.register_failed');
+      toast.error(message);
+    },
+  });
+
+  const socialRegisterMutation = useMutation({
+    mutationFn: async (credentials: SocialRegisterCredentials): Promise<AuthResponse> => {
+      // Add current language to register request
+      const response = await apiService.post('/accounts/sign-up-third-party/', credentials);
+      return response.data;
+    },
+    onSuccess: async (data) => {
+      if(data.user){
+        
+        // Store tokens (backend returns access_token and refresh_token)
+        await secureStorage.setItem('access_token', data.access_token);
+        await secureStorage.setItem('refresh_token', data.refresh_token);
+        
+        // Store user data for profile queries
+        await secureStorage.setItem('user', JSON.stringify(data.user));
+        
+        // Update auth state
+        setIsAuthenticated(true);
+        
+        // Update user data in cache
+        queryClient.setQueryData(['user', 'profile'], data.user);
+        
+        // Connect WebSocket
+        await webSocketService.connect();
+
+        toast.success(t(data.is_new_user ? 'messages.register_success' : 'messages.login_success'));
+      }
+      else{
+        toast.error(t(data.message || 'messages.register_failed'));
+        console.error('Social registration failed: No user data returned from server');
+      }
     },
     onError: (error: any) => {
       const message = error?.message || t('messages.register_failed');
@@ -337,6 +389,7 @@ const useAuth = () => {
     login: loginMutation.mutateAsync,
     socialLogin: socialLoginMutation.mutateAsync,
     register: registerMutation.mutateAsync,
+    socialRegister: socialRegisterMutation.mutateAsync,
     logout,
     updateProfile: updateProfileMutation.mutateAsync,
     changePassword: changePasswordMutation.mutateAsync,

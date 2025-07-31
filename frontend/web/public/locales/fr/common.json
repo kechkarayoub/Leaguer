@@ -297,9 +297,8 @@
     "invalid": "Valeur invalide",
     "name": {
       "first": "Prénom",
-      "full": "Nom complet",
       "last": "Nom de famille",
-      "username": "Nom d'utilisateur"
+      "alpha": "Seules les lettres et un espace simple sont autorisés. Pas de chiffres, caractères spéciaux ou espaces consécutifs."
     },
     "password": {
       "confirm": "Confirmer le mot de passe",
@@ -316,7 +315,14 @@
       "label": "Numéro de téléphone",
       "placeholder": "Entrez votre numéro de téléphone"
     },
-    "required": "Ce champ est requis"
+    "required": "Ce champ est requis",
+    "username": {
+      "label": "Nom d'utilisateur",
+      "placeholder": "Entrez votre nom d'utilisateur",
+      "alphanumeric": "Le nom d'utilisateur doit contenir uniquement des lettres et des chiffres (sans espaces ni caractères spéciaux).",
+      "min": "Le nom d'utilisateur doit comporter au moins {{min}} caractères.",
+      "noSpaces": "Le nom d'utilisateur ne peut pas contenir d'espaces."
+    }
   },
   "helpCenter": {
     "allCategories": "Toutes les Catégories",

@@ -30,7 +30,7 @@ const ForgotPasswordPage: React.FC = () => {
   const forgotPasswordSchema: yup.ObjectSchema<ForgotPasswordFormData> = yup.object({
     email_or_username: yup
       .string()
-      .required(t('common:validation.required', { field: t('common:form.name.username') + ' / ' + t('common:form.email.label') })),
+      .required(t('common:validation.required', { field: t('common:form.username.label') + ' / ' + t('common:form.email.label') })),
   });
 
   const {
@@ -105,7 +105,7 @@ const ForgotPasswordPage: React.FC = () => {
             {/* Email or Username field */}
             <div className="form-group">
               <label className="form-label required" htmlFor="email_or_username">
-                {t('common:form.name.username')} / {t('common:form.email.label')}
+                {t('common:form.username.label')} / {t('common:form.email.label')}
               </label>
               <input
                 {...register('email_or_username')}

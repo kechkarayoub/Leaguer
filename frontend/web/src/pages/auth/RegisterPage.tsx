@@ -20,22 +20,31 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../i18n';
 
-import useAuth, { RegisterCredentials } from '../../hooks/useAuth';
+import useAuth, { RegisterCredentials, SocialRegisterCredentials } from '../../hooks/useAuth';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import SocialLoginButton from '../../components/SocialLoginButton';
 
 const RegisterPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { register: registerUser, isRegistering } = useAuth();
+  const { register: registerUser, isRegistering, socialRegister } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Create validation schema with translations
   const registerSchema: yup.ObjectSchema<RegisterCredentials> = yup.object({
-    firstName: yup.string().required(t('common:validation.required', { field: t('common:form.name.first') })),
-    lastName: yup.string().required(t('common:validation.required', { field: t('common:form.name.last') })),
+    firstName: yup.string()
+      .matches(/^(?!.*  )[A-Za-zÀ-ÖØ-öø-ÿ]+(?: [A-Za-zÀ-ÖØ-öø-ÿ]+)*$/, t('common:form.name.alpha'))
+      .required(t('common:validation.required', { field: t('common:form.name.first') })),
+    lastName: yup.string()
+      .matches(/^(?!.*  )[A-Za-zÀ-ÖØ-öø-ÿ]+(?: [A-Za-zÀ-ÖØ-öø-ÿ]+)*$/, t('common:form.name.alpha'))
+      .required(t('common:validation.required', { field: t('common:form.name.last') })),
+    username: yup.string()
+      .min(3, t('common:form.username.min', { min: 3 }))
+      .matches(/^[^\s]+$/, t('common:form.username.noSpaces'))
+      .required(t('common:validation.required', { field: t('common:form.username') })),
     email: yup
       .string()
       .email(t('common:validation.email'))
@@ -64,6 +73,7 @@ const RegisterPage: React.FC = () => {
     defaultValues: {
       firstName: '',
       lastName: '',
+      username: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -75,7 +85,7 @@ const RegisterPage: React.FC = () => {
   const onSubmit = async (data: RegisterCredentials) => {
     try {
       await registerUser(data);
-      navigate('/dashboard');
+      navigate('/auth/login', { state: process.env.REACT_APP_ENABLE_EMAIL_VERIFICATION === 'true' ? {} : { email: data.email, username: data.username  } });
     } catch (error: any) {
       // Handle specific validation errors
       if (error?.response?.data?.errors) {
@@ -90,23 +100,29 @@ const RegisterPage: React.FC = () => {
     }
   };
 
-  const handleSocialLoginSuccess = async (result: any) => {
+  const handleSocialRegisterSuccess = async (result: any) => {
     try {
-      // Convert social login result to registration credentials
-      await registerUser({
-        firstName: result.user.firstName,
-        lastName: result.user.lastName,
+      // Convert social register result to registration credentials
+      const socialRegisterData: SocialRegisterCredentials = {
         email: result.user.email,
-        provider: result.provider,
-        accessToken: result.accessToken,
-      } as any);
-      navigate('/dashboard');
+        id_token: result.accessToken, // This is the JWT token from Google
+        type_third_party: result.provider as 'google' | 'facebook' | 'apple',
+        from_platform: 'web',
+        selected_language: i18n.language || 'fr',
+        first_name: result.user.firstName,
+        last_name: result.user.lastName,
+        user_image_url: result.user.picture,
+      };
+      const response = await socialRegister(socialRegisterData);
+      if (response?.user) {
+        navigate('/dashboard');
+      }
     } catch (error) {
       console.error('Social registration failed:', error);
     }
   };
 
-  const handleSocialLoginError = (error: any) => {
+  const handleSocialRegisterError = (error: any) => {
     console.error('Social registration error:', error);
   };
 
@@ -141,8 +157,8 @@ const RegisterPage: React.FC = () => {
               <div className="social-buttons">
                 <SocialLoginButton 
                   provider="google" 
-                  onSuccess={handleSocialLoginSuccess}
-                  onError={handleSocialLoginError}
+                  onSuccess={handleSocialRegisterSuccess}
+                  onError={handleSocialRegisterError}
                 />
               </div>
 
@@ -153,7 +169,7 @@ const RegisterPage: React.FC = () => {
           )}
 
           <form onSubmit={handleSubmit(onSubmit)}>
-            {/* Name fields */}
+            {/* Name and username fields */}
             <div className="row">
               <div className="col">
                 <div className="form-group">
@@ -196,6 +212,25 @@ const RegisterPage: React.FC = () => {
                   )}
                 </div>
               </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label required" htmlFor="username">
+                {t('common:form.username.label')}
+              </label>
+              <input
+                {...register('username')}
+                type="text"
+                id="username"
+                className={`form-control ${errors.username ? 'error' : ''}`}
+                placeholder={t('common:form.username.placeholder')}
+                autoComplete="username"
+              />
+              {errors.username && (
+                <span className="form-error">
+                  {errors.username.message}
+                </span>
+              )}
             </div>
 
             {/* Email field */}

@@ -296,10 +296,9 @@
     },
     "invalid": "Invalid value",
     "name": {
-      "first": "First name",
-      "full": "Full name",
-      "last": "Last name",
-      "username": "Username"
+      "first": "First Name",
+      "last": "Last Name",
+      "alpha": "Only letters and single spaces are allowed. No numbers, special characters, or consecutive spaces."
     },
     "password": {
       "confirm": "Confirm password",
@@ -316,7 +315,14 @@
       "label": "Phone number",
       "placeholder": "Enter your phone number"
     },
-    "required": "This field is required"
+    "required": "This field is required",
+    "username": {
+      "label": "Username",
+      "placeholder": "Enter your username",
+      "alphanumeric": "Username must contain only letters and numbers (no spaces or special characters).",
+      "min": "Username must be at least {{min}} characters.",
+      "noSpaces": "Username cannot contain spaces."
+    }
   },
   "helpCenter": {
     "allCategories": "All Categories",
