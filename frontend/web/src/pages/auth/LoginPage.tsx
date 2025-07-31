@@ -221,14 +221,16 @@ const LoginPage: React.FC = () => {
         </div>
 
         {/* Auth navigation links */}
-        <div className="auth-footer">
-          <p className="mb-0">
-            {t('auth:login.noAccount')}{' '}
-            <Link to="/auth/register" className="text-primary">
-              {t('auth:login.signUp')}
-            </Link>
-          </p>
-        </div>
+        {process.env.REACT_APP_ENABLE_SIGNUP === 'true' && (
+          <div className="auth-footer">
+            <p className="mb-0">
+              {t('auth:login.noAccount')}{' '}
+              <Link to="/auth/register" className="text-primary">
+                {t('auth:login.signUp')}
+              </Link>
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

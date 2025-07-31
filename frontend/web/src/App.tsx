@@ -78,7 +78,9 @@ const AppRoutes: React.FC = () => {
             <AuthLayout>
               <Routes>
                 <Route path="login" element={<LoginPage />} />
-                <Route path="register" element={<RegisterPage />} />
+                {process.env.REACT_APP_ENABLE_SIGNUP === 'true' && (
+                  <Route path="register" element={<RegisterPage />} />
+                )}
                 <Route path="forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="reset-password" element={<ResetPasswordPage />} />
                 <Route path="*" element={<Navigate to="/auth/login" replace />} />
