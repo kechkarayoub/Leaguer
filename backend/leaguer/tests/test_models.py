@@ -30,7 +30,8 @@ class ContactMessageModelTest(TestCase):
         self.user = User.objects.create_user(
             username='testuser',
             email='testuser@example.com',
-            password='testpassword123'
+            password='testpassword123',
+            current_language='en',
         )
         
         self.valid_contact_data = {
@@ -40,6 +41,7 @@ class ContactMessageModelTest(TestCase):
             'message': 'This is a test message with sufficient length to pass validation.',
             'user': self.user
         }
+        activate(self.user.current_language)
 
     def test_contact_message_creation_success(self):
         """Test successful creation of ContactMessage."""
@@ -679,13 +681,13 @@ class ContactMessagePerformanceTest(TestCase):
         with self.assertNumQueries(21):  # 1 for contacts + 20 for users
             contacts = ContactMessage.objects.all()
             for contact in contacts:
-                _ = contact.user.username if contact.user else None
+                __ = contact.user.username if contact.user else None
         
         # Query with select_related (should make only 1 query)
         with self.assertNumQueries(1):
             contacts = ContactMessage.objects.select_related('user').all()
             for contact in contacts:
-                _ = contact.user.username if contact.user else None
+                __ = contact.user.username if contact.user else None
 
 
 class ContactMessageSerializerTest(TestCase):
@@ -702,7 +704,8 @@ class ContactMessageSerializerTest(TestCase):
         self.user = User.objects.create_user(
             username='testuser',
             email='testuser@example.com',
-            password='testpassword123'
+            password='testpassword123',
+            current_language='en',
         )
         
         self.valid_contact_data = {
@@ -717,6 +720,8 @@ class ContactMessageSerializerTest(TestCase):
             user=self.user,
             status='new'
         )
+
+        activate(self.user.current_language)
 
     def test_contact_message_serializer_valid_data(self):
         """Test ContactMessageSerializer with valid data."""
@@ -977,7 +982,8 @@ class ContactMessageListSerializerTest(TestCase):
         self.user = User.objects.create_user(
             username='testuser',
             email='testuser@example.com',
-            password='testpassword123'
+            password='testpassword123',
+            current_language='en',
         )
         
         self.contact_message = ContactMessage.objects.create(
@@ -988,6 +994,8 @@ class ContactMessageListSerializerTest(TestCase):
             status='in_progress',
             user=self.user
         )
+
+        activate(self.user.current_language)
 
     def test_contact_message_list_serializer_serialization(self):
         """Test ContactMessageListSerializer serialization."""
@@ -1133,7 +1141,8 @@ class ContactMessageSerializerIntegrationTest(TestCase):
         self.user = User.objects.create_user(
             username='testuser',
             email='testuser@example.com',
-            password='testpassword123'
+            password='testpassword123',
+            current_language='en',
         )
 
     def test_serializer_with_api_client_authenticated(self):
@@ -1232,7 +1241,8 @@ class ContactMessageAdminTest(TestCase):
         self.regular_user = User.objects.create_user(
             username='user',
             email='user@example.com',
-            password='userpassword123'
+            password='userpassword123',
+            current_language='en',
         )
         
         # Create test contact messages
@@ -1260,6 +1270,7 @@ class ContactMessageAdminTest(TestCase):
             message='Feature request message with sufficient length.',
             status='resolved'
         )
+        activate(self.regular_user.current_language)
 
     def test_admin_list_display(self):
         """Test that list display fields are correctly configured."""
@@ -1535,7 +1546,8 @@ class ContactMessageViewTest(TestCase):
         self.user = User.objects.create_user(
             username='testuser',
             email='testuser@example.com',
-            password='testpassword123'
+            password='testpassword123',
+            current_language='en',
         )
         
         self.contact_url = '/api/contact/'
@@ -1546,6 +1558,7 @@ class ContactMessageViewTest(TestCase):
             'subject': 'support',
             'message': 'This is a test message with sufficient length to pass validation.'
         }
+        activate(self.user.current_language)
 
     def test_contact_message_create_success_anonymous(self):
         """Test successful contact message creation by anonymous user."""
@@ -1553,7 +1566,7 @@ class ContactMessageViewTest(TestCase):
         
         self.assertEqual(response.status_code, 201)
         self.assertTrue(response.data['success'])
-        self.assertIn('Your message has been sent successfully', response.data['message'])
+        self.assertEqual(_('Your message has been sent successfully. We will get back to you within 24 hours.'), response.data['message'])
         self.assertIn('id', response.data)
         
         # Verify the contact message was created in the database
@@ -1572,7 +1585,7 @@ class ContactMessageViewTest(TestCase):
         
         self.assertEqual(response.status_code, 201)
         self.assertTrue(response.data['success'])
-        self.assertIn('Your message has been sent successfully', response.data['message'])
+        self.assertEqual(_('Your message has been sent successfully. We will get back to you within 24 hours.'), response.data['message'])
         self.assertIn('id', response.data)
         
         # Verify the contact message was created with user association
@@ -1590,7 +1603,7 @@ class ContactMessageViewTest(TestCase):
         
         self.assertEqual(response.status_code, 400)
         self.assertFalse(response.data['success'])
-        self.assertIn('Please correct the errors below', response.data['message'])
+        self.assertEqual(_('Please correct the errors below.'), response.data['message'])
         self.assertIn('name', response.data['errors'])
 
     def test_contact_message_create_missing_email(self):
@@ -1890,9 +1903,10 @@ class ContactMessageViewTest(TestCase):
             
             self.assertEqual(response.status_code, 500)
             self.assertFalse(response.data['success'])
-            self.assertIn('An error occurred while sending your message', response.data['message'])
+            self.assertEqual(_('An error occurred while sending your message. Please try again later.'), response.data['message'])
             
             # Verify that error was logged
             mock_logger.error.assert_called_once()
             log_call_args = mock_logger.error.call_args[0][0]
-            self.assertIn('Error creating contact message', log_call_args)
+            string_translation = str(_('Error creating contact message'))
+            self.assertIn(string_translation, log_call_args)

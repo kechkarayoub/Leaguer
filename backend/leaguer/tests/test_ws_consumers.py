@@ -13,6 +13,7 @@ from asgiref.sync import sync_to_async
 from leaguer.asgi import application
 from leaguer.ws_consumers import ProfileConsumer
 from leaguer.ws_utils import notify_profile_update_async
+from rest_framework_simplejwt.tokens import RefreshToken
 import asyncio
 import json
 
@@ -26,8 +27,8 @@ class ProfileConsumerTest(TransactionTestCase):
     def setUp(self):
         """Set up test data."""
         self.user = User.objects.create_user(
-            email="testuser@example.com",
-            username="testuser",
+            email="testuser2@example.com",
+            username="testuser2",
             password="testpass123",
             first_name="Test",
             last_name="User"
@@ -37,18 +38,19 @@ class ProfileConsumerTest(TransactionTestCase):
     def create_test_user(self):
         """Create test user asynchronously."""
         return User.objects.create_user(
-            email="testuser2@example.com",
-            username="testuser2",
+            email="testuser3@example.com",
+            username="testuser3",
             password="testpass123",
             first_name="Test",
-            last_name="User2"
+            last_name="User3"
         )
 
     def test_profile_consumer_connect_and_update(self):
         """Test ProfileConsumer connection and profile update events."""
         async def async_test():
             user_id = str(self.user.id)
-            communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/")
+            refresh = RefreshToken.for_user(self.user)
+            communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/?token={str(refresh.access_token)}")
             
             # Mock the scope to include authenticated user
             communicator.scope['user'] = self.user
@@ -106,8 +108,9 @@ class ProfileConsumerTest(TransactionTestCase):
             
             # Try to connect to first user's profile with second user's credentials
             user_id = str(self.user.id)
-            communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/")
-            
+            other_refresh = RefreshToken.for_user(other_user)
+            communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/?token={str(other_refresh.access_token)}")
+
             # Mock the scope with the other user
             communicator.scope['user'] = other_user
             
@@ -120,7 +123,8 @@ class ProfileConsumerTest(TransactionTestCase):
         """Test profile update notification integration."""
         async def async_test():
             user_id = str(self.user.id)
-            communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/")
+            refresh = RefreshToken.for_user(self.user)
+            communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/?token={str(refresh.access_token)}")
             
             # Mock the scope to include authenticated user
             communicator.scope['user'] = self.user
@@ -148,7 +152,8 @@ class ProfileConsumerTest(TransactionTestCase):
         """Test ping event handling."""
         async def async_test():
             user_id = str(self.user.id)
-            communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/")
+            refresh = RefreshToken.for_user(self.user)
+            communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/?token={str(refresh.access_token)}")
             
             # Mock the scope to include authenticated user
             communicator.scope['user'] = self.user
@@ -180,7 +185,8 @@ class ProfileConsumerTest(TransactionTestCase):
         """Test general notification event handling."""
         async def async_test():
             user_id = str(self.user.id)
-            communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/")
+            refresh = RefreshToken.for_user(self.user)
+            communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/?token={str(refresh.access_token)}")
             
             # Mock the scope to include authenticated user
             communicator.scope['user'] = self.user

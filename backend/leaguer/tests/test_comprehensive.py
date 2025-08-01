@@ -39,6 +39,7 @@ from ..ws_utils import (
     ping_user_connection, ping_user_connection_sync
 )
 from ..monitoring import PerformanceMonitor, DatabaseMonitor, CacheMonitor
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 User = get_user_model()
@@ -57,16 +58,18 @@ class EnvironmentTestCase(TestCase):
         from decouple import config
         
         required_vars = [
-            "ENABLE_EMAIL_VERIFICATION", "ENABLE_PHONE_NUMBER_VERIFICATION",
-            "DB_CONTAINER_EXTERNAL_PORT", "DB_CONTAINER_INTERNAL_PORT",
+            "ALLOWED_HOSTS", "API_BURST_LIMIT", "API_RATE_LIMIT",
+            "BACKEND_ENDPOINT", "COMPANY_ADDRESS", "CORS_ALLOW_ALL_ORIGINS",
+            "CORS_ALLOWED_ORIGINS", "DB_CONTAINER_EXTERNAL_PORT", "DB_CONTAINER_INTERNAL_PORT",
             "DB_IP", "DB_NAME", "DB_ROOT_PASSWORD", "DB_USER_NM", "DB_USER_PW",
-            "DJANGO_CONTAINER_EXTERNAL_PORT", "DJANGO_CONTAINER_INTERNAL_PORT",
-            "PIPLINE", "DJANGO_SECRET_KEY", "EMAIL_HOST", "EMAIL_PORT",
-            "EMAIL_USE_TLS", "EMAIL_HOST_USER", "EMAIL_HOST_PASSWORD",
-            "DEFAULT_FROM_EMAIL", "REDIS_CONTAINER_EXTERNAL_PORT",
-            "REDIS_CONTAINER_INTERNAL_PORT", "WHATSAPP_INSTANCE_ID",
-            "WHATSAPP_INSTANCE_TOKEN", "WHATSAPP_INSTANCE_URL",
-            "WS_EXTERNAL_PORT", "WS_INTERNAL_PORT"
+            "DEFAULT_FROM_EMAIL", "DJANGO_CONTAINER_EXTERNAL_PORT", "DJANGO_CONTAINER_INTERNAL_PORT",
+            "DJANGO_SECRET_KEY", "EMAIL_HOST", "EMAIL_HOST_PASSWORD", "EMAIL_HOST_USER", 
+            "EMAIL_PORT", "EMAIL_USE_TLS", "ENABLE_EMAIL_VERIFICATION", "ENABLE_PHONE_NUMBER_VERIFICATION", 
+            "FIREBASE_PROJECT_ID", "FIREBASE_VAPID_KEY", "FRONTEND_ENDPOINT", 
+            "GOOGLE_SIGN_IN_WEB_CLIENT_ID", "PERFORMANCE_MONITORING", "PIPLINE", 
+            "REDIS_CONTAINER_EXTERNAL_PORT", "REDIS_CONTAINER_INTERNAL_PORT", "REDIS_URL", "TECHNICAL_SERVICE_EMAIL",
+            "USE_DEBUG_TOOLBAR", "WHATSAPP_INSTANCE_ID", "WHATSAPP_INSTANCE_TOKEN", "WHATSAPP_INSTANCE_URL",
+            "WS_EXTERNAL_PORT", "WS_INTERNAL_PORT",
         ]
         
         missing_vars = [var for var in required_vars if not config(var, None)]
@@ -606,7 +609,8 @@ class WebSocketTestCase(TransactionTestCase):
         """Test ProfileConsumer connection and updates."""
         async def async_test():
             user_id = str(self.user.id)
-            communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/")
+            refresh = RefreshToken.for_user(self.user)
+            communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/?token={str(refresh.access_token)}")
             
             # Mock the scope to include authenticated user
             communicator.scope['user'] = self.user
