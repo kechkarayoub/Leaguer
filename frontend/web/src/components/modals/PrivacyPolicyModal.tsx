@@ -7,6 +7,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import BaseModal from './BaseModal';
+import { renderDate } from '../../utils/GlobalUtils';
 
 interface PrivacyPolicyModalProps {
   isOpen: boolean;
@@ -14,12 +15,15 @@ interface PrivacyPolicyModalProps {
 }
 
 const PrivacyPolicyModal: React.FC<PrivacyPolicyModalProps> = ({ isOpen, onClose }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const currentLanguage = i18n.language;
 
   // Get company information from environment variables
   const companyName = process.env.REACT_APP_COMPANY_NAME || 'Leaguer';
   const supportEmail = process.env.REACT_APP_SUPPORT_EMAIL || 'support@leaguer.com';
   const companyAddress = process.env.REACT_APP_COMPANY_ADDRESS || 'Company Address';
+  const lastUpdated = new Date(2022, 0, 1); // Example last updated date: 01/01/2022
 
   return (
     <BaseModal
@@ -32,7 +36,7 @@ const PrivacyPolicyModal: React.FC<PrivacyPolicyModalProps> = ({ isOpen, onClose
         {/* Last Updated Section */}
         <div className="modal-section">
           <p className="privacy-last-updated">
-            <strong>{t('common:privacy.lastUpdated', { defaultValue: 'Last updated:' })}</strong> {new Date().toLocaleDateString()}
+            <strong>{t('common:privacy.lastUpdated', { defaultValue: 'Last updated:' })}</strong> {renderDate(lastUpdated, currentLanguage)}
           </p>
         </div>
 
