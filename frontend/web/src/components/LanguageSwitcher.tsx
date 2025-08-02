@@ -8,6 +8,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CountryFlag } from './FlagIcons';
+import styled from 'styled-components';
+import "../assets/styles/LanguageSwitcher.css";
+
 
 interface Language {
   code: string;
@@ -140,7 +143,7 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
 
   if (variant === 'compact') {
     return (
-      <div className={getPositionClasses()}>
+      <LanguageSwitcherStyle className={getPositionClasses()}>
         <div className="language-switcher__compact">
           {SUPPORTED_LANGUAGES.map((language) => (
             <button
@@ -160,13 +163,13 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
             </button>
           ))}
         </div>
-      </div>
+      </LanguageSwitcherStyle>
     );
   }
 
   if (variant === 'floating') {
     return (
-      <div className={getPositionClasses()} ref={dropdownRef}>
+      <LanguageSwitcherStyle className={getPositionClasses()} ref={dropdownRef}>
         <button
           className="language-switcher__floating-trigger"
           onClick={handleDropdownToggle}
@@ -207,12 +210,12 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
             ))}
           </div>
         )}
-      </div>
+      </LanguageSwitcherStyle>
     );
   }
 
   return (
-    <div className={getPositionClasses()} ref={dropdownRef}>
+    <LanguageSwitcherStyle className={getPositionClasses()} ref={dropdownRef}>
       <div className="language-switcher__dropdown">
         <button
           className="language-switcher__trigger"
@@ -258,8 +261,12 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
           </div>
         )}
       </div>
-    </div>
+    </LanguageSwitcherStyle>
   );
 };
+
+const LanguageSwitcherStyle = styled.div`
+
+`;
 
 export default LanguageSwitcher;

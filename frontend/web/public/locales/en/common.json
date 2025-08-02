@@ -704,5 +704,10 @@
     "required": "{{field}} is required",
     "time": "Please enter a valid time",
     "url": "Please enter a valid URL"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "text": "Sorry, the page you are looking for does not exist.",
+    "goHome": "Go to Home"
   }
 }

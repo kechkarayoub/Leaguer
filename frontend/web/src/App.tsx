@@ -32,6 +32,7 @@ import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
 import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
 import ProfilePage from './pages/profile/ProfilePage';
+import PageNotFound from './pages/PageNotFound';
 
 // Import hooks
 import useAuth from './hooks/useAuth';
@@ -100,7 +101,7 @@ const AppRoutes: React.FC = () => {
                 <Route path="dashboard" element={<DashboardPage />} />
                 <Route path="profile" element={<ProfilePage />} />
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                <Route path="*" element={<PageNotFound />} />
               </Routes>
             </MainLayout>
           </ProtectedRoute>

@@ -704,5 +704,10 @@
     "required": "{{field}} est requis",
     "time": "Veuillez entrer une heure valide",
     "url": "Veuillez entrer une URL valide"
+  },
+  "notFound": {
+    "title": "Page non trouvée",
+    "text": "Désolé, la page que vous recherchez n'existe pas.",
+    "goHome": "Aller à l'accueil"
   }
 }
