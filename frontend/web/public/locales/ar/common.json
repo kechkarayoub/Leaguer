@@ -1,4 +1,21 @@
 {
+  "loading": "جاري التحميل...",
+  "user": {
+    "guest": "زائر"
+  },
+  "navigation": {
+    "dashboard": "لوحة التحكم",
+    "profile": "الملف الشخصي",
+    "logout": "تسجيل الخروج"
+  },
+  "form": {
+    "drag_drop_hint": "اسحب وأفلت صورتك هنا، أو انقر للاختيار",
+    "file_size_error": "حجم الملف يتجاوز {{maxSize}} ميجابايت",
+    "file_type_error": "يرجى اختيار ملف صورة صالح (JPEG, PNG, GIF, WebP)",
+    "country_code": "البلد",
+    "phone_number": "رقم الهاتف",
+    "select_country": "اختر البلد"
+  },
   "about": {
     "community": "المجتمع",
     "communityBuilding": "بناء المجتمع",

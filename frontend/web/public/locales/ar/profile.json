@@ -1,78 +1,44 @@
 {
-  "editProfile": "تحرير الملف الشخصي",
-  "messages": {
-    "deactivateConfirm": "هل أنت متأكد من رغبتك في إلغاء تفعيل حسابك؟",
-    "deleteConfirm": "هل أنت متأكد من رغبتك في حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.",
-    "passwordChanged": "تم تغيير كلمة المرور بنجاح",
-    "passwordError": "فشل في تغيير كلمة المرور",
-    "updateError": "فشل في تحديث الملف الشخصي",
-    "updateSuccess": "تم تحديث الملف الشخصي بنجاح"
-  },
-  "myProfile": "ملفي الشخصي",
-  "preferences": {
-    "auto": "تلقائي",
-    "dark": "داكن",
-    "language": "اللغة",
-    "light": "فاتح",
-    "notifications": "الإشعارات",
-    "privacy": "إعدادات الخصوصية",
-    "theme": "المظهر",
-    "timezone": "المنطقة الزمنية",
-    "title": "التفضيلات"
-  },
-  "profile": {
-    "bio": "السيرة الذاتية",
-    "birthDate": "تاريخ الميلاد",
-    "change_photo": "تغيير الصورة",
-    "description": "تحديث تفاصيلك الشخصية ومعلومات الاتصال",
-    "email": "عنوان البريد الإلكتروني",
-    "email_placeholder": "أدخل بريدك الإلكتروني",
-    "first_name": "الاسم الأول",
-    "first_name_placeholder": "أدخل اسمك الأول",
-    "last_name": "اسم العائلة",
-    "last_name_placeholder": "أدخل اسم عائلتك",
-    "location": "الموقع",
-    "phone": "رقم الهاتف",
-    "photo_hint": "JPG أو PNG أو GIF. الحد الأقصى للحجم 2 ميجابايت.",
-    "save_changes": "حفظ التغييرات",
-    "title": "المعلومات الشخصية",
-    "updating": "جاري التحديث...",
-    "username": "اسم المستخدم",
-    "website": "الموقع الإلكتروني"
-  },
-  "security": {
-    "change_password": "تغيير كلمة المرور",
-    "changing": "جاري تغيير كلمة المرور...",
-    "confirm_password": "تأكيد كلمة المرور الجديدة",
-    "confirm_password_placeholder": "تأكيد كلمة المرور الجديدة",
-    "current_password": "كلمة المرور الحالية",
-    "current_password_placeholder": "أدخل كلمة المرور الحالية",
-    "description": "قم بتحديث كلمة المرور لحماية حسابك",
-    "disable2FA": "إلغاء المصادقة الثنائية",
-    "enable2FA": "تفعيل المصادقة الثنائية",
-    "loginHistory": "تاريخ تسجيل الدخول",
-    "new_password": "كلمة المرور الجديدة",
-    "new_password_placeholder": "أدخل كلمة المرور الجديدة",
-    "sessions": "الجلسات النشطة",
-    "title": "تغيير كلمة المرور",
-    "twoFactor": "المصادقة الثنائية"
-  },
-  "social": {
-    "connect": "ربط",
-    "connected": "متصل",
-    "disconnect": "قطع الاتصال",
-    "facebook": "Facebook",
-    "github": "GitHub",
-    "google": "Google",
-    "notConnected": "غير متصل",
-    "title": "الحسابات الاجتماعية",
-    "twitter": "Twitter"
-  },
-  "subtitle": "إدارة إعدادات حسابك وتفضيلاتك",
-  "tabs": {
-    "profile": "معلومات الملف الشخصي",
-    "security": "الأمان"
-  },
   "title": "إعدادات الملف الشخصي",
-  "viewProfile": "عرض الملف الشخصي"
+  "description": "إدارة معلومات حسابك وإعدادات الأمان.",
+  "tabs": {
+    "personal_info": "المعلومات الشخصية",
+    "password": "كلمة المرور والأمان"
+  },
+  "sections": {
+    "profile_picture": "صورة الملف الشخصي",
+    "personal_information": "المعلومات الشخصية",
+    "change_password": "تغيير كلمة المرور"
+  },
+  "fields": {
+    "profile_picture": "صورة الملف الشخصي",
+    "first_name": "الاسم الأول",
+    "last_name": "الاسم الأخير",
+    "phone_number": "رقم الهاتف",
+    "current_password": "كلمة المرور الحالية",
+    "new_password": "كلمة المرور الجديدة",
+    "confirm_password": "تأكيد كلمة المرور الجديدة"
+  },
+  "validation": {
+    "first_name_required": "الاسم الأول مطلوب",
+    "first_name_min_length": "يجب أن يحتوي الاسم الأول على حرفين على الأقل",
+    "last_name_required": "الاسم الأخير مطلوب",
+    "last_name_min_length": "يجب أن يحتوي الاسم الأخير على حرفين على الأقل",
+    "phone_number_required": "رقم الهاتف مطلوب",
+    "current_password_required": "كلمة المرور الحالية مطلوبة",
+    "new_password_required": "كلمة المرور الجديدة مطلوبة",
+    "password_min_length": "يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل",
+    "confirm_password_required": "يرجى تأكيد كلمة المرور الجديدة",
+    "passwords_do_not_match": "كلمات المرور غير متطابقة"
+  },
+  "actions": {
+    "save_changes": "حفظ التغييرات",
+    "update_password": "تحديث كلمة المرور"
+  },
+  "messages": {
+    "profile_updated": "تم تحديث الملف الشخصي بنجاح!",
+    "profile_update_error": "فشل في تحديث الملف الشخصي. يرجى المحاولة مرة أخرى.",
+    "password_updated": "تم تحديث كلمة المرور بنجاح!",
+    "password_update_error": "فشل في تحديث كلمة المرور. يرجى المحاولة مرة أخرى."
+  }
 }

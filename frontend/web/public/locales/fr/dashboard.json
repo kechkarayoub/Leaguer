@@ -1,67 +1,25 @@
 {
-  "achievements": "Réalisations",
-  "actions": {
-    "configure": "Configurer",
-    "create": "Créer nouveau",
-    "delete": "Supprimer",
-    "edit": "Modifier",
-    "export": "Exporter",
-    "import": "Importer",
-    "manage": "Gérer",
-    "refresh": "Actualiser les données",
-    "view": "Voir"
-  },
-  "find_opponents": "Trouver des adversaires",
-  "join_tournament": "Rejoindre le tournoi",
-  "loss": "Défaite",
-  "losses": "Défaites",
-  "no_achievements": "Aucune réalisation pour le moment",
-  "no_recent_games": "Aucun jeu récent",
-  "notifications": {
-    "markAllRead": "Tout marquer comme lu",
-    "markRead": "Marquer comme lu",
-    "newMessage": "Nouveau message",
-    "noNotifications": "Aucune notification",
-    "reminder": "Rappel",
-    "systemUpdate": "Mise à jour du système",
-    "title": "Notifications"
-  },
-  "overview": {
-    "notifications": "Notifications",
-    "recent": "Activité récente",
-    "stats": "Statistiques",
-    "title": "Aperçu"
-  },
-  "ready_to_play": "Prêt à dominer les matchs d'aujourd'hui ?",
-  "recent_games": "Jeux récents",
-  "start_new_game": "Commencer un nouveau jeu",
+  "welcome": "Bon retour, {{name}} !",
+  "description": "Voici un aperçu de votre activité de jeu et des actions rapides pour commencer.",
   "stats": {
-    "active": "Actif",
-    "change": "Changement",
-    "completed": "Terminé",
-    "growth": "Croissance",
-    "lastMonth": "Le mois dernier",
-    "pending": "En attente",
-    "thisMonth": "Ce mois-ci",
-    "thisWeek": "Cette semaine",
-    "today": "Aujourd'hui",
-    "total": "Total"
+    "total_games": "Total des Parties",
+    "wins": "Victoires", 
+    "losses": "Défaites",
+    "win_rate": "Taux de Victoire"
   },
-  "tables": {
-    "empty": "Aucun élément trouvé",
-    "error": "Échec du chargement des données",
-    "loading": "Chargement des données...",
-    "noData": "Aucune donnée disponible",
-    "of": "de",
-    "page": "Page",
-    "rowsPerPage": "Lignes par page"
+  "recent_games": {
+    "title": "Parties Récentes",
+    "view_all": "Voir Tout"
   },
-  "title": "Tableau de bord",
-  "total_games": "Total des jeux",
-  "user": "Utilisateur",
-  "view_all": "Voir tout",
-  "welcome_back": "Bon retour",
-  "win": "Victoire",
-  "win_rate": "Taux de victoire",
-  "wins": "Victoires"
+  "game_result": {
+    "win": "Victoire",
+    "loss": "Défaite",
+    "draw": "Match Nul"
+  },
+  "quick_actions": {
+    "title": "Actions Rapides",
+    "new_game": "Nouvelle Partie",
+    "find_players": "Trouver des Joueurs",
+    "view_stats": "Voir les Statistiques"
+  }
 }

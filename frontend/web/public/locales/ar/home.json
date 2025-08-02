@@ -1,0 +1,18 @@
+{
+  "title": "الرئيسية",
+  "welcome": "مرحباً بعودتك",
+  "quickStats": "إحصائيات سريعة",
+  "quickActions": "إجراءات سريعة",
+  "stats": {
+    "totalUsers": "إجمالي المستخدمين",
+    "activeProjects": "المشاريع النشطة",
+    "completedTasks": "المهام المكتملة",
+    "pendingReviews": "المراجعات المعلقة"
+  },
+  "actions": {
+    "createProject": "إنشاء مشروع جديد",
+    "viewReports": "عرض التقارير",
+    "manageUsers": "إدارة المستخدمين",
+    "systemSettings": "إعدادات النظام"
+  }
+}

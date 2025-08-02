@@ -1,0 +1,207 @@
+/* RTL Support */
+[dir="rtl"] .sidebar {
+  right: 0;
+  left: auto;
+  border-right: none;
+  border-left: 1px solid var(--color-border-light);
+  transform: translateX(100%);
+}
+
+[dir="rtl"] .sidebar--open {
+  transform: translateX(0);
+}
+
+[dir="rtl"] .sidebar__header {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .sidebar__close {
+  margin-left: var(--spacing-sm);
+  margin-right: 0;
+}
+
+[dir="rtl"] .sidebar__menu-link {
+  text-align: right;
+  border-left: none;
+  border-right: 3px solid transparent;
+  justify-content: flex-end;
+}
+
+[dir="rtl"] .sidebar__menu-link:hover {
+  border-right-color: var(--color-primary-light);
+}
+
+[dir="rtl"] .sidebar__menu-link--active {
+  border-right-color: var(--color-primary);
+}
+
+[dir="rtl"] .sidebar__menu-icon {
+  margin-left: var(--spacing-md);
+  margin-right: 0;
+}
+
+[dir="rtl"] .sidebar__menu-text {
+  text-align: right;
+}
+/* Sidebar.css */
+
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  animation: fadeIn var(--transition-fast) ease-out forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100vh;
+  background: var(--color-white);
+  border-right: 1px solid var(--color-border-light);
+  z-index: 1000;
+  transform: translateX(-100%);
+  transition: transform var(--transition-normal) ease-out;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+}
+
+[dir="rtl"] .sidebar {
+  right: 0;
+  left: auto;
+  transform: translateX(0%);
+}
+
+.sidebar--open {
+  transform: translateX(0);
+}
+
+/* Header */
+.sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border-light);
+  background: var(--color-background-light);
+}
+
+.sidebar__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.sidebar__close {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar__close:hover {
+  background: var(--color-background-hover);
+  color: var(--color-text-primary);
+}
+
+/* Navigation */
+.sidebar__nav {
+  flex: 1;
+  padding: var(--spacing-lg) 0;
+  overflow-y: auto;
+}
+
+.sidebar__menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar__menu-item {
+  margin-bottom: var(--spacing-xs);
+}
+
+.sidebar__menu-link {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+  border-left: 3px solid transparent;
+}
+
+.sidebar__menu-link:hover {
+  background: var(--color-background-hover);
+  color: var(--color-text-primary);
+  border-left-color: var(--color-primary-light);
+}
+
+.sidebar__menu-link--active {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-left-color: var(--color-primary);
+}
+
+.sidebar__menu-link--active:hover {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.sidebar__menu-icon {
+  flex-shrink: 0;
+}
+
+.sidebar__menu-text {
+  flex: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    max-width: 320px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 100%;
+  }
+  
+  .sidebar__header {
+    padding: var(--spacing-md);
+  }
+  
+  .sidebar__menu-link {
+    padding: var(--spacing-md);
+  }
+}

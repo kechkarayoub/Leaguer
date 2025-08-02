@@ -51,6 +51,12 @@
   right: var(--spacing-lg);
 }
 
+.from_main_connected{
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
 /* Enhanced language switcher with modern design */
 .language-switcher__trigger {
   display: flex;
@@ -488,6 +494,12 @@
     font-size: var(--text-base);
   }
 
+  .from_main_connected{
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+
 }
 
 @media (max-width: 480px) {
@@ -497,7 +509,7 @@
     left: auto;
     right: var(--spacing-sm);
   }
-  
+
   .auth-layout__language-switcher {
     top: var(--spacing-lg);
     left: var(--spacing-sm);
@@ -561,6 +573,33 @@
     width: 32px;
     height: 32px;
     font-size: var(--text-sm);
+  }
+  
+  .from_main_connected{
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+  .from_main_connected .language-switcher__flag-icon{
+    display: none;
+  }
+  .from_main_connected .language-switcher__minimal {
+    padding: 0 var(--spacing-xs);
+  }
+  .from_main_connected .language-switcher__minimal-btn {
+    min-width: 24px;
+    padding: 2px 6px;
+    width: 24px;
+  }
+  .from_main_connected .language-switcher__compact {
+    padding: 0 6px;
+  }
+  .from_main_connected .language-switcher__compact-btn {
+    min-width: 24px;
+    padding: 2px 6px;
+  }
+  .from_main_connected .language-switcher__floating-trigger {
+    padding: 0 6px;
   }
 
 }

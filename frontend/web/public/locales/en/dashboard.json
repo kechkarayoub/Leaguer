@@ -1,4 +1,27 @@
 {
+  "welcome": "Welcome back, {{name}}!",
+  "description": "Here's an overview of your gaming activity and quick actions to get you started.",
+  "stats": {
+    "total_games": "Total Games",
+    "wins": "Wins", 
+    "losses": "Losses",
+    "win_rate": "Win Rate"
+  },
+  "recent_games": {
+    "title": "Recent Games",
+    "view_all": "View All"
+  },
+  "game_result": {
+    "win": "Win",
+    "loss": "Loss",
+    "draw": "Draw"
+  },
+  "quick_actions": {
+    "title": "Quick Actions",
+    "new_game": "Start New Game",
+    "find_players": "Find Players",
+    "view_stats": "View Statistics"
+  },
   "achievements": "Achievements",
   "actions": {
     "configure": "Configure",

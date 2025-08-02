@@ -1,78 +1,78 @@
 {
-  "editProfile": "Edit Profile",
-  "messages": {
-    "deactivateConfirm": "Are you sure you want to deactivate your account?",
-    "deleteConfirm": "Are you sure you want to delete your account? This action cannot be undone.",
-    "passwordChanged": "Password changed successfully",
-    "passwordError": "Failed to change password",
-    "updateError": "Failed to update profile",
-    "updateSuccess": "Profile updated successfully"
-  },
-  "myProfile": "My Profile",
-  "preferences": {
-    "auto": "Auto",
-    "dark": "Dark",
-    "language": "Language",
-    "light": "Light",
-    "notifications": "Notifications",
-    "privacy": "Privacy Settings",
-    "theme": "Theme",
-    "timezone": "Timezone",
-    "title": "Preferences"
-  },
-  "profile": {
-    "bio": "Biography",
-    "birthDate": "Date of Birth",
-    "change_photo": "Change Photo",
-    "description": "Update your personal details and contact information",
-    "email": "Email Address",
-    "email_placeholder": "Enter your email",
-    "first_name": "First Name",
-    "first_name_placeholder": "Enter your first name",
-    "last_name": "Last Name",
-    "last_name_placeholder": "Enter your last name",
-    "location": "Location",
-    "phone": "Phone Number",
-    "photo_hint": "JPG, PNG or GIF. Max size 2MB.",
-    "save_changes": "Save Changes",
-    "title": "Personal Information",
-    "updating": "Updating...",
-    "username": "Username",
-    "website": "Website"
-  },
-  "security": {
-    "change_password": "Change Password",
-    "changing": "Changing password...",
-    "confirm_password": "Confirm New Password",
-    "confirm_password_placeholder": "Confirm new password",
-    "current_password": "Current Password",
-    "current_password_placeholder": "Enter current password",
-    "description": "Update your password to keep your account secure",
-    "disable2FA": "Disable 2FA",
-    "enable2FA": "Enable 2FA",
-    "loginHistory": "Login History",
-    "new_password": "New Password",
-    "new_password_placeholder": "Enter new password",
-    "sessions": "Active Sessions",
-    "title": "Change Password",
-    "twoFactor": "Two-Factor Authentication"
-  },
-  "social": {
-    "connect": "Connect",
-    "connected": "Connected",
-    "disconnect": "Disconnect",
-    "facebook": "Facebook",
-    "github": "GitHub",
-    "google": "Google",
-    "notConnected": "Not Connected",
-    "title": "Social Accounts",
-    "twitter": "Twitter"
-  },
-  "subtitle": "Manage your account settings and preferences",
-  "tabs": {
-    "profile": "Profile Information",
-    "security": "Security"
-  },
   "title": "Profile Settings",
-  "viewProfile": "View Profile"
+  "description": "Manage your account information and security settings.",
+  "tabs": {
+    "personal_info": "Personal Information",
+    "password": "Password & Security"
+  },
+  "sections": {
+    "profile_picture": "Profile Picture",
+    "personal_information": "Personal Information",
+    "change_password": "Change Password"
+  },
+  "fields": {
+    "profile_picture": "Profile Picture",
+    "username": "Username",
+    "email": "Email Address",
+    "first_name": "First Name",
+    "last_name": "Last Name",
+    "phone_number": "Phone Number",
+    "address": "Address",
+    "birthday": "Date of Birth",
+    "cin": "National ID Number",
+    "country": "Country",
+    "gender": "Gender",
+    "timezone": "Timezone",
+    "language": "Preferred Language",
+    "current_password": "Current Password",
+    "new_password": "New Password",
+    "confirm_password": "Confirm New Password"
+  },
+  "placeholders": {
+    "address": "Enter your full address",
+    "cin": "Enter your national ID number",
+    "select_country": "Select your country",
+    "select_gender": "Select your gender",
+    "select_timezone": "Select your timezone"
+  },
+  "gender": {
+    "male": "Male",
+    "female": "Female",
+    "other": "Other",
+    "prefer_not_to_say": "Prefer not to say"
+  },
+  "languages": {
+    "english": "English",
+    "french": "Français",
+    "arabic": "العربية"
+  },
+  "help": {
+    "phone_validated": "Your phone number has been validated and cannot be changed.",
+    "email_verified": "Your email address has been verified.",
+    "username_locked": "Username cannot be changed after account creation."
+  },
+  "validation": {
+    "first_name_required": "First name is required",
+    "first_name_min_length": "First name must be at least 2 characters",
+    "last_name_required": "Last name is required",
+    "last_name_min_length": "Last name must be at least 2 characters",
+    "phone_number_required": "Phone number is required",
+    "address_max_length": "Address must be less than 500 characters",
+    "cin_format": "Please enter a valid national ID number",
+    "current_password_required": "Current password is required",
+    "new_password_required": "New password is required",
+    "password_min_length": "Password must be at least 8 characters",
+    "confirm_password_required": "Please confirm your new password",
+    "passwords_do_not_match": "Passwords do not match"
+  },
+  "actions": {
+    "save_changes": "Save Changes",
+    "update_password": "Update Password"
+  },
+  "messages": {
+    "profile_updated": "Profile updated successfully!",
+    "profile_update_error": "Failed to update profile. Please try again.",
+    "password_updated": "Password updated successfully!",
+    "password_update_error": "Failed to update password. Please try again."
+  }
 }

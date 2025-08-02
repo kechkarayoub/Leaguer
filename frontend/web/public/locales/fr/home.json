@@ -1,0 +1,18 @@
+{
+  "title": "Accueil",
+  "welcome": "Bon retour",
+  "quickStats": "Statistiques rapides",
+  "quickActions": "Actions rapides",
+  "stats": {
+    "totalUsers": "Utilisateurs totaux",
+    "activeProjects": "Projets actifs",
+    "completedTasks": "Tâches terminées",
+    "pendingReviews": "Révisions en attente"
+  },
+  "actions": {
+    "createProject": "Créer un nouveau projet",
+    "viewReports": "Voir les rapports",
+    "manageUsers": "Gérer les utilisateurs",
+    "systemSettings": "Paramètres système"
+  }
+}

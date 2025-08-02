@@ -13,6 +13,10 @@ import UnauthenticatedApiService from '../../services/UnauthenticatedApiService'
 interface ContactModalProps {
   isOpen: boolean;
   onClose: () => void;
+  prefillUserData?: {
+    name?: string;
+    email?: string;
+  };
 }
 
 interface FormData {
@@ -29,7 +33,7 @@ interface FormErrors {
   message?: string;
 }
 
-const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
+const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, prefillUserData }) => {
   const { t } = useTranslation();
   
   // Ref for success message
@@ -37,8 +41,8 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
   
   // Form state
   const [formData, setFormData] = useState<FormData>({
-    name: '',
-    email: '',
+    name: prefillUserData?.name || '',
+    email: prefillUserData?.email || '',
     subject: '',
     message: ''
   });

@@ -1,78 +1,78 @@
 {
-  "editProfile": "Modifier le profil",
-  "messages": {
-    "deactivateConfirm": "Êtes-vous sûr de vouloir désactiver votre compte ?",
-    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action ne peut pas être annulée.",
-    "passwordChanged": "Mot de passe changé avec succès",
-    "passwordError": "Échec du changement de mot de passe",
-    "updateError": "Échec de la mise à jour du profil",
-    "updateSuccess": "Profil mis à jour avec succès"
-  },
-  "myProfile": "Mon profil",
-  "preferences": {
-    "auto": "Auto",
-    "dark": "Sombre",
-    "language": "Langue",
-    "light": "Clair",
-    "notifications": "Notifications",
-    "privacy": "Paramètres de confidentialité",
-    "theme": "Thème",
-    "timezone": "Fuseau horaire",
-    "title": "Préférences"
-  },
-  "profile": {
-    "bio": "Biographie",
-    "birthDate": "Date de naissance",
-    "change_photo": "Changer la photo",
-    "description": "Mettez à jour vos détails personnels et informations de contact",
-    "email": "Adresse e-mail",
-    "email_placeholder": "Entrez votre e-mail",
-    "first_name": "Prénom",
-    "first_name_placeholder": "Entrez votre prénom",
-    "last_name": "Nom de famille",
-    "last_name_placeholder": "Entrez votre nom de famille",
-    "location": "Localisation",
-    "phone": "Numéro de téléphone",
-    "photo_hint": "JPG, PNG ou GIF. Taille max 2MB.",
-    "save_changes": "Sauvegarder les modifications",
-    "title": "Informations personnelles",
-    "updating": "Mise à jour...",
-    "username": "Nom d'utilisateur",
-    "website": "Site web"
-  },
-  "security": {
-    "change_password": "Changer le mot de passe",
-    "changing": "Changement du mot de passe...",
-    "confirm_password": "Confirmer le nouveau mot de passe",
-    "confirm_password_placeholder": "Confirmez le nouveau mot de passe",
-    "current_password": "Mot de passe actuel",
-    "current_password_placeholder": "Entrez le mot de passe actuel",
-    "description": "Mettez à jour votre mot de passe pour sécuriser votre compte",
-    "disable2FA": "Désactiver 2FA",
-    "enable2FA": "Activer 2FA",
-    "loginHistory": "Historique de connexion",
-    "new_password": "Nouveau mot de passe",
-    "new_password_placeholder": "Entrez le nouveau mot de passe",
-    "sessions": "Sessions actives",
-    "title": "Changer le mot de passe",
-    "twoFactor": "Authentification à deux facteurs"
-  },
-  "social": {
-    "connect": "Connecter",
-    "connected": "Connecté",
-    "disconnect": "Déconnecter",
-    "facebook": "Facebook",
-    "github": "GitHub",
-    "google": "Google",
-    "notConnected": "Non connecté",
-    "title": "Comptes sociaux",
-    "twitter": "Twitter"
-  },
-  "subtitle": "Gérez les paramètres et préférences de votre compte",
+  "title": "Paramètres du Profil",
+  "description": "Gérez les informations de votre compte et les paramètres de sécurité.",
   "tabs": {
-    "profile": "Informations du profil",
-    "security": "Sécurité"
+    "personal_info": "Informations Personnelles",
+    "password": "Mot de Passe et Sécurité"
   },
-  "title": "Paramètres du profil",
-  "viewProfile": "Voir le profil"
+  "sections": {
+    "profile_picture": "Photo de Profil",
+    "personal_information": "Informations Personnelles",
+    "change_password": "Changer le Mot de Passe"
+  },
+  "fields": {
+    "profile_picture": "Photo de Profil",
+    "username": "Nom d'utilisateur",
+    "email": "Adresse Email",
+    "first_name": "Prénom",
+    "last_name": "Nom de Famille",
+    "phone_number": "Numéro de Téléphone",
+    "address": "Adresse",
+    "birthday": "Date de Naissance",
+    "cin": "Numéro d'Identité Nationale",
+    "country": "Pays",
+    "gender": "Genre",
+    "timezone": "Fuseau Horaire",
+    "language": "Langue Préférée",
+    "current_password": "Mot de Passe Actuel",
+    "new_password": "Nouveau Mot de Passe",
+    "confirm_password": "Confirmer le Nouveau Mot de Passe"
+  },
+  "placeholders": {
+    "address": "Entrez votre adresse complète",
+    "cin": "Entrez votre numéro d'identité nationale",
+    "select_country": "Sélectionnez votre pays",
+    "select_gender": "Sélectionnez votre genre",
+    "select_timezone": "Sélectionnez votre fuseau horaire"
+  },
+  "gender": {
+    "male": "Homme",
+    "female": "Femme",
+    "other": "Autre",
+    "prefer_not_to_say": "Préfère ne pas dire"
+  },
+  "languages": {
+    "english": "Anglais",
+    "french": "Français",
+    "arabic": "العربية"
+  },
+  "help": {
+    "phone_validated": "Votre numéro de téléphone a été validé et ne peut pas être modifié.",
+    "email_verified": "Votre adresse email a été vérifiée.",
+    "username_locked": "Le nom d'utilisateur ne peut pas être modifié après la création du compte."
+  },
+  "validation": {
+    "first_name_required": "Le prénom est requis",
+    "first_name_min_length": "Le prénom doit contenir au moins 2 caractères",
+    "last_name_required": "Le nom de famille est requis",
+    "last_name_min_length": "Le nom de famille doit contenir au moins 2 caractères",
+    "phone_number_required": "Le numéro de téléphone est requis",
+    "address_max_length": "L'adresse doit contenir moins de 500 caractères",
+    "cin_format": "Veuillez entrer un numéro d'identité nationale valide",
+    "current_password_required": "Le mot de passe actuel est requis",
+    "new_password_required": "Le nouveau mot de passe est requis",
+    "password_min_length": "Le mot de passe doit contenir au moins 8 caractères",
+    "confirm_password_required": "Veuillez confirmer votre nouveau mot de passe",
+    "passwords_do_not_match": "Les mots de passe ne correspondent pas"
+  },
+  "actions": {
+    "save_changes": "Enregistrer les Modifications",
+    "update_password": "Mettre à Jour le Mot de Passe"
+  },
+  "messages": {
+    "profile_updated": "Profil mis à jour avec succès !",
+    "profile_update_error": "Échec de la mise à jour du profil. Veuillez réessayer.",
+    "password_updated": "Mot de passe mis à jour avec succès !",
+    "password_update_error": "Échec de la mise à jour du mot de passe. Veuillez réessayer."
+  }
 }

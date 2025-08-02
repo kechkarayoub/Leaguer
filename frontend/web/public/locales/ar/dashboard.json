@@ -1,67 +1,25 @@
 {
-  "achievements": "الإنجازات",
-  "actions": {
-    "configure": "تكوين",
-    "create": "إنشاء جديد",
-    "delete": "حذف",
-    "edit": "تحرير",
-    "export": "تصدير",
-    "import": "استيراد",
-    "manage": "إدارة",
-    "refresh": "تحديث البيانات",
-    "view": "عرض"
-  },
-  "find_opponents": "العثور على خصوم",
-  "join_tournament": "الانضمام للبطولة",
-  "loss": "هزيمة",
-  "losses": "الهزائم",
-  "no_achievements": "لا توجد إنجازات بعد",
-  "no_recent_games": "لا توجد ألعاب حديثة",
-  "notifications": {
-    "markAllRead": "وضع علامة على الكل كمقروء",
-    "markRead": "وضع علامة كمقروء",
-    "newMessage": "رسالة جديدة",
-    "noNotifications": "لا توجد إشعارات",
-    "reminder": "تذكير",
-    "systemUpdate": "تحديث النظام",
-    "title": "الإشعارات"
-  },
-  "overview": {
-    "notifications": "الإشعارات",
-    "recent": "النشاط الأخير",
-    "stats": "الإحصائيات",
-    "title": "نظرة عامة"
-  },
-  "ready_to_play": "هل أنت مستعد للهيمنة على مباريات اليوم؟",
-  "recent_games": "الألعاب الأخيرة",
-  "start_new_game": "بدء لعبة جديدة",
+  "welcome": "مرحباً بعودتك، {{name}}!",
+  "description": "إليك نظرة عامة على نشاط الألعاب الخاص بك والإجراءات السريعة للبدء.",
   "stats": {
-    "active": "نشط",
-    "change": "التغيير",
-    "completed": "مكتمل",
-    "growth": "النمو",
-    "lastMonth": "الشهر الماضي",
-    "pending": "قيد الانتظار",
-    "thisMonth": "هذا الشهر",
-    "thisWeek": "هذا الأسبوع",
-    "today": "اليوم",
-    "total": "المجموع"
+    "total_games": "إجمالي الألعاب",
+    "wins": "الانتصارات", 
+    "losses": "الهزائم",
+    "win_rate": "معدل الفوز"
   },
-  "tables": {
-    "empty": "لم يتم العثور على عناصر",
-    "error": "فشل في تحميل البيانات",
-    "loading": "جاري تحميل البيانات...",
-    "noData": "لا توجد بيانات متاحة",
-    "of": "من",
-    "page": "صفحة",
-    "rowsPerPage": "صفوف في الصفحة"
+  "recent_games": {
+    "title": "الألعاب الأخيرة",
+    "view_all": "عرض الكل"
   },
-  "title": "لوحة القيادة",
-  "total_games": "إجمالي الألعاب",
-  "user": "المستخدم",
-  "view_all": "عرض الكل",
-  "welcome_back": "مرحباً بعودتك",
-  "win": "فوز",
-  "win_rate": "معدل الفوز",
-  "wins": "الانتصارات"
+  "game_result": {
+    "win": "فوز",
+    "loss": "هزيمة",
+    "draw": "تعادل"
+  },
+  "quick_actions": {
+    "title": "الإجراءات السريعة",
+    "new_game": "بدء لعبة جديدة",
+    "find_players": "العثور على لاعبين",
+    "view_stats": "عرض الإحصائيات"
+  }
 }

@@ -1,4 +1,21 @@
 {
+  "loading": "Chargement...",
+  "user": {
+    "guest": "Invité"
+  },
+  "navigation": {
+    "dashboard": "Tableau de Bord",
+    "profile": "Profil",
+    "logout": "Déconnexion"
+  },
+  "form": {
+    "drag_drop_hint": "Glissez et déposez votre image ici, ou cliquez pour sélectionner",
+    "file_size_error": "La taille du fichier dépasse {{maxSize}}MB",
+    "file_type_error": "Veuillez sélectionner un fichier image valide (JPEG, PNG, GIF, WebP)",
+    "country_code": "Pays",
+    "phone_number": "Numéro de Téléphone",
+    "select_country": "Sélectionner le pays"
+  },
   "about": {
     "community": "Communauté",
     "communityBuilding": "Construction de Communauté",

@@ -1,0 +1,37 @@
+{
+  "title": "Paramètres",
+  "tabs": {
+    "profile": "Profil",
+    "preferences": "Préférences",
+    "security": "Sécurité"
+  },
+  "profile": {
+    "title": "Informations de profil",
+    "description": "Mettez à jour vos informations de profil et préférences.",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "Email",
+    "phoneNumber": "Numéro de téléphone",
+    "profileImage": "Image de profil",
+    "bio": "Biographie",
+    "save": "Sauvegarder les modifications"
+  },
+  "preferences": {
+    "title": "Préférences",
+    "description": "Personnalisez vos préférences d'application.",
+    "language": "Langue",
+    "theme": "Thème",
+    "notifications": "Notifications",
+    "timezone": "Fuseau horaire",
+    "save": "Sauvegarder les préférences"
+  },
+  "security": {
+    "title": "Paramètres de sécurité",
+    "description": "Gérez la sécurité et la confidentialité de votre compte.",
+    "changePassword": "Changer le mot de passe",
+    "twoFactor": "Authentification à deux facteurs",
+    "sessions": "Sessions actives",
+    "privacy": "Paramètres de confidentialité",
+    "save": "Sauvegarder les paramètres de sécurité"
+  }
+}

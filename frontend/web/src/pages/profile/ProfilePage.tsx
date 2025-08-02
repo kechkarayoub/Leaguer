@@ -1,425 +1,535 @@
 /**
  * ProfilePage Component
  * 
- * User profile management page
+ * User profile page with form to update personal information and password
  */
 
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useForm } from 'react-hook-form';
 
-import useAuth, { User } from '../../hooks/useAuth';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import useAuth from '../../hooks/useAuth';
+import PhoneNumberField from '../../components/form/PhoneNumberField';
+import ImageUpload from '../../components/form/ImageUpload';
+import './ProfilePage.css';
 
-// Validation schemas
 interface ProfileFormData {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
+  first_name: string;
+  last_name: string;
+  user_phone_number: string;
+  user_address: string;
+  user_birthday: string;
+  user_cin: string;
+  user_country: string;
+  user_gender: string;
+  user_timezone: string;
+  current_language: string;
+  username: string;
+  email: string;
+  user_image_url?: File | null;
 }
 
-const profileSchema: yup.ObjectSchema<ProfileFormData> = yup.object({
-  firstName: yup.string().optional(),
-  lastName: yup.string().optional(), 
-  email: yup.string().email('Invalid email format').optional(),
-}) as yup.ObjectSchema<ProfileFormData>;
-
-const passwordSchema = yup.object({
-  currentPassword: yup.string().required('Current password is required'),
-  newPassword: yup
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .matches(/[0-9]/, 'Password must contain at least one number')
-    .required('New password is required'),
-  confirmPassword: yup
-    .string()
-    .oneOf([yup.ref('newPassword')], 'Passwords must match')
-    .required('Please confirm your new password'),
-});
+interface PasswordFormData {
+  current_password: string;
+  new_password: string;
+  confirm_password: string;
+}
 
 const ProfilePage: React.FC = () => {
   const { t } = useTranslation();
-  const { user, updateProfile, changePassword, isUpdatingProfile, isChangingPassword } = useAuth();
-  const [activeTab, setActiveTab] = useState<'profile' | 'security'>('profile');
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { user, updateProfile } = useAuth();
+  const [activeTab, setActiveTab] = useState<'profile' | 'password'>('profile');
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   // Profile form
-  const profileForm = useForm<ProfileFormData>({
-    resolver: yupResolver(profileSchema),
-    defaultValues: {
-      firstName: user?.firstName || '',
-      lastName: user?.lastName || '',
-      email: user?.email || '',
-    },
-  });
+  const {
+    register: registerProfile,
+    handleSubmit: handleSubmitProfile,
+    setValue: setValueProfile,
+    watch: watchProfile,
+    formState: { errors: errorsProfile }
+  } = useForm<ProfileFormData>();
 
   // Password form
-  const passwordForm = useForm<{
-    currentPassword: string;
-    newPassword: string;
-    confirmPassword: string;
-  }>({
-    resolver: yupResolver(passwordSchema),
-    defaultValues: {
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: '',
-    },
-  });
+  const {
+    register: registerPassword,
+    handleSubmit: handleSubmitPassword,
+    watch: watchPassword,
+    reset: resetPassword,
+    formState: { errors: errorsPassword }
+  } = useForm<PasswordFormData>();
 
-  const onProfileSubmit = async (data: ProfileFormData) => {
+  const watchNewPassword = watchPassword('new_password');
+
+  // Initialize form with user data
+  useEffect(() => {
+    if (user) {
+      setValueProfile('first_name', user.first_name || '');
+      setValueProfile('last_name', user.last_name || '');
+      setValueProfile('user_phone_number', user.user_phone_number || '');
+      setValueProfile('user_address', user.user_address || '');
+      setValueProfile('user_birthday', user.user_birthday || '');
+      setValueProfile('user_cin', user.user_cin || '');
+      setValueProfile('user_country', user.user_country || '');
+      setValueProfile('user_gender', user.user_gender || '');
+      setValueProfile('user_timezone', user.user_timezone || '');
+      setValueProfile('current_language', user.current_language || 'en');
+      setValueProfile('username', user.username || '');
+      setValueProfile('email', user.email || '');
+    }
+  }, [user, setValueProfile]);
+
+  const onSubmitProfile = async (data: ProfileFormData) => {
+    setIsLoading(true);
     try {
-      await updateProfile(data as Partial<User>);
-      // Reset form with updated data would happen automatically via React Query
+      // Create the update data object that matches the backend API
+      const updateData = {
+        first_name: data.first_name,
+        last_name: data.last_name,
+        user_phone_number: data.user_phone_number,
+        user_address: data.user_address,
+        user_birthday: data.user_birthday,
+        user_cin: data.user_cin,
+        user_country: data.user_country,
+        user_gender: data.user_gender,
+        user_timezone: data.user_timezone,
+        current_language: data.current_language,
+        // Only include username and email if they are not validated/locked
+        ...((!user?.is_user_phone_number_validated) && { username: data.username }),
+        ...((!user?.is_user_phone_number_validated) && { email: data.email }),
+      };
+
+      // For now, we'll handle the image separately as the updateProfile expects Partial<User>
+      // TODO: Update the useAuth hook to handle FormData for image uploads
+      await updateProfile(updateData);
+      
+      // Show success message
+      alert(t('profile:messages.profile_updated'));
     } catch (error) {
       console.error('Profile update error:', error);
+      alert(t('profile:messages.profile_update_error'));
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const onPasswordSubmit = async (data: {
-    currentPassword: string;
-    newPassword: string;
-    confirmPassword: string;
-  }) => {
+  const onSubmitPassword = async (data: PasswordFormData) => {
+    setIsLoading(true);
     try {
-      await changePassword({
-        currentPassword: data.currentPassword,
-        newPassword: data.newPassword,
+      const response = await fetch('/accounts/update-profile/', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+        body: JSON.stringify({
+          current_password: data.current_password,
+          new_password: data.new_password,
+        }),
       });
-      passwordForm.reset();
+
+      if (response.ok) {
+        resetPassword();
+        alert(t('profile:messages.password_updated'));
+      } else {
+        const errorData = await response.json();
+        alert(errorData.message || t('profile:messages.password_update_error'));
+      }
     } catch (error) {
-      console.error('Password change error:', error);
+      console.error('Password update error:', error);
+      alert(t('profile:messages.password_update_error'));
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const tabs = [
-    {
-      key: 'profile' as const,
-      label: t('profile:tabs.profile'),
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-        </svg>
-      ),
-    },
-    {
-      key: 'security' as const,
-      label: t('profile:tabs.security'),
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-        </svg>
-      ),
-    },
-  ];
+  const handleImageChange = (file: File | null) => {
+    setSelectedImage(file);
+  };
+
+  const handlePhoneChange = (phone: string) => {
+    setValueProfile('user_phone_number', phone);
+  };
 
   return (
     <div className="profile-page">
-      <div className="profile-page__container">
-        <div className="profile-page__header">
-          <h1 className="profile-page__title">
-            {t('profile:title')}
-          </h1>
-          <p className="profile-page__subtitle">
-            {t('profile:subtitle')}
-          </p>
+      <div className="page-container">
+        {/* Page Header */}
+        <div className="page-header">
+          <h1 className="page-title">{t('profile:title')}</h1>
+          <p className="page-description">{t('profile:description')}</p>
         </div>
 
-        <div className="profile-page__content">
-          {/* Tabs */}
-          <div className="profile-tabs">
-            <div className="profile-tabs__list">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.key}
-                  className={`profile-tabs__tab ${
-                    activeTab === tab.key ? 'profile-tabs__tab--active' : ''
-                  }`}
-                  onClick={() => setActiveTab(tab.key)}
-                >
-                  <span className="profile-tabs__tab-icon">
-                    {tab.icon}
-                  </span>
-                  <span className="profile-tabs__tab-text">
-                    {tab.label}
-                  </span>
-                </button>
-              ))}
-            </div>
+        {/* Profile Card */}
+        <div className="profile-card">
+          {/* Tab Navigation */}
+          <div className="tab-navigation">
+            <button
+              className={`tab-button ${activeTab === 'profile' ? 'tab-button--active' : ''}`}
+              onClick={() => setActiveTab('profile')}
+            >
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              {t('profile:tabs.personal_info')}
+            </button>
+            <button
+              className={`tab-button ${activeTab === 'password' ? 'tab-button--active' : ''}`}
+              onClick={() => setActiveTab('password')}
+            >
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              {t('profile:tabs.password')}
+            </button>
           </div>
 
-          {/* Tab content */}
-          <div className="profile-tabs__content">
+          {/* Tab Content */}
+          <div className="tab-content">
             {activeTab === 'profile' && (
-              <div className="profile-section">
-                <div className="profile-section__header">
-                  <h2 className="profile-section__title">
-                    {t('profile:profile.title')}
-                  </h2>
-                  <p className="profile-section__description">
-                    {t('profile:profile.description')}
-                  </p>
+              <form onSubmit={handleSubmitProfile(onSubmitProfile)} className="profile-form">
+                <div className="form-section">
+                  <h3 className="form-section__title">{t('profile:sections.profile_picture')}</h3>
+                  <ImageUpload
+                    value={selectedImage || user?.user_image_url}
+                    onChange={handleImageChange}
+                    label={t('profile:fields.profile_picture')}
+                  />
                 </div>
 
-                <form className="profile-form" onSubmit={profileForm.handleSubmit(onProfileSubmit)}>
-                  {/* Profile picture */}
-                  <div className="profile-picture">
-                    <div className="profile-picture__current">
-                      {user?.profileImage ? (
-                        <img
-                          src={user.profileImage}
-                          alt={user.firstName || user.email}
-                          className="profile-picture__image"
-                        />
-                      ) : (
-                        <div className="profile-picture__placeholder">
-                          {(user?.firstName?.[0] || user?.email?.[0] || 'U').toUpperCase()}
-                        </div>
-                      )}
-                    </div>
-                    <div className="profile-picture__actions">
-                      <button type="button" className="profile-picture__button">
-                        {t('profile:profile.change_photo')}
-                      </button>
-                      <p className="profile-picture__hint">
-                        {t('profile:profile.photo_hint')}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Name fields */}
-                  <div className="form-row">
+                <div className="form-section">
+                  <h3 className="form-section__title">{t('profile:sections.personal_information')}</h3>
+                  
+                  {/* Username and Email (disabled if validated) */}
+                  <div className="form-grid">
                     <div className="form-group">
-                      <label className="form-label" htmlFor="firstName">
-                        {t('profile:profile.first_name')}
+                      <label htmlFor="username" className="form-label">
+                        {t('profile:fields.username')}
                       </label>
                       <input
-                        {...profileForm.register('firstName')}
+                        id="username"
                         type="text"
-                        id="firstName"
-                        className={`form-input ${
-                          profileForm.formState.errors.firstName ? 'form-input--error' : ''
-                        }`}
-                        placeholder={t('profile:profile.first_name_placeholder')}
+                        className={`form-input ${errorsProfile.username ? 'form-input--error' : ''}`}
+                        disabled={true} // Always disabled as per requirements
+                        {...registerProfile('username')}
                       />
-                      {profileForm.formState.errors.firstName && (
-                        <span className="form-error">
-                          {profileForm.formState.errors.firstName.message}
-                        </span>
+                      {errorsProfile.username && (
+                        <span className="form-error">{errorsProfile.username.message}</span>
                       )}
                     </div>
 
                     <div className="form-group">
-                      <label className="form-label" htmlFor="lastName">
-                        {t('profile:profile.last_name')}
+                      <label htmlFor="email" className="form-label">
+                        {t('profile:fields.email')}
                       </label>
                       <input
-                        {...profileForm.register('lastName')}
-                        type="text"
-                        id="lastName"
-                        className={`form-input ${
-                          profileForm.formState.errors.lastName ? 'form-input--error' : ''
-                        }`}
-                        placeholder={t('profile:profile.last_name_placeholder')}
+                        id="email"
+                        type="email"
+                        className={`form-input ${errorsProfile.email ? 'form-input--error' : ''}`}
+                        disabled={true} // Always disabled as per requirements
+                        {...registerProfile('email')}
                       />
-                      {profileForm.formState.errors.lastName && (
-                        <span className="form-error">
-                          {profileForm.formState.errors.lastName.message}
-                        </span>
+                      {errorsProfile.email && (
+                        <span className="form-error">{errorsProfile.email.message}</span>
                       )}
                     </div>
                   </div>
 
-                  {/* Email field */}
+                  {/* First Name and Last Name */}
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label htmlFor="first_name" className="form-label">
+                        {t('profile:fields.first_name')}
+                      </label>
+                      <input
+                        id="first_name"
+                        type="text"
+                        className={`form-input ${errorsProfile.first_name ? 'form-input--error' : ''}`}
+                        {...registerProfile('first_name', {
+                          required: t('profile:validation.first_name_required'),
+                          minLength: {
+                            value: 2,
+                            message: t('profile:validation.first_name_min_length')
+                          }
+                        })}
+                      />
+                      {errorsProfile.first_name && (
+                        <span className="form-error">{errorsProfile.first_name.message}</span>
+                      )}
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="last_name" className="form-label">
+                        {t('profile:fields.last_name')}
+                      </label>
+                      <input
+                        id="last_name"
+                        type="text"
+                        className={`form-input ${errorsProfile.last_name ? 'form-input--error' : ''}`}
+                        {...registerProfile('last_name', {
+                          required: t('profile:validation.last_name_required'),
+                          minLength: {
+                            value: 2,
+                            message: t('profile:validation.last_name_min_length')
+                          }
+                        })}
+                      />
+                      {errorsProfile.last_name && (
+                        <span className="form-error">{errorsProfile.last_name.message}</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Phone Number */}
                   <div className="form-group">
-                    <label className="form-label" htmlFor="email">
-                      {t('profile:profile.email')}
-                    </label>
-                    <input
-                      {...profileForm.register('email')}
-                      type="email"
-                      id="email"
-                      className={`form-input ${
-                        profileForm.formState.errors.email ? 'form-input--error' : ''
-                      }`}
-                      placeholder={t('profile:profile.email_placeholder')}
+                    <PhoneNumberField
+                      label={t('profile:fields.phone_number')}
+                      value={watchProfile('user_phone_number') || ''}
+                      onChange={handlePhoneChange}
+                      error={errorsProfile.user_phone_number?.message}
+                      disabled={user?.is_user_phone_number_validated} // Disabled if validated
                     />
-                    {profileForm.formState.errors.email && (
-                      <span className="form-error">
-                        {profileForm.formState.errors.email.message}
-                      </span>
+                    {user?.is_user_phone_number_validated && (
+                      <small className="form-help-text">{t('profile:help.phone_validated')}</small>
                     )}
                   </div>
 
-                  {/* Submit button */}
-                  <div className="form-actions">
-                    <button
-                      type="submit"
-                      disabled={isUpdatingProfile}
-                      className="form-button form-button--primary"
-                    >
-                      {isUpdatingProfile ? (
-                        <LoadingSpinner size="small" text={t('profile:profile.updating')} />
-                      ) : (
-                        t('profile:profile.save_changes')
-                      )}
-                    </button>
+                  {/* Address */}
+                  <div className="form-group">
+                    <label htmlFor="user_address" className="form-label">
+                      {t('profile:fields.address')}
+                    </label>
+                    <textarea
+                      id="user_address"
+                      className={`form-input form-textarea ${errorsProfile.user_address ? 'form-input--error' : ''}`}
+                      rows={3}
+                      {...registerProfile('user_address')}
+                      placeholder={t('profile:placeholders.address')}
+                    />
+                    {errorsProfile.user_address && (
+                      <span className="form-error">{errorsProfile.user_address.message}</span>
+                    )}
                   </div>
-                </form>
-              </div>
+
+                  {/* Birthday and CIN */}
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label htmlFor="user_birthday" className="form-label">
+                        {t('profile:fields.birthday')}
+                      </label>
+                      <input
+                        id="user_birthday"
+                        type="date"
+                        className={`form-input ${errorsProfile.user_birthday ? 'form-input--error' : ''}`}
+                        {...registerProfile('user_birthday')}
+                      />
+                      {errorsProfile.user_birthday && (
+                        <span className="form-error">{errorsProfile.user_birthday.message}</span>
+                      )}
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="user_cin" className="form-label">
+                        {t('profile:fields.cin')}
+                      </label>
+                      <input
+                        id="user_cin"
+                        type="text"
+                        className={`form-input ${errorsProfile.user_cin ? 'form-input--error' : ''}`}
+                        {...registerProfile('user_cin')}
+                        placeholder={t('profile:placeholders.cin')}
+                      />
+                      {errorsProfile.user_cin && (
+                        <span className="form-error">{errorsProfile.user_cin.message}</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Country and Gender */}
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label htmlFor="user_country" className="form-label">
+                        {t('profile:fields.country')}
+                      </label>
+                      <select
+                        id="user_country"
+                        className={`form-input form-select ${errorsProfile.user_country ? 'form-input--error' : ''}`}
+                        {...registerProfile('user_country')}
+                      >
+                        <option value="">{t('profile:placeholders.select_country')}</option>
+                        <option value="DZ">Algeria</option>
+                        <option value="MA">Morocco</option>
+                        <option value="TN">Tunisia</option>
+                        <option value="FR">France</option>
+                        <option value="GB">United Kingdom</option>
+                        <option value="DE">Germany</option>
+                        <option value="ES">Spain</option>
+                        <option value="IT">Italy</option>
+                        <option value="US">United States</option>
+                        {/* Add more countries as needed */}
+                      </select>
+                      {errorsProfile.user_country && (
+                        <span className="form-error">{errorsProfile.user_country.message}</span>
+                      )}
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="user_gender" className="form-label">
+                        {t('profile:fields.gender')}
+                      </label>
+                      <select
+                        id="user_gender"
+                        className={`form-input form-select ${errorsProfile.user_gender ? 'form-input--error' : ''}`}
+                        {...registerProfile('user_gender')}
+                      >
+                        <option value="">{t('profile:placeholders.select_gender')}</option>
+                        <option value="M">{t('profile:gender.male')}</option>
+                        <option value="F">{t('profile:gender.female')}</option>
+                        <option value="O">{t('profile:gender.other')}</option>
+                        <option value="P">{t('profile:gender.prefer_not_to_say')}</option>
+                      </select>
+                      {errorsProfile.user_gender && (
+                        <span className="form-error">{errorsProfile.user_gender.message}</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Timezone and Language */}
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label htmlFor="user_timezone" className="form-label">
+                        {t('profile:fields.timezone')}
+                      </label>
+                      <select
+                        id="user_timezone"
+                        className={`form-input form-select ${errorsProfile.user_timezone ? 'form-input--error' : ''}`}
+                        {...registerProfile('user_timezone')}
+                      >
+                        <option value="">{t('profile:placeholders.select_timezone')}</option>
+                        <option value="Africa/Algiers">Africa/Algiers (UTC+1)</option>
+                        <option value="Africa/Casablanca">Africa/Casablanca (UTC+1)</option>
+                        <option value="Africa/Tunis">Africa/Tunis (UTC+1)</option>
+                        <option value="Europe/Paris">Europe/Paris (UTC+1)</option>
+                        <option value="Europe/London">Europe/London (UTC+0)</option>
+                        <option value="Europe/Berlin">Europe/Berlin (UTC+1)</option>
+                        <option value="Europe/Madrid">Europe/Madrid (UTC+1)</option>
+                        <option value="Europe/Rome">Europe/Rome (UTC+1)</option>
+                        <option value="America/New_York">America/New_York (UTC-5)</option>
+                        <option value="America/Los_Angeles">America/Los_Angeles (UTC-8)</option>
+                        <option value="Asia/Dubai">Asia/Dubai (UTC+4)</option>
+                        <option value="Asia/Tokyo">Asia/Tokyo (UTC+9)</option>
+                      </select>
+                      {errorsProfile.user_timezone && (
+                        <span className="form-error">{errorsProfile.user_timezone.message}</span>
+                      )}
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="current_language" className="form-label">
+                        {t('profile:fields.language')}
+                      </label>
+                      <select
+                        id="current_language"
+                        className={`form-input form-select ${errorsProfile.current_language ? 'form-input--error' : ''}`}
+                        {...registerProfile('current_language')}
+                      >
+                        <option value="en">{t('profile:languages.english')}</option>
+                        <option value="fr">{t('profile:languages.french')}</option>
+                        <option value="ar">{t('profile:languages.arabic')}</option>
+                      </select>
+                      {errorsProfile.current_language && (
+                        <span className="form-error">{errorsProfile.current_language.message}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-actions">
+                  <button
+                    type="submit"
+                    className="btn btn--primary"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? t('common:loading') : t('profile:actions.save_changes')}
+                  </button>
+                </div>
+              </form>
             )}
 
-            {activeTab === 'security' && (
-              <div className="profile-section">
-                <div className="profile-section__header">
-                  <h2 className="profile-section__title">
-                    {t('profile:security.title')}
-                  </h2>
-                  <p className="profile-section__description">
-                    {t('profile:security.description')}
-                  </p>
+            {activeTab === 'password' && (
+              <form onSubmit={handleSubmitPassword(onSubmitPassword)} className="password-form">
+                <div className="form-section">
+                  <h3 className="form-section__title">{t('profile:sections.change_password')}</h3>
+                  
+                  <div className="form-group">
+                    <label htmlFor="current_password" className="form-label">
+                      {t('profile:fields.current_password')}
+                    </label>
+                    <input
+                      id="current_password"
+                      type="password"
+                      className={`form-input ${errorsPassword.current_password ? 'form-input--error' : ''}`}
+                      {...registerPassword('current_password', {
+                        required: t('profile:validation.current_password_required')
+                      })}
+                    />
+                    {errorsPassword.current_password && (
+                      <span className="form-error">{errorsPassword.current_password.message}</span>
+                    )}
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="new_password" className="form-label">
+                      {t('profile:fields.new_password')}
+                    </label>
+                    <input
+                      id="new_password"
+                      type="password"
+                      className={`form-input ${errorsPassword.new_password ? 'form-input--error' : ''}`}
+                      {...registerPassword('new_password', {
+                        required: t('profile:validation.new_password_required'),
+                        minLength: {
+                          value: 8,
+                          message: t('profile:validation.password_min_length')
+                        }
+                      })}
+                    />
+                    {errorsPassword.new_password && (
+                      <span className="form-error">{errorsPassword.new_password.message}</span>
+                    )}
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="confirm_password" className="form-label">
+                      {t('profile:fields.confirm_password')}
+                    </label>
+                    <input
+                      id="confirm_password"
+                      type="password"
+                      className={`form-input ${errorsPassword.confirm_password ? 'form-input--error' : ''}`}
+                      {...registerPassword('confirm_password', {
+                        required: t('profile:validation.confirm_password_required'),
+                        validate: (value) =>
+                          value === watchNewPassword || t('profile:validation.passwords_do_not_match')
+                      })}
+                    />
+                    {errorsPassword.confirm_password && (
+                      <span className="form-error">{errorsPassword.confirm_password.message}</span>
+                    )}
+                  </div>
                 </div>
 
-                <form className="profile-form" onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}>
-                  {/* Current password */}
-                  <div className="form-group">
-                    <label className="form-label" htmlFor="currentPassword">
-                      {t('profile:security.current_password')}
-                    </label>
-                    <div className="form-input-group">
-                      <input
-                        {...passwordForm.register('currentPassword')}
-                        type={showCurrentPassword ? 'text' : 'password'}
-                        id="currentPassword"
-                        className={`form-input ${
-                          passwordForm.formState.errors.currentPassword ? 'form-input--error' : ''
-                        }`}
-                        placeholder={t('profile:security.current_password_placeholder')}
-                      />
-                      <button
-                        type="button"
-                        className="form-input-button"
-                        onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                      >
-                        {showCurrentPassword ? (
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
-                          </svg>
-                        ) : (
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                          </svg>
-                        )}
-                      </button>
-                    </div>
-                    {passwordForm.formState.errors.currentPassword && (
-                      <span className="form-error">
-                        {passwordForm.formState.errors.currentPassword.message}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* New password */}
-                  <div className="form-group">
-                    <label className="form-label" htmlFor="newPassword">
-                      {t('profile:security.new_password')}
-                    </label>
-                    <div className="form-input-group">
-                      <input
-                        {...passwordForm.register('newPassword')}
-                        type={showNewPassword ? 'text' : 'password'}
-                        id="newPassword"
-                        className={`form-input ${
-                          passwordForm.formState.errors.newPassword ? 'form-input--error' : ''
-                        }`}
-                        placeholder={t('profile:security.new_password_placeholder')}
-                      />
-                      <button
-                        type="button"
-                        className="form-input-button"
-                        onClick={() => setShowNewPassword(!showNewPassword)}
-                      >
-                        {showNewPassword ? (
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
-                          </svg>
-                        ) : (
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                          </svg>
-                        )}
-                      </button>
-                    </div>
-                    {passwordForm.formState.errors.newPassword && (
-                      <span className="form-error">
-                        {passwordForm.formState.errors.newPassword.message}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Confirm password */}
-                  <div className="form-group">
-                    <label className="form-label" htmlFor="confirmPassword">
-                      {t('profile:security.confirm_password')}
-                    </label>
-                    <div className="form-input-group">
-                      <input
-                        {...passwordForm.register('confirmPassword')}
-                        type={showConfirmPassword ? 'text' : 'password'}
-                        id="confirmPassword"
-                        className={`form-input ${
-                          passwordForm.formState.errors.confirmPassword ? 'form-input--error' : ''
-                        }`}
-                        placeholder={t('profile:security.confirm_password_placeholder')}
-                      />
-                      <button
-                        type="button"
-                        className="form-input-button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      >
-                        {showConfirmPassword ? (
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
-                          </svg>
-                        ) : (
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                          </svg>
-                        )}
-                      </button>
-                    </div>
-                    {passwordForm.formState.errors.confirmPassword && (
-                      <span className="form-error">
-                        {passwordForm.formState.errors.confirmPassword.message}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Submit button */}
-                  <div className="form-actions">
-                    <button
-                      type="submit"
-                      disabled={isChangingPassword}
-                      className="form-button form-button--primary"
-                    >
-                      {isChangingPassword ? (
-                        <LoadingSpinner size="small" text={t('profile:security.changing')} />
-                      ) : (
-                        t('profile:security.change_password')
-                      )}
-                    </button>
-                  </div>
-                </form>
-              </div>
+                <div className="form-actions">
+                  <button
+                    type="submit"
+                    className="btn btn--primary"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? t('common:loading') : t('profile:actions.update_password')}
+                  </button>
+                </div>
+              </form>
             )}
           </div>
         </div>

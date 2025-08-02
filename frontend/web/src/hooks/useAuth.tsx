@@ -18,9 +18,13 @@ import WebSocketService from '../services/WebSocketService';
 export interface User {
   id: string;
   email: string;
-  firstName?: string;
-  lastName?: string;
-  profileImage?: string;
+  first_name?: string;
+  last_name?: string;
+  firstName?: string; // Keep for backward compatibility
+  lastName?: string; // Keep for backward compatibility
+  user_phone_number?: string;
+  user_image_url?: string;
+  profileImage?: string; // Keep for backward compatibility
   isEmailVerified?: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -282,7 +286,7 @@ const useAuth = () => {
       
       toast.success(t('messages.logout_success'));
     }
-  }, [isAuthenticated, queryClient, t]);
+  }, [queryClient, t]);
 
   // Update profile mutation
   const updateProfileMutation = useMutation({

@@ -15,6 +15,7 @@ declare module 'react-i18next' {
       dashboard: typeof import('../locales/en/dashboard.json');
       profile: typeof import('../locales/en/profile.json');
       errors: typeof import('../locales/en/errors.json');
+      countries: typeof import('../public/locales/en/countries.json');
     };
   }
 }
@@ -28,6 +29,7 @@ declare module 'i18next' {
       dashboard: {};
       profile: {};
       errors: {};
+      countries: typeof import('../public/locales/en/countries.json');
     };
   }
 }

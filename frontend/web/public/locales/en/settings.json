@@ -1,0 +1,37 @@
+{
+  "title": "Settings",
+  "tabs": {
+    "profile": "Profile",
+    "preferences": "Preferences",
+    "security": "Security"
+  },
+  "profile": {
+    "title": "Profile Information",
+    "description": "Update your profile information and preferences.",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "phoneNumber": "Phone Number",
+    "profileImage": "Profile Image",
+    "bio": "Bio",
+    "save": "Save Changes"
+  },
+  "preferences": {
+    "title": "Preferences",
+    "description": "Customize your application preferences.",
+    "language": "Language",
+    "theme": "Theme",
+    "notifications": "Notifications",
+    "timezone": "Timezone",
+    "save": "Save Preferences"
+  },
+  "security": {
+    "title": "Security Settings",
+    "description": "Manage your account security and privacy.",
+    "changePassword": "Change Password",
+    "twoFactor": "Two-Factor Authentication",
+    "sessions": "Active Sessions",
+    "privacy": "Privacy Settings",
+    "save": "Save Security Settings"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "title": "Home",
+  "welcome": "Welcome back",
+  "quickStats": "Quick Stats",
+  "quickActions": "Quick Actions",
+  "stats": {
+    "totalUsers": "Total Users",
+    "activeProjects": "Active Projects",
+    "completedTasks": "Completed Tasks",
+    "pendingReviews": "Pending Reviews"
+  },
+  "actions": {
+    "createProject": "Create New Project",
+    "viewReports": "View Reports",
+    "manageUsers": "Manage Users",
+    "systemSettings": "System Settings"
+  }
+}

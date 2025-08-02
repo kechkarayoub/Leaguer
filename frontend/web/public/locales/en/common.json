@@ -1,4 +1,21 @@
 {
+  "loading": "Loading...",
+  "user": {
+    "guest": "Guest"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "form": {
+    "drag_drop_hint": "Drag and drop your image here, or click to select",
+    "file_size_error": "File size exceeds {{maxSize}}MB",
+    "file_type_error": "Please select a valid image file (JPEG, PNG, GIF, WebP)",
+    "country_code": "Country",
+    "phone_number": "Phone Number",
+    "select_country": "Select country"
+  },
   "about": {
     "community": "Community",
     "communityBuilding": "Community Building",

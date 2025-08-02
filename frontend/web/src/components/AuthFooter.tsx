@@ -19,11 +19,16 @@ import CookiesPolicyModal from './modals/CookiesPolicyModal';
 interface AuthFooterProps {
   showSignUpLink?: boolean;
   showSignInLink?: boolean;
+  prefillUserData?: {
+    name?: string;
+    email?: string;
+  };
 }
 
 const AuthFooter: React.FC<AuthFooterProps> = ({ 
   showSignUpLink = false, 
-  showSignInLink = false 
+  showSignInLink = false,
+  prefillUserData 
 }) => {
   const { t } = useTranslation();
   const { isRTL } = useRTL();
@@ -256,7 +261,8 @@ const AuthFooter: React.FC<AuthFooterProps> = ({
       />
       <ContactModal 
         isOpen={activeModal === 'contact'} 
-        onClose={closeModal} 
+        onClose={closeModal}
+        prefillUserData={prefillUserData}
       />
       <HelpCenterModal 
         isOpen={activeModal === 'help'} 

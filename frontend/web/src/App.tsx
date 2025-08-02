@@ -30,7 +30,8 @@ import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
 import ResetPasswordPage from './pages/auth/ResetPasswordPage';
-import DashboardPage from './pages/dashboard/DashboardPage';
+import HomePage from './pages/home/HomePage';
+import SettingsPage from './pages/settings/SettingsPage';
 import ProfilePage from './pages/profile/ProfilePage';
 import PageNotFound from './pages/PageNotFound';
 
@@ -74,7 +75,7 @@ const AppRoutes: React.FC = () => {
         path="/auth/*"
         element={
           isAuthenticated ? (
-            <Navigate to="/dashboard" replace />
+            <Navigate to="/" replace />
           ) : (
             <AuthLayout>
               <Routes>
@@ -98,9 +99,9 @@ const AppRoutes: React.FC = () => {
           <ProtectedRoute>
             <MainLayout>
               <Routes>
-                <Route path="dashboard" element={<DashboardPage />} />
+                <Route path="/" element={<HomePage />} />
+                <Route path="settings" element={<SettingsPage />} />
                 <Route path="profile" element={<ProfilePage />} />
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
                 <Route path="*" element={<PageNotFound />} />
               </Routes>
             </MainLayout>
