@@ -14,6 +14,7 @@ import "../assets/styles/LanguageSwitcher.css";
 
 interface Language {
   code: string;
+  codesByLanguage: Record<string, string>;
   name: string;
   nativeName: string;
   flag: 'US' | 'FR' | 'SA';
@@ -22,18 +23,33 @@ interface Language {
 const SUPPORTED_LANGUAGES: Language[] = [
   {
     code: 'en',
+    codesByLanguage: {
+      "en": "EN",
+      "fr": "AN",
+      "ar": "إن"
+    },
     name: 'English',
     nativeName: 'English',
     flag: 'US',
   },
   {
     code: 'fr',
+    codesByLanguage: {
+      "en": "FR",
+      "fr": "FR",
+      "ar": "فر"
+    },
     name: 'French',
     nativeName: 'Français',
     flag: 'FR',
   },
   {
     code: 'ar',
+    codesByLanguage: {
+      "en": "AR",
+      "fr": "AR",
+      "ar": "عر"
+    },
     name: 'Arabic',
     nativeName: 'العربية',
     flag: 'SA',
@@ -159,7 +175,7 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
                 className="language-switcher__flag-icon" 
                 size={16}
               />
-              <span className="language-switcher__compact-code">{language.code.toUpperCase()}</span>
+              <span className="language-switcher__compact-code">{language.codesByLanguage[currentLanguage.code] || language.code.toUpperCase()}</span>
             </button>
           ))}
         </div>
