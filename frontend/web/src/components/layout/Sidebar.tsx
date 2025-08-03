@@ -7,9 +7,9 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { getMenuItems } from '../../utils/UserUtils'; // Assuming you have a utility to get menu items
+import useAuth from '../../hooks/useAuth';
 
-import HomeIcon from '../icons/HomeIcon';
-import SettingsIcon from '../icons/SettingsIcon';
 import './Sidebar.css';
 
 interface SidebarProps {
@@ -21,21 +21,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
 
-  const menuItems = [
-    {
-      key: 'home',
-      label: t('navigation:home'),
-      path: '/',
-      icon: HomeIcon,
-    },
-    {
-      key: 'settings',
-      label: t('navigation:settings'),
-      path: '/settings',
-      icon: SettingsIcon,
-    },
-  ];
+  const menuItems = getMenuItems(user, t);
 
   const handleNavigation = (path: string) => {
     navigate(path);

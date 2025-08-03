@@ -3,6 +3,7 @@
   "welcome": "مرحباً بعودتك",
   "quickStats": "إحصائيات سريعة",
   "quickActions": "إجراءات سريعة",
+  "noContentYet": "لا يوجد محتوى متاح بعد.",
   "stats": {
     "totalUsers": "إجمالي المستخدمين",
     "activeProjects": "المشاريع النشطة",

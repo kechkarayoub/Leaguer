@@ -12,7 +12,7 @@
 }
 
 [dir="rtl"] .sidebar__header {
-  flex-direction: row-reverse;
+  /* flex-direction: row-reverse; */
 }
 
 [dir="rtl"] .sidebar__close {
@@ -79,11 +79,6 @@
   flex-direction: column;
 }
 
-[dir="rtl"] .sidebar {
-  right: 0;
-  left: auto;
-  transform: translateX(0%);
-}
 
 .sidebar--open {
   transform: translateX(0);

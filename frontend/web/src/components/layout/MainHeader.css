@@ -258,6 +258,9 @@
 }
 
 @media (max-width: 480px) {
+  .site-title {
+    display: none;
+  }
   .main-header__container {
     gap: var(--spacing-sm);
   }

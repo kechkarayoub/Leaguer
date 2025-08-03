@@ -499,6 +499,17 @@
     left: 0;
     right: 0;
   }
+  .from_main_connected .language-switcher__flag-icon{
+    display: none;
+  }
+  .from_main_connected .language-switcher__compact-btn {
+    min-width: 24px;
+    padding: 2px 6px;
+  }
+  .from_main_connected .language-switcher__minimal-btn {
+    min-width: 24px;
+    width: 24px;
+  }
 
 }
 

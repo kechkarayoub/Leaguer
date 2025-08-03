@@ -3,6 +3,7 @@
   "welcome": "Bon retour",
   "quickStats": "Statistiques rapides",
   "quickActions": "Actions rapides",
+  "noContentYet": "Aucun contenu disponible pour le moment.",
   "stats": {
     "totalUsers": "Utilisateurs totaux",
     "activeProjects": "Projets actifs",

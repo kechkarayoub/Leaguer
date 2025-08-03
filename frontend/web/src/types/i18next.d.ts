@@ -16,6 +16,9 @@ declare module 'react-i18next' {
       profile: typeof import('../locales/en/profile.json');
       errors: typeof import('../locales/en/errors.json');
       countries: typeof import('../public/locales/en/countries.json');
+      home: typeof import('../public/locales/en/home.json');
+      navigation: typeof import('../public/locales/en/navigation.json');
+      settings: typeof import('../public/locales/en/settings.json');
     };
   }
 }
@@ -26,10 +29,13 @@ declare module 'i18next' {
     resources: {
       common: typeof import('../public/locales/en/common.json');
       auth: typeof import('../public/locales/en/auth.json');
-      dashboard: {};
-      profile: {};
-      errors: {};
+      dashboard: typeof import('../public/locales/en/dashboard.json');
+      profile: typeof import('../public/locales/en/profile.json');
+      errors: typeof import('../public/locales/en/errors.json');
       countries: typeof import('../public/locales/en/countries.json');
+      home: typeof import('../public/locales/en/home.json');
+      navigation: typeof import('../public/locales/en/navigation.json');
+      settings: typeof import('../public/locales/en/settings.json');
     };
   }
 }
