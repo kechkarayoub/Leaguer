@@ -7,6 +7,7 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import './ErrorBoundary.css';
 
 interface Props {
   children: ReactNode;
