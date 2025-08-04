@@ -136,12 +136,12 @@
 }
 
 .image-upload__remove-btn {
-  background: var(--color-red-600);
+  background: var(--color-danger);
   color: var(--color-white);
 }
 
 .image-upload__remove-btn:hover {
-  background: var(--color-red-700);
+  background: var(--color-danger-hover);
 }
 
 .image-upload__change-btn .icon,

@@ -96,7 +96,7 @@
 
 .sidebar__title {
   font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-semibold);
   color: var(--color-text-primary);
   margin: 0;
 }
@@ -107,7 +107,7 @@
   color: var(--color-text-secondary);
   cursor: pointer;
   padding: var(--spacing-sm);
-  border-radius: var(--border-radius);
+  border-radius: var(--radius-md);
   transition: all var(--transition-fast);
   display: flex;
   align-items: center;
@@ -147,7 +147,7 @@
   color: var(--color-text-secondary);
   text-decoration: none;
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-medium);
   cursor: pointer;
   transition: all var(--transition-fast);
   text-align: left;

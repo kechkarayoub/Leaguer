@@ -17,7 +17,25 @@
     "phone_number": "رقم الهاتف",
     "current_password": "كلمة المرور الحالية",
     "new_password": "كلمة المرور الجديدة",
-    "confirm_password": "تأكيد كلمة المرور الجديدة"
+    "confirm_password": "تأكيد كلمة المرور الجديدة",
+    "username": "اسم المستخدم",
+    "email": "عنوان البريد الإلكتروني",
+    "address": "العنوان",
+    "birthday": "تاريخ الميلاد",
+    "cin": "رقم الهوية الوطنية",
+    "country": "البلد",
+    "preferredLanguage": "اللغة المفضلة",
+    "gender": "الجنس",
+    "timezone": "المنطقة الزمنية"
+
+  },
+  "placeholders": {
+    "address": "أدخل عنوانك الكامل",
+    "cin": "أدخل رقم الهوية الوطنية",
+    "select_country": "حدد بلدك",
+    "select_gender": "حدد جنسك",
+    "user_birthday": "أدخل تاريخ ميلادك",
+    "date_placeholder": "اختر تاريخًا"
   },
   "validation": {
     "first_name_required": "الاسم الأول مطلوب",

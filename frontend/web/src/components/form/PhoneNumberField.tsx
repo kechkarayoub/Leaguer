@@ -6,15 +6,18 @@
 
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PhoneInput } from 'react-international-phone';
-import 'react-international-phone/style.css';
+import { EXCLUDED_COUNTRIES } from '../../utils/GlobalUtils';
+import PhoneInput from 'react-phone-input-2';
+import ar from 'react-phone-input-2/lang/ar.json'
+import fr from 'react-phone-input-2/lang/fr.json'
+import 'react-phone-input-2/lib/style.css';
 import UnauthenticatedApiService from '../../services/UnauthenticatedApiService';
 
 import './PhoneNumberField.css';
 
 interface PhoneNumberFieldProps {
   value: string;
-  onChange: (value: string) => void;
+  onChange: (value: string | undefined) => void;
   error?: string;
   label?: string;
   placeholder?: string;
@@ -35,15 +38,16 @@ const PhoneNumberField: React.FC<PhoneNumberFieldProps> = ({
   className = '',
   useGeolocation = true,
 }) => {
-  const { t } = useTranslation();
-  const [defaultCountry, setDefaultCountry] = useState<string>('fr');
+  const { t, i18n } = useTranslation();
+  const [defaultCountry, setDefaultCountry] = useState<string>('ma');
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const currentLanguage = i18n.language;
+
 
   // Fetch user geolocation to set default country
   useEffect(() => {
     const fetchGeolocation = async () => {
-      if (!useGeolocation || value) return; // Don't fetch if phone number already set
-      
+      if (!useGeolocation || disabled) return;
       setIsLoadingLocation(true);
       try {
         const response = await UnauthenticatedApiService.getInstance().getGeolocation();
@@ -52,15 +56,14 @@ const PhoneNumberField: React.FC<PhoneNumberFieldProps> = ({
         }
       } catch (error) {
         console.warn('Failed to fetch geolocation:', error);
-        // Keep default 'fr' country
       } finally {
         setIsLoadingLocation(false);
       }
     };
-
     fetchGeolocation();
-  }, [useGeolocation, value]);
+  }, [useGeolocation, disabled, currentLanguage]);
 
+        console.log('Current language:', currentLanguage)
   return (
     <div className={`phone-field ${className} ${error ? 'phone-field--error' : ''}`}>
       {label && (
@@ -69,22 +72,28 @@ const PhoneNumberField: React.FC<PhoneNumberFieldProps> = ({
           {required && <span className="required-asterisk">*</span>}
         </label>
       )}
-      
-      <div className="phone-field__input-wrapper">
+      <div className="phone-field__input-wrapper" key={currentLanguage}>
         <PhoneInput
-          defaultCountry={defaultCountry}
-          value={value}
+          country={defaultCountry}
+          localization={currentLanguage === 'ar' ? ar : currentLanguage === 'fr' ? fr : undefined}
+          value={value || ''}
           onChange={onChange}
-          placeholder={placeholder || t('common:form.phone_number')}
-          disabled={disabled || isLoadingLocation}
+          excludeCountries={EXCLUDED_COUNTRIES}
+          preferredCountries={['ma'].concat(defaultCountry === 'ma' ? [] : [defaultCountry])}
           inputProps={{
+            placeholder: placeholder || t('common:form.phone_number'),
+            disabled: disabled || isLoadingLocation,
             'aria-label': label || t('common:form.phone_number'),
             'aria-invalid': !!error,
             'aria-describedby': error ? `${label}-error` : undefined,
+            required,
           }}
+          searchPlaceholder={t('common:form.phone.search_placeholder')}
+          searchNotFound={t('common:form.phone.searchNotFound')}
+          enableSearch
+          disableDropdown={disabled || isLoadingLocation}
         />
       </div>
-
       {error && (
         <div className="phone-field__error" id={`${label}-error`} role="alert">
           {error}

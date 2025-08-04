@@ -24,7 +24,7 @@
 .phone-field__input-wrapper .react-international-phone-input-container {
   border: 2px solid var(--border-light);
   border-radius: var(--radius-lg);
-  overflow: hidden;
+  overflow: visible;
   transition: border-color var(--transition-fast);
   background: white;
   display: flex;
@@ -43,6 +43,7 @@
 .phone-field--error .react-international-phone-input-container:focus-within {
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
 }
+
 
 /* Country selector button */
 .phone-field__input-wrapper .react-international-phone-country-selector-button {
@@ -98,7 +99,7 @@
 
 /* Country dropdown - Fixed positioning and z-index for proper rendering */
 .react-international-phone-country-selector-dropdown {
-  position: fixed !important; /* Use fixed instead of absolute */
+  position: absolute !important; /* Use fixed instead of absolute */
   border: 1px solid var(--border-light) !important;
   border-radius: var(--radius-lg) !important;
   box-shadow: var(--shadow-lg) !important;
@@ -154,6 +155,21 @@
 .react-international-phone-flag-emoji {
   margin-right: var(--spacing-xs);
   font-size: 1.2em;
+}
+
+.react-tel-input{
+
+}
+[dir="rtl"] .react-tel-input >.form-control {
+    padding: var(--spacing-sm) var(--spacing-md);
+    padding-right: 48px;
+}
+[dir="rtl"] .react-tel-input .selected-flag {
+    padding: 0 8px 0 0;
+}
+[dir="rtl"] .react-tel-input .selected-flag .arrow{
+    left: 0;
+    right: 20px;
 }
 
 /* Responsive Design */

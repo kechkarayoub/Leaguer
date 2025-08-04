@@ -19,7 +19,7 @@
 
 .page-title {
   font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-bold);
   color: var(--color-text-primary);
   margin-bottom: var(--spacing-sm);
 }
@@ -41,7 +41,7 @@
 
 .stat-card {
   background: var(--color-white);
-  border-radius: var(--border-radius);
+  border-radius: var(--radius-md);
   padding: var(--spacing-lg);
   border: 1px solid var(--color-border-light);
   box-shadow: var(--shadow-sm);
@@ -59,7 +59,7 @@
 .stat-card__icon {
   width: 48px;
   height: 48px;
-  border-radius: var(--border-radius);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -97,7 +97,7 @@
 
 .stat-card__value {
   font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-bold);
   color: var(--color-text-primary);
   margin-bottom: var(--spacing-xs);
 }
@@ -117,7 +117,7 @@
 
 .content-card {
   background: var(--color-white);
-  border-radius: var(--border-radius);
+  border-radius: var(--radius-md);
   padding: var(--spacing-lg);
   border: 1px solid var(--color-border-light);
   box-shadow: var(--shadow-sm);
@@ -134,7 +134,7 @@
 
 .content-card__title {
   font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-semibold);
   color: var(--color-text-primary);
   margin: 0;
 }
@@ -152,7 +152,7 @@
   justify-content: space-between;
   padding: var(--spacing-md);
   border: 1px solid var(--color-border-light);
-  border-radius: var(--border-radius);
+  border-radius: var(--radius-md);
   transition: all var(--transition-fast);
 }
 
@@ -168,7 +168,7 @@
 }
 
 .game-item__opponent {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-medium);
   color: var(--color-text-primary);
 }
 
@@ -184,15 +184,15 @@
 }
 
 .game-item__score {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-medium);
   color: var(--color-text-primary);
 }
 
 .game-item__status {
   padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--radius-sm);
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-medium);
   text-transform: capitalize;
 }
 
@@ -219,11 +219,11 @@
   gap: var(--spacing-sm);
   padding: var(--spacing-md);
   border: 1px solid var(--color-border);
-  border-radius: var(--border-radius);
+  border-radius: var(--radius-md);
   background: transparent;
   color: var(--color-text-primary);
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-medium);
   text-decoration: none;
   transition: all var(--transition-fast);
   cursor: pointer;

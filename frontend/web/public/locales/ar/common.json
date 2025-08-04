@@ -3,19 +3,6 @@
   "user": {
     "guest": "زائر"
   },
-  "navigation": {
-    "dashboard": "لوحة التحكم",
-    "profile": "الملف الشخصي",
-    "logout": "تسجيل الخروج"
-  },
-  "form": {
-    "drag_drop_hint": "اسحب وأفلت صورتك هنا، أو انقر للاختيار",
-    "file_size_error": "حجم الملف يتجاوز {{maxSize}} ميجابايت",
-    "file_type_error": "يرجى اختيار ملف صورة صالح (JPEG, PNG, GIF, WebP)",
-    "country_code": "البلد",
-    "phone_number": "رقم الهاتف",
-    "select_country": "اختر البلد"
-  },
   "about": {
     "community": "المجتمع",
     "communityBuilding": "بناء المجتمع",
@@ -330,7 +317,9 @@
     "phone": {
       "invalid": "يرجى إدخال رقم هاتف صحيح",
       "label": "رقم الهاتف",
-      "placeholder": "أدخل رقم هاتفك"
+      "placeholder": "أدخل رقم هاتفك",
+      "search_placeholder": "ابحث عن بلدك",
+      "searchNotFound": "لا توجد نتائج."
     },
     "required": "هذا الحقل مطلوب",
     "username": {
@@ -339,7 +328,19 @@
       "alphanumeric": "يجب أن يحتوي اسم المستخدم على أحرف وأرقام فقط (بدون مسافات أو رموز خاصة).",
       "min": "يجب أن يكون اسم المستخدم على الأقل {{min}} أحرف.",
       "noSpaces": "لا يمكن أن يحتوي اسم المستخدم على مسافات."
-    }
+    },
+    "drag_drop_hint": "اسحب وأفلت صورتك هنا، أو انقر للاختيار",
+    "file_size_error": "حجم الملف يتجاوز {{maxSize}} ميجابايت",
+    "file_type_error": "يرجى اختيار ملف صورة صالح (JPEG, PNG, GIF, WebP)",
+    "country_code": "البلد",
+    "phone_number": "رقم الهاتف",
+    "select_country": "اختر البلد",
+    "change_image": "تغيير الصورة",
+    "remove_image": "إزالة الصورة",
+    "image_invalid_type": "نوع الصورة غير صالح. يرجى تحميل ملف JPEG أو PNG أو GIF أو WebP.",
+    "image_too_large": "حجم الصورة يتجاوز الحد الأقصى المسموح به وهو {{maxSize}} ميجابايت. يرجى تحميل صورة أصغر.",
+    "image_upload_text": "قم بتحميل صورة ملفك الشخصي",
+    "image_upload_hint": "انقر لتحميل أو اسحب وأفلت ملف صورة هنا"
   },
   "helpCenter": {
     "allCategories": "جميع الفئات",

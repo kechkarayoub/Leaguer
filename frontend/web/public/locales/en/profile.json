@@ -26,14 +26,16 @@
     "language": "Preferred Language",
     "current_password": "Current Password",
     "new_password": "New Password",
-    "confirm_password": "Confirm New Password"
+    "confirm_password": "Confirm New Password",
+    "preferredLanguage": "Preferred Language"
   },
   "placeholders": {
     "address": "Enter your full address",
     "cin": "Enter your national ID number",
     "select_country": "Select your country",
     "select_gender": "Select your gender",
-    "select_timezone": "Select your timezone"
+    "user_birthday": "Enter your date of birth",
+    "date_placeholder": "Select a date"
   },
   "gender": {
     "male": "Male",

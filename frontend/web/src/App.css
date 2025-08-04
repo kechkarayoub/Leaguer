@@ -2,40 +2,21 @@
 
 :root {
   /* Brand colors - Clean and simple palette */
-  --brand-primary: #2563eb;
-  --brand-primary-hover: #1d4ed8;
-  --brand-primary-light: #dbeafe;
-  --brand-primary-dark: #1e40af;
-  --brand-secondary: #64748b;
   --brand-accent: #0891b2;
   --brand-accent-hover: #0e7490;
-  
-  /* Semantic colors - Built on brand colors */
-  --color-primary: var(--brand-primary);
-  --color-primary-hover: var(--brand-primary-hover);
-  --color-primary-light: var(--brand-primary-light);
-  --color-primary-dark: var(--brand-primary-dark);
-  --color-secondary: var(--brand-secondary);
-  --color-accent: var(--brand-accent);
-  --color-accent-hover: var(--brand-accent-hover);
+  --brand-primary: #2563eb;
+  --brand-primary-dark: #1e40af;
+  --brand-primary-hover: #1d4ed8;
+  --brand-primary-light: #dbeafe;
+  --brand-secondary: #64748b;
+
   
   /* Status colors - Clean and trustworthy */
-  --color-success: #16a34a;
-  --color-success-hover: #15803d;
-  --color-success-light: #dcfce7;
+  --color-black: #000000;
   --color-danger: #dc2626;
   --color-danger-hover: #b91c1c;
   --color-danger-light: #fecaca;
-  --color-warning: #ca8a04;
-  --color-warning-hover: #a16207;
-  --color-warning-light: #fef3c7;
-  --color-info: #0369a1;
-  --color-info-hover: #075985;
-  --color-info-light: #e0f2fe;
-  
-  /* Neutral colors - Refined grayscale palette */
-  --color-white: #ffffff;
-  --color-black: #000000;
+  --color-error: #dc2626;
   --color-gray-50: #f8fafc;
   --color-gray-100: #f1f5f9;
   --color-gray-200: #e2e8f0;
@@ -46,30 +27,55 @@
   --color-gray-700: #334155;
   --color-gray-800: #1e293b;
   --color-gray-900: #0f172a;
+  --color-info: #0369a1;
+  --color-info-hover: #075985;
+  --color-info-light: #e0f2fe;
+  --color-success: #16a34a;
+  --color-success-hover: #15803d;
+  --color-success-light: #dcfce7;
+  --color-warning: #ca8a04;
+  --color-warning-hover: #a16207;
+  --color-warning-light: #fef3c7;
+  --color-white: #ffffff;
   
-  /* Background colors - Simple and clean */
+  
+  /* Semantic colors - Built on brand colors */
+  --bg-inverse: var(--color-gray-900);
   --bg-primary: var(--color-white);
   --bg-secondary: var(--color-gray-50);
   --bg-tertiary: var(--color-gray-100);
-  --bg-inverse: var(--color-gray-900);
-  
+  --border-accent: var(--color-primary);
+  --border-primary: var(--color-gray-200);
+  --border-secondary: var(--color-gray-300);
+  --color-accent: var(--brand-accent);
+  --color-accent-hover: var(--brand-accent-hover);
+  --color-background: var(--color-white);
+  --color-background-hover: var(--color-gray-100);
+  --color-background-light: var(--color-gray-50);
+  --color-border: var(--color-gray-300);
+  --color-border-dark: var(--color-gray-600);
+  --color-border-light: var(--color-gray-200);
+  --color-primary: var(--brand-primary);
+  --color-primary-dark: var(--brand-primary-dark);
+  --color-primary-hover: var(--brand-primary-hover);
+  --color-primary-light: var(--brand-primary-light);
+  --color-secondary: var(--brand-secondary);
+  --color-text-primary: var(--color-gray-900);
+  --color-text-secondary: var(--color-gray-600);
+  --color-text-tertiary: var(--color-gray-500);
   /* Text colors */
+  --text-accent: var(--color-primary);
+  --text-inverse: var(--color-white);
   --text-primary: var(--color-gray-900);
   --text-secondary: var(--color-gray-600);
   --text-tertiary: var(--color-gray-500);
-  --text-inverse: var(--color-white);
-  --text-accent: var(--color-primary);
   
-  /* Border colors */
-  --border-primary: var(--color-gray-200);
-  --border-secondary: var(--color-gray-300);
-  --border-accent: var(--color-primary);
   
   /* Background gradients - Subtle and clean */
+  --gradient-brand: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-accent) 100%);
   --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
   --gradient-secondary: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
   --gradient-success: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-hover) 100%);
-  --gradient-brand: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-accent) 100%);
   --gradient-surface: linear-gradient(180deg, var(--color-white) 0%, var(--color-gray-50) 100%);
   
   /* Spacing - Consistent spacing system */
@@ -151,6 +157,23 @@
   --leading-normal: 1.5;
   --leading-relaxed: 1.625;
   --leading-loose: 2;
+
+  --font-size-lg: 1.125rem; /* 18px */
+  --font-size-md: 1rem; /* 16px */
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-xs: 0.75rem; /* 12px */
+  --font-size-xl: 1.25rem; /* 20px */
+  --font-size-2xl: 1.5rem; /* 24px */
+  --font-size-3xl: 1.875rem; /* 30px */
+  --font-size-4xl: 2.25rem; /* 36px */
+  --font-size-5xl: 3rem; /* 48px */
+
+  --header-height: 4rem; /* 64px */
+  --footer-height: 0; /* 64px */ 
+
+  --container-max-width: 1200px;
+  --container-xl: 1280px;
+
   
   /* Z-index scale */
   --z-index-dropdown: 1000;
@@ -4546,3 +4569,14 @@ a:hover {
      <body className="theme-corporate">
      <body className="theme-sunset">
 */
+
+
+.required-asterisk {
+  color: #ef4444;
+  margin-left: 0.25rem;
+}
+[dir="rtl"] .required-asterisk {
+  color: #ef4444;
+  margin-right: 0.25rem;
+  margin-left: 0;
+}

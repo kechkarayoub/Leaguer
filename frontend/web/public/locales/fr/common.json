@@ -3,19 +3,6 @@
   "user": {
     "guest": "Invité"
   },
-  "navigation": {
-    "dashboard": "Tableau de Bord",
-    "profile": "Profil",
-    "logout": "Déconnexion"
-  },
-  "form": {
-    "drag_drop_hint": "Glissez et déposez votre image ici, ou cliquez pour sélectionner",
-    "file_size_error": "La taille du fichier dépasse {{maxSize}}MB",
-    "file_type_error": "Veuillez sélectionner un fichier image valide (JPEG, PNG, GIF, WebP)",
-    "country_code": "Pays",
-    "phone_number": "Numéro de Téléphone",
-    "select_country": "Sélectionner le pays"
-  },
   "about": {
     "community": "Communauté",
     "communityBuilding": "Construction de Communauté",
@@ -330,7 +317,9 @@
     "phone": {
       "invalid": "Veuillez entrer un numéro de téléphone valide",
       "label": "Numéro de téléphone",
-      "placeholder": "Entrez votre numéro de téléphone"
+      "placeholder": "Entrez votre numéro de téléphone",
+      "search_placeholder": "Recherchez votre pays",
+      "searchNotFound": "Aucun résultat trouvé."
     },
     "required": "Ce champ est requis",
     "username": {
@@ -339,7 +328,19 @@
       "alphanumeric": "Le nom d'utilisateur doit contenir uniquement des lettres et des chiffres (sans espaces ni caractères spéciaux).",
       "min": "Le nom d'utilisateur doit comporter au moins {{min}} caractères.",
       "noSpaces": "Le nom d'utilisateur ne peut pas contenir d'espaces."
-    }
+    },
+    "drag_drop_hint": "Glissez et déposez votre image ici, ou cliquez pour sélectionner",
+    "file_size_error": "La taille du fichier dépasse {{maxSize}}MB",
+    "file_type_error": "Veuillez sélectionner un fichier image valide (JPEG, PNG, GIF, WebP)",
+    "country_code": "Pays",
+    "phone_number": "Numéro de Téléphone",
+    "select_country": "Sélectionner le pays",
+    "change_image": "Changer d'image",
+    "remove_image": "Supprimer l'image",
+    "image_invalid_type": "Type d'image invalide. Veuillez télécharger un fichier JPEG, PNG, GIF ou WebP.",
+    "image_too_large": "La taille de l'image dépasse la limite maximale de {{maxSize}}MB. Veuillez télécharger une image plus petite.",
+    "image_upload_text": "Téléchargez votre photo de profil",
+    "image_upload_hint": "Cliquez pour télécharger ou faites glisser et déposez un fichier image ici"
   },
   "helpCenter": {
     "allCategories": "Toutes les Catégories",

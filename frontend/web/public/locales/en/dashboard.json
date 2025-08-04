@@ -1,12 +1,6 @@
 {
   "welcome": "Welcome back, {{name}}!",
   "description": "Here's an overview of your gaming activity and quick actions to get you started.",
-  "stats": {
-    "total_games": "Total Games",
-    "wins": "Wins", 
-    "losses": "Losses",
-    "win_rate": "Win Rate"
-  },
   "recent_games": {
     "title": "Recent Games",
     "view_all": "View All"
@@ -56,7 +50,6 @@
     "title": "Overview"
   },
   "ready_to_play": "Ready to dominate today's matches?",
-  "recent_games": "Recent Games",
   "start_new_game": "Start New Game",
   "stats": {
     "active": "Active",
@@ -68,7 +61,11 @@
     "thisMonth": "This month",
     "thisWeek": "This week",
     "today": "Today",
-    "total": "Total"
+    "total": "Total",
+    "total_games": "Total Games",
+    "wins": "Wins", 
+    "losses": "Losses",
+    "win_rate": "Win Rate"
   },
   "tables": {
     "empty": "No items found",

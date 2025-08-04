@@ -1,0 +1,79 @@
+/* CustomDatePicker.css - Modern, clean, responsive datepicker styling */
+
+.custom-datepicker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.custom-datepicker__label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #334155;
+  margin-bottom: 0.25rem;
+}
+
+.custom-datepicker__input {
+  width: 100%;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+  background: var(--color-gray-50);
+  color: var(--color-text-primary);
+  transition: border 0.2s;
+  margin-top: -15px;
+}
+
+.custom-datepicker__input:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.custom-datepicker--error .custom-datepicker__input {
+  border-color: var(--color-error);
+  background: var(--color-error-light);
+}
+
+.custom-datepicker__error {
+  color: var(--color-error);
+  font-size: 0.95rem;
+  margin-top: 0.25rem;
+}
+
+.required-asterisk {
+  color: var(--color-error);
+  margin-left: 0.25rem;
+}
+
+[dir="rtl"] .react-datepicker__header .react-datepicker__current-month{
+  text-align: center;
+}
+.react-datepicker__month-dropdown,
+.react-datepicker__year-dropdown {
+  height: 200px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.react-datepicker__navigation.react-datepicker__navigation--years.react-datepicker__navigation--years-previous{
+  padding: 3px;
+}
+.react-datepicker__navigation.react-datepicker__navigation--years.react-datepicker__navigation--years-upcoming {
+  padding: 8px;
+}
+.react-datepicker__navigation.react-datepicker__navigation--years.react-datepicker__navigation--years-previous::before  {
+  content: "▼"; /* down arrow */
+  display: block;
+  font-size: 16px;
+  color: var(--color-text-secondary);
+  text-indent: 0;
+}
+
+.react-datepicker__navigation.react-datepicker__navigation--years.react-datepicker__navigation--years-upcoming::before {
+  content: "▲"; /* up arrow */
+  display: block;
+  font-size: 16px;
+  color: var(--color-text-secondary);
+  text-indent: 0;
+}

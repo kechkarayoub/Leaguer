@@ -3,19 +3,6 @@
   "user": {
     "guest": "Guest"
   },
-  "navigation": {
-    "dashboard": "Dashboard",
-    "profile": "Profile",
-    "logout": "Logout"
-  },
-  "form": {
-    "drag_drop_hint": "Drag and drop your image here, or click to select",
-    "file_size_error": "File size exceeds {{maxSize}}MB",
-    "file_type_error": "Please select a valid image file (JPEG, PNG, GIF, WebP)",
-    "country_code": "Country",
-    "phone_number": "Phone Number",
-    "select_country": "Select country"
-  },
   "about": {
     "community": "Community",
     "communityBuilding": "Community Building",
@@ -330,7 +317,9 @@
     "phone": {
       "invalid": "Please enter a valid phone number",
       "label": "Phone number",
-      "placeholder": "Enter your phone number"
+      "placeholder": "Enter your phone number",
+      "search_placeholder": "Search for your country",
+      "searchNotFound": "No results found."
     },
     "required": "This field is required",
     "username": {
@@ -339,7 +328,19 @@
       "alphanumeric": "Username must contain only letters and numbers (no spaces or special characters).",
       "min": "Username must be at least {{min}} characters.",
       "noSpaces": "Username cannot contain spaces."
-    }
+    },
+    "drag_drop_hint": "Drag and drop your image here, or click to select",
+    "file_size_error": "File size exceeds {{maxSize}}MB",
+    "file_type_error": "Please select a valid image file (JPEG, PNG, GIF, WebP)",
+    "country_code": "Country",
+    "phone_number": "Phone Number",
+    "select_country": "Select country",
+    "change_image": "Change Image",
+    "remove_image": "Remove Image",
+    "image_invalid_type": "Invalid image type. Please upload a JPEG, PNG, GIF, or WebP file.",
+    "image_too_large": "Image size exceeds the maximum limit of {{maxSize}}MB. Please upload a smaller image.",
+    "image_upload_text": "Upload your profile picture",
+    "image_upload_hint": "Click to upload or drag and drop an image file here"
   },
   "helpCenter": {
     "allCategories": "All Categories",

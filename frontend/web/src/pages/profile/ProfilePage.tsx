@@ -7,23 +7,27 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
+import { EXCLUDED_COUNTRIES } from '../../utils/GlobalUtils';
 
 import useAuth from '../../hooks/useAuth';
 import PhoneNumberField from '../../components/form/PhoneNumberField';
+import CustomDatePicker from '../../components/form/CustomDatePicker';
+
+
+import { defaultCountries } from 'react-international-phone';
 import ImageUpload from '../../components/form/ImageUpload';
 import './ProfilePage.css';
+import moment from 'moment';
 
 interface ProfileFormData {
   first_name: string;
   last_name: string;
   user_phone_number: string;
   user_address: string;
-  user_birthday: string;
+  user_birthday: string | Date | null;
   user_cin: string;
   user_country: string;
   user_gender: string;
-  user_timezone: string;
-  current_language: string;
   username: string;
   email: string;
   user_image_url?: File | null;
@@ -40,7 +44,11 @@ const ProfilePage: React.FC = () => {
   const { user, updateProfile } = useAuth();
   const [activeTab, setActiveTab] = useState<'profile' | 'password'>('profile');
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedImage, setSelectedImage] = useState<File | null | String>(null);
+  const countries = defaultCountries.filter(country => {
+    return EXCLUDED_COUNTRIES.indexOf(country[1].toLowerCase()) === -1;
+  });
+  const userPhoneNumber = user?.user_phone_number || '';
 
   // Profile form
   const {
@@ -73,8 +81,6 @@ const ProfilePage: React.FC = () => {
       setValueProfile('user_cin', user.user_cin || '');
       setValueProfile('user_country', user.user_country || '');
       setValueProfile('user_gender', user.user_gender || '');
-      setValueProfile('user_timezone', user.user_timezone || '');
-      setValueProfile('current_language', user.current_language || 'en');
       setValueProfile('username', user.username || '');
       setValueProfile('email', user.email || '');
     }
@@ -93,11 +99,8 @@ const ProfilePage: React.FC = () => {
         user_cin: data.user_cin,
         user_country: data.user_country,
         user_gender: data.user_gender,
-        user_timezone: data.user_timezone,
-        current_language: data.current_language,
-        // Only include username and email if they are not validated/locked
-        ...((!user?.is_user_phone_number_validated) && { username: data.username }),
-        ...((!user?.is_user_phone_number_validated) && { email: data.email }),
+        username: data.username,
+        email: data.email,
       };
 
       // For now, we'll handle the image separately as the updateProfile expects Partial<User>
@@ -144,12 +147,12 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  const handleImageChange = (file: File | null) => {
+  const handleImageChange = (file: File | null | String) => {
     setSelectedImage(file);
   };
 
-  const handlePhoneChange = (phone: string) => {
-    setValueProfile('user_phone_number', phone);
+  const handlePhoneChange = (phone: string | undefined) => {
+    setValueProfile('user_phone_number', phone || "");
   };
 
   return (
@@ -192,7 +195,7 @@ const ProfilePage: React.FC = () => {
                 <div className="form-section">
                   <h3 className="form-section__title">{t('profile:sections.profile_picture')}</h3>
                   <ImageUpload
-                    value={selectedImage || user?.user_image_url}
+                    value={selectedImage === "" ? selectedImage : selectedImage || user?.user_image_url}
                     onChange={handleImageChange}
                     label={t('profile:fields.profile_picture')}
                   />
@@ -206,6 +209,7 @@ const ProfilePage: React.FC = () => {
                     <div className="form-group">
                       <label htmlFor="username" className="form-label">
                         {t('profile:fields.username')}
+                        <span className="required-asterisk">*</span>
                       </label>
                       <input
                         id="username"
@@ -222,6 +226,7 @@ const ProfilePage: React.FC = () => {
                     <div className="form-group">
                       <label htmlFor="email" className="form-label">
                         {t('profile:fields.email')}
+                        <span className="required-asterisk">*</span>
                       </label>
                       <input
                         id="email"
@@ -241,6 +246,7 @@ const ProfilePage: React.FC = () => {
                     <div className="form-group">
                       <label htmlFor="first_name" className="form-label">
                         {t('profile:fields.first_name')}
+                        <span className="required-asterisk">*</span>
                       </label>
                       <input
                         id="first_name"
@@ -262,6 +268,7 @@ const ProfilePage: React.FC = () => {
                     <div className="form-group">
                       <label htmlFor="last_name" className="form-label">
                         {t('profile:fields.last_name')}
+                        <span className="required-asterisk">*</span>
                       </label>
                       <input
                         id="last_name"
@@ -288,9 +295,11 @@ const ProfilePage: React.FC = () => {
                       value={watchProfile('user_phone_number') || ''}
                       onChange={handlePhoneChange}
                       error={errorsProfile.user_phone_number?.message}
-                      disabled={user?.is_user_phone_number_validated} // Disabled if validated
+                      disabled={userPhoneNumber && user?.is_user_phone_number_validated} // Disabled if validated
+                      required
+                      useGeolocation={true}
                     />
-                    {user?.is_user_phone_number_validated && (
+                    {userPhoneNumber && user?.is_user_phone_number_validated && (
                       <small className="form-help-text">{t('profile:help.phone_validated')}</small>
                     )}
                   </div>
@@ -315,23 +324,25 @@ const ProfilePage: React.FC = () => {
                   {/* Birthday and CIN */}
                   <div className="form-grid">
                     <div className="form-group">
-                      <label htmlFor="user_birthday" className="form-label">
-                        {t('profile:fields.birthday')}
-                      </label>
-                      <input
-                        id="user_birthday"
-                        type="date"
-                        className={`form-input ${errorsProfile.user_birthday ? 'form-input--error' : ''}`}
-                        {...registerProfile('user_birthday')}
+                      <CustomDatePicker
+                        value={watchProfile('user_birthday')}
+                        onChange={date => setValueProfile('user_birthday', date)}
+                        label={t('profile:fields.birthday')}
+                        placeholder={t('profile:placeholders.user_birthday')}
+                        error={errorsProfile.user_birthday?.message}
+                        required
+                        type="date" // or "time" or "datetime"
+                        disabled={false}
+                        showYearDropdown={true}
+                        showMonthDropdown={true}
+                        dropdownMode={"scroll"}
                       />
-                      {errorsProfile.user_birthday && (
-                        <span className="form-error">{errorsProfile.user_birthday.message}</span>
-                      )}
                     </div>
 
                     <div className="form-group">
                       <label htmlFor="user_cin" className="form-label">
                         {t('profile:fields.cin')}
+                        <span className="required-asterisk">*</span>
                       </label>
                       <input
                         id="user_cin"
@@ -351,6 +362,7 @@ const ProfilePage: React.FC = () => {
                     <div className="form-group">
                       <label htmlFor="user_country" className="form-label">
                         {t('profile:fields.country')}
+                        <span className="required-asterisk">*</span>
                       </label>
                       <select
                         id="user_country"
@@ -358,15 +370,11 @@ const ProfilePage: React.FC = () => {
                         {...registerProfile('user_country')}
                       >
                         <option value="">{t('profile:placeholders.select_country')}</option>
-                        <option value="DZ">Algeria</option>
-                        <option value="MA">Morocco</option>
-                        <option value="TN">Tunisia</option>
-                        <option value="FR">France</option>
-                        <option value="GB">United Kingdom</option>
-                        <option value="DE">Germany</option>
-                        <option value="ES">Spain</option>
-                        <option value="IT">Italy</option>
-                        <option value="US">United States</option>
+                        {countries.map(country => (
+                          <option key={country[1]} value={country[1]}>
+                            {country[0]}
+                          </option>
+                        ))}
                         {/* Add more countries as needed */}
                       </select>
                       {errorsProfile.user_country && (
@@ -377,6 +385,7 @@ const ProfilePage: React.FC = () => {
                     <div className="form-group">
                       <label htmlFor="user_gender" className="form-label">
                         {t('profile:fields.gender')}
+                        <span className="required-asterisk">*</span>
                       </label>
                       <select
                         id="user_gender"
@@ -384,10 +393,8 @@ const ProfilePage: React.FC = () => {
                         {...registerProfile('user_gender')}
                       >
                         <option value="">{t('profile:placeholders.select_gender')}</option>
-                        <option value="M">{t('profile:gender.male')}</option>
-                        <option value="F">{t('profile:gender.female')}</option>
-                        <option value="O">{t('profile:gender.other')}</option>
-                        <option value="P">{t('profile:gender.prefer_not_to_say')}</option>
+                        <option value="male">{t('profile:gender.male')}</option>
+                        <option value="female">{t('profile:gender.female')}</option>
                       </select>
                       {errorsProfile.user_gender && (
                         <span className="form-error">{errorsProfile.user_gender.message}</span>
@@ -395,54 +402,6 @@ const ProfilePage: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Timezone and Language */}
-                  <div className="form-grid">
-                    <div className="form-group">
-                      <label htmlFor="user_timezone" className="form-label">
-                        {t('profile:fields.timezone')}
-                      </label>
-                      <select
-                        id="user_timezone"
-                        className={`form-input form-select ${errorsProfile.user_timezone ? 'form-input--error' : ''}`}
-                        {...registerProfile('user_timezone')}
-                      >
-                        <option value="">{t('profile:placeholders.select_timezone')}</option>
-                        <option value="Africa/Algiers">Africa/Algiers (UTC+1)</option>
-                        <option value="Africa/Casablanca">Africa/Casablanca (UTC+1)</option>
-                        <option value="Africa/Tunis">Africa/Tunis (UTC+1)</option>
-                        <option value="Europe/Paris">Europe/Paris (UTC+1)</option>
-                        <option value="Europe/London">Europe/London (UTC+0)</option>
-                        <option value="Europe/Berlin">Europe/Berlin (UTC+1)</option>
-                        <option value="Europe/Madrid">Europe/Madrid (UTC+1)</option>
-                        <option value="Europe/Rome">Europe/Rome (UTC+1)</option>
-                        <option value="America/New_York">America/New_York (UTC-5)</option>
-                        <option value="America/Los_Angeles">America/Los_Angeles (UTC-8)</option>
-                        <option value="Asia/Dubai">Asia/Dubai (UTC+4)</option>
-                        <option value="Asia/Tokyo">Asia/Tokyo (UTC+9)</option>
-                      </select>
-                      {errorsProfile.user_timezone && (
-                        <span className="form-error">{errorsProfile.user_timezone.message}</span>
-                      )}
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="current_language" className="form-label">
-                        {t('profile:fields.language')}
-                      </label>
-                      <select
-                        id="current_language"
-                        className={`form-input form-select ${errorsProfile.current_language ? 'form-input--error' : ''}`}
-                        {...registerProfile('current_language')}
-                      >
-                        <option value="en">{t('profile:languages.english')}</option>
-                        <option value="fr">{t('profile:languages.french')}</option>
-                        <option value="ar">{t('profile:languages.arabic')}</option>
-                      </select>
-                      {errorsProfile.current_language && (
-                        <span className="form-error">{errorsProfile.current_language.message}</span>
-                      )}
-                    </div>
-                  </div>
                 </div>
 
                 <div className="form-actions">

@@ -11,7 +11,7 @@ import './ImageUpload.css';
 
 interface ImageUploadProps {
   value?: string | File;
-  onChange: (file: File | null) => void;
+  onChange: (file: File | null | String) => void;
   label?: string;
   error?: string;
   maxSize?: number; // in MB
@@ -97,7 +97,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   };
 
   const handleRemove = () => {
-    onChange(null);
+    onChange("");
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }

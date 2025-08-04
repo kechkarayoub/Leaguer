@@ -150,6 +150,35 @@ const SettingsPage: React.FC = () => {
                     </select>
                   </div>
 
+                  
+                    <div className="form-group">
+                      <label htmlFor="user_timezone" className="form-label">
+                        {t('settings:preferences.timezone')}
+                      </label>
+                      <select
+                        id="user_timezone"
+                        // className={`form-input form-select ${errorsProfile.user_timezone ? 'form-input--error' : ''}`}
+                        // {...registerProfile('user_timezone')}
+                      >
+                        <option value="">{t('profile:placeholders.select_timezone')}</option>
+                        <option value="Africa/Algiers">Africa/Algiers (UTC+1)</option>
+                        <option value="Africa/Casablanca">Africa/Casablanca (UTC+1)</option>
+                        <option value="Africa/Tunis">Africa/Tunis (UTC+1)</option>
+                        <option value="Europe/Paris">Europe/Paris (UTC+1)</option>
+                        <option value="Europe/London">Europe/London (UTC+0)</option>
+                        <option value="Europe/Berlin">Europe/Berlin (UTC+1)</option>
+                        <option value="Europe/Madrid">Europe/Madrid (UTC+1)</option>
+                        <option value="Europe/Rome">Europe/Rome (UTC+1)</option>
+                        <option value="America/New_York">America/New_York (UTC-5)</option>
+                        <option value="America/Los_Angeles">America/Los_Angeles (UTC-8)</option>
+                        <option value="Asia/Dubai">Asia/Dubai (UTC+4)</option>
+                        <option value="Asia/Tokyo">Asia/Tokyo (UTC+9)</option>
+                      </select>
+                      {/* {errorsProfile.user_timezone && (
+                        <span className="form-error">{errorsProfile.user_timezone.message}</span>
+                      )} */}
+                    </div>
+
                   {/* Theme */}
                   <div className="form-group">
                     <label className="form-label">{t('settings:preferences.theme')}</label>

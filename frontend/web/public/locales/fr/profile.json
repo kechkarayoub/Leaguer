@@ -26,14 +26,16 @@
     "language": "Langue Préférée",
     "current_password": "Mot de Passe Actuel",
     "new_password": "Nouveau Mot de Passe",
-    "confirm_password": "Confirmer le Nouveau Mot de Passe"
+    "confirm_password": "Confirmer le Nouveau Mot de Passe",
+    "preferredLanguage": "Langue Préférée"
   },
   "placeholders": {
     "address": "Entrez votre adresse complète",
     "cin": "Entrez votre numéro d'identité nationale",
     "select_country": "Sélectionnez votre pays",
     "select_gender": "Sélectionnez votre genre",
-    "select_timezone": "Sélectionnez votre fuseau horaire"
+    "user_birthday": "Entrez votre date de naissance",
+    "date_placeholder": "Sélectionnez une date"
   },
   "gender": {
     "male": "Homme",

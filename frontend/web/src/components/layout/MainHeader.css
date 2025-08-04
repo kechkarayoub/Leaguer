@@ -29,7 +29,7 @@
   color: var(--color-text-secondary);
   cursor: pointer;
   padding: var(--spacing-sm);
-  border-radius: var(--border-radius);
+  border-radius: var(--radius-md);
   transition: all var(--transition-fast);
 }
 
@@ -46,13 +46,16 @@
 
 .page-title {
   font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-semibold);
   color: var(--color-text-primary);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-align: center !important;
+  text-align: center !important; 
+}
+.page-description {
+  text-align: center !important; 
 }
 
 .page-subtitle {
@@ -93,7 +96,7 @@
   border: none;
   cursor: pointer;
   padding: var(--spacing-sm);
-  border-radius: var(--border-radius);
+  border-radius: var(--radius-md);
   transition: all var(--transition-fast);
   max-width: 250px;
 }
@@ -117,7 +120,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-semibold);
   font-size: var(--font-size-sm);
 }
 
@@ -130,7 +133,7 @@
 }
 
 .user-name {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-medium);
   color: var(--color-text-primary);
   font-size: var(--font-size-sm);
   white-space: nowrap;
@@ -168,7 +171,7 @@
   width: 200px;
   background: var(--color-white);
   border: 1px solid var(--color-border-light);
-  border-radius: var(--border-radius);
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
   overflow: hidden;
   z-index: 1000;
