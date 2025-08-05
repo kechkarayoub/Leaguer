@@ -1,80 +1,81 @@
 {
-  "title": "Paramètres du Profil",
-  "description": "Gérez les informations de votre compte et les paramètres de sécurité.",
-  "tabs": {
-    "personal_info": "Informations Personnelles",
-    "password": "Mot de Passe et Sécurité"
-  },
-  "sections": {
-    "profile_picture": "Photo de Profil",
-    "personal_information": "Informations Personnelles",
-    "change_password": "Changer le Mot de Passe"
-  },
-  "fields": {
-    "profile_picture": "Photo de Profil",
-    "username": "Nom d'utilisateur",
-    "email": "Adresse Email",
-    "first_name": "Prénom",
-    "last_name": "Nom de Famille",
-    "phone_number": "Numéro de Téléphone",
-    "address": "Adresse",
-    "birthday": "Date de Naissance",
-    "cin": "Numéro d'Identité Nationale",
-    "country": "Pays",
-    "gender": "Genre",
-    "timezone": "Fuseau Horaire",
-    "language": "Langue Préférée",
-    "current_password": "Mot de Passe Actuel",
-    "new_password": "Nouveau Mot de Passe",
-    "confirm_password": "Confirmer le Nouveau Mot de Passe",
-    "preferredLanguage": "Langue Préférée"
-  },
-  "placeholders": {
-    "address": "Entrez votre adresse complète",
-    "cin": "Entrez votre numéro d'identité nationale",
-    "select_country": "Sélectionnez votre pays",
-    "select_gender": "Sélectionnez votre genre",
-    "user_birthday": "Entrez votre date de naissance",
-    "date_placeholder": "Sélectionnez une date"
-  },
-  "gender": {
-    "male": "Homme",
-    "female": "Femme",
-    "other": "Autre",
-    "prefer_not_to_say": "Préfère ne pas dire"
-  },
-  "languages": {
-    "english": "Anglais",
-    "french": "Français",
-    "arabic": "العربية"
-  },
-  "help": {
-    "phone_validated": "Votre numéro de téléphone a été validé et ne peut pas être modifié.",
-    "email_verified": "Votre adresse email a été vérifiée.",
-    "username_locked": "Le nom d'utilisateur ne peut pas être modifié après la création du compte."
-  },
-  "validation": {
-    "first_name_required": "Le prénom est requis",
-    "first_name_min_length": "Le prénom doit contenir au moins 2 caractères",
-    "last_name_required": "Le nom de famille est requis",
-    "last_name_min_length": "Le nom de famille doit contenir au moins 2 caractères",
-    "phone_number_required": "Le numéro de téléphone est requis",
-    "address_max_length": "L'adresse doit contenir moins de 500 caractères",
-    "cin_format": "Veuillez entrer un numéro d'identité nationale valide",
-    "current_password_required": "Le mot de passe actuel est requis",
-    "new_password_required": "Le nouveau mot de passe est requis",
-    "password_min_length": "Le mot de passe doit contenir au moins 8 caractères",
-    "confirm_password_required": "Veuillez confirmer votre nouveau mot de passe",
-    "passwords_do_not_match": "Les mots de passe ne correspondent pas"
-  },
   "actions": {
     "save_changes": "Enregistrer les Modifications",
     "update_password": "Mettre à Jour le Mot de Passe"
   },
+  "description": "Gérez les informations de votre compte et les paramètres de sécurité.",
+  "fields": {
+    "address": "Adresse",
+    "birthday": "Date de Naissance",
+    "cin": "Numéro d'Identité Nationale",
+    "confirm_password": "Confirmer le Nouveau Mot de Passe",
+    "country": "Pays",
+    "current_password": "Mot de Passe Actuel",
+    "email": "Adresse Email",
+    "first_name": "Prénom",
+    "gender": "Genre",
+    "language": "Langue Préférée",
+    "last_name": "Nom de Famille",
+    "new_password": "Nouveau Mot de Passe",
+    "phone_number": "Numéro de Téléphone",
+    "preferredLanguage": "Langue Préférée",
+    "profile_picture": "Photo de Profil",
+    "timezone": "Fuseau Horaire",
+    "username": "Nom d'utilisateur"
+  },
+  "gender": {
+    "female": "Femme",
+    "male": "Homme"
+  },
+  "help": {
+    "email_verified": "Votre adresse email a été vérifiée.",
+    "phone_validated": "Votre numéro de téléphone a été validé et ne peut pas être modifié.",
+    "username_locked": "Le nom d'utilisateur ne peut pas être modifié après la création du compte."
+  },
+  "languages": {
+    "arabic": "العربية",
+    "english": "Anglais",
+    "french": "Français"
+  },
   "messages": {
-    "profile_updated": "Profil mis à jour avec succès !",
-    "profile_update_error": "Échec de la mise à jour du profil. Veuillez réessayer.",
+    "password_update_error": "Échec de la mise à jour du mot de passe. Veuillez réessayer.",
     "password_updated": "Mot de passe mis à jour avec succès !",
-    "password_update_error": "Échec de la mise à jour du mot de passe. Veuillez réessayer."
+    "profile_update_error": "Échec de la mise à jour du profil. Veuillez réessayer.",
+    "profile_updated": "Profil mis à jour avec succès !"
+  },
+  "placeholders": {
+    "address": "Entrez votre adresse complète",
+    "cin": "Entrez votre numéro d'identité nationale",
+    "date_placeholder": "Sélectionnez une date",
+    "select_country": "Sélectionnez votre pays",
+    "select_gender": "Sélectionnez votre genre",
+    "user_birthday": "Entrez votre date de naissance"
+  },
+  "sections": {
+    "change_password": "Changer le Mot de Passe",
+    "personal_information": "Informations Personnelles",
+    "profile_picture": "Photo de Profil"
+  },
+  "select": {
+    "no_options": "Aucune option trouvée"
+  },
+  "tabs": {
+    "password": "Mot de Passe et Sécurité",
+    "personal_info": "Informations Personnelles"
+  },
+  "title": "Paramètres du Profil",
+  "validation": {
+    "address_max_length": "L'adresse doit contenir moins de 500 caractères",
+    "cin_format": "Veuillez entrer un numéro d'identité nationale valide",
+    "confirm_password_required": "Veuillez confirmer votre nouveau mot de passe",
+    "current_password_required": "Le mot de passe actuel est requis",
+    "first_name_min_length": "Le prénom doit contenir au moins 2 caractères",
+    "first_name_required": "Le prénom est requis",
+    "last_name_min_length": "Le nom de famille doit contenir au moins 2 caractères",
+    "last_name_required": "Le nom de famille est requis",
+    "new_password_required": "Le nouveau mot de passe est requis",
+    "password_min_length": "Le mot de passe doit contenir au moins 8 caractères",
+    "passwords_do_not_match": "Les mots de passe ne correspondent pas",
+    "phone_number_required": "Le numéro de téléphone est requis"
   }
 }

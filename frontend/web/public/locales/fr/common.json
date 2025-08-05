@@ -1,8 +1,4 @@
 {
-  "loading": "Chargement...",
-  "user": {
-    "guest": "Invité"
-  },
   "about": {
     "community": "Communauté",
     "communityBuilding": "Construction de Communauté",
@@ -288,6 +284,9 @@
     "terms": "Conditions d'utilisation"
   },
   "form": {
+    "change_image": "Changer d'image",
+    "country_code": "Pays",
+    "drag_drop_hint": "Glissez et déposez votre image ici, ou cliquez pour sélectionner",
     "email": {
       "invalid": "Veuillez entrer une adresse email valide",
       "label": "Email",
@@ -298,11 +297,17 @@
       "label": "Email ou Nom d'utilisateur",
       "placeholder": "Entrez votre email ou nom d'utilisateur"
     },
+    "file_size_error": "La taille du fichier dépasse {{maxSize}}MB",
+    "file_type_error": "Veuillez sélectionner un fichier image valide (JPEG, PNG, GIF, WebP)",
+    "image_invalid_type": "Type d'image invalide. Veuillez télécharger un fichier JPEG, PNG, GIF ou WebP.",
+    "image_too_large": "La taille de l'image dépasse la limite maximale de {{maxSize}}MB. Veuillez télécharger une image plus petite.",
+    "image_upload_hint": "Cliquez pour télécharger ou faites glisser et déposez un fichier image ici",
+    "image_upload_text": "Téléchargez votre photo de profil",
     "invalid": "Valeur invalide",
     "name": {
+      "alpha": "Seules les lettres et un espace simple sont autorisés. Pas de chiffres, caractères spéciaux ou espaces consécutifs.",
       "first": "Prénom",
-      "last": "Nom de famille",
-      "alpha": "Seules les lettres et un espace simple sont autorisés. Pas de chiffres, caractères spéciaux ou espaces consécutifs."
+      "last": "Nom de famille"
     },
     "password": {
       "confirm": "Confirmer le mot de passe",
@@ -318,29 +323,20 @@
       "invalid": "Veuillez entrer un numéro de téléphone valide",
       "label": "Numéro de téléphone",
       "placeholder": "Entrez votre numéro de téléphone",
-      "search_placeholder": "Recherchez votre pays",
-      "searchNotFound": "Aucun résultat trouvé."
+      "searchNotFound": "Aucun résultat trouvé.",
+      "search_placeholder": "Recherchez votre pays"
     },
-    "required": "Ce champ est requis",
-    "username": {
-      "label": "Nom d'utilisateur",
-      "placeholder": "Entrez votre nom d'utilisateur",
-      "alphanumeric": "Le nom d'utilisateur doit contenir uniquement des lettres et des chiffres (sans espaces ni caractères spéciaux).",
-      "min": "Le nom d'utilisateur doit comporter au moins {{min}} caractères.",
-      "noSpaces": "Le nom d'utilisateur ne peut pas contenir d'espaces."
-    },
-    "drag_drop_hint": "Glissez et déposez votre image ici, ou cliquez pour sélectionner",
-    "file_size_error": "La taille du fichier dépasse {{maxSize}}MB",
-    "file_type_error": "Veuillez sélectionner un fichier image valide (JPEG, PNG, GIF, WebP)",
-    "country_code": "Pays",
     "phone_number": "Numéro de Téléphone",
-    "select_country": "Sélectionner le pays",
-    "change_image": "Changer d'image",
     "remove_image": "Supprimer l'image",
-    "image_invalid_type": "Type d'image invalide. Veuillez télécharger un fichier JPEG, PNG, GIF ou WebP.",
-    "image_too_large": "La taille de l'image dépasse la limite maximale de {{maxSize}}MB. Veuillez télécharger une image plus petite.",
-    "image_upload_text": "Téléchargez votre photo de profil",
-    "image_upload_hint": "Cliquez pour télécharger ou faites glisser et déposez un fichier image ici"
+    "required": "Ce champ est requis",
+    "select_country": "Sélectionner le pays",
+    "username": {
+      "alphanumeric": "Le nom d'utilisateur doit contenir uniquement des lettres et des chiffres (sans espaces ni caractères spéciaux).",
+      "label": "Nom d'utilisateur",
+      "min": "Le nom d'utilisateur doit comporter au moins {{min}} caractères.",
+      "noSpaces": "Le nom d'utilisateur ne peut pas contenir d'espaces.",
+      "placeholder": "Entrez votre nom d'utilisateur"
+    }
   },
   "helpCenter": {
     "allCategories": "Toutes les Catégories",
@@ -460,6 +456,7 @@
     "french": "Français",
     "select": "Sélectionner la langue"
   },
+  "loading": "Chargement...",
   "messages": {
     "login_failed": "Échec de la connexion",
     "login_success": "Connexion réussie",
@@ -479,6 +476,11 @@
     "logout": "Se déconnecter",
     "profile": "Profil",
     "settings": "Paramètres"
+  },
+  "notFound": {
+    "goHome": "Aller à l'accueil",
+    "text": "Désolé, la page que vous recherchez n'existe pas.",
+    "title": "Page non trouvée"
   },
   "privacy": {
     "changes": {
@@ -708,6 +710,9 @@
     "weeks": "{{count}} semaine_plural",
     "years": "{{count}} année_plural"
   },
+  "user": {
+    "guest": "Invité"
+  },
   "validation": {
     "date": "Veuillez entrer une date valide",
     "email": "Veuillez entrer une adresse email valide",
@@ -722,10 +727,5 @@
     "required": "{{field}} est requis",
     "time": "Veuillez entrer une heure valide",
     "url": "Veuillez entrer une URL valide"
-  },
-  "notFound": {
-    "title": "Page non trouvée",
-    "text": "Désolé, la page que vous recherchez n'existe pas.",
-    "goHome": "Aller à l'accueil"
   }
 }

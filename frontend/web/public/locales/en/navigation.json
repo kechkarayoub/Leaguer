@@ -1,9 +1,9 @@
 {
-  "menu": "Menu",
+  "close": "Close",
   "home": "Home",
-  "settings": "Settings",
-  "profile": "Profile",
   "logout": "Logout",
+  "menu": "Menu",
   "navigation": "Navigation",
-  "close": "Close"
+  "profile": "Profile",
+  "settings": "Settings"
 }

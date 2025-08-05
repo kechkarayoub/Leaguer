@@ -1,21 +1,4 @@
 {
-  "welcome": "Welcome back, {{name}}!",
-  "description": "Here's an overview of your gaming activity and quick actions to get you started.",
-  "recent_games": {
-    "title": "Recent Games",
-    "view_all": "View All"
-  },
-  "game_result": {
-    "win": "Win",
-    "loss": "Loss",
-    "draw": "Draw"
-  },
-  "quick_actions": {
-    "title": "Quick Actions",
-    "new_game": "Start New Game",
-    "find_players": "Find Players",
-    "view_stats": "View Statistics"
-  },
   "achievements": "Achievements",
   "actions": {
     "configure": "Configure",
@@ -28,7 +11,13 @@
     "refresh": "Refresh Data",
     "view": "View"
   },
+  "description": "Here's an overview of your gaming activity and quick actions to get you started.",
   "find_opponents": "Find Opponents",
+  "game_result": {
+    "draw": "Draw",
+    "loss": "Loss",
+    "win": "Win"
+  },
   "join_tournament": "Join Tournament",
   "loss": "Loss",
   "losses": "Losses",
@@ -49,7 +38,17 @@
     "stats": "Statistics",
     "title": "Overview"
   },
+  "quick_actions": {
+    "find_players": "Find Players",
+    "new_game": "Start New Game",
+    "title": "Quick Actions",
+    "view_stats": "View Statistics"
+  },
   "ready_to_play": "Ready to dominate today's matches?",
+  "recent_games": {
+    "title": "Recent Games",
+    "view_all": "View All"
+  },
   "start_new_game": "Start New Game",
   "stats": {
     "active": "Active",
@@ -57,15 +56,15 @@
     "completed": "Completed",
     "growth": "Growth",
     "lastMonth": "Last month",
+    "losses": "Losses",
     "pending": "Pending",
     "thisMonth": "This month",
     "thisWeek": "This week",
     "today": "Today",
     "total": "Total",
     "total_games": "Total Games",
-    "wins": "Wins", 
-    "losses": "Losses",
-    "win_rate": "Win Rate"
+    "win_rate": "Win Rate",
+    "wins": "Wins"
   },
   "tables": {
     "empty": "No items found",
@@ -80,6 +79,7 @@
   "total_games": "Total Games",
   "user": "User",
   "view_all": "View All",
+  "welcome": "Welcome back, {{name}}!",
   "welcome_back": "Welcome back",
   "win": "Win",
   "win_rate": "Win Rate",

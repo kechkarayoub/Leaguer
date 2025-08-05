@@ -1,8 +1,4 @@
 {
-  "loading": "Loading...",
-  "user": {
-    "guest": "Guest"
-  },
   "about": {
     "community": "Community",
     "communityBuilding": "Community Building",
@@ -288,6 +284,9 @@
     "terms": "Terms of Service"
   },
   "form": {
+    "change_image": "Change Image",
+    "country_code": "Country",
+    "drag_drop_hint": "Drag and drop your image here, or click to select",
     "email": {
       "invalid": "Please enter a valid email address",
       "label": "Email",
@@ -298,11 +297,17 @@
       "label": "Email or Username",
       "placeholder": "Enter your email or username"
     },
+    "file_size_error": "File size exceeds {{maxSize}}MB",
+    "file_type_error": "Please select a valid image file (JPEG, PNG, GIF, WebP)",
+    "image_invalid_type": "Invalid image type. Please upload a JPEG, PNG, GIF, or WebP file.",
+    "image_too_large": "Image size exceeds the maximum limit of {{maxSize}}MB. Please upload a smaller image.",
+    "image_upload_hint": "Click to upload or drag and drop an image file here",
+    "image_upload_text": "Upload your profile picture",
     "invalid": "Invalid value",
     "name": {
+      "alpha": "Only letters and single spaces are allowed. No numbers, special characters, or consecutive spaces.",
       "first": "First Name",
-      "last": "Last Name",
-      "alpha": "Only letters and single spaces are allowed. No numbers, special characters, or consecutive spaces."
+      "last": "Last Name"
     },
     "password": {
       "confirm": "Confirm password",
@@ -318,29 +323,20 @@
       "invalid": "Please enter a valid phone number",
       "label": "Phone number",
       "placeholder": "Enter your phone number",
-      "search_placeholder": "Search for your country",
-      "searchNotFound": "No results found."
+      "searchNotFound": "No results found.",
+      "search_placeholder": "Search for your country"
     },
-    "required": "This field is required",
-    "username": {
-      "label": "Username",
-      "placeholder": "Enter your username",
-      "alphanumeric": "Username must contain only letters and numbers (no spaces or special characters).",
-      "min": "Username must be at least {{min}} characters.",
-      "noSpaces": "Username cannot contain spaces."
-    },
-    "drag_drop_hint": "Drag and drop your image here, or click to select",
-    "file_size_error": "File size exceeds {{maxSize}}MB",
-    "file_type_error": "Please select a valid image file (JPEG, PNG, GIF, WebP)",
-    "country_code": "Country",
     "phone_number": "Phone Number",
-    "select_country": "Select country",
-    "change_image": "Change Image",
     "remove_image": "Remove Image",
-    "image_invalid_type": "Invalid image type. Please upload a JPEG, PNG, GIF, or WebP file.",
-    "image_too_large": "Image size exceeds the maximum limit of {{maxSize}}MB. Please upload a smaller image.",
-    "image_upload_text": "Upload your profile picture",
-    "image_upload_hint": "Click to upload or drag and drop an image file here"
+    "required": "This field is required",
+    "select_country": "Select country",
+    "username": {
+      "alphanumeric": "Username must contain only letters and numbers (no spaces or special characters).",
+      "label": "Username",
+      "min": "Username must be at least {{min}} characters.",
+      "noSpaces": "Username cannot contain spaces.",
+      "placeholder": "Enter your username"
+    }
   },
   "helpCenter": {
     "allCategories": "All Categories",
@@ -460,6 +456,7 @@
     "french": "Français",
     "select": "Select language"
   },
+  "loading": "Loading...",
   "messages": {
     "login_failed": "Login failed",
     "login_success": "Successfully logged in",
@@ -479,6 +476,11 @@
     "logout": "Logout",
     "profile": "Profile",
     "settings": "Settings"
+  },
+  "notFound": {
+    "goHome": "Go to Home",
+    "text": "Sorry, the page you are looking for does not exist.",
+    "title": "Page Not Found"
   },
   "privacy": {
     "changes": {
@@ -708,6 +710,9 @@
     "weeks": "{{count}} week_plural",
     "years": "{{count}} year_plural"
   },
+  "user": {
+    "guest": "Guest"
+  },
   "validation": {
     "date": "Please enter a valid date",
     "email": "Please enter a valid email address",
@@ -722,10 +727,5 @@
     "required": "{{field}} is required",
     "time": "Please enter a valid time",
     "url": "Please enter a valid URL"
-  },
-  "notFound": {
-    "title": "Page Not Found",
-    "text": "Sorry, the page you are looking for does not exist.",
-    "goHome": "Go to Home"
   }
 }

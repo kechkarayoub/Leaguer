@@ -1,25 +1,87 @@
 {
-  "welcome": "مرحباً بعودتك، {{name}}!",
-  "description": "إليك نظرة عامة على نشاط الألعاب الخاص بك والإجراءات السريعة للبدء.",
-  "stats": {
-    "total_games": "إجمالي الألعاب",
-    "wins": "الانتصارات", 
-    "losses": "الهزائم",
-    "win_rate": "معدل الفوز"
+  "achievements": "الإنجازات",
+  "actions": {
+    "configure": "إعداد",
+    "create": "إنشاء جديد",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "export": "تصدير",
+    "import": "استيراد",
+    "manage": "إدارة",
+    "refresh": "تحديث البيانات",
+    "view": "عرض"
   },
+  "description": "إليك نظرة عامة على نشاط الألعاب الخاص بك والإجراءات السريعة للبدء.",
+  "find_opponents": "ابحث عن منافسين",
+  "game_result": {
+    "draw": "تعادل",
+    "loss": "هزيمة",
+    "win": "فوز"
+  },
+  "join_tournament": "انضم إلى البطولة",
+  "loss": "هزيمة",
+  "losses": "الهزائم",
+  "no_achievements": "لا توجد إنجازات حتى الآن",
+  "no_recent_games": "لا توجد ألعاب حديثة",
+  "notifications": {
+    "markAllRead": "تحديد الكل كمقروء",
+    "markRead": "تحديد كمقروء",
+    "newMessage": "رسالة جديدة",
+    "noNotifications": "لا توجد إشعارات",
+    "reminder": "تذكير",
+    "systemUpdate": "تحديث النظام",
+    "title": "الإشعارات"
+  },
+  "overview": {
+    "notifications": "الإشعارات",
+    "recent": "النشاط الأخير",
+    "stats": "الإحصائيات",
+    "title": "نظرة عامة"
+  },
+  "quick_actions": {
+    "find_players": "العثور على لاعبين",
+    "new_game": "بدء لعبة جديدة",
+    "title": "الإجراءات السريعة",
+    "view_stats": "عرض الإحصائيات"
+  },
+  "ready_to_play": "هل أنت جاهز للسيطرة على مباريات اليوم؟",
   "recent_games": {
     "title": "الألعاب الأخيرة",
     "view_all": "عرض الكل"
   },
-  "game_result": {
-    "win": "فوز",
-    "loss": "هزيمة",
-    "draw": "تعادل"
+  "start_new_game": "بدء لعبة جديدة",
+  "stats": {
+    "active": "نشط",
+    "change": "تغيير",
+    "completed": "مكتمل",
+    "growth": "النمو",
+    "lastMonth": "الشهر الماضي",
+    "losses": "الهزائم",
+    "pending": "قيد الانتظار",
+    "thisMonth": "هذا الشهر",
+    "thisWeek": "هذا الأسبوع",
+    "today": "اليوم",
+    "total": "الإجمالي",
+    "total_games": "إجمالي الألعاب",
+    "win_rate": "معدل الفوز",
+    "wins": "الانتصارات"
   },
-  "quick_actions": {
-    "title": "الإجراءات السريعة",
-    "new_game": "بدء لعبة جديدة",
-    "find_players": "العثور على لاعبين",
-    "view_stats": "عرض الإحصائيات"
-  }
+  "tables": {
+    "empty": "لم يتم العثور على عناصر",
+    "error": "فشل في تحميل البيانات",
+    "loading": "جارٍ تحميل البيانات...",
+    "noData": "لا توجد بيانات متاحة",
+    "of": "من",
+    "page": "صفحة",
+    "rowsPerPage": "عدد الصفوف لكل صفحة"
+  },
+  "title": "لوحة التحكم",
+  "total_games": "إجمالي الألعاب",
+  "user": "المستخدم",
+  "view_all": "عرض الكل",
+  "welcome": "مرحباً بعودتك، {{name}}!",
+  "welcome_back": "مرحباً بعودتك",
+  "win": "فوز",
+  "win_rate": "معدل الفوز",
+  "wins": "الانتصارات"
 }

@@ -1,19 +1,19 @@
 {
-  "title": "Accueil",
-  "welcome": "Bon retour",
-  "quickStats": "Statistiques rapides",
-  "quickActions": "Actions rapides",
-  "noContentYet": "Aucun contenu disponible pour le moment.",
-  "stats": {
-    "totalUsers": "Utilisateurs totaux",
-    "activeProjects": "Projets actifs",
-    "completedTasks": "Tâches terminées",
-    "pendingReviews": "Révisions en attente"
-  },
   "actions": {
     "createProject": "Créer un nouveau projet",
-    "viewReports": "Voir les rapports",
     "manageUsers": "Gérer les utilisateurs",
-    "systemSettings": "Paramètres système"
-  }
+    "systemSettings": "Paramètres système",
+    "viewReports": "Voir les rapports"
+  },
+  "noContentYet": "Aucun contenu disponible pour le moment.",
+  "quickActions": "Actions rapides",
+  "quickStats": "Statistiques rapides",
+  "stats": {
+    "activeProjects": "Projets actifs",
+    "completedTasks": "Tâches terminées",
+    "pendingReviews": "Révisions en attente",
+    "totalUsers": "Utilisateurs totaux"
+  },
+  "title": "Accueil",
+  "welcome": "Bon retour"
 }

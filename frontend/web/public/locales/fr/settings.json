@@ -1,37 +1,37 @@
 {
-  "title": "Paramètres",
-  "tabs": {
-    "profile": "Profil",
-    "preferences": "Préférences",
-    "security": "Sécurité"
-  },
-  "profile": {
-    "title": "Informations de profil",
-    "description": "Mettez à jour vos informations de profil et préférences.",
-    "firstName": "Prénom",
-    "lastName": "Nom",
-    "email": "Email",
-    "phoneNumber": "Numéro de téléphone",
-    "profileImage": "Image de profil",
-    "bio": "Biographie",
-    "save": "Sauvegarder les modifications"
-  },
   "preferences": {
-    "title": "Préférences",
     "description": "Personnalisez vos préférences d'application.",
     "language": "Langue",
-    "theme": "Thème",
     "notifications": "Notifications",
+    "save": "Sauvegarder les préférences",
+    "theme": "Thème",
     "timezone": "Fuseau horaire",
-    "save": "Sauvegarder les préférences"
+    "title": "Préférences"
+  },
+  "profile": {
+    "bio": "Biographie",
+    "description": "Mettez à jour vos informations de profil et préférences.",
+    "email": "Email",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "phoneNumber": "Numéro de téléphone",
+    "profileImage": "Image de profil",
+    "save": "Sauvegarder les modifications",
+    "title": "Informations de profil"
   },
   "security": {
-    "title": "Paramètres de sécurité",
-    "description": "Gérez la sécurité et la confidentialité de votre compte.",
     "changePassword": "Changer le mot de passe",
-    "twoFactor": "Authentification à deux facteurs",
-    "sessions": "Sessions actives",
+    "description": "Gérez la sécurité et la confidentialité de votre compte.",
     "privacy": "Paramètres de confidentialité",
-    "save": "Sauvegarder les paramètres de sécurité"
-  }
+    "save": "Sauvegarder les paramètres de sécurité",
+    "sessions": "Sessions actives",
+    "title": "Paramètres de sécurité",
+    "twoFactor": "Authentification à deux facteurs"
+  },
+  "tabs": {
+    "preferences": "Préférences",
+    "profile": "Profil",
+    "security": "Sécurité"
+  },
+  "title": "Paramètres"
 }

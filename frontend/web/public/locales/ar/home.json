@@ -1,19 +1,19 @@
 {
-  "title": "الرئيسية",
-  "welcome": "مرحباً بعودتك",
-  "quickStats": "إحصائيات سريعة",
-  "quickActions": "إجراءات سريعة",
-  "noContentYet": "لا يوجد محتوى متاح بعد.",
-  "stats": {
-    "totalUsers": "إجمالي المستخدمين",
-    "activeProjects": "المشاريع النشطة",
-    "completedTasks": "المهام المكتملة",
-    "pendingReviews": "المراجعات المعلقة"
-  },
   "actions": {
     "createProject": "إنشاء مشروع جديد",
-    "viewReports": "عرض التقارير",
     "manageUsers": "إدارة المستخدمين",
-    "systemSettings": "إعدادات النظام"
-  }
+    "systemSettings": "إعدادات النظام",
+    "viewReports": "عرض التقارير"
+  },
+  "noContentYet": "لا يوجد محتوى متاح بعد.",
+  "quickActions": "إجراءات سريعة",
+  "quickStats": "إحصائيات سريعة",
+  "stats": {
+    "activeProjects": "المشاريع النشطة",
+    "completedTasks": "المهام المكتملة",
+    "pendingReviews": "المراجعات المعلقة",
+    "totalUsers": "إجمالي المستخدمين"
+  },
+  "title": "الرئيسية",
+  "welcome": "مرحباً بعودتك"
 }

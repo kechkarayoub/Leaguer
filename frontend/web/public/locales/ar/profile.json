@@ -1,62 +1,81 @@
 {
-  "title": "إعدادات الملف الشخصي",
-  "description": "إدارة معلومات حسابك وإعدادات الأمان.",
-  "tabs": {
-    "personal_info": "المعلومات الشخصية",
-    "password": "كلمة المرور والأمان"
-  },
-  "sections": {
-    "profile_picture": "صورة الملف الشخصي",
-    "personal_information": "المعلومات الشخصية",
-    "change_password": "تغيير كلمة المرور"
-  },
-  "fields": {
-    "profile_picture": "صورة الملف الشخصي",
-    "first_name": "الاسم الأول",
-    "last_name": "الاسم الأخير",
-    "phone_number": "رقم الهاتف",
-    "current_password": "كلمة المرور الحالية",
-    "new_password": "كلمة المرور الجديدة",
-    "confirm_password": "تأكيد كلمة المرور الجديدة",
-    "username": "اسم المستخدم",
-    "email": "عنوان البريد الإلكتروني",
-    "address": "العنوان",
-    "birthday": "تاريخ الميلاد",
-    "cin": "رقم الهوية الوطنية",
-    "country": "البلد",
-    "preferredLanguage": "اللغة المفضلة",
-    "gender": "الجنس",
-    "timezone": "المنطقة الزمنية"
-
-  },
-  "placeholders": {
-    "address": "أدخل عنوانك الكامل",
-    "cin": "أدخل رقم الهوية الوطنية",
-    "select_country": "حدد بلدك",
-    "select_gender": "حدد جنسك",
-    "user_birthday": "أدخل تاريخ ميلادك",
-    "date_placeholder": "اختر تاريخًا"
-  },
-  "validation": {
-    "first_name_required": "الاسم الأول مطلوب",
-    "first_name_min_length": "يجب أن يحتوي الاسم الأول على حرفين على الأقل",
-    "last_name_required": "الاسم الأخير مطلوب",
-    "last_name_min_length": "يجب أن يحتوي الاسم الأخير على حرفين على الأقل",
-    "phone_number_required": "رقم الهاتف مطلوب",
-    "current_password_required": "كلمة المرور الحالية مطلوبة",
-    "new_password_required": "كلمة المرور الجديدة مطلوبة",
-    "password_min_length": "يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل",
-    "confirm_password_required": "يرجى تأكيد كلمة المرور الجديدة",
-    "passwords_do_not_match": "كلمات المرور غير متطابقة"
-  },
   "actions": {
     "save_changes": "حفظ التغييرات",
     "update_password": "تحديث كلمة المرور"
   },
+  "description": "إدارة معلومات حسابك وإعدادات الأمان.",
+  "fields": {
+    "address": "العنوان",
+    "birthday": "تاريخ الميلاد",
+    "cin": "رقم الهوية الوطنية",
+    "confirm_password": "تأكيد كلمة المرور الجديدة",
+    "country": "البلد",
+    "current_password": "كلمة المرور الحالية",
+    "email": "عنوان البريد الإلكتروني",
+    "first_name": "الاسم الأول",
+    "gender": "الجنس",
+    "language": "Preferred Language",
+    "last_name": "الاسم الأخير",
+    "new_password": "كلمة المرور الجديدة",
+    "phone_number": "رقم الهاتف",
+    "preferredLanguage": "اللغة المفضلة",
+    "profile_picture": "صورة الملف الشخصي",
+    "timezone": "المنطقة الزمنية",
+    "username": "اسم المستخدم"
+  },
+  "gender": {
+    "female": "أنثى",
+    "male": "ذكر"
+  },
+  "help": {
+    "email_verified": "تم التحقق من عنوان بريدك الإلكتروني.",
+    "phone_validated": "تم التحقق من رقم هاتفك ولا يمكن تغييره.",
+    "username_locked": "لا يمكن تغيير اسم المستخدم بعد إنشاء الحساب."
+  },
+  "languages": {
+    "arabic": "العربية",
+    "english": "English",
+    "french": "Français"
+  },
   "messages": {
-    "profile_updated": "تم تحديث الملف الشخصي بنجاح!",
-    "profile_update_error": "فشل في تحديث الملف الشخصي. يرجى المحاولة مرة أخرى.",
+    "password_update_error": "فشل في تحديث كلمة المرور. يرجى المحاولة مرة أخرى.",
     "password_updated": "تم تحديث كلمة المرور بنجاح!",
-    "password_update_error": "فشل في تحديث كلمة المرور. يرجى المحاولة مرة أخرى."
+    "profile_update_error": "فشل في تحديث الملف الشخصي. يرجى المحاولة مرة أخرى.",
+    "profile_updated": "تم تحديث الملف الشخصي بنجاح!"
+  },
+  "placeholders": {
+    "address": "أدخل عنوانك الكامل",
+    "cin": "أدخل رقم الهوية الوطنية",
+    "date_placeholder": "اختر تاريخًا",
+    "select_country": "حدد بلدك",
+    "select_gender": "حدد جنسك",
+    "user_birthday": "أدخل تاريخ ميلادك"
+  },
+  "sections": {
+    "change_password": "تغيير كلمة المرور",
+    "personal_information": "المعلومات الشخصية",
+    "profile_picture": "صورة الملف الشخصي"
+  },
+  "select": {
+    "no_options": "لا توجد خيارات متاحة"
+  },
+  "tabs": {
+    "password": "كلمة المرور والأمان",
+    "personal_info": "المعلومات الشخصية"
+  },
+  "title": "إعدادات الملف الشخصي",
+  "validation": {
+    "address_max_length": "Address must be less than 500 characters",
+    "cin_format": "Please enter a valid national ID number",
+    "confirm_password_required": "يرجى تأكيد كلمة المرور الجديدة",
+    "current_password_required": "كلمة المرور الحالية مطلوبة",
+    "first_name_min_length": "يجب أن يحتوي الاسم الأول على حرفين على الأقل",
+    "first_name_required": "الاسم الأول مطلوب",
+    "last_name_min_length": "يجب أن يحتوي الاسم الأخير على حرفين على الأقل",
+    "last_name_required": "الاسم الأخير مطلوب",
+    "new_password_required": "كلمة المرور الجديدة مطلوبة",
+    "password_min_length": "يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل",
+    "passwords_do_not_match": "كلمات المرور غير متطابقة",
+    "phone_number_required": "رقم الهاتف مطلوب"
   }
 }

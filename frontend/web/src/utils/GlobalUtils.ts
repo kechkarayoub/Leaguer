@@ -14,4 +14,4 @@ export const renderDate = (date: Date, currentLanguage: string, separator: strin
   return moment(date).format(format);
 };
 
-export const EXCLUDED_COUNTRIES = ['IL', 'il'];
+export const EXCLUDED_COUNTRIES = ['IL', 'il', 'EH', 'eh'];

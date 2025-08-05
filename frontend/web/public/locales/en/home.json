@@ -1,19 +1,19 @@
 {
-  "title": "Home",
-  "welcome": "Welcome back",
-  "quickStats": "Quick Stats",
-  "quickActions": "Quick Actions",
-  "noContentYet": "No content available yet.",
-  "stats": {
-    "totalUsers": "Total Users",
-    "activeProjects": "Active Projects",
-    "completedTasks": "Completed Tasks",
-    "pendingReviews": "Pending Reviews"
-  },
   "actions": {
     "createProject": "Create New Project",
-    "viewReports": "View Reports",
     "manageUsers": "Manage Users",
-    "systemSettings": "System Settings"
-  }
+    "systemSettings": "System Settings",
+    "viewReports": "View Reports"
+  },
+  "noContentYet": "No content available yet.",
+  "quickActions": "Quick Actions",
+  "quickStats": "Quick Stats",
+  "stats": {
+    "activeProjects": "Active Projects",
+    "completedTasks": "Completed Tasks",
+    "pendingReviews": "Pending Reviews",
+    "totalUsers": "Total Users"
+  },
+  "title": "Home",
+  "welcome": "Welcome back"
 }

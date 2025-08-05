@@ -12,6 +12,8 @@ import { EXCLUDED_COUNTRIES } from '../../utils/GlobalUtils';
 import useAuth from '../../hooks/useAuth';
 import PhoneNumberField from '../../components/form/PhoneNumberField';
 import CustomDatePicker from '../../components/form/CustomDatePicker';
+import CustomSelect, { CustomSelectOption } from '../../components/form/CustomSelect';
+
 
 
 import { defaultCountries } from 'react-international-phone';
@@ -40,7 +42,7 @@ interface PasswordFormData {
 }
 
 const ProfilePage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user, updateProfile } = useAuth();
   const [activeTab, setActiveTab] = useState<'profile' | 'password'>('profile');
   const [isLoading, setIsLoading] = useState(false);
@@ -49,6 +51,14 @@ const ProfilePage: React.FC = () => {
     return EXCLUDED_COUNTRIES.indexOf(country[1].toLowerCase()) === -1;
   });
   const userPhoneNumber = user?.user_phone_number || '';
+  const countryOptions: CustomSelectOption[] = countries.map(country => ({
+    value: country[1],
+    label: t(`countries:countries.${country[1].toLocaleUpperCase()}`),
+  }));
+  const genderOptions: CustomSelectOption[] = [
+    { value: 'male', label: t('profile:gender.male') },
+    { value: 'female', label: t('profile:gender.female') },
+  ];
 
   // Profile form
   const {
@@ -360,45 +370,28 @@ const ProfilePage: React.FC = () => {
                   {/* Country and Gender */}
                   <div className="form-grid">
                     <div className="form-group">
-                      <label htmlFor="user_country" className="form-label">
-                        {t('profile:fields.country')}
-                        <span className="required-asterisk">*</span>
-                      </label>
-                      <select
-                        id="user_country"
-                        className={`form-input form-select ${errorsProfile.user_country ? 'form-input--error' : ''}`}
-                        {...registerProfile('user_country')}
-                      >
-                        <option value="">{t('profile:placeholders.select_country')}</option>
-                        {countries.map(country => (
-                          <option key={country[1]} value={country[1]}>
-                            {country[0]}
-                          </option>
-                        ))}
-                        {/* Add more countries as needed */}
-                      </select>
-                      {errorsProfile.user_country && (
-                        <span className="form-error">{errorsProfile.user_country.message}</span>
-                      )}
+                      <CustomSelect
+                        value={watchProfile('user_country')}
+                        onChange={val => setValueProfile('user_country', val || '')}
+                        options={countryOptions}
+                        label={t('profile:fields.country')}
+                        placeholder={t('profile:placeholders.select_country')}
+                        error={errorsProfile.user_country?.message}
+                        showCountriesFlags={true} // Show flags in the dropdown
+                        required
+                      />
                     </div>
 
-                    <div className="form-group">
-                      <label htmlFor="user_gender" className="form-label">
-                        {t('profile:fields.gender')}
-                        <span className="required-asterisk">*</span>
-                      </label>
-                      <select
-                        id="user_gender"
-                        className={`form-input form-select ${errorsProfile.user_gender ? 'form-input--error' : ''}`}
-                        {...registerProfile('user_gender')}
-                      >
-                        <option value="">{t('profile:placeholders.select_gender')}</option>
-                        <option value="male">{t('profile:gender.male')}</option>
-                        <option value="female">{t('profile:gender.female')}</option>
-                      </select>
-                      {errorsProfile.user_gender && (
-                        <span className="form-error">{errorsProfile.user_gender.message}</span>
-                      )}
+                    <div className="form-group">                      
+                      <CustomSelect
+                        value={watchProfile('user_gender')}
+                        onChange={val => setValueProfile('user_gender', val || '')}
+                        options={genderOptions}
+                        label={t('profile:fields.gender')}
+                        placeholder={t('profile:placeholders.select_gender')}
+                        error={errorsProfile.user_gender?.message}
+                        required
+                      />
                     </div>
                   </div>
 

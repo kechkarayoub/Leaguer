@@ -1,37 +1,37 @@
 {
-  "title": "Settings",
-  "tabs": {
-    "profile": "Profile",
-    "preferences": "Preferences",
-    "security": "Security"
-  },
-  "profile": {
-    "title": "Profile Information",
-    "description": "Update your profile information and preferences.",
-    "firstName": "First Name",
-    "lastName": "Last Name",
-    "email": "Email",
-    "phoneNumber": "Phone Number",
-    "profileImage": "Profile Image",
-    "bio": "Bio",
-    "save": "Save Changes"
-  },
   "preferences": {
-    "title": "Preferences",
     "description": "Customize your application preferences.",
     "language": "Language",
-    "theme": "Theme",
     "notifications": "Notifications",
+    "save": "Save Preferences",
+    "theme": "Theme",
     "timezone": "Timezone",
-    "save": "Save Preferences"
+    "title": "Preferences"
+  },
+  "profile": {
+    "bio": "Bio",
+    "description": "Update your profile information and preferences.",
+    "email": "Email",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phoneNumber": "Phone Number",
+    "profileImage": "Profile Image",
+    "save": "Save Changes",
+    "title": "Profile Information"
   },
   "security": {
-    "title": "Security Settings",
-    "description": "Manage your account security and privacy.",
     "changePassword": "Change Password",
-    "twoFactor": "Two-Factor Authentication",
-    "sessions": "Active Sessions",
+    "description": "Manage your account security and privacy.",
     "privacy": "Privacy Settings",
-    "save": "Save Security Settings"
-  }
+    "save": "Save Security Settings",
+    "sessions": "Active Sessions",
+    "title": "Security Settings",
+    "twoFactor": "Two-Factor Authentication"
+  },
+  "tabs": {
+    "preferences": "Preferences",
+    "profile": "Profile",
+    "security": "Security"
+  },
+  "title": "Settings"
 }
