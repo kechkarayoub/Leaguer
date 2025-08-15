@@ -21,11 +21,17 @@
   },
   "general": {
     "accessDenied": "الوصول مرفوض",
+    "badRequest": "طلب خاطئ",
     "contactSupport": "إذا استمرت المشكلة، يرجى الاتصال بالدعم",
+    "generic": "حدث خطأ ما",
+    "network": "حدث خطأ في الشبكة. يرجى التحقق من اتصالك.",
     "notFound": "الصفحة غير موجودة",
+    "resourceNotFound": "المورد غير موجود",
+    "serverError": "حدث خطأ في الخادم. يرجى المحاولة لاحقاً.",
     "somethingWentWrong": "حدث خطأ ما",
     "title": "خطأ",
     "tryAgain": "يرجى المحاولة مرة أخرى",
+    "unexpected": "حدث خطأ غير متوقع",
     "unknown": "حدث خطأ غير معروف"
   },
   "go_back": "العودة",

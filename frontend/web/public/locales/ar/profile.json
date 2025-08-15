@@ -68,7 +68,18 @@
     "address_max_length": "Address must be less than 500 characters",
     "cin_format": "Please enter a valid national ID number",
     "confirm_password_required": "يرجى تأكيد كلمة المرور الجديدة",
+    "address_required": "يرجى إدخال عنوانك",
+    "birthday_required": "يرجى تحديد تاريخ الميلاد",
+    "cin_required": "يرجى تحديد رقم الهوية الوطنية",
+    "gender_required": "يرجى تحديد الجنس",
+    "country_required": "يرجى تحديد البلد",
+    "email_required": "يرجى إدخال عنوان بريدك الإلكتروني",
+    "phone_required": "يرجى تحديد رقم الهاتف",
+    "phone_min_length": "يجب أن يحتوي رقم الهاتف على 9 أحرف على الأقل",
+    "username_required": "يرجى تحديد اسم المستخدم",
     "current_password_required": "كلمة المرور الحالية مطلوبة",
+    "first_name_alpha_only": "الاسم الأول يجب أن يحتوي على أحرف فقط",
+    "last_name_alpha_only": "الاسم الأخير يجب أن يحتوي على أحرف فقط",
     "first_name_min_length": "يجب أن يحتوي الاسم الأول على حرفين على الأقل",
     "first_name_required": "الاسم الأول مطلوب",
     "last_name_min_length": "يجب أن يحتوي الاسم الأخير على حرفين على الأقل",
@@ -76,6 +87,7 @@
     "new_password_required": "كلمة المرور الجديدة مطلوبة",
     "password_min_length": "يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل",
     "passwords_do_not_match": "كلمات المرور غير متطابقة",
-    "phone_number_required": "رقم الهاتف مطلوب"
+    "phone_number_required": "رقم الهاتف مطلوب",
+    "user_cin_alphanum_only": "رقم الهوية الوطنية يجب أن يحتوي على أحرف وأرقام فقط"
   }
 }

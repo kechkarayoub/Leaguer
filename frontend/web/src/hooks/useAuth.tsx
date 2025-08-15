@@ -30,6 +30,21 @@ export interface User {
   updatedAt?: string;
 }
 
+export interface UserProfileUpdate {
+  email: string;
+  first_name: string;
+  last_name: string;
+  user_phone_number: string;
+  user_address: string;
+  user_birthday: string | Date | null;
+  user_cin: string;
+  user_country: string;
+  user_gender: string;
+  username: string;
+  profile_image?: File | null | String; // File or URL string
+  image_updated: boolean | String;
+}
+
 export interface LoginCredentials {
   email_or_username: string; // Changed to match backend API field name
   password: string;
@@ -131,7 +146,8 @@ const useAuth = () => {
     },
     enabled: isAuthenticated,
     retry: false, // Don't retry as there's no backend endpoint
-    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    staleTime: 0, // Always consider data stale so invalidateQueries works immediately
+    gcTime: 5 * 60 * 1000, // Keep data in cache for 5 minutes after component unmounts
   });
 
   // Login mutation
@@ -280,7 +296,7 @@ const useAuth = () => {
       
       // Clear query cache
       queryClient.clear();
-      
+
       // Disconnect WebSocket
       await webSocketService.disconnect();
       
@@ -290,18 +306,49 @@ const useAuth = () => {
 
   // Update profile mutation
   const updateProfileMutation = useMutation({
-    mutationFn: async (profileData: Partial<User>) => {
+    mutationFn: async (profileData: Partial<FormData>) => {
       const response = await apiService.put('/accounts/update-profile/', profileData);
       return response.data;
     },
+    retry: false, // Disable automatic retries to prevent double requests on errors
     onSuccess: async (data) => {
-      // Update user data in cache
+      // Store updated user data in the same storage type as tokens first
+      const hasSessionTokens = await secureStorage.getSessionItem('access_token');
+      const hasLocalTokens = await secureStorage.getItem('access_token');
+      
+      if(data.access_token){
+        if (hasSessionTokens) {
+          // User chose not to be remembered, use session storage
+          await secureStorage.setSessionItem('access_token', data.access_token);
+          await secureStorage.setSessionItem('refresh_token', data.refresh_token);
+        } else if (hasLocalTokens) {
+          // User chose to be remembered, use local storage
+          await secureStorage.setItem('access_token', data.access_token);
+          await secureStorage.setItem('refresh_token', data.refresh_token);
+        }
+      }
+      
+      // Store updated user data in the same storage type as tokens
+      if (hasSessionTokens) {
+        await secureStorage.setSessionItem('user', JSON.stringify(data.user));
+      } else {
+        await secureStorage.setItem('user', JSON.stringify(data.user));
+      }
+      
+      // Update user data in cache immediately (this is synchronous)
       queryClient.setQueryData(['user', 'profile'], data.user);
       
-      // Store updated user data
-      await secureStorage.setItem('user', JSON.stringify(data.user));
+      // Force an immediate cache update by removing stale state
+      queryClient.removeQueries({ queryKey: ['user', 'profile'] });
+      queryClient.setQueryData(['user', 'profile'], data.user);
       
-      toast.success(t('messages.profile_updated'));
+      // Force all components to re-fetch user data from storage 
+      queryClient.invalidateQueries({ queryKey: ['user', 'profile'] });
+      
+      // Trigger a manual refetch to ensure immediate UI update
+      setTimeout(() => {
+        queryClient.refetchQueries({ queryKey: ['user', 'profile'] });
+      }, 0);
     },
     onError: (error: any) => {
       const message = error?.response?.data?.message || t('messages.profile_update_failed');
@@ -320,12 +367,25 @@ const useAuth = () => {
       const response = await apiService.put('/accounts/update-profile/', updateData);
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       // If password was updated, new tokens may be provided
+      let changeSessionStorage = !!(await secureStorage.getSessionItem('access_token'))
+      if(!changeSessionStorage){
+        secureStorage.setItem('user', data.user);
+      }
+      else if(changeSessionStorage){
+        secureStorage.setSessionItem('user', data.user);
+      }
       if (data.access_token && data.refresh_token) {
         // Store new tokens
-        secureStorage.setItem('access_token', data.access_token);
-        secureStorage.setItem('refresh_token', data.refresh_token);
+        if(!changeSessionStorage){
+          secureStorage.setItem('access_token', data.access_token);
+          secureStorage.setItem('refresh_token', data.refresh_token);
+        }
+        else if(changeSessionStorage){
+          secureStorage.setSessionItem('access_token', data.access_token);
+          secureStorage.setSessionItem('refresh_token', data.refresh_token);
+        }
       }
       toast.success(t('messages.password_changed'));
     },

@@ -68,7 +68,18 @@
     "address_max_length": "L'adresse doit contenir moins de 500 caractères",
     "cin_format": "Veuillez entrer un numéro d'identité nationale valide",
     "confirm_password_required": "Veuillez confirmer votre nouveau mot de passe",
+    "address_required": "Veuillez entrer votre adresse",
+    "birthday_required": "Veuillez sélectionner une date de naissance",
+    "cin_required": "Veuillez sélectionner un numéro d'identité nationale",
+    "gender_required": "Veuillez sélectionner un genre",
+    "country_required": "Veuillez sélectionner un pays",
+    "email_required": "Veuillez entrer une adresse email",
+    "phone_required": "Veuillez sélectionner un numéro de téléphone",
+    "phone_min_length": "Le numéro de téléphone doit contenir au moins 9 caractères",
+    "username_required": "Veuillez sélectionner un nom d'utilisateur",
     "current_password_required": "Le mot de passe actuel est requis",
+    "first_name_alpha_only": "Le prénom ne doit contenir que des lettres",
+    "last_name_alpha_only": "Le nom de famille ne doit contenir que des lettres",
     "first_name_min_length": "Le prénom doit contenir au moins 2 caractères",
     "first_name_required": "Le prénom est requis",
     "last_name_min_length": "Le nom de famille doit contenir au moins 2 caractères",
@@ -76,6 +87,7 @@
     "new_password_required": "Le nouveau mot de passe est requis",
     "password_min_length": "Le mot de passe doit contenir au moins 8 caractères",
     "passwords_do_not_match": "Les mots de passe ne correspondent pas",
-    "phone_number_required": "Le numéro de téléphone est requis"
+    "phone_number_required": "Le numéro de téléphone est requis",
+    "user_cin_alphanum_only": "Le numéro d'identité nationale doit contenir uniquement des lettres et des chiffres"
   }
 }

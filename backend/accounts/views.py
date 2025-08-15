@@ -613,6 +613,9 @@ class UpdateProfileView(APIView):
         data['email'] = random_prefix + data.get('email', '')
         data['username'] = random_prefix + data.get('username', '')
         user_phone_number = data.get('user_phone_number')
+        user_cin = data.get('user_cin')
+        if user_cin and user_cin == user.user_cin:
+            data['user_cin'] = ""
         formatted_user_phone_number = format_phone_number(user_phone_number)
         if user.user_phone_number and user.user_phone_number == formatted_user_phone_number:
             data['user_phone_number'] = ""
@@ -634,7 +637,10 @@ class UpdateProfileView(APIView):
         last_name = data.get('last_name')
         new_password = data.get('new_password')
         update_password = data.get('update_password') in [True, 'true']
+        user_address = data.get('user_address')
         user_birthday = data.get('user_birthday')
+        user_cin = user_cin
+        user_country = data.get('user_country')
         user_gender = data.get('user_gender')
         user_image_url = user.user_image_url
         user_initials_bg_color = data.get('user_initials_bg_color')
@@ -657,7 +663,10 @@ class UpdateProfileView(APIView):
         user.current_language = current_language
         user.first_name = first_name
         user.last_name = last_name
+        user.user_address = user_address
         user.user_birthday = user_birthday
+        user.user_cin = user_cin
+        user.user_country = user_country
         user.user_gender = user_gender
         user.user_image_url = user_image_url
         user.user_initials_bg_color = user_initials_bg_color

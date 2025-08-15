@@ -60,6 +60,7 @@
     "welcome": "Welcome to Leaguer",
     "yes": "Yes"
   },
+  "cancel_changes": "Cancel Changes",
   "connection": {
     "connecting": "Connecting...",
     "failed": "Connection failed",

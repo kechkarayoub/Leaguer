@@ -95,9 +95,7 @@ const PhoneNumberField: React.FC<PhoneNumberFieldProps> = ({
         />
       </div>
       {error && (
-        <div className="phone-field__error" id={`${label}-error`} role="alert">
-          {error}
-        </div>
+        <span className="form-error">{error}</span>
       )}
     </div>
   );

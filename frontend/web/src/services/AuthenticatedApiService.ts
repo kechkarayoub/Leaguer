@@ -13,6 +13,7 @@ import config from '../config/config';
 import DeviceIdService from './DeviceIdService';
 import SecureStorageService from './SecureStorageService';
 import { toast } from 'react-toastify';
+import { getTranslation } from '../utils/GlobalUtils'; // Import the translation helper
 
 export interface User {
   id: string;
@@ -30,6 +31,7 @@ export interface AuthTokens {
   accessToken: string;
   refreshToken: string;
 }
+
 
 class AuthenticatedApiService {
   private static instance: AuthenticatedApiService;
@@ -95,10 +97,9 @@ class AuthenticatedApiService {
       async (error) => {
         const originalRequest = error.config;
 
-        // Handle 401 errors (token expired)
+        // Only retry for 401 errors (token expired) and only once
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
-
           try {
             // Try to refresh token
             const tokens = await this.refreshTokens();
@@ -107,14 +108,16 @@ class AuthenticatedApiService {
               originalRequest.headers.Authorization = `Bearer ${tokens.accessToken}`;
               return this.axiosInstance(originalRequest);
             }
+
           } catch (refreshError) {
             // Refresh failed, logout user
-            this.handleSessionExpired();
+            await this.handleSessionExpired();
             return Promise.reject(refreshError);
           }
         }
 
-        // Handle other errors
+        // For all other error codes (including 409), don't retry
+        // Just handle the error and reject
         this.handleApiError(error);
         return Promise.reject(error);
       }
@@ -179,15 +182,24 @@ class AuthenticatedApiService {
     };
   }
 
-  private handleSessionExpired(): void {
-    // Clear tokens
-    this.secureStorage.removeItem('access_token');
-    this.secureStorage.removeItem('refresh_token');
+  private async handleSessionExpired(): Promise<void> {
+    console.log('Session expired - clearing tokens and redirecting to login');
     
-    // Notify session expired
+    // Clear tokens
+    await this.clearTokens();
+
+    // Clear user data
+    await this.secureStorage.removeSessionItem('user');
+    await this.secureStorage.removeItem('user');
+
+    // Show toast message
+    toast.error(getTranslation('errors:authentication.sessionExpired', 'Session expired. Please login again.'));
+    
+    // Notify callback if set (for additional cleanup)
     this.onSessionExpired?.();
     
-    toast.error('Session expired. Please login again.');
+    // Force navigation to login page using window.location
+    window.location.href = '/auth/login';
   }
 
   private handleApiError(error: any): void {
@@ -196,24 +208,32 @@ class AuthenticatedApiService {
       
       switch (status) {
         case 400:
-          toast.error(data.message || 'Bad request');
+          toast.error(data.message || getTranslation('errors:general.badRequest', 'Bad request'));
           break;
         case 403:
-          toast.error('Access denied');
+          toast.error(getTranslation('errors:general.accessDenied', 'Access denied'));
           break;
         case 404:
-          toast.error('Resource not found');
+          toast.error(getTranslation('errors:general.resourceNotFound', 'Resource not found'));
+          break;
+        case 409:
+          // Don't show toast for 409 (Conflict) errors - these are usually validation errors
+          // that should be handled by the component itself
+          console.log('Validation/Conflict error (409):', data);
           break;
         case 500:
-          toast.error('Server error. Please try again.');
+          toast.error(getTranslation('errors:general.serverError', 'Server error. Please try again.'));
           break;
         default:
-          toast.error(data.message || 'An error occurred');
+          // For other errors, only show toast if it's not a 409
+          if (status !== 409) {
+            toast.error(data.message || getTranslation('errors:general.generic', 'An error occurred'));
+          }
       }
     } else if (error.request) {
-      toast.error('Network error. Please check your connection.');
+      toast.error(getTranslation('errors:general.network', 'Network error. Please check your connection.'));
     } else {
-      toast.error('An unexpected error occurred.');
+      toast.error(getTranslation('errors:general.unexpected', 'An unexpected error occurred'));
     }
   }
 

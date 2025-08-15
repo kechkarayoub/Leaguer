@@ -50,6 +50,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "start_craco": "craco start",
+    "build_craco": "craco build",
+    "test_craco": "craco test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -71,6 +74,7 @@
     ]
   },
   "devDependencies": {
+    "@craco/craco": "^7.1.0",
     "@types/styled-components": "^5.1.34"
   }
 }

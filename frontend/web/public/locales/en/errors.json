@@ -21,11 +21,17 @@
   },
   "general": {
     "accessDenied": "Access denied",
+    "badRequest": "Bad request",
     "contactSupport": "If the problem persists, please contact support",
+    "generic": "An error occurred",
+    "network": "Network error occurred. Please check your connection.",
     "notFound": "Page not found",
+    "resourceNotFound": "Resource not found",
+    "serverError": "Server error occurred. Please try again later.",
     "somethingWentWrong": "Something went wrong",
     "title": "Error",
     "tryAgain": "Please try again",
+    "unexpected": "An unexpected error occurred",
     "unknown": "An unknown error occurred"
   },
   "go_back": "Go Back",

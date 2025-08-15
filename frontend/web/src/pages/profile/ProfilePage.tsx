@@ -7,6 +7,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
+import { useRef } from 'react';
+import { toast } from 'react-toastify';
 import { EXCLUDED_COUNTRIES } from '../../utils/GlobalUtils';
 
 import useAuth from '../../hooks/useAuth';
@@ -46,6 +48,9 @@ const ProfilePage: React.FC = () => {
   const { user, updateProfile } = useAuth();
   const [activeTab, setActiveTab] = useState<'profile' | 'password'>('profile');
   const [isLoading, setIsLoading] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const [imageUpdated, setImageUpdated] = useState(false);
+  const initialUserData = useRef<ProfileFormData | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null | String>(null);
   const countries = defaultCountries.filter(country => {
     return EXCLUDED_COUNTRIES.indexOf(country[1].toLowerCase()) === -1;
@@ -66,7 +71,8 @@ const ProfilePage: React.FC = () => {
     handleSubmit: handleSubmitProfile,
     setValue: setValueProfile,
     watch: watchProfile,
-    formState: { errors: errorsProfile }
+    reset: resetProfile,
+    formState: { errors: errorsProfile, dirtyFields }
   } = useForm<ProfileFormData>();
 
   // Password form
@@ -83,45 +89,77 @@ const ProfilePage: React.FC = () => {
   // Initialize form with user data
   useEffect(() => {
     if (user) {
-      setValueProfile('first_name', user.first_name || '');
-      setValueProfile('last_name', user.last_name || '');
-      setValueProfile('user_phone_number', user.user_phone_number || '');
-      setValueProfile('user_address', user.user_address || '');
-      setValueProfile('user_birthday', user.user_birthday || '');
-      setValueProfile('user_cin', user.user_cin || '');
-      setValueProfile('user_country', user.user_country || '');
-      setValueProfile('user_gender', user.user_gender || '');
-      setValueProfile('username', user.username || '');
-      setValueProfile('email', user.email || '');
+      const data: ProfileFormData = {
+        first_name: user.first_name || '',
+        last_name: user.last_name || '',
+        user_phone_number: user.user_phone_number || '',
+        user_address: user.user_address || '',
+        user_birthday: user.user_birthday || '',
+        user_cin: user.user_cin || '',
+        user_country: user.user_country || '',
+        user_gender: user.user_gender || '',
+        username: user.username || '',
+        email: user.email || '',
+        user_image_url: user.user_image_url || null,
+      };
+      initialUserData.current = data;
+      resetProfile(data);
+      setIsDirty(false);
     }
-  }, [user, setValueProfile]);
+  }, [user, resetProfile]);
+  useEffect(() => {
+    setIsDirty(Object.keys(dirtyFields).length > 0);
+  }, [dirtyFields]);
 
   const onSubmitProfile = async (data: ProfileFormData) => {
     setIsLoading(true);
     try {
-      // Create the update data object that matches the backend API
-      const updateData = {
-        first_name: data.first_name,
-        last_name: data.last_name,
-        user_phone_number: data.user_phone_number,
-        user_address: data.user_address,
-        user_birthday: data.user_birthday,
-        user_cin: data.user_cin,
-        user_country: data.user_country,
-        user_gender: data.user_gender,
-        username: data.username,
-        email: data.email,
-      };
-
-      // For now, we'll handle the image separately as the updateProfile expects Partial<User>
-      // TODO: Update the useAuth hook to handle FormData for image uploads
-      await updateProfile(updateData);
+      // Create FormData for multipart/form-data request
+      const formData = new FormData();
       
-      // Show success message
-      alert(t('profile:messages.profile_updated'));
-    } catch (error) {
+      // Add all the profile data to FormData
+      formData.append('current_language', i18n.language);
+      formData.append('first_name', (data.first_name || '').trim());
+      formData.append('last_name', (data.last_name || '').trim());
+      formData.append('user_phone_number', (data.user_phone_number || '').trim());
+      formData.append('user_address', (data.user_address || '').trim());
+      formData.append('user_birthday', data.user_birthday ? moment(data.user_birthday).format('YYYY-MM-DD') : '');
+      formData.append('user_cin', (data.user_cin || '').trim());
+      formData.append('user_country', (data.user_country || '').trim());
+      formData.append('user_gender', (data.user_gender || '').trim());
+      formData.append('username', (data.username || '').trim());
+      formData.append('email', (data.email || '').trim());
+
+      // Handle image upload if there's a selected image
+      formData.append('image_updated', imageUpdated ? 'true' : 'false');
+      if (selectedImage && typeof selectedImage === 'object' && selectedImage instanceof File) {
+        formData.append('profile_image', selectedImage);
+      }
+
+      // Make the API call with FormData
+      const response = await updateProfile(formData);
+
+      if (response.success) {
+        
+        // Show success message
+        toast.success(t('profile:messages.profile_updated'));
+        
+        // Reset form dirty state
+        setIsDirty(false);
+      } else {
+        toast.error(response.message || t('profile:messages.profile_update_error'));
+      }
+    } catch (error:any) {
+      if(error?.response?.data?.errors){
+        let userBirthdayError = error.response.data.errors.user_birthday;
+        if(userBirthdayError){
+          toast.error(userBirthdayError[0], {
+            autoClose: 8000 // 8 seconds
+          });
+        }
+      }
       console.error('Profile update error:', error);
-      alert(t('profile:messages.profile_update_error'));
+      toast.error(t('profile:messages.profile_update_error'));
     } finally {
       setIsLoading(false);
     }
@@ -158,11 +196,9 @@ const ProfilePage: React.FC = () => {
   };
 
   const handleImageChange = (file: File | null | String) => {
+    setImageUpdated(true);
     setSelectedImage(file);
-  };
-
-  const handlePhoneChange = (phone: string | undefined) => {
-    setValueProfile('user_phone_number', phone || "");
+    setIsDirty(true);
   };
 
   return (
@@ -226,7 +262,9 @@ const ProfilePage: React.FC = () => {
                         type="text"
                         className={`form-input ${errorsProfile.username ? 'form-input--error' : ''}`}
                         disabled={true} // Always disabled as per requirements
-                        {...registerProfile('username')}
+                        {...registerProfile('username', {
+                          required: t('profile:validation.username_required')
+                        })}
                       />
                       {errorsProfile.username && (
                         <span className="form-error">{errorsProfile.username.message}</span>
@@ -243,7 +281,13 @@ const ProfilePage: React.FC = () => {
                         type="email"
                         className={`form-input ${errorsProfile.email ? 'form-input--error' : ''}`}
                         disabled={true} // Always disabled as per requirements
-                        {...registerProfile('email')}
+                        {...registerProfile('email', {
+                          required: t('profile:validation.email_required'),
+                          pattern: {
+                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                            message: t('profile:validation.email_invalid')
+                          }
+                        })}
                       />
                       {errorsProfile.email && (
                         <span className="form-error">{errorsProfile.email.message}</span>
@@ -267,8 +311,16 @@ const ProfilePage: React.FC = () => {
                           minLength: {
                             value: 2,
                             message: t('profile:validation.first_name_min_length')
+                          },
+                          pattern: {
+                            value: /^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/,
+                            message: t('profile:validation.first_name_alpha_only')
                           }
                         })}
+                        onChange={e => {
+                          setIsDirty(true);
+                          registerProfile('first_name').onChange(e);
+                        }}
                       />
                       {errorsProfile.first_name && (
                         <span className="form-error">{errorsProfile.first_name.message}</span>
@@ -289,8 +341,16 @@ const ProfilePage: React.FC = () => {
                           minLength: {
                             value: 2,
                             message: t('profile:validation.last_name_min_length')
+                          },
+                          pattern: {
+                            value: /^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/,
+                            message: t('profile:validation.last_name_alpha_only')
                           }
                         })}
+                        onChange={e => {
+                          setIsDirty(true);
+                          registerProfile('last_name').onChange(e);
+                        }}
                       />
                       {errorsProfile.last_name && (
                         <span className="form-error">{errorsProfile.last_name.message}</span>
@@ -303,15 +363,27 @@ const ProfilePage: React.FC = () => {
                     <PhoneNumberField
                       label={t('profile:fields.phone_number')}
                       value={watchProfile('user_phone_number') || ''}
-                      onChange={handlePhoneChange}
+                      onChange={phone => {
+                        setIsDirty(true);
+                        setValueProfile('user_phone_number', phone || '');
+                      }}
                       error={errorsProfile.user_phone_number?.message}
                       disabled={userPhoneNumber && user?.is_user_phone_number_validated} // Disabled if validated
-                      required
                       useGeolocation={true}
                     />
                     {userPhoneNumber && user?.is_user_phone_number_validated && (
                       <small className="form-help-text">{t('profile:help.phone_validated')}</small>
                     )}
+                    <input
+                      type="hidden"
+                      {...registerProfile('user_phone_number', {
+                        required: t('profile:validation.phone_required'),
+                        minLength: {
+                          value: 9,
+                          message: t('profile:validation.phone_min_length')
+                        }
+                      })}
+                    />
                   </div>
 
                   {/* Address */}
@@ -323,8 +395,14 @@ const ProfilePage: React.FC = () => {
                       id="user_address"
                       className={`form-input form-textarea ${errorsProfile.user_address ? 'form-input--error' : ''}`}
                       rows={3}
-                      {...registerProfile('user_address')}
+                      {...registerProfile('user_address', {
+                          required: t('profile:validation.address_required'),
+                        })}
                       placeholder={t('profile:placeholders.address')}
+                      onChange={e => {
+                        setIsDirty(true);
+                        registerProfile('user_address').onChange(e);
+                      }}
                     />
                     {errorsProfile.user_address && (
                       <span className="form-error">{errorsProfile.user_address.message}</span>
@@ -336,7 +414,10 @@ const ProfilePage: React.FC = () => {
                     <div className="form-group">
                       <CustomDatePicker
                         value={watchProfile('user_birthday')}
-                        onChange={date => setValueProfile('user_birthday', date)}
+                        onChange={date => {
+                          setIsDirty(true);
+                          setValueProfile('user_birthday', date);
+                        }}
                         label={t('profile:fields.birthday')}
                         placeholder={t('profile:placeholders.user_birthday')}
                         error={errorsProfile.user_birthday?.message}
@@ -346,6 +427,12 @@ const ProfilePage: React.FC = () => {
                         showYearDropdown={true}
                         showMonthDropdown={true}
                         dropdownMode={"scroll"}
+                      />
+                      <input
+                        type="hidden"
+                        {...registerProfile('user_birthday', {
+                          required: t('profile:validation.birthday_required')
+                        })}
                       />
                     </div>
 
@@ -358,8 +445,18 @@ const ProfilePage: React.FC = () => {
                         id="user_cin"
                         type="text"
                         className={`form-input ${errorsProfile.user_cin ? 'form-input--error' : ''}`}
-                        {...registerProfile('user_cin')}
+                        {...registerProfile('user_cin', {
+                          required: t('profile:validation.cin_required'),
+                          pattern: {
+                              value: /^[A-Za-z0-9]+$/,
+                              message: t('profile:validation.user_cin_alphanum_only')
+                          }
+                        })}
                         placeholder={t('profile:placeholders.cin')}
+                        onChange={e => {
+                          setIsDirty(true);
+                          registerProfile('user_cin').onChange(e);
+                        }}
                       />
                       {errorsProfile.user_cin && (
                         <span className="form-error">{errorsProfile.user_cin.message}</span>
@@ -372,7 +469,10 @@ const ProfilePage: React.FC = () => {
                     <div className="form-group">
                       <CustomSelect
                         value={watchProfile('user_country')}
-                        onChange={val => setValueProfile('user_country', val || '')}
+                        onChange={val => {
+                          setIsDirty(true);
+                          setValueProfile('user_country', val || '');
+                        }}
                         options={countryOptions}
                         label={t('profile:fields.country')}
                         placeholder={t('profile:placeholders.select_country')}
@@ -380,17 +480,32 @@ const ProfilePage: React.FC = () => {
                         showCountriesFlags={true} // Show flags in the dropdown
                         required
                       />
+                      <input
+                        type="hidden"
+                        {...registerProfile('user_country', {
+                          required: t('profile:validation.country_required')
+                        })}
+                      />
                     </div>
 
                     <div className="form-group">                      
                       <CustomSelect
                         value={watchProfile('user_gender')}
-                        onChange={val => setValueProfile('user_gender', val || '')}
+                        onChange={val => {
+                          setIsDirty(true);
+                          setValueProfile('user_gender', val || '');
+                        }}
                         options={genderOptions}
                         label={t('profile:fields.gender')}
                         placeholder={t('profile:placeholders.select_gender')}
                         error={errorsProfile.user_gender?.message}
                         required
+                      />
+                      <input
+                        type="hidden"
+                        {...registerProfile('user_gender', {
+                          required: t('profile:validation.gender_required')
+                        })}
                       />
                     </div>
                   </div>
@@ -401,10 +516,26 @@ const ProfilePage: React.FC = () => {
                   <button
                     type="submit"
                     className="btn btn--primary"
-                    disabled={isLoading}
+                    disabled={isLoading || !isDirty}
                   >
                     {isLoading ? t('common:loading') : t('profile:actions.save_changes')}
                   </button>
+                  {isDirty && (
+                    <button
+                      type="button"
+                      className="btn btn--secondary"
+                      style={{ marginLeft: '1rem' }}
+                      onClick={() => {
+                        if (initialUserData.current) {
+                          resetProfile(initialUserData.current);
+                          setSelectedImage(user?.user_image_url || null);
+                        }
+                        setIsDirty(false);
+                      }}
+                    >
+                      {t('common:cancel_changes', 'Cancel Changes')}
+                    </button>
+                  )}
                 </div>
               </form>
             )}

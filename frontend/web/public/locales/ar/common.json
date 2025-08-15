@@ -60,6 +60,7 @@
     "welcome": "مرحباً بك في Leaguer",
     "yes": "نعم"
   },
+  "cancel_changes": "إلغاء التغييرات",
   "connection": {
     "connecting": "جارٍ الاتصال...",
     "failed": "فشل الاتصال",

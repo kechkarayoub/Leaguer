@@ -115,7 +115,7 @@ const RegisterPage: React.FC = () => {
       };
       const response = await socialRegister(socialRegisterData);
       if (response?.user) {
-        navigate('/dashboard');
+        navigate('/');
       }
     } catch (error) {
       console.error('Social registration failed:', error);

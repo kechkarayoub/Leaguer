@@ -21,11 +21,17 @@
   },
   "general": {
     "accessDenied": "Accès refusé",
+    "badRequest": "Mauvaise requête",
     "contactSupport": "Si le problème persiste, veuillez contacter le support",
+    "generic": "Une erreur s'est produite",
+    "network": "Une erreur réseau est survenue. Veuillez vérifier votre connexion.",
     "notFound": "Page non trouvée",
+    "resourceNotFound": "Ressource non trouvée",
+    "serverError": "Une erreur serveur est survenue. Veuillez réessayer plus tard.",
     "somethingWentWrong": "Quelque chose s'est mal passé",
     "title": "Erreur",
     "tryAgain": "Veuillez réessayer",
+    "unexpected": "Une erreur inattendue s'est produite",
     "unknown": "Une erreur inconnue s'est produite"
   },
   "go_back": "Retour",

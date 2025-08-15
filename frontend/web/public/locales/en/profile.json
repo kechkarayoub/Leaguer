@@ -68,7 +68,18 @@
     "address_max_length": "Address must be less than 500 characters",
     "cin_format": "Please enter a valid national ID number",
     "confirm_password_required": "Please confirm your new password",
+    "address_required": "Please enter your address",
+    "birthday_required": "Please select a date of birth",
+    "cin_required": "Please select a national ID number",
+    "gender_required": "Please select a gender",
+    "country_required": "Please select a country",
+    "email_required": "Please enter an email address",
+    "phone_required": "Please select a phone number",
+    "phone_min_length": "Phone number must be at least 9 characters",
+    "username_required": "Please select a username",
     "current_password_required": "Current password is required",
+    "first_name_alpha_only": "First name must contain only letters",
+    "last_name_alpha_only": "Last name must contain only letters",
     "first_name_min_length": "First name must be at least 2 characters",
     "first_name_required": "First name is required",
     "last_name_min_length": "Last name must be at least 2 characters",
@@ -76,6 +87,7 @@
     "new_password_required": "New password is required",
     "password_min_length": "Password must be at least 8 characters",
     "passwords_do_not_match": "Passwords do not match",
-    "phone_number_required": "Phone number is required"
+    "phone_number_required": "Phone number is required",
+    "user_cin_alphanum_only": "National ID number must contain only letters and numbers"
   }
 }
