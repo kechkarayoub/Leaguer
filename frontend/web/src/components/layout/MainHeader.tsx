@@ -13,6 +13,7 @@ import LanguageSwitcher from '../LanguageSwitcher';
 import MenuIcon from '../icons/MenuIcon';
 import UserIcon from '../icons/UserIcon';
 import ChevronDownIcon from '../icons/ChevronDownIcon';
+import {getPageTitle} from '../../utils/GlobalUtils'; 
 import './MainHeader.css';
 
 interface MainHeaderProps {
@@ -54,21 +55,7 @@ const MainHeader: React.FC<MainHeaderProps> = ({ pageTitle, pageSubtitle, onMenu
     };
   }, []);
 
-  // Get page title based on current route
-  const getPageTitle = () => {
-    if (pageTitle) return pageTitle;
-    
-    switch (location.pathname) {
-      case '/':
-        return t('navigation.home');
-      case '/profile':
-        return t('navigation.profile');
-      case '/settings':
-        return t('navigation.settings');
-      default:
-        return t('navigation.home');
-    }
-  };
+
 
   const handleLogout = async () => {
     try {
@@ -123,7 +110,7 @@ const MainHeader: React.FC<MainHeaderProps> = ({ pageTitle, pageSubtitle, onMenu
 
           {/* Page Title (center) */}
           <div className="page-title-section" style={{ flex: 1, textAlign: 'center' }}>
-            <h1 className="page-title">{getPageTitle()}</h1>
+            <h1 className="page-title">{getPageTitle(location.pathname, t, pageTitle)}</h1>
             {pageSubtitle && <p className="page-subtitle">{pageSubtitle}</p>}
           </div>
 

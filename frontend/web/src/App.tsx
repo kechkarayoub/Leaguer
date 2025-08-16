@@ -9,8 +9,10 @@
  * - Theme provider
  */
 
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import {getPageTitle} from './utils/GlobalUtils'; 
+import config from './config/config';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ToastContainer } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
@@ -60,7 +62,15 @@ const queryClient = new QueryClient({
 const AppRoutes: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
   const { ready } = useTranslation();
-  
+  const { t, i18n } = useTranslation();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Update page title based on the current route
+    const pageTitle = config.app.name + " - " + getPageTitle(location.pathname, t);
+    document.title = pageTitle;
+  }, [location.pathname, t, i18n.language]);
+
   // Initialize RTL support
   useRTL();
 

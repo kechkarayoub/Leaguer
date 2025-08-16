@@ -28,7 +28,7 @@ const config: Config = {
     appId: process.env.REACT_APP_FIREBASE_WEB_APP_ID || '',
   },
   app: {
-    name: process.env.REACT_APP_APP_NAME || 'Leaguer',
+    name: process.env.REACT_APP_NAME || 'Leaguer',
     version: process.env.REACT_APP_VERSION || '1.0.0',
   },
 };

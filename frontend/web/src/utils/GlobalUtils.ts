@@ -11,6 +11,22 @@ export const getTranslation = (key: string, fallback: string): string => {
   return fallback;
 };
 
+// Get page title based on current route
+export const getPageTitle = (path: string, t: Function, pageTitle?: string | undefined) => {
+  if (pageTitle) return pageTitle;
+
+  switch (path) {
+    case '/':
+      return t('navigation.home');
+    case '/profile':
+      return t('navigation.profile');
+    case '/settings':
+      return t('navigation.settings');
+    default:
+      return t('navigation.home');
+  }
+};
+
 export const renderDate = (date: Date, currentLanguage: string, separator: string = '/'): string => {
   let format = `DD${separator}MM${separator}YYYY`; // Default format
   if (currentLanguage === 'en') {
