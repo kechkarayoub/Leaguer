@@ -45,7 +45,7 @@ interface PasswordFormData {
 
 const ProfilePage: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const { user, updateProfile } = useAuth();
+  const { user, updateProfile, changePassword } = useAuth();
   const [activeTab, setActiveTab] = useState<'profile' | 'password'>('profile');
   const [isLoading, setIsLoading] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
@@ -81,10 +81,27 @@ const ProfilePage: React.FC = () => {
     handleSubmit: handleSubmitPassword,
     watch: watchPassword,
     reset: resetPassword,
-    formState: { errors: errorsPassword }
+    formState: { errors: errorsPassword, dirtyFields: dirtyFieldsPassword }
   } = useForm<PasswordFormData>();
 
+  const [isPasswordDirty, setIsPasswordDirty] = useState(false);
+  const initialPasswordData = useRef<PasswordFormData | null>(null);
   const watchNewPassword = watchPassword('new_password');
+
+  useEffect(() => {
+    setIsPasswordDirty(Object.keys(dirtyFieldsPassword).length > 0);
+  }, [dirtyFieldsPassword]);
+
+  useEffect(() => {
+    // Store initial password form data
+    initialPasswordData.current = {
+      current_password: '',
+      new_password: '',
+      confirm_password: '',
+    };
+    resetPassword(initialPasswordData.current);
+    setIsPasswordDirty(false);
+  }, [user, resetPassword]);
 
   // Initialize form with user data
   useEffect(() => {
@@ -118,6 +135,7 @@ const ProfilePage: React.FC = () => {
       const formData = new FormData();
       
       // Add all the profile data to FormData
+      formData.append('action',"update_profile");
       formData.append('current_language', i18n.language);
       formData.append('first_name', (data.first_name || '').trim());
       formData.append('last_name', (data.last_name || '').trim());
@@ -168,28 +186,34 @@ const ProfilePage: React.FC = () => {
   const onSubmitPassword = async (data: PasswordFormData) => {
     setIsLoading(true);
     try {
-      const response = await fetch('/accounts/update-profile/', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-        body: JSON.stringify({
-          current_password: data.current_password,
-          new_password: data.new_password,
-        }),
-      });
+      const formData = new FormData();
+      
+      // Add all the profile data to FormData
+      formData.append('action',"update_password");
+      formData.append('current_language', i18n.language);
+      formData.append('current_password', data.current_password);
+      formData.append('new_password', data.new_password);
 
-      if (response.ok) {
-        resetPassword();
-        alert(t('profile:messages.password_updated'));
+      // Make the API call with FormData
+      const response = await changePassword(formData);
+
+      if (response.success) {
+        if(response.wrong_password){
+          toast.warning(response.message || t('profile:messages.current_password_incorrect'));
+        }
+        else{
+          resetPassword();
+          
+          // Reset form password dirty state
+          setIsPasswordDirty(false);
+          toast.success(t('profile:messages.password_updated'));
+        }
       } else {
-        const errorData = await response.json();
-        alert(errorData.message || t('profile:messages.password_update_error'));
+        toast.error(response.message || t('profile:messages.password_update_error'));
       }
     } catch (error) {
       console.error('Password update error:', error);
-      alert(t('profile:messages.password_update_error'));
+      toast.error(t('profile:messages.password_update_error'));
     } finally {
       setIsLoading(false);
     }
@@ -544,7 +568,6 @@ const ProfilePage: React.FC = () => {
               <form onSubmit={handleSubmitPassword(onSubmitPassword)} className="password-form">
                 <div className="form-section">
                   <h3 className="form-section__title">{t('profile:sections.change_password')}</h3>
-                  
                   <div className="form-group">
                     <label htmlFor="current_password" className="form-label">
                       {t('profile:fields.current_password')}
@@ -556,12 +579,15 @@ const ProfilePage: React.FC = () => {
                       {...registerPassword('current_password', {
                         required: t('profile:validation.current_password_required')
                       })}
+                      onChange={e => {
+                        setIsPasswordDirty(true);
+                        registerPassword('current_password').onChange(e);
+                      }}
                     />
                     {errorsPassword.current_password && (
                       <span className="form-error">{errorsPassword.current_password.message}</span>
                     )}
                   </div>
-
                   <div className="form-group">
                     <label htmlFor="new_password" className="form-label">
                       {t('profile:fields.new_password')}
@@ -577,12 +603,15 @@ const ProfilePage: React.FC = () => {
                           message: t('profile:validation.password_min_length')
                         }
                       })}
+                      onChange={e => {
+                        setIsPasswordDirty(true);
+                        registerPassword('new_password').onChange(e);
+                      }}
                     />
                     {errorsPassword.new_password && (
                       <span className="form-error">{errorsPassword.new_password.message}</span>
                     )}
                   </div>
-
                   <div className="form-group">
                     <label htmlFor="confirm_password" className="form-label">
                       {t('profile:fields.confirm_password')}
@@ -596,21 +625,39 @@ const ProfilePage: React.FC = () => {
                         validate: (value) =>
                           value === watchNewPassword || t('profile:validation.passwords_do_not_match')
                       })}
+                      onChange={e => {
+                        setIsPasswordDirty(true);
+                        registerPassword('confirm_password').onChange(e);
+                      }}
                     />
                     {errorsPassword.confirm_password && (
                       <span className="form-error">{errorsPassword.confirm_password.message}</span>
                     )}
                   </div>
                 </div>
-
                 <div className="form-actions">
                   <button
                     type="submit"
                     className="btn btn--primary"
-                    disabled={isLoading}
+                    disabled={isLoading || !isPasswordDirty}
                   >
                     {isLoading ? t('common:loading') : t('profile:actions.update_password')}
                   </button>
+                  {isPasswordDirty && (
+                    <button
+                      type="button"
+                      className="btn btn--secondary"
+                      style={{ marginLeft: '1rem' }}
+                      onClick={() => {
+                        if (initialPasswordData.current) {
+                          resetPassword(initialPasswordData.current);
+                        }
+                        setIsPasswordDirty(false);
+                      }}
+                    >
+                      {t('common:cancel_changes', 'Cancel Changes')}
+                    </button>
+                  )}
                 </div>
               </form>
             )}

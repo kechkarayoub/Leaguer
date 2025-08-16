@@ -32,6 +32,7 @@ from ..utils import (
 from ..views import get_geolocation, health_check, api_info
 from ..ws_utils import (
     WebSocketNotificationService, notify_profile_update_async,
+    notify_profile_password_update_async, notify_profile_password_update,
     notify_profile_update, notify_user_async, notify_user,
     notify_multiple_users_async, notify_multiple_users,
     ping_user_connection, ping_user_connection_sync
@@ -335,9 +336,7 @@ class UtilsTestCase(TestCase):
         mock_save.return_value = 'profile_images/profile_test_image.jpg'
         request = self.factory.post('/test/')
         file_url, file_path = upload_file(request, test_file, 'profile_images', prefix="profile_")
-        expected_url = f'{
-            request.build_absolute_uri(settings.MEDIA_URL)
-        }profile_images/profile_test_image.jpg'
+        expected_url = f'{request.build_absolute_uri(settings.MEDIA_URL)}profile_images/profile_test_image.jpg'
         self.assertEqual(file_url, expected_url)
         self.assertEqual(file_path, 'profile_images/profile_test_image.jpg')
     def test_send_whatsapp(self):
@@ -479,6 +478,18 @@ class WebSocketTestCase(TransactionTestCase):
             # Should not raise any exceptions
             await notify_profile_update_async(user_id, new_profile_data, password_updated=True)
         asyncio.get_event_loop().run_until_complete(async_test())
+    def notify_profile_password_update_async(self):
+        """Test async profile password update notification."""
+        async def async_test():
+            user_id = str(self.user.id)
+            # Should not raise any exceptions
+            await notify_profile_password_update_async(user_id)
+        asyncio.get_event_loop().run_until_complete(async_test())
+    def test_notify_profile_password_update_sync(self):
+        """Test sync profile password update notification."""
+        user_id = str(self.user.id)
+        # Should not raise any exceptions
+        notify_profile_password_update(user_id)
     def test_notify_profile_update_sync(self):
         """Test sync profile update notification."""
         user_id = str(self.user.id)
@@ -523,6 +534,10 @@ class WebSocketTestCase(TransactionTestCase):
             response = await communicator.receive_from()
             data = json.loads(response)
             self.assertEqual(data["type"], "profile_update")
+            await notify_profile_password_update_async(user_id)
+            response = await communicator.receive_from()
+            data = json.loads(response)
+            self.assertEqual(data["type"], "profile_password_update")
             await communicator.disconnect()
         asyncio.get_event_loop().run_until_complete(async_test())
     def test_profile_consumer_unauthenticated(self):

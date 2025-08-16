@@ -161,6 +161,7 @@ const useAuth = () => {
       const response = await apiService.post('/accounts/sign-in/', loginData);
       return response.data;
     },
+    retry: false,
     onSuccess: async (data, variables) => {
       // Determine storage type based on "Remember me" checkbox
       const useSessionStorage = !variables.rememberMe;
@@ -358,36 +359,29 @@ const useAuth = () => {
 
   // Change password mutation
   const changePasswordMutation = useMutation({
-    mutationFn: async (passwordData: { currentPassword: string; newPassword: string }) => {
-      const updateData = {
-        current_password: passwordData.currentPassword,
-        new_password: passwordData.newPassword,
-        update_password: true,
-      };
-      const response = await apiService.put('/accounts/update-profile/', updateData);
+    mutationFn: async (passwordData: FormData) => {
+      const response = await apiService.put('/accounts/update-profile/', passwordData);
       return response.data;
     },
+    retry: false,
     onSuccess: async (data) => {
-      // If password was updated, new tokens may be provided
-      let changeSessionStorage = !!(await secureStorage.getSessionItem('access_token'))
-      if(!changeSessionStorage){
-        secureStorage.setItem('user', data.user);
-      }
-      else if(changeSessionStorage){
-        secureStorage.setSessionItem('user', data.user);
-      }
-      if (data.access_token && data.refresh_token) {
-        // Store new tokens
-        if(!changeSessionStorage){
-          secureStorage.setItem('access_token', data.access_token);
-          secureStorage.setItem('refresh_token', data.refresh_token);
-        }
-        else if(changeSessionStorage){
-          secureStorage.setSessionItem('access_token', data.access_token);
-          secureStorage.setSessionItem('refresh_token', data.refresh_token);
+      if(data.success && !data.wrong_password){
+        // Store updated user data in the same storage type as tokens first
+        const hasSessionTokens = await secureStorage.getSessionItem('access_token');
+        const hasLocalTokens = await secureStorage.getItem('access_token');
+        
+        if(data.access_token){
+          if (hasSessionTokens) {
+            // User chose not to be remembered, use session storage
+            await secureStorage.setSessionItem('access_token', data.access_token);
+            await secureStorage.setSessionItem('refresh_token', data.refresh_token);
+          } else if (hasLocalTokens) {
+            // User chose to be remembered, use local storage
+            await secureStorage.setItem('access_token', data.access_token);
+            await secureStorage.setItem('refresh_token', data.refresh_token);
+          }
         }
       }
-      toast.success(t('messages.password_changed'));
     },
     onError: (error: any) => {
       const message = error?.response?.data?.message || t('messages.password_change_failed');

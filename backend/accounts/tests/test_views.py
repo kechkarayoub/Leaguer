@@ -602,12 +602,46 @@ class UpdateProfileViewTest(TestCase):
         # Log in the test user for authentication
         self.client.force_authenticate(user=self.user3)
 
+    def test_update_password(self):
+        # Log in first
+        self.authenticate_user()
+
+        # Prepare the data for the request
+        data = {
+            'action': 'update_password',
+            'current_password': 'testpassword',
+            'new_password': 'newpassword',
+            'current_language': 'en'
+        }
+
+        # Make a POST request to update the profile
+        response = self.client.put(self.url, data)
+
+        # Assert that the response status code is HTTP 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Your password has been updated successfully.")
+        self.assertTrue(data.get("success"))
+        self.assertFalse(data.get("wrong_password"))
+
+        # Assert that the user's profile was updated in the database
+        self.user.refresh_from_db()
+        # inside your test method
+        factory = APIRequestFactory()
+        fake_request = factory.post(self.url)  # fake request just to satisfy the `authenticate` function
+        request = Request(fake_request)
+        not_authenticated_user = authenticate(request, username=self.user.username, password="testpassword")
+        self.assertIsNone(not_authenticated_user)
+        authenticated_user = authenticate(request, username=self.user.username, password="newpassword")
+        self.assertIsNotNone(authenticated_user)
     def test_update_profile_with_password(self):
         # Log in first
         self.authenticate_user()
 
         # Prepare the data for the request
         data = {
+            'action': 'update_profile',
             'first_name': 'John',
             'last_name': 'Doe',
             'user_birthday': '1990-01-01',
@@ -650,6 +684,7 @@ class UpdateProfileViewTest(TestCase):
 
         # Prepare the data for the request
         data = {
+            'action': 'update_profile',
             'first_name': '',
             'last_name': '',
             'user_birthday': 'wrong date',
@@ -681,6 +716,7 @@ class UpdateProfileViewTest(TestCase):
 
         # Prepare the data for the request
         data = {
+            'action': 'update_profile',
             'first_name': 'John2',
             'last_name': 'Doe2',
             'user_birthday': '1990-01-01',
@@ -724,6 +760,7 @@ class UpdateProfileViewTest(TestCase):
 
         # Prepare the data for the request
         data = {
+            'action': 'update_profile',
             'first_name': 'John2',
             'last_name': 'Doe2',
             'user_birthday': '1990-01-01',
@@ -758,6 +795,7 @@ class UpdateProfileViewTest(TestCase):
 
         # Prepare the data for the request
         data = {
+            'action': 'update_profile',
             'first_name': 'John2',
             'last_name': 'Doe2',
             'user_birthday': '1990-01-01',
@@ -792,6 +830,7 @@ class UpdateProfileViewTest(TestCase):
 
         # Prepare the data for the request
         data1 = {
+            'action': 'update_profile',
             'first_name': 'John2',
             'last_name': 'Doe2',
             'user_birthday': '1990-01-01',
@@ -808,6 +847,7 @@ class UpdateProfileViewTest(TestCase):
             'user_phone_number': '+212672937219',
         }
         data3 = {
+            'action': 'update_profile',
             'first_name': 'John2',
             'last_name': 'Doe2',
             'user_birthday': '1990-01-01',
@@ -848,12 +888,45 @@ class UpdateProfileViewTest(TestCase):
         self.user3.refresh_from_db()
         self.assertNotEqual(self.user3.user_cin, data3.get('user_cin'))
 
+    def test_update_passwor_invalid_password(self):
+        # Log in first
+        self.authenticate_user3()
+
+        # Prepare the data for the request
+        data = {
+            'action': 'update_password',
+            'current_password': 'wrongpassword',
+            'new_password': 'newpassword',
+            'current_language': 'en'
+        }
+
+        # Make a POST request to update the profile
+        response = self.client.put(self.url, data)
+
+        # Assert that the response status code is HTTP 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Your password update failed. Please check your current password and try again.")
+        self.assertTrue(data.get("success"))
+        self.assertTrue(data.get("wrong_password"))
+
+        # inside your test method
+        factory = APIRequestFactory()
+        fake_request = factory.post(self.url)  # fake request just to satisfy the `authenticate` function
+        request = Request(fake_request)
+        not_authenticated_user = authenticate(request, username=self.user3.username, password="testpassword")
+        self.assertIsNotNone(not_authenticated_user)
+        authenticated_user = authenticate(request, username=self.user3.username, password="newpassword")
+        self.assertIsNone(authenticated_user)
     def test_update_profile_with_invalid_password(self):
         # Log in first
         self.authenticate_user3()
 
         # Prepare the data for the request
         data = {
+            'action': 'update_profile',
             'first_name': 'John',
             'last_name': 'Doe',
             'user_birthday': '1990-01-01',
@@ -897,6 +970,7 @@ class UpdateProfileViewTest(TestCase):
         # Prepare the data with profile image update
         random_name = generate_random_code()
         data = {
+            'action': 'update_profile',
             'first_name': 'John',
             'last_name': 'Doe',
             'user_birthday': '1990-01-01',
@@ -924,6 +998,7 @@ class UpdateProfileViewTest(TestCase):
 
         # Prepare the data with profile image update
         data = {
+            'action': 'update_profile',
             'first_name': 'John',
             'last_name': 'Doe',
             'user_birthday': '1990-01-01',

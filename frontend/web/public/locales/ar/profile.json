@@ -38,6 +38,7 @@
     "french": "Français"
   },
   "messages": {
+    "current_password_incorrect": "كلمة المرور الحالية غير صحيحة.",
     "password_update_error": "فشل في تحديث كلمة المرور. يرجى المحاولة مرة أخرى.",
     "password_updated": "تم تحديث كلمة المرور بنجاح!",
     "profile_update_error": "فشل في تحديث الملف الشخصي. يرجى المحاولة مرة أخرى.",

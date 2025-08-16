@@ -208,7 +208,7 @@ class AuthenticatedApiService {
       
       switch (status) {
         case 400:
-          toast.error(data.message || getTranslation('errors:general.badRequest', 'Bad request'));
+          // toast.error(data.message || getTranslation('errors:general.badRequest', 'Bad request'));
           break;
         case 403:
           toast.error(getTranslation('errors:general.accessDenied', 'Access denied'));

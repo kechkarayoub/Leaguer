@@ -12,7 +12,7 @@ from django.contrib.auth.models import AnonymousUser
 from asgiref.sync import sync_to_async
 from leaguer.asgi import application
 from leaguer.ws_consumers import ProfileConsumer
-from leaguer.ws_utils import notify_profile_update_async
+from leaguer.ws_utils import notify_profile_update_async, notify_profile_password_update_async
 from rest_framework_simplejwt.tokens import RefreshToken
 import asyncio
 import json
@@ -142,6 +142,33 @@ class ProfileConsumerTest(TransactionTestCase):
             data = json.loads(response)
             self.assertEqual(data["type"], "profile_update")
             self.assertEqual(data["data"]["id"], user_id)
+            self.assertTrue(data["password_updated"])
+
+            await communicator.disconnect()
+
+        asyncio.get_event_loop().run_until_complete(async_test())
+
+    def test_notify_profile_password_update_integration(self):
+        """Test profile password update notification integration."""
+        async def async_test():
+            user_id = str(self.user.id)
+            refresh = RefreshToken.for_user(self.user)
+            communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/?token={str(refresh.access_token)}")
+            
+            # Mock the scope to include authenticated user
+            communicator.scope['user'] = self.user
+            
+            connected, _ = await communicator.connect()
+            self.assertTrue(connected)
+            await communicator.receive_from()  # initial connection message
+
+            # Call the function to notify profile password update
+            await notify_profile_password_update_async(user_id)
+
+            # The consumer should send the new profile data back
+            response = await communicator.receive_from()
+            data = json.loads(response)
+            self.assertEqual(data["type"], "profile_password_update")
             self.assertTrue(data["password_updated"])
 
             await communicator.disconnect()

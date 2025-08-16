@@ -38,6 +38,7 @@
     "french": "Français"
   },
   "messages": {
+    "current_password_incorrect": "Le mot de passe actuel est incorrect.",
     "password_update_error": "Échec de la mise à jour du mot de passe. Veuillez réessayer.",
     "password_updated": "Mot de passe mis à jour avec succès !",
     "profile_update_error": "Échec de la mise à jour du profil. Veuillez réessayer.",

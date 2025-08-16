@@ -68,6 +68,44 @@ async def notify_profile_update_async(user_id, new_profile_data, password_update
         logger.error(f"Failed to send profile update notification for user {user_id}: {str(e)}")
 
 
+# Async version: Use this in async contexts
+async def notify_profile_password_update_async(user_id, device_id=None):
+    """
+    Asynchronously sends a profile password update event to all WebSocket clients in the user's group.
+
+    Args:
+        user_id (str or int): The ID of the user whose profile was updated
+        new_profile_data (dict): The updated profile data to send to clients
+        device_id (str, optional): Device ID to exclude from receiving the update
+    """
+    try:
+        await WebSocketNotificationService.send_to_group(
+            f"profile_{user_id}",
+            "profile_password_update",
+            {
+                "password_updated": True,
+                "device_id": device_id,
+            }
+        )
+    except Exception as e:
+        logger.error(f"Failed to send profile password update notification for user {user_id}: {str(e)}")
+
+
+# Sync version: Use this in synchronous Django code
+def notify_profile_password_update(user_id, device_id=None):
+    """
+    Synchronously sends a profile password update event to all WebSocket clients in the user's group.
+    This wraps the async version for use in non-async code.
+
+    Args:
+        user_id (str or int): The ID of the user whose profile was updated
+        device_id (str, optional): Device ID to exclude from receiving the update
+    """
+    try:
+        async_to_sync(notify_profile_password_update_async)(user_id, device_id)
+    except Exception as e:
+        logger.error(f"Failed to send sync profile password update notification for user {user_id}: {str(e)}")
+
 # Sync version: Use this in synchronous Django code
 def notify_profile_update(user_id, new_profile_data, password_updated=False, device_id=None):
     """

@@ -132,6 +132,28 @@ class ProfileConsumer(BaseConsumer):
             logger.error(f"Error in ProfileConsumer.profile_update: {str(e)}")
             await self.send_error(_("Error processing profile update"), "update_error")
     
+    async def profile_password_update(self, event):
+        """
+        Handle profile password update events sent to the group.
+        Forwards the update to the WebSocket client.
+        """
+        try:
+            # Check if this update should be sent to this specific client
+            device_id = event.get('device_id')
+            if device_id and hasattr(self, 'device_id') and self.device_id == device_id:
+                # Skip sending to the device that initiated the update
+                return
+            
+            await self.send(text_data=json.dumps({
+                "type": "profile_password_update",
+                "password_updated": event.get('password_updated', False),
+                "timestamp": event.get('timestamp')
+            }))
+            
+        except Exception as e:
+            logger.error(f"Error in ProfileConsumer.profile_password_update: {str(e)}")
+            await self.send_error(_("Error processing profile password update"), "update_error")
+
     async def notification(self, event):
         """
         Handle general notification events.
