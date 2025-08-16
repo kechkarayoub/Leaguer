@@ -469,6 +469,11 @@
     "register_success": "Inscription réussie"
   },
   "navigation": {
+    "forgotPassword": "Mot de passe oublié",
+    "pageNotFound": "Page Non Trouvée",
+    "login": "Connexion",
+    "register": "S'inscrire",
+    "resetPassword": "Réinitialiser le mot de passe",
     "about": "À propos",
     "contact": "Contact",
     "dashboard": "Tableau de bord",

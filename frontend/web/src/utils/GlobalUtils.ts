@@ -18,12 +18,20 @@ export const getPageTitle = (path: string, t: Function, pageTitle?: string | und
   switch (path) {
     case '/':
       return t('navigation.home');
+    case '/auth/login':
+      return t('navigation.login');
+    case '/auth/forgot-password':
+      return t('navigation.forgotPassword');
+    case '/auth/register':
+      return t('navigation.register');
+    case '/auth/reset-password':
+      return t('navigation.resetPassword');
     case '/profile':
       return t('navigation.profile');
     case '/settings':
       return t('navigation.settings');
     default:
-      return t('navigation.home');
+      return t('navigation.pageNotFound');
   }
 };
 

@@ -469,6 +469,11 @@
     "register_success": "Successfully registered"
   },
   "navigation": {
+    "forgotPassword": "Forgot Password",
+    "pageNotFound": "Page Not Found",
+    "login": "Login",
+    "register": "Register",
+    "resetPassword": "Reset Password",
     "about": "About",
     "contact": "Contact",
     "dashboard": "Dashboard",

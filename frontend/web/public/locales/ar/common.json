@@ -471,6 +471,11 @@
   },
   "navigation": {
     "about": "حول",
+    "forgotPassword": "نسيت كلمة المرور",
+    "pageNotFound": "الصفحة غير موجودة",
+    "login": "تسجيل الدخول",
+    "register": "تسجيل",
+    "resetPassword": "إعادة تعيين كلمة المرور",
     "contact": "اتصل بنا",
     "dashboard": "لوحة التحكم",
     "help": "مساعدة",
