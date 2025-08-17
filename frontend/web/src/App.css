@@ -1364,6 +1364,10 @@ a:hover {
 .auth-footer-modern.rtl .auth-footer-bottom-links {
   flex-direction: row-reverse;
 }
+[dir="rtl"] .form-input-group .form-control {
+  padding-left: 3rem;
+  padding-right: 1rem;
+}
 
 /* Modal Components Styling */
 .modal-overlay {

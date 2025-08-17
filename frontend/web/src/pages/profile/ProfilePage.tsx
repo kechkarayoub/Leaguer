@@ -15,6 +15,7 @@ import useAuth from '../../hooks/useAuth';
 import PhoneNumberField from '../../components/form/PhoneNumberField';
 import CustomDatePicker from '../../components/form/CustomDatePicker';
 import CustomSelect, { CustomSelectOption } from '../../components/form/CustomSelect';
+import ShowPasswordButton from '../../components/form/ShowPasswordButton'
 
 
 
@@ -49,6 +50,9 @@ const ProfilePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'profile' | 'password'>('profile');
   const [isLoading, setIsLoading] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [imageUpdated, setImageUpdated] = useState(false);
   const initialUserData = useRef<ProfileFormData | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null | String>(null);
@@ -572,18 +576,24 @@ const ProfilePage: React.FC = () => {
                     <label htmlFor="current_password" className="form-label">
                       {t('profile:fields.current_password')}
                     </label>
-                    <input
-                      id="current_password"
-                      type="password"
-                      className={`form-input ${errorsPassword.current_password ? 'form-input--error' : ''}`}
-                      {...registerPassword('current_password', {
-                        required: t('profile:validation.current_password_required')
-                      })}
-                      onChange={e => {
-                        setIsPasswordDirty(true);
-                        registerPassword('current_password').onChange(e);
-                      }}
-                    />
+                    <div className="form-input-group">
+                      <input
+                        id="current_password"
+                        type={showCurrentPassword ? 'text' : 'password'}
+                        className={`form-input ${errorsPassword.current_password ? 'form-input--error' : ''}`}
+                        {...registerPassword('current_password', {
+                          required: t('profile:validation.current_password_required')
+                        })}
+                        onChange={e => {
+                          setIsPasswordDirty(true);
+                          registerPassword('current_password').onChange(e);
+                        }}
+                      />
+                      <ShowPasswordButton
+                        value={showCurrentPassword}
+                        onClick={setShowCurrentPassword}
+                      />
+                    </div>
                     {errorsPassword.current_password && (
                       <span className="form-error">{errorsPassword.current_password.message}</span>
                     )}
@@ -592,22 +602,28 @@ const ProfilePage: React.FC = () => {
                     <label htmlFor="new_password" className="form-label">
                       {t('profile:fields.new_password')}
                     </label>
-                    <input
-                      id="new_password"
-                      type="password"
-                      className={`form-input ${errorsPassword.new_password ? 'form-input--error' : ''}`}
-                      {...registerPassword('new_password', {
-                        required: t('profile:validation.new_password_required'),
-                        minLength: {
-                          value: 8,
-                          message: t('profile:validation.password_min_length')
-                        }
-                      })}
-                      onChange={e => {
-                        setIsPasswordDirty(true);
-                        registerPassword('new_password').onChange(e);
-                      }}
-                    />
+                    <div className="form-input-group">
+                      <input
+                        id="new_password"
+                        type={showNewPassword ? 'text' : 'password'}
+                        className={`form-input ${errorsPassword.new_password ? 'form-input--error' : ''}`}
+                        {...registerPassword('new_password', {
+                          required: t('profile:validation.new_password_required'),
+                          minLength: {
+                            value: 8,
+                            message: t('profile:validation.password_min_length')
+                          }
+                        })}
+                        onChange={e => {
+                          setIsPasswordDirty(true);
+                          registerPassword('new_password').onChange(e);
+                        }}
+                      />
+                      <ShowPasswordButton
+                        value={showNewPassword}
+                        onClick={setShowNewPassword}
+                      />
+                    </div>
                     {errorsPassword.new_password && (
                       <span className="form-error">{errorsPassword.new_password.message}</span>
                     )}
@@ -616,20 +632,26 @@ const ProfilePage: React.FC = () => {
                     <label htmlFor="confirm_password" className="form-label">
                       {t('profile:fields.confirm_password')}
                     </label>
-                    <input
-                      id="confirm_password"
-                      type="password"
-                      className={`form-input ${errorsPassword.confirm_password ? 'form-input--error' : ''}`}
-                      {...registerPassword('confirm_password', {
-                        required: t('profile:validation.confirm_password_required'),
-                        validate: (value) =>
-                          value === watchNewPassword || t('profile:validation.passwords_do_not_match')
-                      })}
-                      onChange={e => {
-                        setIsPasswordDirty(true);
-                        registerPassword('confirm_password').onChange(e);
-                      }}
-                    />
+                    <div className="form-input-group">
+                      <input
+                        id="confirm_password"
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        className={`form-input ${errorsPassword.confirm_password ? 'form-input--error' : ''}`}
+                        {...registerPassword('confirm_password', {
+                          required: t('profile:validation.confirm_password_required'),
+                          validate: (value) =>
+                            value === watchNewPassword || t('profile:validation.passwords_do_not_match')
+                        })}
+                        onChange={e => {
+                         setIsPasswordDirty(true);
+                          registerPassword('confirm_password').onChange(e);
+                        }}
+                      />
+                      <ShowPasswordButton
+                        value={showConfirmPassword}
+                        onClick={setShowConfirmPassword}
+                      />
+                    </div>
                     {errorsPassword.confirm_password && (
                       <span className="form-error">{errorsPassword.confirm_password.message}</span>
                     )}
