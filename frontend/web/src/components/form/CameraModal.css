@@ -1,0 +1,229 @@
+/* CameraModal Component Styles */
+
+.camera-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.camera-modal {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 800px;
+  height: calc(100vh - 2rem);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  margin: auto;
+}
+
+.camera-modal__header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.camera-modal__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.camera-modal__close {
+  background: none;
+  border: none;
+  padding: 0 0.5rem;
+  cursor: pointer;
+  color: #6b7280;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.camera-modal__close:hover {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.camera-modal__close svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.camera-modal__content {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100% - 140px);
+  overflow-y: auto;
+}
+
+.camera-container {
+  width: 100%;
+  height: 100%;
+  min-height: calc(200px - 2rem);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.camera-preview {
+  max-width: 100%;
+  width: auto;
+  max-height: 100%;
+  display: block;
+  height: auto;
+  margin: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.captured-container {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.captured-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.cropping-container {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+
+.crop-container {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  max-height: 60vh;
+  margin: auto;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.crop-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 60vh;
+  object-fit: contain;
+}
+
+.camera-modal__actions {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.camera-capture-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.camera-capture-btn .icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .camera-modal {
+    margin: 0.5rem;
+    max-width: calc(100vw - 1rem);
+    max-height: calc(100vh - 1rem);
+  }
+  
+  .camera-modal__header,
+  .camera-modal__content,
+  .camera-modal__actions {
+    padding: 1rem;
+  }
+  
+  .camera-modal__actions {
+    flex-direction: column;
+  }
+  
+  .camera-modal__actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .crop-container {
+    max-height: 50vh;
+  }
+
+  .crop-image {
+    max-height: 50vh;
+  }
+}
+
+@media (max-height: 600px) {
+  .camera-modal-overlay {
+    align-items: flex-start;
+    padding: 0.5rem;
+  }
+  
+  .camera-modal {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .crop-container {
+    max-height: 40vh;
+  }
+
+  .crop-image {
+    max-height: 40vh;
+  }
+}
+
+/* React Image Crop overrides */
+.ReactCrop {
+  max-width: 100%;
+}
+
+.ReactCrop__crop-selection {
+  border: 2px solid #3b82f6;
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.ReactCrop__drag-handle {
+  background-color: #3b82f6;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ReactCrop__drag-handle:after {
+  background-color: #3b82f6;
+}

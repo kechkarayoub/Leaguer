@@ -1,7 +1,8 @@
 
 - Add .env.example
 - Optimizing images before upload.
-- Access to pages with urls on web.
+- Add websocket receive message system.
+- Add preferences update
 - Notifications && Push notifications.
 - Test update profile on mobile.
 - Add phone number to profile update.

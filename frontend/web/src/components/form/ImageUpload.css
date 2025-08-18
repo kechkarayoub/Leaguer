@@ -92,6 +92,10 @@
   border-radius: var(--radius-xl);
   object-fit: cover;
   display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .image-upload__overlay {
@@ -157,6 +161,82 @@
   color: var(--color-red-600);
   font-size: var(--text-xs);
   font-weight: 500;
+}
+
+/* Camera functionality */
+.image-upload__camera-section {
+  margin-top: var(--spacing-lg, 1.5rem);
+}
+
+.image-upload__divider {
+  display: flex;
+  align-items: center;
+  margin: var(--spacing-lg, 1.5rem) 0;
+  text-align: center;
+}
+
+.image-upload__divider::before,
+.image-upload__divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e5e7eb;
+}
+
+.image-upload__divider span {
+  padding: 0 var(--spacing-md, 1rem);
+  color: #6b7280;
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: 500;
+}
+
+.image-upload__camera-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs, 0.5rem);
+  padding: var(--spacing-xs, 0.5rem) var(--spacing-sm, 0.75rem);
+  border: none;
+  border-radius: var(--radius-md, 8px);
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast, 0.15s ease);
+  background: #3b82f6;
+  color: white;
+}
+
+.image-upload__camera-btn:hover {
+  background: #1d4ed8;
+}
+
+.image-upload__camera-btn--standalone {
+  width: 100%;
+  justify-content: center;
+  padding: var(--spacing-md, 1rem) var(--spacing-lg, 1.5rem);
+  font-size: var(--text-sm, 0.875rem);
+  border: 2px solid #3b82f6;
+  background: transparent;
+  color: #3b82f6;
+}
+
+.image-upload__camera-btn--standalone:hover {
+  background: #3b82f6;
+  color: white;
+}
+
+.image-upload__camera-btn .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.image-upload__camera-btn--standalone .icon {
+  width: 20px;
+  height: 20px;
+}
+
+.image-upload__no-preview {
+  display: flex;
+  flex-direction: column;
 }
 
 /* Responsive Design */

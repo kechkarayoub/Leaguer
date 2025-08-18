@@ -260,8 +260,8 @@ const useAuth = () => {
         // Update user data in cache
         queryClient.setQueryData(['user', 'profile'], data.user);
         
-        // Connect WebSocket
-        await webSocketService.connect();
+        // // Connect WebSocket
+        // await webSocketService.connect();
 
         toast.success(t(data.is_new_user ? 'messages.register_success' : 'messages.login_success'));
       }

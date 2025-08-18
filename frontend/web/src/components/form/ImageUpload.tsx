@@ -1,11 +1,14 @@
 /**
  * ImageUpload Component
  * 
- * Reusable image upload component with preview and drag-and-drop
+ * Reusable image upload component with preview, drag-and-drop, and camera capture
  */
 
 import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import CameraModal from './CameraModal';
+import CropModal from './CropModal';
+import { useCamera } from '../../hooks/useCamera';
 
 import './ImageUpload.css';
 
@@ -33,7 +36,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const { t } = useTranslation();
   const [preview, setPreview] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
+  const [isCropModalOpen, setIsCropModalOpen] = useState(false);
+  const [selectedImageForCrop, setSelectedImageForCrop] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { hasCamera } = useCamera();
 
   React.useEffect(() => {
     if (value) {
@@ -66,7 +73,14 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       return;
     }
 
-    onChange(file);
+    // Read file as data URL for cropping
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result as string;
+      setSelectedImageForCrop(result);
+      setIsCropModalOpen(true);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,6 +121,34 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     fileInputRef.current?.click();
   };
 
+  const openCameraModal = () => {
+    setIsCameraModalOpen(true);
+  };
+
+  const closeCameraModal = () => {
+    setIsCameraModalOpen(false);
+  };
+
+  const handleCameraCapture = (file: File) => {
+    const validationError = validateFile(file);
+    if (validationError) {
+      alert(validationError);
+      return;
+    }
+    onChange(file);
+  };
+
+  const handleCropConfirm = (croppedFile: File) => {
+    onChange(croppedFile);
+    setIsCropModalOpen(false);
+    setSelectedImageForCrop('');
+  };
+
+  const handleCropCancel = () => {
+    setIsCropModalOpen(false);
+    setSelectedImageForCrop('');
+  };
+
   return (
     <div className={`image-upload ${className} ${error ? 'image-upload--error' : ''}`}>
       {label && (
@@ -131,6 +173,19 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 </svg>
                 {t('common:form.change_image')}
               </button>
+              {hasCamera && (
+                <button
+                  type="button"
+                  onClick={openCameraModal}
+                  className="image-upload__camera-btn"
+                >
+                  <svg className="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  {t('common:form.take_photo')}
+                </button>
+              )}
               <button
                 type="button"
                 onClick={handleRemove}
@@ -144,27 +199,48 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             </div>
           </div>
         ) : (
-          <div
-            className={`image-upload__dropzone ${isDragging ? 'image-upload__dropzone--dragging' : ''}`}
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onClick={openFileDialog}
-          >
-            <svg className="image-upload__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-            </svg>
-            <div className="image-upload__text">
-              <p className="image-upload__primary-text">
-                {placeholder || t('common:form.image_upload_text')}
-              </p>
-              <p className="image-upload__secondary-text">
-                {t('common:form.image_upload_hint', { 
-                  types: acceptedTypes.map(type => type.split('/')[1].toUpperCase()).join(', '),
-                  size: maxSize 
-                })}
-              </p>
+          <div className="image-upload__no-preview">
+            <div
+              className={`image-upload__dropzone ${isDragging ? 'image-upload__dropzone--dragging' : ''}`}
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onClick={openFileDialog}
+            >
+              <svg className="image-upload__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+              <div className="image-upload__text">
+                <p className="image-upload__primary-text">
+                  {placeholder || t('common:form.image_upload_text')}
+                </p>
+                <p className="image-upload__secondary-text">
+                  {t('common:form.image_upload_hint', { 
+                    types: acceptedTypes.map(type => type.split('/')[1].toUpperCase()).join(', '),
+                    size: maxSize 
+                  })}
+                </p>
+              </div>
             </div>
+            
+            {hasCamera && (
+              <div className="image-upload__camera-section">
+                <div className="image-upload__divider">
+                  <span>{t('common:app.or', 'or')}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={openCameraModal}
+                  className="image-upload__camera-btn image-upload__camera-btn--standalone"
+                >
+                  <svg className="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  {t('common:form.take_photo')}
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -178,6 +254,20 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       />
 
       {error && <div className="image-upload__error">{error}</div>}
+      
+      <CameraModal
+        isOpen={isCameraModalOpen}
+        onClose={closeCameraModal}
+        onCapture={handleCameraCapture}
+      />
+
+      <CropModal
+        isOpen={isCropModalOpen}
+        imageSrc={selectedImageForCrop}
+        onConfirm={handleCropConfirm}
+        onClose={handleCropCancel}
+        title={t('common:form.crop_image')}
+      />
     </div>
   );
 };

@@ -1,0 +1,186 @@
+/* CropModal Component Styles */
+
+.crop-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.crop-modal {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 800px;
+  height: calc(100vh - 2rem);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  margin: auto;
+}
+
+.crop-modal__header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.crop-modal__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.crop-modal__close {
+  background: none;
+  border: none;
+  padding: 0 0.5rem;
+  cursor: pointer;
+  color: #6b7280;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.crop-modal__close:hover {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.crop-modal__close svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.crop-modal__content {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100% - 140px);
+  overflow-y: auto;
+}
+
+.cropping-container {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.crop-container {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  max-height: 60vh;
+  margin: auto;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.crop-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 60vh;
+  object-fit: contain;
+}
+
+.crop-modal__actions {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .crop-modal {
+    margin: 0.5rem;
+    max-width: calc(100vw - 1rem);
+    max-height: calc(100vh - 1rem);
+  }
+  
+  .crop-modal__header,
+  .crop-modal__content,
+  .crop-modal__actions {
+    padding: 1rem;
+  }
+  
+  .crop-modal__actions {
+    flex-direction: column;
+  }
+  
+  .crop-modal__actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .crop-container {
+    max-height: 50vh;
+  }
+
+  .crop-image {
+    max-height: 50vh;
+  }
+}
+
+@media (max-height: 600px) {
+  .crop-modal-overlay {
+    align-items: flex-start;
+    padding: 0.5rem;
+  }
+  
+  .crop-modal {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .crop-container {
+    max-height: 40vh;
+  }
+
+  .crop-image {
+    max-height: 40vh;
+  }
+}
+
+/* React Image Crop overrides */
+.ReactCrop {
+  max-width: 100%;
+}
+
+.ReactCrop__crop-selection {
+  border: 2px solid #3b82f6;
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.ReactCrop__drag-handle {
+  background-color: #3b82f6;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ReactCrop__drag-handle:after {
+  background-color: #3b82f6;
+}
