@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 import { EXCLUDED_COUNTRIES } from '../../utils/GlobalUtils';
 
 import useAuth from '../../hooks/useAuth';
+import { useProfileWebSocket } from '../../hooks/useWebSocket';
 import PhoneNumberField from '../../components/form/PhoneNumberField';
 import CustomDatePicker from '../../components/form/CustomDatePicker';
 import CustomSelect, { CustomSelectOption } from '../../components/form/CustomSelect';
@@ -47,6 +48,7 @@ interface PasswordFormData {
 const ProfilePage: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { user, updateProfile, changePassword } = useAuth();
+  const { isConnected } = useProfileWebSocket();
   const [activeTab, setActiveTab] = useState<'profile' | 'password'>('profile');
   const [isLoading, setIsLoading] = useState(false);
   const [isDirty, setIsDirty] = useState(false);

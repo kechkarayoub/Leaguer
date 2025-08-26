@@ -185,8 +185,8 @@ const useAuth = () => {
       // Update user data in cache
       queryClient.setQueryData(['user', 'profile'], data.user);
       
-      // Connect WebSocket
-      await webSocketService.connect();
+      // // Connect WebSocket
+      // await webSocketService.connect();
       
       const message = variables.rememberMe 
         ? t('messages.login_success_remembered')
@@ -277,20 +277,26 @@ const useAuth = () => {
   });
 
   // Logout function
-  const logout = useCallback(async () => {
+  const logout = useCallback(async (logoutAllDevices: boolean = false) => {
     try {
-      // For JWT, logout is handled client-side by clearing tokens
-      // No backend call needed as JWT tokens are stateless
       console.log('Logging out user...');
+      
+      // Call the API service logout method which handles token blacklisting
+      var data = {
+        logout_all_devices: logoutAllDevices,
+        selected_language: i18n.language,
+      }
+      await apiService.logout(data);
+
     } catch (error) {
       console.error('Logout error:', error);
-    } finally {
-      // Clear stored data from both storages
+      // Even if logout API call fails, continue with local cleanup
       await apiService.clearTokens();
       await secureStorage.removeItem('user');
       await secureStorage.removeSessionItem('user');
+    } finally {
+      // Clear additional session data if needed
       await secureStorage.clearSession(); // Clear all session data
-      await secureStorage.clear(); // Clear all session data
       
       // Update auth state
       setIsAuthenticated(false);
@@ -424,8 +430,8 @@ const useAuth = () => {
       // Update user data in cache
       queryClient.setQueryData(['user', 'profile'], data.user);
       
-      // Connect WebSocket
-      await webSocketService.connect();
+      // // Connect WebSocket
+      // await webSocketService.connect();
       
       toast.success(t('messages.login_success'));
     },

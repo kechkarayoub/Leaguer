@@ -9,20 +9,18 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import LoadingSpinner from './LoadingSpinner';
-import WebSocketService from '../services/WebSocketService';
+import useAuthenticatedWebSocket from '../hooks/useAuthenticatedWebSocket';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
-const initializeWebsocket = async () => {
-  const webSocketService = WebSocketService.getInstance();
-  await webSocketService.connect();
-}
-
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
+  
+  // Automatically manage WebSocket connection based on auth status
+  useAuthenticatedWebSocket();
 
   if (isLoading) {
     return <LoadingSpinner overlay />;
@@ -38,9 +36,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       />
     );
   }
-
-  
-  // initializeWebsocket();
 
   return <>{children}</>;
 };

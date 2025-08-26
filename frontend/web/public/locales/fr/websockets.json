@@ -1,0 +1,9 @@
+{
+  "profile": {
+    "updatedRemotely": "Profile modifié à partir d'un autre appareil"
+  },
+  "auth": {
+    "passwordChangedElsewhere": "Mot de passe modifié à partir d'un autre appareil. Vous serez déconnecté.",
+    "passwordReset": "Mot de passe réinitialisé. Vous serez déconnecté."
+  }
+}

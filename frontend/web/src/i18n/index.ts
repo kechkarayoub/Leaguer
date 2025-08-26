@@ -56,7 +56,7 @@ i18n
 
     // Namespace and key options
     defaultNS: 'common',
-    ns: ['common', 'auth', 'countries', 'dashboard', 'home', 'navigation', 'settings', 'profile', 'errors'],
+    ns: ['common', 'auth', 'countries', 'dashboard', 'home', 'navigation', 'settings', 'profile', 'errors', 'websockets'],
 
     // Key separator
     keySeparator: '.',

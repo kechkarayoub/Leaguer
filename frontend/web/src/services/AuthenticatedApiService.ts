@@ -115,6 +115,9 @@ class AuthenticatedApiService {
             return Promise.reject(refreshError);
           }
         }
+        else if(error.response?.status === 401){
+          await this.handleSessionExpired();
+        }
 
         // For all other error codes (including 409), don't retry
         // Just handle the error and reject
@@ -124,6 +127,9 @@ class AuthenticatedApiService {
     );
   }
 
+  public async publicRefreshTokens(): Promise<AuthTokens | null> {
+    return this.refreshTokens();
+  }
   private async refreshTokens(): Promise<AuthTokens | null> {
     if (this.isRefreshing && this.refreshPromise) {
       return this.refreshPromise;
@@ -182,6 +188,9 @@ class AuthenticatedApiService {
     };
   }
 
+  public async publicHandleSessionExpired(): Promise<void> {
+    this.handleSessionExpired();
+  }
   private async handleSessionExpired(): Promise<void> {
     console.log('Session expired - clearing tokens and redirecting to login');
     
@@ -270,6 +279,29 @@ class AuthenticatedApiService {
     await this.secureStorage.removeItem('refresh_token');
     await this.secureStorage.removeSessionItem('access_token');
     await this.secureStorage.removeSessionItem('refresh_token');
+  }
+
+  /**
+   * Logout user by blacklisting their tokens on the server
+   */
+  public async logout(data: any = {}): Promise<void> {
+    try {
+      // Get refresh token for blacklisting
+      let refreshToken = await this.secureStorage.getSessionItem('refresh_token');
+      if (!refreshToken) {
+        refreshToken = await this.secureStorage.getItem('refresh_token');
+      }
+
+      if (refreshToken) {
+        // Call logout endpoint to blacklist the token
+        data.refresh_token = refreshToken;
+        await this.axiosInstance.post('/accounts/logout/', data);
+      }
+    } catch (error) {
+      // If logout API call fails, still proceed with local cleanup
+      console.error('Logout API call failed:', error);
+    } finally {
+    }
   }
 
   public async hasValidToken(): Promise<boolean> {
