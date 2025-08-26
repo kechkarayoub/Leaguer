@@ -54,10 +54,13 @@ LANGUAGE_COOKIE_SECURE = False  # Allow HTTP for development
 LANGUAGE_COOKIE_HTTPONLY = False
 LANGUAGE_COOKIE_SAMESITE = 'Lax'
 
-# Redis and Channel Layers (using simple in-memory for development)
+# Redis and Channel Layers (using Redis for reliable group messaging)
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],  # Use Redis container name in Docker
+        },
     },
 }
 

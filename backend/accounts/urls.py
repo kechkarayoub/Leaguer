@@ -1,14 +1,15 @@
 
 from .views import (SendVerificationEmailLinkView, SignInView, SignInThirdPartyView, SignUpView, SignUpThirdPartyView, verify_email, verify_phone_number,
-    UpdateProfileView, ForgotPasswordView, ResetPasswordView)
+    UpdateProfileView, ForgotPasswordView, ResetPasswordView, LogoutView)
+from .jwt_views import TokenObtainPairView, TokenRefreshView
 from django.urls import path
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
 urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('send-verification-email-link/', SendVerificationEmailLinkView.as_view(), name='send-verification-email-link'),
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('sign-in/', SignInView.as_view(), name='sign-in'),
     path('sign-in-third-party/', SignInThirdPartyView.as_view(), name='sign-in-third-party'),
     path('sign-up/', SignUpView.as_view(), name='sign-up'),

@@ -7,7 +7,7 @@ from django.test import TestCase, override_settings
 from django.utils import timezone
 from datetime import timedelta
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from rest_framework_simplejwt.tokens import RefreshToken
+from accounts.tokens import RefreshToken
 from unittest.mock import patch, MagicMock
 import importlib
 from io import StringIO

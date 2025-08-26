@@ -9,7 +9,7 @@ import os
 import asyncio
 import time
 from unittest.mock import patch, Mock
-from rest_framework_simplejwt.tokens import RefreshToken
+from accounts.tokens import RefreshToken
 from channels.testing import WebsocketCommunicator
 from decouple import config
 from django.test import TestCase, TransactionTestCase, RequestFactory
@@ -35,8 +35,10 @@ from ..ws_utils import (
     notify_profile_password_update_async, notify_profile_password_update,
     notify_profile_update, notify_user_async, notify_user,
     notify_multiple_users_async, notify_multiple_users,
-    ping_user_connection, ping_user_connection_sync
+    ping_user_connection, ping_user_connection_sync,
+    notify_profile_password_reset_async, notify_profile_password_reset
 )
+from channels.db import database_sync_to_async
 from ..monitoring import PerformanceMonitor, DatabaseMonitor
 
 
@@ -496,6 +498,20 @@ class WebSocketTestCase(TransactionTestCase):
         new_profile_data = {"id": user_id, "name": "Test User"}
         # Should not raise any exceptions
         notify_profile_update(user_id, new_profile_data, password_updated=True)
+    def test_notify_profile_password_reset_async(self):
+        """Test async profile password reset notification."""
+        async def async_test():
+            user_id = str(self.user.id)
+            # Should not raise any exceptions
+            await notify_profile_password_reset_async(user_id)
+        asyncio.get_event_loop().run_until_complete(async_test())
+
+    def test_notify_profile_password_reset_sync(self):
+        """Test sync profile password reset notification."""
+        user_id = str(self.user.id)
+        # Should not raise any exceptions
+        notify_profile_password_reset(user_id)
+
     def test_notify_user_functions(self):
         """Test user notification functions."""
         async def async_test():
@@ -516,7 +532,7 @@ class WebSocketTestCase(TransactionTestCase):
         """Test ProfileConsumer connection and updates."""
         async def async_test():
             user_id = str(self.user.id)
-            refresh = RefreshToken.for_user(self.user)
+            refresh = await database_sync_to_async(RefreshToken.for_user)(self.user)
             communicator = WebsocketCommunicator(
                 application, f"/ws/profile/{user_id}/?token={str(refresh.access_token)}"
             )
@@ -538,6 +554,15 @@ class WebSocketTestCase(TransactionTestCase):
             response = await communicator.receive_from()
             data = json.loads(response)
             self.assertEqual(data["type"], "profile_password_update")
+            
+            # Test password reset notification
+            await notify_profile_password_reset_async(user_id)
+            response = await communicator.receive_from()
+            data = json.loads(response)
+            self.assertEqual(data["type"], "profile_password_reset")
+            self.assertTrue(data["password_reset"])
+            self.assertEqual(data["action"], "logout_required")
+            
             await communicator.disconnect()
         asyncio.get_event_loop().run_until_complete(async_test())
     def test_profile_consumer_unauthenticated(self):
@@ -545,10 +570,20 @@ class WebSocketTestCase(TransactionTestCase):
         async def async_test():
             user_id = str(self.user.id)
             communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/")
-            # Mock the scope with anonymous user
+            # Mock the scope with anonymous user and auth error
             communicator.scope['user'] = AnonymousUser()
+            communicator.scope['auth_error'] = 'no_token'
             connected, _ = await communicator.connect()
-            self.assertFalse(connected)
+            self.assertTrue(connected)  # Connection is initially accepted
+
+            # Should receive auth error message
+            response = await communicator.receive_from()
+            data = json.loads(response)
+            self.assertEqual(data["type"], "auth_error")
+            self.assertEqual(data["error"], "no_token")
+            
+            # Connection should be closed with appropriate code
+            await communicator.disconnect()
         asyncio.get_event_loop().run_until_complete(async_test())
     def test_profile_consumer_unauthorized_user(self):
         """Test that users cannot access other users' profiles."""
@@ -557,11 +592,22 @@ class WebSocketTestCase(TransactionTestCase):
             other_user = await self.create_test_user()
             # Try to connect to first user's profile with second user's credentials
             user_id = str(self.user.id)
-            communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/")
+            refresh = await database_sync_to_async(RefreshToken.for_user)(self.user)
+            communicator = WebsocketCommunicator(
+                application, f"/ws/profile/{user_id}/?token={str(refresh.access_token)}"
+            )
             # Mock the scope with the other user
             communicator.scope['user'] = other_user
             connected, _ = await communicator.connect()
-            self.assertFalse(connected)
+            self.assertTrue(connected)
+            # Should receive access denied message
+            response = await communicator.receive_from()
+            data = json.loads(response)
+            self.assertEqual(data["type"], "auth_error")
+            self.assertEqual(data["error"], "access_denied")
+            
+            # Connection should be closed with appropriate code
+            await communicator.disconnect()
         asyncio.get_event_loop().run_until_complete(async_test())
 
 
@@ -644,11 +690,12 @@ class ConfigurationTestCase(TestCase):
             'django.contrib.messages', 'django.contrib.staticfiles',
         ]
         third_party_apps = [
-            'corsheaders', 'rest_framework', 'rest_framework_simplejwt', 'channels',
+            'corsheaders', 'rest_framework', 'rest_framework_simplejwt', 'rest_framework_simplejwt.token_blacklist',
+            'channels',
         ]
         local_apps = ['accounts', 'i18n_switcher', 'leaguer']
         # Expected apps count (13 base apps, debug toolbar conditionally added)
-        expected_apps_count = 13
+        expected_apps_count = 14
         self.assertEqual(len(settings.INSTALLED_APPS), expected_apps_count)
         for app in django_apps + third_party_apps + local_apps:
             self.assertIn(app, settings.INSTALLED_APPS)

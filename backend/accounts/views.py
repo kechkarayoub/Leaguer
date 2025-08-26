@@ -1,5 +1,6 @@
 from .models import User
 from .serializers import UserSerializer
+from .tokens import RefreshToken
 from .utils import format_phone_number, send_verification_email, send_phone_number_verification_code, send_password_reset_email, validate_password_reset_token
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
@@ -14,13 +15,13 @@ from django.utils.translation import activate, gettext_lazy as _
 from firebase_admin import auth
 from accounts.services import UserService
 from leaguer.utils import generate_random_code, upload_file, remove_file
-from leaguer.ws_utils import notify_profile_update, notify_profile_password_update
+from leaguer.ws_utils import notify_profile_update, notify_profile_password_update, notify_profile_password_reset
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 import datetime
 import logging
 import os
@@ -387,10 +388,28 @@ class ResetPasswordView(APIView):
             # Activate user's language
             activate(user.current_language)
             
+            # Blacklist all existing tokens for this user before resetting password
+            try:
+                outstanding_tokens = OutstandingToken.objects.filter(user=user)
+                tokens_blacklisted = 0
+                for outstanding_token in outstanding_tokens:
+                    if not BlacklistedToken.objects.filter(token=outstanding_token).exists():
+                        BlacklistedToken.objects.create(token=outstanding_token)
+                        tokens_blacklisted += 1
+                logger.info(f"Blacklisted {tokens_blacklisted} tokens for user {user.username} due to password reset")
+            except Exception as e:
+                logger.error(f"Error blacklisting tokens during password reset for user {user.username}: {str(e)}")
+            
             # Reset password
             user.set_password(new_password)
             user.save()
             
+            # Notify all connected devices about password reset - they should logout
+            # Get device ID from request headers or data to exclude from WebSocket updates
+            device_id = request.headers.get('X-Device-ID')
+            # No device_id provided since this is a password reset from email link
+            notify_profile_password_reset(user.id, device_id=device_id)
+
             return Response({
                 "message": _("Password has been reset successfully. You can now log in with your new password."),
                 "success": True,
@@ -698,6 +717,7 @@ class UpdateProfileView(APIView):
             # Get device ID from request headers or data to exclude from WebSocket updates
             device_id = request.headers.get('X-Device-ID')
             # Notify all connected clients (via WebSocket) that the user's profile has changed
+            logger.info(f"Sending profile update notification for user {user.id} from device {device_id}")
             notify_profile_update(user.id, user_data, password_updated=access_token is not None, device_id=device_id)
             return Response({
                     'message': message,
@@ -717,6 +737,19 @@ class UpdateProfileView(APIView):
             refresh_token = None
             authenticated_user = authenticate(request, username=user.username, password=current_password)
             if authenticated_user is not None:
+                # Blacklist all existing tokens for this user before setting new password
+                try:
+                    outstanding_tokens = OutstandingToken.objects.filter(user=user)
+                    tokens_blacklisted = 0
+                    for outstanding_token in outstanding_tokens:
+                        if not BlacklistedToken.objects.filter(token=outstanding_token).exists():
+                            BlacklistedToken.objects.create(token=outstanding_token)
+                            tokens_blacklisted += 1
+                    logger.info(f"Blacklisted {tokens_blacklisted} tokens for user {user.username} due to password change")
+                except Exception as e:
+                    logger.error(f"Error blacklisting tokens during password change for user {user.username}: {str(e)}")
+                
+                # Set new password and generate new tokens
                 user.set_password(new_password)
                 user.save()
                 refresh = RefreshToken.for_user(user)
@@ -932,5 +965,111 @@ def verify_email(request):
             }, status=400)
         else:
             return JsonResponse({"message": _("Invalid token.")}, status=400)
+
+
+class LogoutView(APIView):
+    """
+    API endpoint for user logout.
+    Blacklists the user's refresh token to prevent further use.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """
+        Logout user by blacklisting their tokens.
+        
+        Request Body:
+        - refresh_token (str): The refresh token to blacklist
+        - selected_language (str, optional): Language preference
+        
+        Response:
+        - Success: Confirmation of logout
+        - Failure: Error messages with proper status codes
+        """
+        try:
+            current_language = request.data.get("selected_language") or 'en'
+            activate(current_language)
+            
+            # Optional: Blacklist all tokens for this user (more secure but logs out all devices)
+            # You can enable this if you want to logout from all devices
+            logout_all_devices = request.data.get("logout_all_devices", False)
+
+            refresh_token = request.data.get("refresh_token")
+            
+            if not refresh_token:
+                return Response({
+                    "message": _("Refresh token is required"),
+                    "success": False
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            try:
+                # Parse the refresh token to get the JTI
+                token = RefreshToken(refresh_token)
+                jti = token.get('jti')
+                
+                if jti:
+                    # Find the outstanding token and blacklist it
+                    try:
+                        outstanding_token = OutstandingToken.objects.get(jti=jti)
+                        
+                        # Check if already blacklisted
+                        if not BlacklistedToken.objects.filter(token=outstanding_token).exists():
+                            BlacklistedToken.objects.create(token=outstanding_token)
+                            logger.info(f"Successfully blacklisted token for user {request.user.username}")
+                        else:
+                            logger.info(f"Token already blacklisted for user {request.user.username}")
+                            
+                    except OutstandingToken.DoesNotExist:
+                        logger.warning(f"Outstanding token not found for JTI {jti}")
+                        # Token might already be expired or invalid, but that's okay for logout
+                        
+                else:
+                    logger.warning("No JTI found in refresh token")
+                    
+            except Exception as token_error:
+                logger.warning(f"Error processing refresh token: {str(token_error)}")
+                # Continue with logout even if token processing fails
+                if not logout_all_devices:
+                    return Response({
+                        "message": _("Invalid refresh token"),
+                        "success": False
+                    }, status=status.HTTP_400_BAD_REQUEST)
+            
+            
+            if logout_all_devices:
+                try:
+                    # Get all outstanding tokens for this user
+                    outstanding_tokens = OutstandingToken.objects.filter(user=request.user)
+                    tokens_blacklisted = 0
+                    
+                    for outstanding_token in outstanding_tokens:
+                        if not BlacklistedToken.objects.filter(token=outstanding_token).exists():
+                            BlacklistedToken.objects.create(token=outstanding_token)
+                            tokens_blacklisted += 1
+                    
+                    logger.info(f"Blacklisted {tokens_blacklisted} tokens for user {request.user.username} (all devices)")
+                    
+                except Exception as e:
+                    logger.error(f"Error blacklisting all tokens for user {request.user.username}: {str(e)}")
+            
+            # Get device ID for WebSocket notification
+            device_id = request.headers.get('X-Device-ID')
+            
+            # Notify all connected devices about logout (except the current device)
+            # This will trigger automatic logout on other devices if logout_all_devices is True
+            if logout_all_devices:
+                notify_profile_password_reset(request.user.id, device_id=device_id)
+            
+            return Response({
+                "message": _("Successfully logged out"),
+                "success": True
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            logger.error(f"Error during logout for user {request.user.id if request.user else 'unknown'}: {str(e)}")
+            return Response({
+                "message": _("An error occurred during logout"),
+                "success": False
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

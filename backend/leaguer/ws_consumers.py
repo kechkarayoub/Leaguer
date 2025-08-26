@@ -51,23 +51,89 @@ class ProfileConsumer(BaseConsumer):
         """
         self.user = self.scope.get('user')
         self.user_id = self.scope['url_route']['kwargs']['user_id']
+        self.auth_error = self.scope.get('auth_error')
+        
+        # Always accept the connection first, then handle auth errors
+        await self.accept()
+        
+        # Check authentication errors first
+        if self.auth_error:
+            # Send error message before closing to ensure frontend receives the error reason
+            if self.auth_error == "token_expired":
+                await self.send(text_data=json.dumps({
+                    "type": "auth_error",
+                    "error": "token_expired",
+                    "message": "Token has expired"
+                }))
+                await self.close(code=4001, reason="token_expired")
+            elif self.auth_error == "token_blacklisted":
+                await self.send(text_data=json.dumps({
+                    "type": "auth_error",
+                    "error": "token_blacklisted",
+                    "message": "Token has been blacklisted"
+                }))
+                await self.close(code=4002, reason="token_blacklisted")
+            elif self.auth_error == "invalid_token":
+                await self.send(text_data=json.dumps({
+                    "type": "auth_error",
+                    "error": "invalid_token",
+                    "message": "Invalid token"
+                }))
+                await self.close(code=4002, reason="invalid_token")
+            elif self.auth_error == "user_not_found":
+                await self.send(text_data=json.dumps({
+                    "type": "auth_error",
+                    "error": "user_not_found",
+                    "message": "User not found"
+                }))
+                await self.close(code=4003, reason="user_not_found")
+            elif self.auth_error == "no_token":
+                await self.send(text_data=json.dumps({
+                    "type": "auth_error",
+                    "error": "no_token",
+                    "message": "No token provided"
+                }))
+                await self.close(code=4004, reason="no_token")
+            else:
+                await self.send(text_data=json.dumps({
+                    "type": "auth_error",
+                    "error": "auth_error",
+                    "message": "Authentication error"
+                }))
+                await self.close(code=4005, reason="auth_error")
+            return
         
         # Check if user is authenticated
         if isinstance(self.user, AnonymousUser):
-            await self.close(code=4001)
+            await self.send(text_data=json.dumps({
+                "type": "auth_error",
+                "error": "unauthenticated",
+                "message": "User not authenticated"
+            }))
+            await self.close(code=4001, reason="unauthenticated")
             return
         
         # Check if user can access this profile
         if str(self.user.id) != str(self.user_id):
-            await self.close(code=4003)
+            await self.send(text_data=json.dumps({
+                "type": "auth_error",
+                "error": "access_denied",
+                "message": "Access denied to this profile"
+            }))
+            await self.close(code=4003, reason="access_denied")
             return
         
         self.group_name = f"profile_{self.user_id}"
         
         # Add this channel to the user's group
         await self.channel_layer.group_add(self.group_name, self.channel_name)
+        logger.info(f"WebSocket client added to group '{self.group_name}', channel: {self.channel_name}")
         
-        await super().connect()
+        # Store connection time for debugging
+        import time
+        self.connected_at = time.time()
+        
+        # Don't call super().connect() since we already accepted above
         
         # Send confirmation message
         await self.send_success({
@@ -81,8 +147,15 @@ class ProfileConsumer(BaseConsumer):
         Handle WebSocket disconnection.
         Removes the channel from the user's group.
         """
+        # Calculate connection duration
+        if hasattr(self, 'connected_at'):
+            import time
+            duration = time.time() - self.connected_at
+            logger.info(f"WebSocket was connected for {duration:.2f} seconds")
+            
         if hasattr(self, 'group_name'):
             await self.channel_layer.group_discard(self.group_name, self.channel_name)
+            logger.info(f"WebSocket client removed from group '{self.group_name}', channel: {self.channel_name}")
         
         await super().disconnect(close_code)
     
@@ -91,11 +164,13 @@ class ProfileConsumer(BaseConsumer):
         Handle messages received from the client.
         Currently handles ping/pong for connection monitoring.
         """
+        logger.info(f"ProfileConsumer.receive called with data: {text_data}")
         try:
             data = json.loads(text_data)
             message_type = data.get('type')
             
             if message_type == 'ping':
+                logger.info(f"Received ping from client, sending pong")
                 await self.send(text_data=json.dumps({
                     "type": "pong",
                     "timestamp": data.get('timestamp')
@@ -114,15 +189,19 @@ class ProfileConsumer(BaseConsumer):
         Handle profile update events sent to the group.
         Forwards the update to the WebSocket client.
         """
+        logger.info(f"PROFILE_UPDATE METHOD CALLED for user {self.user_id} with event: {event}")
         try:
             # Check if this update should be sent to this specific client
             device_id = event.get('device_id')
-            if device_id and hasattr(self, 'device_id') and self.device_id == device_id:
-                # Skip sending to the device that initiated the update
-                return
+            # if device_id and hasattr(self, 'device_id') and self.device_id == device_id:
+            #     # Skip sending to the device that initiated the update
+            #     return
             
+            logger.info(f"Sending profile update to client for user {self.user_id}")
             await self.send(text_data=json.dumps({
                 "type": "profile_update",
+                "action": "profile_updated",
+                "device_id": device_id,
                 "data": event.get('new_profile_data', {}),
                 "password_updated": event.get('password_updated', False),
                 "timestamp": event.get('timestamp')
@@ -140,12 +219,14 @@ class ProfileConsumer(BaseConsumer):
         try:
             # Check if this update should be sent to this specific client
             device_id = event.get('device_id')
-            if device_id and hasattr(self, 'device_id') and self.device_id == device_id:
-                # Skip sending to the device that initiated the update
-                return
+            # if device_id and hasattr(self, 'device_id') and self.device_id == device_id:
+            #     # Skip sending to the device that initiated the update
+            #     return
             
             await self.send(text_data=json.dumps({
                 "type": "profile_password_update",
+                "action": "password_changed",
+                "device_id": device_id,
                 "password_updated": event.get('password_updated', False),
                 "timestamp": event.get('timestamp')
             }))
@@ -153,6 +234,27 @@ class ProfileConsumer(BaseConsumer):
         except Exception as e:
             logger.error(f"Error in ProfileConsumer.profile_password_update: {str(e)}")
             await self.send_error(_("Error processing profile password update"), "update_error")
+
+    async def profile_password_reset(self, event):
+        """
+        Handle profile password reset events sent to the group.
+        This should trigger logout on all connected devices except the one that initiated the reset.
+        """
+        try:
+            # Check if this update should be sent to this specific client
+            device_id = event.get('device_id')
+            
+            await self.send(text_data=json.dumps({
+                "type": "profile_password_reset",
+                "action": "logout_required",
+                "device_id": device_id,
+                "password_reset": event.get('password_reset', True),
+                "timestamp": event.get('timestamp')
+            }))
+            
+        except Exception as e:
+            logger.error(f"Error in ProfileConsumer.profile_password_reset: {str(e)}")
+            await self.send_error(_("Error processing profile password reset"), "reset_error")
 
     async def notification(self, event):
         """
@@ -169,3 +271,31 @@ class ProfileConsumer(BaseConsumer):
         except Exception as e:
             logger.error(f"Error in ProfileConsumer.notification: {str(e)}")
             await self.send_error(_("Error processing notification"), "notification_error")
+
+    async def default(self, event):
+        """
+        Default handler for any unmatched event types.
+        """
+        logger.warning(f"Unhandled event type '{event.get('type')}' received in ProfileConsumer: {event}")
+        
+    async def dispatch(self, message):
+        """
+        Override dispatch to add debugging for all incoming messages.
+        """
+        logger.info(f"ProfileConsumer.dispatch called with message: {message}")
+        logger.info(f"Message type: {message.get('type')}")
+        
+        # Check if the method exists
+        handler_name = message.get('type', 'default')
+        if hasattr(self, handler_name):
+            logger.info(f"Found handler method: {handler_name}")
+        else:
+            logger.warning(f"No handler method found for: {handler_name}")
+            
+        try:
+            result = await super().dispatch(message)
+            logger.info(f"Dispatch completed successfully for type: {message.get('type')}")
+            return result
+        except Exception as e:
+            logger.error(f"Dispatch failed for type {message.get('type')}: {str(e)}")
+            raise

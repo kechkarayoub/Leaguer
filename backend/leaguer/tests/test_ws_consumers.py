@@ -12,10 +12,11 @@ from django.contrib.auth.models import AnonymousUser
 from asgiref.sync import sync_to_async
 from leaguer.asgi import application
 from leaguer.ws_consumers import ProfileConsumer
-from leaguer.ws_utils import notify_profile_update_async, notify_profile_password_update_async
-from rest_framework_simplejwt.tokens import RefreshToken
+from leaguer.ws_utils import notify_profile_update_async, notify_profile_password_update_async, notify_profile_password_reset_async
+from accounts.tokens import RefreshToken
 import asyncio
 import json
+from channels.db import database_sync_to_async
 
 
 User = get_user_model()
@@ -27,8 +28,8 @@ class ProfileConsumerTest(TransactionTestCase):
     def setUp(self):
         """Set up test data."""
         self.user = User.objects.create_user(
-            email="testuser2@example.com",
-            username="testuser2",
+            email="testuser2u@example.com",
+            username="testuser2u",
             password="testpass123",
             first_name="Test",
             last_name="User"
@@ -49,7 +50,7 @@ class ProfileConsumerTest(TransactionTestCase):
         """Test ProfileConsumer connection and profile update events."""
         async def async_test():
             user_id = str(self.user.id)
-            refresh = RefreshToken.for_user(self.user)
+            refresh = await database_sync_to_async(RefreshToken.for_user)(self.user)
             communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/?token={str(refresh.access_token)}")
             
             # Mock the scope to include authenticated user
@@ -92,11 +93,21 @@ class ProfileConsumerTest(TransactionTestCase):
             user_id = str(self.user.id)
             communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/")
             
-            # Mock the scope with anonymous user
+            # Mock the scope with anonymous user and auth error
             communicator.scope['user'] = AnonymousUser()
+            communicator.scope['auth_error'] = 'no_token'
             
             connected, _ = await communicator.connect()
-            self.assertFalse(connected)  # Should be rejected
+            self.assertTrue(connected)  # Connection is initially accepted
+
+            # Should receive auth error message
+            response = await communicator.receive_from()
+            data = json.loads(response)
+            self.assertEqual(data["type"], "auth_error")
+            self.assertEqual(data["error"], "no_token")
+            
+            # Connection should be closed with appropriate code
+            await communicator.disconnect()
 
         asyncio.get_event_loop().run_until_complete(async_test())
 
@@ -108,14 +119,23 @@ class ProfileConsumerTest(TransactionTestCase):
             
             # Try to connect to first user's profile with second user's credentials
             user_id = str(self.user.id)
-            other_refresh = RefreshToken.for_user(other_user)
+            other_refresh = await database_sync_to_async(RefreshToken.for_user)(other_user)
             communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/?token={str(other_refresh.access_token)}")
 
             # Mock the scope with the other user
             communicator.scope['user'] = other_user
             
             connected, _ = await communicator.connect()
-            self.assertFalse(connected)  # Should be rejected
+            self.assertTrue(connected)  # Should be rejected
+            
+            # Should receive auth error message
+            response = await communicator.receive_from()
+            data = json.loads(response)
+            self.assertEqual(data["type"], "auth_error")
+            self.assertEqual(data["error"], "access_denied")
+            
+            # Connection should be closed with appropriate code
+            await communicator.disconnect()
 
         asyncio.get_event_loop().run_until_complete(async_test())
 
@@ -123,7 +143,7 @@ class ProfileConsumerTest(TransactionTestCase):
         """Test profile update notification integration."""
         async def async_test():
             user_id = str(self.user.id)
-            refresh = RefreshToken.for_user(self.user)
+            refresh = await database_sync_to_async(RefreshToken.for_user)(self.user)
             communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/?token={str(refresh.access_token)}")
             
             # Mock the scope to include authenticated user
@@ -152,7 +172,7 @@ class ProfileConsumerTest(TransactionTestCase):
         """Test profile password update notification integration."""
         async def async_test():
             user_id = str(self.user.id)
-            refresh = RefreshToken.for_user(self.user)
+            refresh = await database_sync_to_async(RefreshToken.for_user)(self.user)
             communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/?token={str(refresh.access_token)}")
             
             # Mock the scope to include authenticated user
@@ -175,11 +195,39 @@ class ProfileConsumerTest(TransactionTestCase):
 
         asyncio.get_event_loop().run_until_complete(async_test())
 
+    def test_notify_profile_password_reset_integration(self):
+        """Test profile password reset notification integration."""
+        async def async_test():
+            user_id = str(self.user.id)
+            refresh = await database_sync_to_async(RefreshToken.for_user)(self.user)
+            communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/?token={str(refresh.access_token)}")
+            
+            # Mock the scope to include authenticated user
+            communicator.scope['user'] = self.user
+            
+            connected, _ = await communicator.connect()
+            self.assertTrue(connected)
+            await communicator.receive_from()  # initial connection message
+
+            # Call the function to notify profile password reset
+            await notify_profile_password_reset_async(user_id)
+
+            # The consumer should send the password reset notification
+            response = await communicator.receive_from()
+            data = json.loads(response)
+            self.assertEqual(data["type"], "profile_password_reset")
+            self.assertTrue(data["password_reset"])
+            self.assertEqual(data["action"], "logout_required")
+
+            await communicator.disconnect()
+
+        asyncio.get_event_loop().run_until_complete(async_test())
+
     def test_profile_consumer_ping_event(self):
         """Test ping event handling."""
         async def async_test():
             user_id = str(self.user.id)
-            refresh = RefreshToken.for_user(self.user)
+            refresh = await database_sync_to_async(RefreshToken.for_user)(self.user)
             communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/?token={str(refresh.access_token)}")
             
             # Mock the scope to include authenticated user
@@ -212,7 +260,7 @@ class ProfileConsumerTest(TransactionTestCase):
         """Test general notification event handling."""
         async def async_test():
             user_id = str(self.user.id)
-            refresh = RefreshToken.for_user(self.user)
+            refresh = await database_sync_to_async(RefreshToken.for_user)(self.user)
             communicator = WebsocketCommunicator(application, f"/ws/profile/{user_id}/?token={str(refresh.access_token)}")
             
             # Mock the scope to include authenticated user
