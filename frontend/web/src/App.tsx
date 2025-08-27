@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 
 // Import services
 import './i18n';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 
 // Import components
 import ErrorBoundary from './components/ErrorBoundary';
@@ -126,24 +127,35 @@ const App: React.FC = () => {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <Router>
-          <div className="App">
-            <AppRoutes />
-            <ToastContainer
-              position="top-right"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-            />
-          </div>
-        </Router>
+        <ThemeProvider>
+          <Router>
+            <ThemedApp />
+          </Router>
+        </ThemeProvider>
       </QueryClientProvider>
     </ErrorBoundary>
+  );
+};
+
+const ThemedApp: React.FC = () => {
+  const { resolvedTheme } = useTheme();
+  
+  return (
+    <div className="App">
+      <AppRoutes />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
+      />
+    </div>
   );
 };
 

@@ -6,6 +6,15 @@
   background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
 }
 
+/* Theme-specific overrides for page not found container */
+[data-theme="light"] .page-not-found-container {
+  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%) !important;
+}
+
+[data-theme="dark"] .page-not-found-container {
+  background: linear-gradient(135deg, #111827 0%, #1e1b4b 100%) !important;
+}
+
 .page-not-found-content {
   text-align: center;
   background: #fff;
@@ -14,6 +23,17 @@
   box-shadow: 0 4px 24px rgba(0,0,0,0.08);
   max-width: 400px;
   width: 100%;
+}
+
+/* Theme-specific overrides for page not found content */
+[data-theme="light"] .page-not-found-content {
+  background: #ffffff !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08) !important;
+}
+
+[data-theme="dark"] .page-not-found-content {
+  background: #1f2937 !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5) !important;
 }
 
 .page-not-found-title {
@@ -30,10 +50,28 @@
   margin-bottom: 1rem;
 }
 
+/* Theme-specific overrides for page not found subtitle */
+[data-theme="light"] .page-not-found-subtitle {
+  color: #374151 !important;
+}
+
+[data-theme="dark"] .page-not-found-subtitle {
+  color: #f9fafb !important;
+}
+
 .page-not-found-text {
   font-size: 1.1rem;
   color: #6b7280;
   margin-bottom: 2rem;
+}
+
+/* Theme-specific overrides for page not found text */
+[data-theme="light"] .page-not-found-text {
+  color: #6b7280 !important;
+}
+
+[data-theme="dark"] .page-not-found-text {
+  color: #9ca3af !important;
 }
 
 .page-not-found-btn {

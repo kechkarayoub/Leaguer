@@ -30,12 +30,38 @@
   text-align: center !important;
 }
 
+/* Theme-specific overrides for welcome title */
+[data-theme="light"] .welcome-title {
+  color: #1f2937 !important;
+  background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+[data-theme="dark"] .welcome-title {
+  color: #f9fafb !important;
+  background: linear-gradient(135deg, #818cf8, #6366f1) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
 .welcome-description {
   font-size: var(--font-size-lg);
   color: var(--color-text-secondary);
   max-width: 600px;
   margin: 0 auto;
   line-height: 1.6;
+}
+
+/* Theme-specific overrides for welcome description */
+[data-theme="light"] .welcome-description {
+  color: #6b7280 !important;
+}
+
+[data-theme="dark"] .welcome-description {
+  color: #9ca3af !important;
 }
 
 /* Quick Stats */
@@ -56,6 +82,19 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
+}
+
+/* Theme-specific overrides for stat card */
+[data-theme="light"] .stat-card {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="dark"] .stat-card {
+  background: #1f2937 !important;
+  border-color: #374151 !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3) !important;
 }
 
 .stat-card:hover {
@@ -104,10 +143,28 @@
   margin-bottom: var(--spacing-xs);
 }
 
+/* Theme-specific overrides for stat card value */
+[data-theme="light"] .stat-card__value {
+  color: #1f2937 !important;
+}
+
+[data-theme="dark"] .stat-card__value {
+  color: #f9fafb !important;
+}
+
 .stat-card__label {
   color: var(--color-text-secondary);
   font-size: var(--font-size-sm);
   margin: 0;
+}
+
+/* Theme-specific overrides for stat card label */
+[data-theme="light"] .stat-card__label {
+  color: #6b7280 !important;
+}
+
+[data-theme="dark"] .stat-card__label {
+  color: #9ca3af !important;
 }
 
 /* Action Cards */
@@ -125,6 +182,19 @@
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-fast);
   text-align: center;
+}
+
+/* Theme-specific overrides for action card */
+[data-theme="light"] .action-card {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="dark"] .action-card {
+  background: #1f2937 !important;
+  border-color: #374151 !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3) !important;
 }
 
 .action-card:hover {

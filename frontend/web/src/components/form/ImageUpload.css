@@ -11,6 +11,15 @@
   font-size: var(--text-sm);
 }
 
+/* Theme-specific overrides for image upload label */
+[data-theme="light"] .image-upload__label {
+  color: #374151 !important;
+}
+
+[data-theme="dark"] .image-upload__label {
+  color: #f9fafb !important;
+}
+
 .image-upload__container {
   position: relative;
 }
@@ -28,6 +37,17 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   background: var(--bg-gray-50);
+}
+
+/* Theme-specific overrides for image upload dropzone */
+[data-theme="light"] .image-upload__dropzone {
+  border-color: #d1d5db !important;
+  background: #f9fafb !important;
+}
+
+[data-theme="dark"] .image-upload__dropzone {
+  border-color: #4b5563 !important;
+  background: #1f2937 !important;
 }
 
 .image-upload__dropzone:hover {
@@ -68,10 +88,28 @@
   margin-bottom: var(--spacing-xs);
 }
 
+/* Theme-specific overrides for image upload primary text */
+[data-theme="light"] .image-upload__primary-text {
+  color: #374151 !important;
+}
+
+[data-theme="dark"] .image-upload__primary-text {
+  color: #f9fafb !important;
+}
+
 .image-upload__secondary-text {
   font-size: var(--text-sm);
   color: var(--color-gray-500);
   margin: 0;
+}
+
+/* Theme-specific overrides for image upload secondary text */
+[data-theme="light"] .image-upload__secondary-text {
+  color: #6b7280 !important;
+}
+
+[data-theme="dark"] .image-upload__secondary-text {
+  color: #9ca3af !important;
 }
 
 /* Preview */

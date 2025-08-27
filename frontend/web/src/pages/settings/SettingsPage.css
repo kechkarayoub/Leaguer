@@ -104,6 +104,7 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-border-light);
   box-shadow: var(--shadow-sm);
+  overflow: hidden;
 }
 
 .settings-section {
@@ -279,6 +280,96 @@
 .btn--secondary:hover {
   background: var(--color-background-hover);
   border-color: var(--color-border-dark);
+}
+
+/* Theme overrides for explicit themes only */
+[data-theme="light"] .settings-page,
+[data-theme="light"] .settings-nav,
+[data-theme="light"] .settings-content,
+[data-theme="light"] .settings-section,
+[data-theme="dark"] .settings-page,
+[data-theme="dark"] .settings-nav,
+[data-theme="dark"] .settings-content,
+[data-theme="dark"] .settings-section {
+  background-color: var(--theme-bg-primary) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+[data-theme="light"] .page-title,
+[data-theme="light"] .settings-section__title,
+[data-theme="light"] .settings-nav__item-label,
+[data-theme="light"] .form-label,
+[data-theme="light"] .radio-option__label,
+[data-theme="light"] .toggle-option__label,
+[data-theme="dark"] .page-title,
+[data-theme="dark"] .settings-section__title,
+[data-theme="dark"] .settings-nav__item-label,
+[data-theme="dark"] .form-label,
+[data-theme="dark"] .radio-option__label,
+[data-theme="dark"] .toggle-option__label {
+  color: var(--theme-text-primary) !important;
+}
+
+[data-theme="light"] .page-description,
+[data-theme="light"] .settings-section__description,
+[data-theme="light"] .settings-nav__item-desc,
+[data-theme="dark"] .page-description,
+[data-theme="dark"] .settings-section__description,
+[data-theme="dark"] .settings-nav__item-desc {
+  color: var(--theme-text-secondary) !important;
+}
+
+[data-theme="light"] .settings-nav__item,
+[data-theme="dark"] .settings-nav__item {
+  background-color: var(--theme-bg-primary) !important;
+  color: var(--theme-text-primary) !important;
+  border-color: var(--theme-border-primary) !important;
+}
+
+[data-theme="light"] .settings-nav__item:hover,
+[data-theme="dark"] .settings-nav__item:hover {
+  background-color: var(--theme-bg-secondary) !important;
+}
+
+[data-theme="light"] .settings-nav__item--active,
+[data-theme="dark"] .settings-nav__item--active {
+  background-color: var(--theme-bg-secondary) !important;
+  border-color: var(--brand-primary) !important;
+}
+
+[data-theme="light"] .form-input,
+[data-theme="light"] .form-select,
+[data-theme="dark"] .form-input,
+[data-theme="dark"] .form-select {
+  background-color: var(--theme-bg-primary) !important;
+  color: var(--theme-text-primary) !important;
+  border-color: var(--theme-border-primary) !important;
+}
+
+[data-theme="light"] .radio-option,
+[data-theme="light"] .toggle-option,
+[data-theme="dark"] .radio-option,
+[data-theme="dark"] .toggle-option {
+  color: var(--theme-text-primary) !important;
+}
+
+[data-theme="light"] .radio-option:hover,
+[data-theme="light"] .toggle-option:hover,
+[data-theme="dark"] .radio-option:hover,
+[data-theme="dark"] .toggle-option:hover {
+  background-color: var(--theme-bg-secondary) !important;
+}
+
+[data-theme="light"] .btn--secondary,
+[data-theme="dark"] .btn--secondary {
+  background-color: var(--theme-bg-secondary) !important;
+  color: var(--theme-text-primary) !important;
+  border-color: var(--theme-border-primary) !important;
+}
+
+[data-theme="light"] .btn--secondary:hover,
+[data-theme="dark"] .btn--secondary:hover {
+  background-color: var(--theme-bg-tertiary) !important;
 }
 
 /* Responsive Design */

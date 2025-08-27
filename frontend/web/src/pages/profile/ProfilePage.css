@@ -24,6 +24,15 @@
   margin-bottom: var(--spacing-sm);
 }
 
+/* Theme-specific overrides for page title */
+[data-theme="light"] .page-title {
+  color: #1f2937 !important;
+}
+
+[data-theme="dark"] .page-title {
+  color: #f9fafb !important;
+}
+
 .page-description {
   color: var(--color-text-secondary);
   font-size: var(--font-size-md);
@@ -40,11 +49,35 @@
   border: 1px solid var(--color-border-light);
 }
 
+/* Theme-specific overrides for profile card */
+[data-theme="light"] .profile-card {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+[data-theme="dark"] .profile-card {
+  background: #1f2937 !important;
+  border-color: #374151 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+}
+
 /* Tab Navigation */
 .tab-navigation {
   display: flex;
   border-bottom: 1px solid var(--color-border-light);
   background: var(--color-background-light);
+}
+
+/* Theme-specific overrides for tab navigation */
+[data-theme="light"] .tab-navigation {
+  border-bottom-color: #e5e7eb !important;
+  background: #f9fafb !important;
+}
+
+[data-theme="dark"] .tab-navigation {
+  border-bottom-color: #374151 !important;
+  background: #111827 !important;
 }
 
 .tab-button {
@@ -64,6 +97,15 @@
   border-bottom: 3px solid transparent;
 }
 
+/* Theme-specific overrides for tab button */
+[data-theme="light"] .tab-button {
+  color: #6b7280 !important;
+}
+
+[data-theme="dark"] .tab-button {
+  color: #9ca3af !important;
+}
+
 .tab-button svg {
   width: 20px;
   height: 20px;
@@ -74,10 +116,34 @@
   color: var(--color-text-primary);
 }
 
+/* Theme-specific overrides for tab button hover */
+[data-theme="light"] .tab-button:hover {
+  background: #f3f4f6 !important;
+  color: #1f2937 !important;
+}
+
+[data-theme="dark"] .tab-button:hover {
+  background: #374151 !important;
+  color: #f9fafb !important;
+}
+
 .tab-button--active {
   background: var(--color-white);
   color: var(--color-primary);
   border-bottom-color: var(--color-primary);
+}
+
+/* Theme-specific overrides for active tab button */
+[data-theme="light"] .tab-button--active {
+  background: #ffffff !important;
+  color: #6366f1 !important;
+  border-bottom-color: #6366f1 !important;
+}
+
+[data-theme="dark"] .tab-button--active {
+  background: #1f2937 !important;
+  color: #818cf8 !important;
+  border-bottom-color: #818cf8 !important;
 }
 
 /* Tab Content */

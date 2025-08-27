@@ -4,9 +4,19 @@
     "language": "اللغة",
     "notifications": "الإشعارات",
     "save": "حفظ التفضيلات",
+    "selectLanguage": "اختر اللغة",
+    "selectTimezone": "اختر المنطقة الزمنية",
     "theme": "السمة",
+    "theme_light": "فاتح",
+    "theme_dark": "داكن",
+    "theme_default": "عادي",
+    "theme_auto": "تلقائي",
     "timezone": "المنطقة الزمنية",
-    "title": "التفضيلات"
+    "title": "التفضيلات",
+    "updateSuccess": "تم تحديث الإعدادات بنجاح",
+    "updateError": "فشل في تحديث الإعدادات",
+    "email_notifications": "إشعارات البريد الإلكتروني",
+    "push_notifications": "إشعارات الدفع"
   },
   "profile": {
     "bio": "السيرة الذاتية",

@@ -6,9 +6,60 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.utils import timezone
 import logging
+import json
+from datetime import date, datetime
+from decimal import Decimal
 
 
 logger = logging.getLogger(__name__)
+
+
+def serialize_for_websocket(obj):
+    """
+    Convert non-serializable objects to JSON-serializable format.
+    
+    Args:
+        obj: Object to serialize
+        
+    Returns:
+        JSON-serializable object
+    """
+    if isinstance(obj, (date, datetime)):
+        return obj.isoformat()
+    elif isinstance(obj, Decimal):
+        return float(obj)
+    elif hasattr(obj, '__dict__'):
+        # Handle model instances
+        return serialize_dict_for_websocket(obj.__dict__)
+    elif isinstance(obj, dict):
+        return serialize_dict_for_websocket(obj)
+    elif isinstance(obj, (list, tuple)):
+        return [serialize_for_websocket(item) for item in obj]
+    else:
+        return obj
+
+
+def serialize_dict_for_websocket(data_dict):
+    """
+    Recursively serialize a dictionary for WebSocket transmission.
+    
+    Args:
+        data_dict (dict): Dictionary to serialize
+        
+    Returns:
+        dict: Serialized dictionary
+    """
+    if not isinstance(data_dict, dict):
+        return serialize_for_websocket(data_dict)
+    
+    serialized = {}
+    for key, value in data_dict.items():
+        # Skip Django model internal fields
+        if key.startswith('_'):
+            continue
+        serialized[key] = serialize_for_websocket(value)
+    
+    return serialized
 
 
 class WebSocketNotificationService:
@@ -32,10 +83,13 @@ class WebSocketNotificationService:
         channel_layer = get_channel_layer()
         if channel_layer:
             try:
+                # Serialize the data to handle datetime and other non-JSON serializable objects
+                serialized_data = serialize_dict_for_websocket(data)
+                
                 event_data = {
                     "type": event_type,
                     "timestamp": timezone.now().isoformat(),
-                    **data
+                    **serialized_data
                 }
                 
                 await channel_layer.group_send(group_name, event_data)

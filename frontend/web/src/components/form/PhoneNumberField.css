@@ -11,6 +11,15 @@
   font-size: var(--text-sm);
 }
 
+/* Theme-specific overrides for phone field label */
+[data-theme="light"] .phone-field__label {
+  color: #374151 !important;
+}
+
+[data-theme="dark"] .phone-field__label {
+  color: #f9fafb !important;
+}
+
 .required-asterisk {
   color: var(--color-red-500);
   margin-left: 2px;
@@ -29,6 +38,17 @@
   background: white;
   display: flex;
   align-items: stretch;
+}
+
+/* Theme-specific overrides for react-international-phone input container */
+[data-theme="light"] .phone-field__input-wrapper .react-international-phone-input-container {
+  border-color: #e5e7eb !important;
+  background: #ffffff !important;
+}
+
+[data-theme="dark"] .phone-field__input-wrapper .react-international-phone-input-container {
+  border-color: #374151 !important;
+  background: #1f2937 !important;
 }
 
 .phone-field__input-wrapper .react-international-phone-input-container:focus-within {
@@ -157,19 +177,70 @@
   font-size: 1.2em;
 }
 
-.react-tel-input{
-
-}
-[dir="rtl"] .react-tel-input >.form-control {
+/* react-tel-input styles */
+[dir="rtl"] .react-tel-input > .form-control {
     padding: var(--spacing-sm) var(--spacing-md);
     padding-right: 48px;
 }
+
 [dir="rtl"] .react-tel-input .selected-flag {
     padding: 0 8px 0 0;
 }
-[dir="rtl"] .react-tel-input .selected-flag .arrow{
+
+[dir="rtl"] .react-tel-input .selected-flag .arrow {
     left: 0;
     right: 20px;
+}
+
+/* Theme-specific overrides for react-tel-input selected flag */
+[data-theme="light"] .react-tel-input .selected-flag {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+  color: #374151 !important;
+}
+
+[data-theme="dark"] .react-tel-input .selected-flag {
+  background: #1f2937 !important;
+  border-color: #374151 !important;
+  color: #f9fafb !important;
+}
+
+[data-theme="light"] .react-tel-input .form-control {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+  color: #374151 !important;
+}
+
+[data-theme="dark"] .react-tel-input .form-control {
+  background: #1f2937 !important;
+  border-color: #374151 !important;
+  color: #f9fafb !important;
+}
+
+[data-theme="light"] .react-tel-input .country-list {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .react-tel-input .country-list {
+  background: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+[data-theme="light"] .react-tel-input .country-list .country {
+  color: #374151 !important;
+}
+
+[data-theme="dark"] .react-tel-input .country-list .country {
+  color: #f9fafb !important;
+}
+
+[data-theme="light"] .react-tel-input .country-list .country:hover {
+  background: #f9fafb !important;
+}
+
+[data-theme="dark"] .react-tel-input .country-list .country:hover {
+  background: #374151 !important;
 }
 
 /* Responsive Design */

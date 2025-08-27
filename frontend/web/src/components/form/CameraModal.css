@@ -28,6 +28,17 @@
   margin: auto;
 }
 
+/* Theme-specific overrides for camera modal */
+[data-theme="light"] .camera-modal {
+  background: #ffffff !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+[data-theme="dark"] .camera-modal {
+  background: #1f2937 !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important;
+}
+
 .camera-modal__header {
   padding: 1rem 1.5rem;
   border-bottom: 1px solid #e5e7eb;
@@ -36,11 +47,29 @@
   justify-content: space-between;
 }
 
+/* Theme-specific overrides for camera modal header */
+[data-theme="light"] .camera-modal__header {
+  border-bottom-color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .camera-modal__header {
+  border-bottom-color: #374151 !important;
+}
+
 .camera-modal__title {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
   color: #1f2937;
+}
+
+/* Theme-specific overrides for camera modal title */
+[data-theme="light"] .camera-modal__title {
+  color: #1f2937 !important;
+}
+
+[data-theme="dark"] .camera-modal__title {
+  color: #f9fafb !important;
 }
 
 .camera-modal__close {

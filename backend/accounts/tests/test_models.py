@@ -92,7 +92,7 @@ class UserModelTest(TestCase):
 
     def test_to_login_dict(self):
         user_login_dict = self.user.to_login_dict()
-        self.assertEqual(len(user_login_dict.keys()), 17)
+        self.assertEqual(len(user_login_dict.keys()), 18)
         self.assertEqual(user_login_dict.get("current_language"), self.user.current_language)
         self.assertEqual(user_login_dict.get("email"), self.user.email)
         self.assertEqual(user_login_dict.get("first_name"), self.user.first_name)
@@ -108,6 +108,7 @@ class UserModelTest(TestCase):
         self.assertEqual(user_login_dict.get("user_initials_bg_color"), self.user.user_initials_bg_color)
         self.assertEqual(user_login_dict.get("user_phone_number"), self.user.user_phone_number)
         self.assertEqual(user_login_dict.get("user_phone_number_to_verify"), self.user.user_phone_number_to_verify)
+        self.assertEqual(user_login_dict.get("user_theme"), self.user.user_theme)
         self.assertEqual(user_login_dict.get("user_timezone"), self.user.user_timezone)
 
     def test_user_creation(self):

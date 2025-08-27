@@ -1,6 +1,6 @@
 
 from .views import (SendVerificationEmailLinkView, SignInView, SignInThirdPartyView, SignUpView, SignUpThirdPartyView, verify_email, verify_phone_number,
-    UpdateProfileView, ForgotPasswordView, ResetPasswordView, LogoutView)
+    UpdateProfileView, ForgotPasswordView, ResetPasswordView, LogoutView, UpdateSettingsView)
 from .jwt_views import TokenObtainPairView, TokenRefreshView
 from django.urls import path
 
@@ -17,6 +17,7 @@ urlpatterns = [
     path('verify-email/', verify_email, name='verify_email'),
     path('verify-phone-number/', verify_phone_number, name='verify_phone_number'),
     path('update-profile/', UpdateProfileView.as_view(), name='update-profile'),
+    path('update-settings/', UpdateSettingsView.as_view(), name='update-settings'),
     path('forgot-password/', ForgotPasswordView.as_view(), name='forgot-password'),
     path('reset-password/', ResetPasswordView.as_view(), name='reset-password'),
 ]

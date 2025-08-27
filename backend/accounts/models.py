@@ -5,6 +5,13 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from leaguer.utils import get_all_timezones, PHONE_NUMBER_VERIFICATION_METHOD
 
+# Theme choices
+THEME_CHOICES = [
+    ('light', _('Light')),
+    ('dark', _('Dark')),
+    ('default', _('Default')),
+]
+
 
 class User(AbstractUser):
 
@@ -34,6 +41,7 @@ class User(AbstractUser):
         user_phone_number_to_verify (CharField): Optional. Stores the user's phone number to verify.
         user_phone_number_verified_by (CharField): Optional. Stores the user's phone number verification method (google, facebook, sms, whatsapp, ...).
         user_timezone (CharField): Required. Stores the user's timezone.
+        user_theme (CharField): Optional. Stores the user's preferred theme (light, dark, auto).
     """
 
     class Meta(object):
@@ -70,6 +78,7 @@ class User(AbstractUser):
     user_phone_number_to_verify = models.CharField(db_index=True, blank=True, max_length=15, null=True, verbose_name=_("Phone number to verify"))
     user_phone_number_verified_by = models.CharField(blank=True, choices=PHONE_NUMBER_VERIFICATION_METHOD, default="", max_length=10, verbose_name=_("Phone number verified by"))
     user_timezone = models.CharField(choices=get_all_timezones(), default=settings.TIME_ZONE, max_length=100, verbose_name=_("Time zone"),)
+    user_theme = models.CharField(choices=THEME_CHOICES, default="default", max_length=10, verbose_name=_("Theme"))
 
     def __str__(self):
         """
@@ -105,6 +114,7 @@ class User(AbstractUser):
             "user_phone_number": self.user_phone_number,
             "user_phone_number_to_verify": self.user_phone_number_to_verify,
             "user_timezone": self.user_timezone,
+            "user_theme": self.user_theme,
             "username": self.username,
         }
 

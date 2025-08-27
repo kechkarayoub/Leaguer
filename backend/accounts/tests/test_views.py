@@ -1906,3 +1906,181 @@ class LogoutViewTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(response.data['success'])
 
+
+class UpdateSettingsViewTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='testuser',
+            email='test@example.com',
+            password='password123',
+            current_language='en',
+            user_timezone='UTC',
+            user_theme='light'
+        )
+        self.client = APIClient()
+        self.url = reverse('update-settings')
+
+    def test_update_settings_unauthenticated(self):
+        """Test that unauthenticated users cannot update settings."""
+        data = {
+            'current_language': 'fr',
+            'user_timezone': 'Europe/Paris',
+            'user_theme': 'dark'
+        }
+        
+        response = self.client.put(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_update_language_success(self):
+        """Test successful language update."""
+        self.client.force_authenticate(user=self.user)
+        
+        data = {
+            'current_language': 'fr',
+            'selected_language': 'en'
+        }
+        
+        response = self.client.put(self.url, data)
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['success'])
+        self.assertEqual(response.data['user']['current_language'], 'fr')
+        
+        # Verify in database
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.current_language, 'fr')
+
+    def test_update_timezone_success(self):
+        """Test successful timezone update."""
+        self.client.force_authenticate(user=self.user)
+        
+        data = {
+            'user_timezone': 'Europe/Paris',
+            'selected_language': 'en'
+        }
+        
+        response = self.client.put(self.url, data)
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['success'])
+        self.assertEqual(response.data['user']['user_timezone'], 'Europe/Paris')
+        
+        # Verify in database
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.user_timezone, 'Europe/Paris')
+
+    def test_update_theme_success(self):
+        """Test successful theme update."""
+        self.client.force_authenticate(user=self.user)
+        
+        data = {
+            'user_theme': 'dark',
+            'selected_language': 'en'
+        }
+        
+        response = self.client.put(self.url, data)
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['success'])
+        self.assertEqual(response.data['user']['user_theme'], 'dark')
+        
+        # Verify in database
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.user_theme, 'dark')
+
+    def test_update_all_settings_success(self):
+        """Test updating all settings at once."""
+        self.client.force_authenticate(user=self.user)
+        
+        data = {
+            'current_language': 'ar',
+            'user_timezone': 'Asia/Dubai',
+            'user_theme': 'default',
+            'selected_language': 'en'
+        }
+        
+        response = self.client.put(self.url, data)
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['success'])
+        self.assertEqual(response.data['user']['current_language'], 'ar')
+        self.assertEqual(response.data['user']['user_timezone'], 'Asia/Dubai')
+        self.assertEqual(response.data['user']['user_theme'], 'default')
+        
+        # Verify in database
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.current_language, 'ar')
+        self.assertEqual(self.user.user_timezone, 'Asia/Dubai')
+        self.assertEqual(self.user.user_theme, 'default')
+
+    def test_invalid_language(self):
+        """Test updating with invalid language."""
+        self.client.force_authenticate(user=self.user)
+        
+        data = {
+            'current_language': 'invalid_lang',
+            'selected_language': 'en'
+        }
+        
+        response = self.client.put(self.url, data)
+        
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(response.data['success'])
+        self.assertIn('Invalid language selection', response.data['message'])
+
+    def test_invalid_timezone(self):
+        """Test updating with invalid timezone."""
+        self.client.force_authenticate(user=self.user)
+        
+        data = {
+            'user_timezone': 'Invalid/Timezone',
+            'selected_language': 'en'
+        }
+        
+        response = self.client.put(self.url, data)
+        
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(response.data['success'])
+        self.assertIn('Invalid timezone selection', response.data['message'])
+
+    def test_invalid_theme(self):
+        """Test updating with invalid theme."""
+        self.client.force_authenticate(user=self.user)
+        
+        data = {
+            'user_theme': 'invalid_theme',
+            'selected_language': 'en'
+        }
+        
+        response = self.client.put(self.url, data)
+        
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(response.data['success'])
+        self.assertIn('Invalid theme selection', response.data['message'])
+
+    def test_no_changes_detected(self):
+        """Test when no changes are provided."""
+        self.client.force_authenticate(user=self.user)
+        
+        data = {
+            'current_language': 'en',  # Same as current
+            'user_timezone': 'UTC',    # Same as current
+            'user_theme': 'light',     # Same as current
+            'selected_language': 'en'
+        }
+        
+        response = self.client.put(self.url, data)
+        
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(response.data['success'])
+        self.assertIn('No changes detected', response.data['message'])
+
+    def test_empty_request(self):
+        """Test with empty request data."""
+        self.client.force_authenticate(user=self.user)
+        
+        response = self.client.put(self.url, {})
+        
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(response.data['success'])
+        self.assertIn('No changes detected', response.data['message'])

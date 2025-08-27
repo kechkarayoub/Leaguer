@@ -44,6 +44,30 @@
   overflow: hidden;
 }
 
+/* Theme overrides for explicit themes only */
+[data-theme="light"] .main-layout,
+[data-theme="dark"] .main-layout {
+  background: var(--theme-bg-secondary) !important;
+}
+
+[data-theme="light"] .page-container,
+[data-theme="light"] .page-content,
+[data-theme="dark"] .page-container,
+[data-theme="dark"] .page-content {
+  background: var(--theme-bg-primary) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+[data-theme="light"] .page-title,
+[data-theme="dark"] .page-title {
+  color: var(--theme-text-primary) !important;
+}
+
+[data-theme="light"] .page-description,
+[data-theme="dark"] .page-description {
+  color: var(--theme-text-secondary) !important;
+}
+
 /* Responsive Design */
 @media (min-width: 1024px) {
   .main-layout__content {

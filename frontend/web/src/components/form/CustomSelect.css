@@ -34,11 +34,23 @@
 
 .custom-select__input {
   color: #1e293b !important;
+  margin-left: -5px !important;
+}
+
+/* RTL Support */
+[dir="rtl"] .custom-select__input{
+  margin-right: -5px !important;
+  margin-left: 0px !important;
 }
 
 .custom-select__single-value {
   color: #1e293b !important;
 }
+
+/* RTL Support */
+/* [dir="rtl"] .custom-select__single-value{
+  padding-right: 5px !important;
+} */
 
 .custom-select__menu {
   border-radius: 8px !important;
@@ -85,4 +97,40 @@
 }
 .custom-select__input-container{
     position: absolute;
+}
+
+/* Theme overrides for explicit themes only */
+[data-theme="light"] .custom-select__label,
+[data-theme="dark"] .custom-select__label {
+  color: var(--theme-text-primary) !important;
+}
+
+[data-theme="light"] .custom-select__control,
+[data-theme="dark"] .custom-select__control {
+  background: var(--theme-bg-primary) !important;
+  border-color: var(--theme-border-primary) !important;
+}
+
+[data-theme="light"] .custom-select__input,
+[data-theme="light"] .custom-select__single-value,
+[data-theme="dark"] .custom-select__input,
+[data-theme="dark"] .custom-select__single-value {
+  color: var(--theme-text-primary) !important;
+}
+
+[data-theme="light"] .custom-select__menu,
+[data-theme="dark"] .custom-select__menu {
+  background: var(--theme-bg-primary) !important;
+  border-color: var(--theme-border-primary) !important;
+}
+
+[data-theme="light"] .custom-select__option,
+[data-theme="dark"] .custom-select__option {
+  color: var(--theme-text-primary) !important;
+}
+
+[data-theme="light"] .custom-select__option--is-focused,
+[data-theme="dark"] .custom-select__option--is-focused {
+  background: var(--theme-bg-secondary) !important;
+  color: var(--theme-text-primary) !important;
 }

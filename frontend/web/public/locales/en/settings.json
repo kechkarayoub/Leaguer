@@ -4,9 +4,19 @@
     "language": "Language",
     "notifications": "Notifications",
     "save": "Save Preferences",
+    "selectLanguage": "Select language",
+    "selectTimezone": "Select timezone",
     "theme": "Theme",
+    "theme_light": "Light",
+    "theme_dark": "Dark",
+    "theme_default": "Default",
+    "theme_auto": "Auto",
     "timezone": "Timezone",
-    "title": "Preferences"
+    "title": "Preferences",
+    "updateSuccess": "Settings updated successfully",
+    "updateError": "Failed to update settings",
+    "email_notifications": "Email notifications",
+    "push_notifications": "Push notifications"
   },
   "profile": {
     "bio": "Bio",

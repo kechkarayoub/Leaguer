@@ -52,7 +52,7 @@ const LoginPage: React.FC = () => {
     defaultValues: {
       email_or_username: prefilledUsername || prefilledEmail,
       password: '',
-      rememberMe: false,
+      rememberMe: true,
     },
   });
 

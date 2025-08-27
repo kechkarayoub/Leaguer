@@ -1,39 +1,149 @@
 /**
  * SettingsPage Component
  * 
- * User settings and preferences page
+ * User settings and preferences page with dirty state management
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
+import { useQueryClient } from '@tanstack/react-query';
 
 import useAuth from '../../hooks/useAuth';
-import PhoneNumberField from '../../components/form/PhoneNumberField';
-import ImageUpload from '../../components/form/ImageUpload';
+import CustomSelect from '../../components/form/CustomSelect';
+import { getAllTimezones, getLanguageOptions, getThemeOptions } from '../../utils/TimezoneUtils';
+import { useTheme } from '../../contexts/ThemeContext';
+import AuthenticatedApiService from '../../services/AuthenticatedApiService';
 import './SettingsPage.css';
 
+interface SettingsFormData {
+  current_language: string;
+  user_timezone: string;
+  user_theme: string;
+}
+
 const SettingsPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
-  const [activeSection, setActiveSection] = useState<'profile' | 'preferences' | 'security'>('profile');
+  const { setTheme } = useTheme();
+  const queryClient = useQueryClient();
+  const [activeSection, setActiveSection] = useState<'preferences'>('preferences');
+  const [isDirty, setIsDirty] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [initialData, setInitialData] = useState<SettingsFormData | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    setValue,
+    formState: { errors, dirtyFields }
+  } = useForm<SettingsFormData>();
+
+  // Get form options
+  const languageOptions = getLanguageOptions();
+  const timezoneOptions = getAllTimezones();
+  const themeOptions = getThemeOptions();
+
+  // Watch all form fields
+  const watchedData = watch();
+
+  // Set initial form data when user data loads
+  useEffect(() => {
+    if (user) {
+      const data: SettingsFormData = {
+        current_language: i18n.language || user.current_language || 'en', // Use current i18n language
+        user_timezone: user.user_timezone || 'UTC',
+        user_theme: user.user_theme || 'default',
+      };
+      
+      setInitialData(data);
+      reset(data);
+      setIsDirty(false);
+    }
+  }, [user, reset, i18n.language]); // Add i18n.language as dependency
+
+  // Track dirty state
+  useEffect(() => {
+    if (initialData && watchedData) {
+      const hasChanges = Object.keys(dirtyFields).length > 0 || 
+        watchedData.current_language !== initialData.current_language ||
+        watchedData.user_timezone !== initialData.user_timezone ||
+        watchedData.user_theme !== initialData.user_theme;
+      
+      setIsDirty(hasChanges);
+    }
+  }, [watchedData, dirtyFields, initialData]);
 
   const sections = [
     {
-      key: 'profile',
-      label: t('settings:sections.profile'),
-      description: t('settings:sections.profile_desc'),
-    },
-    {
       key: 'preferences',
-      label: t('settings:sections.preferences'),
-      description: t('settings:sections.preferences_desc'),
-    },
-    {
-      key: 'security',
-      label: t('settings:sections.security'),
-      description: t('settings:sections.security_desc'),
+      label: t('settings:preferences.title'),
+      description: t('settings:preferences.description'),
     },
   ];
+
+  const onSubmit = async (data: SettingsFormData) => {
+    if (!isDirty) return;
+
+    setIsLoading(true);
+    try {
+      const apiService = AuthenticatedApiService.getInstance();
+      
+      const response = await apiService.put('/accounts/update-settings/', {
+        ...data,
+        selected_language: i18n.language,
+      });
+
+      if (response.data.success && response.data.user) {
+        // Update the user context using React Query
+        queryClient.setQueryData(['user', 'profile'], response.data.user);
+        
+        // Update i18n language if it changed
+        if (data.current_language !== i18n.language) {
+          i18n.changeLanguage(data.current_language);
+        }
+        
+        // Update theme if it changed
+        if (data.user_theme !== initialData?.user_theme) {
+          setTheme(data.user_theme as 'light' | 'dark' | 'default');
+        }
+        
+        // Update initial data to new values
+        setInitialData(data);
+        setIsDirty(false);
+        
+        toast.success(t('settings:preferences.updateSuccess', 'Settings updated successfully'));
+      }
+    } catch (error: any) {
+      console.error('Settings update error:', error);
+      const errorMessage = error.response?.data?.message || t('settings:preferences.updateError', 'Failed to update settings');
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCancel = () => {
+    if (initialData) {
+      reset(initialData);
+      setIsDirty(false);
+      // Revert theme to original value
+      if (initialData.user_theme) {
+        setTheme(initialData.user_theme as 'light' | 'dark' | 'default');
+      }
+    }
+  };
+
+  const handleLanguageChange = (value: string | null) => {
+    setValue('current_language', value || 'en', { shouldDirty: true });
+  };
+
+  const handleTimezoneChange = (value: string | null) => {
+    setValue('user_timezone', value || 'UTC', { shouldDirty: true });
+  };
 
   return (
     <div className="settings-page">
@@ -41,7 +151,6 @@ const SettingsPage: React.FC = () => {
         {/* Page Header */}
         <div className="page-header">
           <h1 className="page-title">{t('settings:title')}</h1>
-          <p className="page-description">{t('settings:description')}</p>
         </div>
 
         <div className="settings-layout">
@@ -65,73 +174,6 @@ const SettingsPage: React.FC = () => {
 
           {/* Settings Content */}
           <div className="settings-content">
-            {activeSection === 'profile' && (
-              <div className="settings-section">
-                <div className="settings-section__header">
-                  <h2 className="settings-section__title">{t('settings:profile.title')}</h2>
-                  <p className="settings-section__description">{t('settings:profile.description')}</p>
-                </div>
-
-                <div className="settings-form">
-                  {/* Profile Picture */}
-                  <div className="form-group">
-                    <label className="form-label">{t('settings:profile.picture')}</label>
-                    <ImageUpload
-                      value={user?.user_image_url || user?.profileImage}
-                      onChange={(file) => console.log('Image changed:', file)}
-                      label={t('settings:profile.picture')}
-                    />
-                  </div>
-
-                  {/* Name Fields */}
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label className="form-label">{t('settings:profile.first_name')}</label>
-                      <input
-                        type="text"
-                        className="form-input"
-                        defaultValue={user?.first_name || user?.firstName || ''}
-                        placeholder={t('settings:profile.first_name_placeholder')}
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label className="form-label">{t('settings:profile.last_name')}</label>
-                      <input
-                        type="text"
-                        className="form-input"
-                        defaultValue={user?.last_name || user?.lastName || ''}
-                        placeholder={t('settings:profile.last_name_placeholder')}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Phone Number */}
-                  <div className="form-group">
-                    <PhoneNumberField
-                      label={t('settings:profile.phone')}
-                      value={user?.user_phone_number || ''}
-                      onChange={(phone) => console.log('Phone changed:', phone)}
-                    />
-                  </div>
-
-                  {/* Email */}
-                  <div className="form-group">
-                    <label className="form-label">{t('settings:profile.email')}</label>
-                    <input
-                      type="email"
-                      className="form-input"
-                      defaultValue={user?.email || ''}
-                      placeholder={t('settings:profile.email_placeholder')}
-                    />
-                  </div>
-
-                  <div className="form-actions">
-                    <button className="btn btn--primary">{t('settings:profile.save')}</button>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {activeSection === 'preferences' && (
               <div className="settings-section">
                 <div className="settings-section__header">
@@ -139,127 +181,83 @@ const SettingsPage: React.FC = () => {
                   <p className="settings-section__description">{t('settings:preferences.description')}</p>
                 </div>
 
-                <div className="settings-form">
+                <form className="settings-form" onSubmit={handleSubmit(onSubmit)}>
                   {/* Language */}
                   <div className="form-group">
-                    <label className="form-label">{t('settings:preferences.language')}</label>
-                    <select className="form-select">
-                      <option value="en">English</option>
-                      <option value="fr">Français</option>
-                      <option value="ar">العربية</option>
-                    </select>
+                    <CustomSelect
+                      label={t('settings:preferences.language')}
+                      value={watchedData.current_language}
+                      onChange={handleLanguageChange}
+                      options={languageOptions}
+                      placeholder={t('settings:preferences.selectLanguage', 'Select language')}
+                      error={errors.current_language?.message}
+                      required
+                      isSearchable={false}
+                      isClearable={false}
+                    />
                   </div>
 
-                  
-                    <div className="form-group">
-                      <label htmlFor="user_timezone" className="form-label">
-                        {t('settings:preferences.timezone')}
-                      </label>
-                      <select
-                        id="user_timezone"
-                        // className={`form-input form-select ${errorsProfile.user_timezone ? 'form-input--error' : ''}`}
-                        // {...registerProfile('user_timezone')}
-                      >
-                        <option value="">{t('profile:placeholders.select_timezone')}</option>
-                        <option value="Africa/Algiers">Africa/Algiers (UTC+1)</option>
-                        <option value="Africa/Casablanca">Africa/Casablanca (UTC+1)</option>
-                        <option value="Africa/Tunis">Africa/Tunis (UTC+1)</option>
-                        <option value="Europe/Paris">Europe/Paris (UTC+1)</option>
-                        <option value="Europe/London">Europe/London (UTC+0)</option>
-                        <option value="Europe/Berlin">Europe/Berlin (UTC+1)</option>
-                        <option value="Europe/Madrid">Europe/Madrid (UTC+1)</option>
-                        <option value="Europe/Rome">Europe/Rome (UTC+1)</option>
-                        <option value="America/New_York">America/New_York (UTC-5)</option>
-                        <option value="America/Los_Angeles">America/Los_Angeles (UTC-8)</option>
-                        <option value="Asia/Dubai">Asia/Dubai (UTC+4)</option>
-                        <option value="Asia/Tokyo">Asia/Tokyo (UTC+9)</option>
-                      </select>
-                      {/* {errorsProfile.user_timezone && (
-                        <span className="form-error">{errorsProfile.user_timezone.message}</span>
-                      )} */}
-                    </div>
+                  {/* Timezone */}
+                  <div className="form-group">
+                    <CustomSelect
+                      label={t('settings:preferences.timezone')}
+                      value={watchedData.user_timezone}
+                      onChange={handleTimezoneChange}
+                      options={timezoneOptions}
+                      placeholder={t('settings:preferences.selectTimezone', 'Select timezone')}
+                      error={errors.user_timezone?.message}
+                      required
+                      isSearchable={true}
+                      isClearable={false}
+                    />
+                  </div>
 
                   {/* Theme */}
                   <div className="form-group">
                     <label className="form-label">{t('settings:preferences.theme')}</label>
                     <div className="radio-group">
-                      <label className="radio-option">
-                        <input type="radio" name="theme" value="light" defaultChecked />
-                        <span className="radio-option__label">{t('settings:preferences.theme_light')}</span>
-                      </label>
-                      <label className="radio-option">
-                        <input type="radio" name="theme" value="dark" />
-                        <span className="radio-option__label">{t('settings:preferences.theme_dark')}</span>
-                      </label>
-                      <label className="radio-option">
-                        <input type="radio" name="theme" value="auto" />
-                        <span className="radio-option__label">{t('settings:preferences.theme_auto')}</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* Notifications */}
-                  <div className="form-group">
-                    <label className="form-label">{t('settings:preferences.notifications')}</label>
-                    <div className="toggle-group">
-                      <label className="toggle-option">
-                        <input type="checkbox" defaultChecked />
-                        <span className="toggle-option__label">{t('settings:preferences.email_notifications')}</span>
-                      </label>
-                      <label className="toggle-option">
-                        <input type="checkbox" defaultChecked />
-                        <span className="toggle-option__label">{t('settings:preferences.push_notifications')}</span>
-                      </label>
+                      {themeOptions.map((theme) => (
+                        <label key={theme.value} className="radio-option">
+                          <input
+                            type="radio"
+                            {...register('user_theme')}
+                            value={theme.value}
+                            checked={watchedData.user_theme === theme.value}
+                            onChange={(e) => {
+                              setValue('user_theme', e.target.value, { shouldDirty: true });
+                              // Immediately preview the theme change
+                              setTheme(e.target.value as 'light' | 'dark' | 'default');
+                            }}
+                          />
+                          <span className="radio-option__label">
+                            {t(`settings:preferences.theme_${theme.value}`, theme.label)}
+                          </span>
+                        </label>
+                      ))}
                     </div>
                   </div>
 
                   <div className="form-actions">
-                    <button className="btn btn--primary">{t('settings:preferences.save')}</button>
+                    <button 
+                      type="submit"
+                      className="btn btn--primary"
+                      disabled={isLoading || !isDirty}
+                    >
+                      {isLoading ? t('common:app.updating', 'Updating...') : t('settings:preferences.save')}
+                    </button>
+                    
+                    {isDirty && (
+                      <button
+                        type="button"
+                        className="btn btn--secondary"
+                        onClick={handleCancel}
+                        disabled={isLoading}
+                      >
+                        {t('common:app.cancel', 'Cancel')}
+                      </button>
+                    )}
                   </div>
-                </div>
-              </div>
-            )}
-
-            {activeSection === 'security' && (
-              <div className="settings-section">
-                <div className="settings-section__header">
-                  <h2 className="settings-section__title">{t('settings:security.title')}</h2>
-                  <p className="settings-section__description">{t('settings:security.description')}</p>
-                </div>
-
-                <div className="settings-form">
-                  {/* Change Password */}
-                  <div className="form-group">
-                    <label className="form-label">{t('settings:security.current_password')}</label>
-                    <input
-                      type="password"
-                      className="form-input"
-                      placeholder={t('settings:security.current_password_placeholder')}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">{t('settings:security.new_password')}</label>
-                    <input
-                      type="password"
-                      className="form-input"
-                      placeholder={t('settings:security.new_password_placeholder')}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">{t('settings:security.confirm_password')}</label>
-                    <input
-                      type="password"
-                      className="form-input"
-                      placeholder={t('settings:security.confirm_password_placeholder')}
-                    />
-                  </div>
-
-                  <div className="form-actions">
-                    <button className="btn btn--primary">{t('settings:security.change_password')}</button>
-                  </div>
-                </div>
+                </form>
               </div>
             )}
           </div>

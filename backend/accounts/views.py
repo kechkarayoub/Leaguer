@@ -1073,3 +1073,102 @@ class LogoutView(APIView):
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+class UpdateSettingsView(APIView):
+    """
+    API endpoint for updating user settings (language, timezone, theme).
+    """
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        """
+        Update user settings including language, timezone, and theme.
+        
+        Request Body:
+        - current_language (str, optional): User's preferred language
+        - user_timezone (str, optional): User's timezone
+        - user_theme (str, optional): User's preferred theme (light, dark, auto)
+        - selected_language (str, optional): Language for response messages
+        
+        Response:
+        - Success: Updated user data
+        - Failure: Error messages with proper status codes
+        """
+        try:
+            current_language = request.data.get("selected_language") or request.user.current_language or 'en'
+            activate(current_language)
+            
+            user = request.user
+            updated_fields = []
+            
+            # Update current language
+            new_language = request.data.get("current_language")
+            if new_language and new_language != user.current_language:
+                if new_language in [lang[0] for lang in settings.LANGUAGES]:
+                    user.current_language = new_language
+                    updated_fields.append("current_language")
+                else:
+                    return Response({
+                        "message": _("Invalid language selection"),
+                        "success": False
+                    }, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Update timezone
+            new_timezone = request.data.get("user_timezone")
+            if new_timezone and new_timezone != user.user_timezone:
+                # Validate timezone
+                from leaguer.utils import get_all_timezones
+                valid_timezones = [tz[0] for tz in get_all_timezones()]
+                if new_timezone in valid_timezones:
+                    user.user_timezone = new_timezone
+                    updated_fields.append("user_timezone")
+                else:
+                    return Response({
+                        "message": _("Invalid timezone selection"),
+                        "success": False
+                    }, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Update theme
+            new_theme = request.data.get("user_theme")
+            if new_theme and new_theme != user.user_theme:
+                from accounts.models import THEME_CHOICES
+                valid_themes = [theme[0] for theme in THEME_CHOICES]
+                if new_theme in valid_themes:
+                    user.user_theme = new_theme
+                    updated_fields.append("user_theme")
+                else:
+                    return Response({
+                        "message": _("Invalid theme selection"),
+                        "success": False
+                    }, status=status.HTTP_400_BAD_REQUEST)
+            
+            if not updated_fields:
+                return Response({
+                    "message": _("No changes detected"),
+                    "success": False
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Save the user
+            user.save(update_fields=updated_fields)
+            
+            # Get device ID for WebSocket notification
+            device_id = request.headers.get('X-Device-ID')
+            
+            # Notify other devices about settings update
+            user_data = user.to_login_dict()
+            notify_profile_update(user.id, user_data, device_id=device_id)
+            
+            logger.info(f"Settings updated for user {user.username}: {', '.join(updated_fields)}")
+            
+            return Response({
+                "message": _("Settings updated successfully"),
+                "success": True,
+                "user": user_data
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            logger.error(f"Error updating settings for user {request.user.id if request.user else 'unknown'}: {str(e)}")
+            return Response({
+                "message": _("An error occurred while updating settings"),
+                "success": False
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
