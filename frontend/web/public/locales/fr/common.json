@@ -288,6 +288,7 @@
   "form": {
     "change_image": "Changer d'image",
     "country_code": "Pays",
+    "crop_image": "Recadrer l'image",
     "drag_drop_hint": "Glissez et déposez votre image ici, ou cliquez pour sélectionner",
     "email": {
       "invalid": "Veuillez entrer une adresse email valide",

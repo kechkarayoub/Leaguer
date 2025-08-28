@@ -110,7 +110,7 @@ const ResetPasswordPage: React.FC = () => {
         <div className="auth-card">
           <div className="auth-header">
             <div className="loading-spinner"></div>
-            <h1>{t('common:app.loading')}</h1>
+            <h1>{t('common:app.loading', { defaultValue: 'Loading...' })}</h1>
           </div>
         </div>
       </div>

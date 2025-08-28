@@ -200,7 +200,7 @@ const LoginPage: React.FC = () => {
               {(isLoggingIn || isSocialLoggingIn) ? (
                 <>
                   <div className="loading-spinner"></div>
-                  {t('common:app.loading')}
+                  {t('common:app.loading', { defaultValue: 'Loading...' })}
                 </>
               ) : (
                 t('auth:login.button')

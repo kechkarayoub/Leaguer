@@ -288,6 +288,7 @@
   "form": {
     "change_image": "Change Image",
     "country_code": "Country",
+    "crop_image": "Crop Image",
     "drag_drop_hint": "Drag and drop your image here, or click to select",
     "email": {
       "invalid": "Please enter a valid email address",

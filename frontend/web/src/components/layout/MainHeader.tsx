@@ -99,7 +99,7 @@ const MainHeader: React.FC<MainHeaderProps> = ({ pageTitle, pageSubtitle, onMenu
           {/* Logo + App Name (left) */}
           <div className="main-header__logo" onClick={() => navigate('/')}
             style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-            aria-label={t('navigation.home')}
+            aria-label={t('navigation.home', { defaultValue: 'Home' })}
             tabIndex={0}
             role="button"
             onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') navigate('/'); }}

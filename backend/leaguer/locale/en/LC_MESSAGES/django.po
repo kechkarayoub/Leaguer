@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-26 12:04+0100\n"
+"POT-Creation-Date: 2025-08-28 07:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
 #: admin.py:79
 #, python-format
 msgid "%(count)d message(s) marked as in progress."
@@ -168,7 +169,7 @@ msgstr ""
 msgid "Name is required"
 msgstr ""
 
-#: services.py:43 tests/test_functionalities.py:376
+#: services.py:43 tests/test_functionalities.py:395
 msgid "Geolocation service unavailable. Try again later."
 msgstr ""
 
@@ -193,15 +194,15 @@ msgstr ""
 msgid "Bulk message sending failed"
 msgstr ""
 
-#: settings/base.py:131
+#: settings/base.py:132
 msgid "Arabic"
 msgstr ""
 
-#: settings/base.py:132
+#: settings/base.py:133
 msgid "English"
 msgstr ""
 
-#: settings/base.py:133
+#: settings/base.py:134
 msgid "French"
 msgstr ""
 
@@ -210,40 +211,58 @@ msgstr ""
 msgid "%(current_year)s © %(app_name)s. All rights reserved."
 msgstr ""
 
-#: tests/test_functionalities.py:167 tests/test_functionalities.py:177
-#: utils.py:58 utils.py:117
+#: tests/test_functionalities.py:186 tests/test_functionalities.py:196
+#: utils.py:69 utils.py:128
 msgid "Select"
 msgstr ""
 
-#: utils.py:117
+#: tests/test_models.py:1569 tests/test_models.py:1588 views.py:134
+msgid ""
+"Your message has been sent successfully. We will get back to you within 24 "
+"hours."
+msgstr ""
+
+#: tests/test_models.py:1606 views.py:140
+msgid "Please correct the errors below."
+msgstr ""
+
+#: tests/test_models.py:1906 views.py:148
+msgid "An error occurred while sending your message. Please try again later."
+msgstr ""
+
+#: tests/test_models.py:1911
+msgid "Error creating contact message"
+msgstr ""
+
+#: utils.py:128
 msgid "Apple"
 msgstr ""
 
-#: utils.py:117
+#: utils.py:128
 msgid "Default"
 msgstr ""
 
-#: utils.py:117
+#: utils.py:128
 msgid "Facebook"
 msgstr ""
 
-#: utils.py:117
+#: utils.py:128
 msgid "Google"
 msgstr ""
 
-#: utils.py:118
+#: utils.py:129
 msgid "Sms"
 msgstr ""
 
-#: utils.py:118
+#: utils.py:129
 msgid "Yahoo"
 msgstr ""
 
-#: utils.py:118
+#: utils.py:129
 msgid "Whatsapp"
 msgstr ""
 
-#: utils.py:118
+#: utils.py:129
 msgid "X"
 msgstr ""
 
@@ -251,40 +270,34 @@ msgstr ""
 msgid "An unexpected error occurred"
 msgstr ""
 
-#: views.py:134
-msgid ""
-"Your message has been sent successfully. We will get back to you within 24 "
-"hours."
-msgstr ""
-
-#: views.py:140
-msgid "Please correct the errors below."
-msgstr ""
-
-#: views.py:148
-msgid "An error occurred while sending your message. Please try again later."
-msgstr ""
-
-#: ws_consumers.py:77
+#: ws_consumers.py:143
 msgid "Connected to profile updates"
 msgstr ""
 
-#: ws_consumers.py:104
+#: ws_consumers.py:179
 msgid "Unknown message type"
 msgstr ""
 
-#: ws_consumers.py:107
+#: ws_consumers.py:182
 msgid "Invalid JSON format"
 msgstr ""
 
-#: ws_consumers.py:110
+#: ws_consumers.py:185
 msgid "Internal server error"
 msgstr ""
 
-#: ws_consumers.py:133
+#: ws_consumers.py:212
 msgid "Error processing profile update"
 msgstr ""
 
-#: ws_consumers.py:149
+#: ws_consumers.py:236
+msgid "Error processing profile password update"
+msgstr ""
+
+#: ws_consumers.py:257
+msgid "Error processing profile password reset"
+msgstr ""
+
+#: ws_consumers.py:273
 msgid "Error processing notification"
 msgstr ""

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-26 12:04+0100\n"
+"POT-Creation-Date: 2025-08-28 07:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,6 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
 #: admin.py:79
 #, python-format
 msgid "%(count)d message(s) marked as in progress."
@@ -169,7 +170,7 @@ msgstr "يجب أن تكون الرسالة 10 أحرف على الأقل"
 msgid "Name is required"
 msgstr "الاسم مطلوب"
 
-#: services.py:43 tests/test_functionalities.py:376
+#: services.py:43 tests/test_functionalities.py:395
 msgid "Geolocation service unavailable. Try again later."
 msgstr "خدمة تحديد الموقع غير متوفرة. حاول مرة أخرى لاحقًا."
 
@@ -194,15 +195,15 @@ msgstr "خدمة إرسال الرسائل غير متوفرة"
 msgid "Bulk message sending failed"
 msgstr "فشل إرسال الرسائل الجماعية"
 
-#: settings/base.py:131
+#: settings/base.py:132
 msgid "Arabic"
 msgstr "العربية"
 
-#: settings/base.py:132
+#: settings/base.py:133
 msgid "English"
 msgstr "الإنجليزية"
 
-#: settings/base.py:133
+#: settings/base.py:134
 msgid "French"
 msgstr "الفرنسية"
 
@@ -211,40 +212,58 @@ msgstr "الفرنسية"
 msgid "%(current_year)s © %(app_name)s. All rights reserved."
 msgstr "%(current_year)s © %(app_name)s. جميع الحقوق محفوظة."
 
-#: tests/test_functionalities.py:167 tests/test_functionalities.py:177
-#: utils.py:58 utils.py:117
+#: tests/test_functionalities.py:186 tests/test_functionalities.py:196
+#: utils.py:69 utils.py:128
 msgid "Select"
 msgstr "اختر"
 
-#: utils.py:117
+#: tests/test_models.py:1569 tests/test_models.py:1588 views.py:134
+msgid ""
+"Your message has been sent successfully. We will get back to you within 24 "
+"hours."
+msgstr "تم إرسال رسالتك بنجاح. سنرد عليك خلال 24 ساعة."
+
+#: tests/test_models.py:1606 views.py:140
+msgid "Please correct the errors below."
+msgstr "يرجى تصحيح الأخطاء أدناه."
+
+#: tests/test_models.py:1906 views.py:148
+msgid "An error occurred while sending your message. Please try again later."
+msgstr "حدث خطأ أثناء إرسال رسالتك. يرجى المحاولة مرة أخرى لاحقًا."
+
+#: tests/test_models.py:1911
+msgid "Error creating contact message"
+msgstr "خطأ أثناء إنشاء رسالة الاتصال"
+
+#: utils.py:128
 msgid "Apple"
 msgstr "Apple"
 
-#: utils.py:117
+#: utils.py:128
 msgid "Default"
 msgstr "افتراضي"
 
-#: utils.py:117
+#: utils.py:128
 msgid "Facebook"
 msgstr "Facebook"
 
-#: utils.py:117
+#: utils.py:128
 msgid "Google"
 msgstr "Google"
 
-#: utils.py:118
+#: utils.py:129
 msgid "Sms"
 msgstr "رسالة نصية"
 
-#: utils.py:118
+#: utils.py:129
 msgid "Yahoo"
 msgstr "Yahoo"
 
-#: utils.py:118
+#: utils.py:129
 msgid "Whatsapp"
 msgstr "Whatsapp"
 
-#: utils.py:118
+#: utils.py:129
 msgid "X"
 msgstr "X"
 
@@ -252,40 +271,34 @@ msgstr "X"
 msgid "An unexpected error occurred"
 msgstr "حدث خطأ غير متوقع"
 
-#: views.py:134
-msgid ""
-"Your message has been sent successfully. We will get back to you within 24 "
-"hours."
-msgstr "تم إرسال رسالتك بنجاح. سنرد عليك خلال 24 ساعة."
-
-#: views.py:140
-msgid "Please correct the errors below."
-msgstr "يرجى تصحيح الأخطاء أدناه."
-
-#: views.py:148
-msgid "An error occurred while sending your message. Please try again later."
-msgstr "حدث خطأ أثناء إرسال رسالتك. يرجى المحاولة مرة أخرى لاحقًا."
-
-#: ws_consumers.py:77
+#: ws_consumers.py:143
 msgid "Connected to profile updates"
 msgstr "متصل بتحديثات الملف الشخصي"
 
-#: ws_consumers.py:104
+#: ws_consumers.py:179
 msgid "Unknown message type"
 msgstr "نوع الرسالة غير معروف"
 
-#: ws_consumers.py:107
+#: ws_consumers.py:182
 msgid "Invalid JSON format"
 msgstr "تنسيق JSON غير صالح"
 
-#: ws_consumers.py:110
+#: ws_consumers.py:185
 msgid "Internal server error"
 msgstr "خطأ في الخادم الداخلي"
 
-#: ws_consumers.py:133
+#: ws_consumers.py:212
 msgid "Error processing profile update"
 msgstr "خطأ أثناء معالجة تحديث الملف الشخصي"
 
-#: ws_consumers.py:149
+#: ws_consumers.py:236
+msgid "Error processing profile password update"
+msgstr "خطأ أثناء معالجة تحديث كلمة مرور الملف الشخصي"
+
+#: ws_consumers.py:257
+msgid "Error processing profile password reset"
+msgstr "خطأ أثناء معالجة إعادة تعيين كلمة مرور الملف الشخصي"
+
+#: ws_consumers.py:273
 msgid "Error processing notification"
 msgstr "خطأ أثناء معالجة الإشعار"

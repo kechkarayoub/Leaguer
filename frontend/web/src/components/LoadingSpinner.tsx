@@ -56,7 +56,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
       
       {(text || !text) && (
         <p className="loading-spinner__text">
-          {text || t('common:app.loading')}
+          {text || t('common:app.loading', { defaultValue: 'Loading...' } )}
         </p>
       )}
     </div>

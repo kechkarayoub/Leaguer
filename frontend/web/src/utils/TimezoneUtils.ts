@@ -44,7 +44,7 @@ export const getAllTimezones = (): TimezoneOption[] => {
     
     // Major Asia timezones
     'Asia/Bangkok',
-    'Asia/Beijing',
+    'Asia/Shanghai',
     'Asia/Dhaka',
     'Asia/Dubai',
     'Asia/Hong_Kong',

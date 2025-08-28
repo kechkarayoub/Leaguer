@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-26 12:04+0100\n"
+"POT-Creation-Date: 2025-08-28 07:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
 #: admin.py:79
 #, python-format
 msgid "%(count)d message(s) marked as in progress."
@@ -168,7 +169,7 @@ msgstr "Le message doit contenir au moins 10 caractères"
 msgid "Name is required"
 msgstr "Le nom est requis"
 
-#: services.py:43 tests/test_functionalities.py:376
+#: services.py:43 tests/test_functionalities.py:395
 msgid "Geolocation service unavailable. Try again later."
 msgstr "Service de géolocalisation indisponible. Veuillez réessayer plus tard."
 
@@ -193,15 +194,15 @@ msgstr "Service d'envoi de messages indisponible"
 msgid "Bulk message sending failed"
 msgstr "Échec de l'envoi de messages groupés"
 
-#: settings/base.py:131
+#: settings/base.py:132
 msgid "Arabic"
 msgstr "Arabe"
 
-#: settings/base.py:132
+#: settings/base.py:133
 msgid "English"
 msgstr "Anglais"
 
-#: settings/base.py:133
+#: settings/base.py:134
 msgid "French"
 msgstr "Français"
 
@@ -210,40 +211,61 @@ msgstr "Français"
 msgid "%(current_year)s © %(app_name)s. All rights reserved."
 msgstr "%(current_year)s © %(app_name)s. Tous droits réservés."
 
-#: tests/test_functionalities.py:167 tests/test_functionalities.py:177
-#: utils.py:58 utils.py:117
+#: tests/test_functionalities.py:186 tests/test_functionalities.py:196
+#: utils.py:69 utils.py:128
 msgid "Select"
 msgstr "Sélectionner"
 
-#: utils.py:117
+#: tests/test_models.py:1569 tests/test_models.py:1588 views.py:134
+msgid ""
+"Your message has been sent successfully. We will get back to you within 24 "
+"hours."
+msgstr ""
+"Votre message a été envoyé avec succès. Nous vous répondrons sous 24 heures."
+
+#: tests/test_models.py:1606 views.py:140
+msgid "Please correct the errors below."
+msgstr "Veuillez corriger les erreurs ci-dessous."
+
+#: tests/test_models.py:1906 views.py:148
+msgid "An error occurred while sending your message. Please try again later."
+msgstr ""
+"Une erreur s'est produite lors de l'envoi de votre message. Veuillez "
+"réessayer plus tard."
+
+#: tests/test_models.py:1911
+msgid "Error creating contact message"
+msgstr "Erreur lors de la création du message de contact"
+
+#: utils.py:128
 msgid "Apple"
 msgstr "Apple"
 
-#: utils.py:117
+#: utils.py:128
 msgid "Default"
 msgstr "Défaut"
 
-#: utils.py:117
+#: utils.py:128
 msgid "Facebook"
 msgstr "Facebook"
 
-#: utils.py:117
+#: utils.py:128
 msgid "Google"
 msgstr "Google"
 
-#: utils.py:118
+#: utils.py:129
 msgid "Sms"
 msgstr "Sms"
 
-#: utils.py:118
+#: utils.py:129
 msgid "Yahoo"
 msgstr "Yahoo"
 
-#: utils.py:118
+#: utils.py:129
 msgid "Whatsapp"
 msgstr "Whatsapp"
 
-#: utils.py:118
+#: utils.py:129
 msgid "X"
 msgstr "X"
 
@@ -251,40 +273,34 @@ msgstr "X"
 msgid "An unexpected error occurred"
 msgstr "Une erreur inattendue s'est produite"
 
-#: views.py:134
-msgid ""
-"Your message has been sent successfully. We will get back to you within 24 "
-"hours."
-msgstr "Votre message a été envoyé avec succès. Nous vous répondrons sous 24 heures."
-
-#: views.py:140
-msgid "Please correct the errors below."
-msgstr "Veuillez corriger les erreurs ci-dessous."
-
-#: views.py:148
-msgid "An error occurred while sending your message. Please try again later."
-msgstr "Une erreur s'est produite lors de l'envoi de votre message. Veuillez réessayer plus tard."
-
-#: ws_consumers.py:77
+#: ws_consumers.py:143
 msgid "Connected to profile updates"
 msgstr "Connecté aux mises à jour du profil"
 
-#: ws_consumers.py:104
+#: ws_consumers.py:179
 msgid "Unknown message type"
 msgstr "Type de message inconnu"
 
-#: ws_consumers.py:107
+#: ws_consumers.py:182
 msgid "Invalid JSON format"
 msgstr "Format JSON invalide"
 
-#: ws_consumers.py:110
+#: ws_consumers.py:185
 msgid "Internal server error"
 msgstr "Erreur interne du serveur"
 
-#: ws_consumers.py:133
+#: ws_consumers.py:212
 msgid "Error processing profile update"
 msgstr "Erreur lors du traitement de la mise à jour du profil"
 
-#: ws_consumers.py:149
+#: ws_consumers.py:236
+msgid "Error processing profile password update"
+msgstr "Erreur lors du traitement de la mise à jour du mot de passe du profil"
+
+#: ws_consumers.py:257
+msgid "Error processing profile password reset"
+msgstr "Erreur lors du traitement de la réinitialisation du mot de passe du profil"
+
+#: ws_consumers.py:273
 msgid "Error processing notification"
 msgstr "Erreur lors du traitement de la notification"
