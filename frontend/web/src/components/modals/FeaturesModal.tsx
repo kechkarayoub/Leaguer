@@ -26,13 +26,14 @@ const FeaturesModal: React.FC<FeaturesModalProps> = ({ isOpen, onClose }) => {
     >
       <div className="features-modal-content">
         {/* Hero Section */}
-        <div className="modal-section">
-          <div className="modal-hero">
+        <div className="modal-section" data-testid="features-hero-section">
+          <div className="modal-hero" data-testid="features-hero">
             <div className="modal-hero-logo">
               <img 
                 src={leaguerLogo} 
                 alt="Leaguer Logo" 
                 className="modal-hero-logo-img"
+                data-testid="features-hero-logo"
               />
             </div>
             <h3 className="modal-hero-title">
@@ -45,11 +46,11 @@ const FeaturesModal: React.FC<FeaturesModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Core Features */}
-        <div className="modal-section">
+        <div className="modal-section" data-testid="features-core-section">
           <h4 className="modal-section-title">
             {t('common:features.coreFeatures', { defaultValue: 'Core Features' })}
           </h4>
-          <div className="modal-feature-grid">
+          <div className="modal-feature-grid" data-testid="features-grid">
             {/* Team Management */}
             <div className="modal-feature-item">
               <div className="modal-feature-icon">
@@ -167,12 +168,12 @@ const FeaturesModal: React.FC<FeaturesModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Advanced Features */}
-        <div className="modal-section">
+        <div className="modal-section" data-testid="features-advanced-section">
           <h4 className="modal-section-title">
             {t('common:features.advancedFeatures', { defaultValue: 'Advanced Features' })}
           </h4>
           
-          <div className="modal-advanced-features">
+          <div className="modal-advanced-features" data-testid="features-advanced-grid">
             <div className="modal-advanced-feature-row">
               <div className="modal-advanced-feature-icon">
                 <svg viewBox="0 0 24 24" className="modal-advanced-svg">
@@ -230,8 +231,8 @@ const FeaturesModal: React.FC<FeaturesModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Call to Action */}
-        <div className="modal-section modal-section--final">
-          <div className="modal-cta">
+        <div className="modal-section modal-section--final" data-testid="features-cta-section">
+          <div className="modal-cta" data-testid="features-cta">
             <h4 className="modal-cta-title">
               {t('common:features.getStarted', { defaultValue: 'Ready to Get Started?' })}
             </h4>

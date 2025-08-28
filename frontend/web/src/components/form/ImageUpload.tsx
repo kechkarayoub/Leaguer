@@ -150,7 +150,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   };
 
   return (
-    <div className={`image-upload ${className} ${error ? 'image-upload--error' : ''}`}>
+    <div className={`image-upload ${className} ${error ? 'image-upload--error' : ''}`} data-testid="image-upload-container">
       {label && (
         <label className="image-upload__label">
           {label}
@@ -251,6 +251,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         accept={acceptedTypes.join(',')}
         onChange={handleFileInputChange}
         className="image-upload__input"
+        data-testid="file-input"
       />
 
       {error && <div className="image-upload__error">{error}</div>}

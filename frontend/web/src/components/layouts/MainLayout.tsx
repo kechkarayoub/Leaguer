@@ -28,7 +28,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="main-layout">
+    <div className="main-layout" data-testid="main-layout">
       <MainHeader onMenuClick={handleToggleSidebar} />
       <Sidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} />
       <main className="main-layout__content">

@@ -27,15 +27,16 @@ const AboutUsModal: React.FC<AboutUsModalProps> = ({ isOpen, onClose }) => {
       title={t('common:footer.about', { defaultValue: 'About Us' })}
       size="large"
     >
-      <div className="about-us-modal-content">
+      <div className="about-us-modal-content" data-testid="about-us-modal-content">
         {/* Hero Section */}
-        <div className="modal-section">
+        <div className="modal-section" data-testid="about-us-hero-section">
           <div className="modal-hero">
             <div className="modal-hero-logo">
               <img 
                 src={leaguerLogo} 
                 alt="Leaguer Logo" 
                 className="modal-hero-logo-img"
+                data-testid="about-us-logo"
               />
             </div>
             <h3 className="modal-hero-title">
@@ -48,7 +49,7 @@ const AboutUsModal: React.FC<AboutUsModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Mission Section */}
-        <div className="modal-section">
+        <div className="modal-section" data-testid="about-us-mission-section">
           <h4 className="modal-section-title">
             {t('common:about.ourMission', { defaultValue: 'Our Mission' })}
           </h4>
@@ -60,11 +61,11 @@ const AboutUsModal: React.FC<AboutUsModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Features Section */}
-        <div className="modal-section">
+        <div className="modal-section" data-testid="about-us-features-section">
           <h4 className="modal-section-title">
             {t('common:about.whatWeOffer', { defaultValue: 'What We Offer' })}
           </h4>
-          <div className="modal-feature-grid">
+          <div className="modal-feature-grid" data-testid="about-us-feature-grid">
             <div className="modal-feature-item">
               <div className="modal-feature-icon">
                 <svg viewBox="0 0 24 24" className="modal-feature-svg">
@@ -122,24 +123,24 @@ const AboutUsModal: React.FC<AboutUsModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Values Section */}
-        <div className="modal-section">
+        <div className="modal-section" data-testid="about-us-values-section">
           <h4 className="modal-section-title">
             {t('common:about.ourValues', { defaultValue: 'Our Values' })}
           </h4>
-          <div className="modal-values-grid">
-            <div className="modal-value-item">
+          <div className="modal-values-grid" data-testid="about-us-values-grid">
+            <div className="modal-value-item" data-testid="about-us-value-excellence">
               <strong>{t('common:about.excellence', { defaultValue: 'Excellence' })}</strong>
               <span>{t('common:about.excellenceDesc', { defaultValue: 'Striving for the best in everything we do' })}</span>
             </div>
-            <div className="modal-value-item">
+            <div className="modal-value-item" data-testid="about-us-value-community">
               <strong>{t('common:about.community', { defaultValue: 'Community' })}</strong>
               <span>{t('common:about.communityDesc', { defaultValue: 'Building connections that last beyond the game' })}</span>
             </div>
-            <div className="modal-value-item">
+            <div className="modal-value-item" data-testid="about-us-value-innovation">
               <strong>{t('common:about.innovation', { defaultValue: 'Innovation' })}</strong>
               <span>{t('common:about.innovationDesc', { defaultValue: 'Using technology to enhance the sports experience' })}</span>
             </div>
-            <div className="modal-value-item">
+            <div className="modal-value-item" data-testid="about-us-value-inclusivity">
               <strong>{t('common:about.inclusivity', { defaultValue: 'Inclusivity' })}</strong>
               <span>{t('common:about.inclusivityDesc', { defaultValue: 'Welcoming athletes of all levels and backgrounds' })}</span>
             </div>
@@ -147,7 +148,7 @@ const AboutUsModal: React.FC<AboutUsModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Contact Section */}
-        <div className="modal-section modal-section--final">
+        <div className="modal-section modal-section--final" data-testid="about-us-contact-section">
           <h4 className="modal-section-title">
             {t('common:about.getInTouch', { defaultValue: 'Get in Touch' })}
           </h4>
@@ -157,14 +158,15 @@ const AboutUsModal: React.FC<AboutUsModalProps> = ({ isOpen, onClose }) => {
             })}
           </p>
           {supportEmail && supportEmail.trim() !== '' && (
-            <div className="modal-contact-info">
+            <div className="modal-contact-info" data-testid="about-us-contact-info">
               <div className="modal-contact-item">
-                <svg viewBox="0 0 24 24" className="modal-contact-icon">
+                <svg viewBox="0 0 24 24" className="modal-contact-icon" data-testid="about-us-contact-icon">
                   <path d="M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4M20,8L12,13L4,8V6L12,11L20,6V8Z" fill="currentColor"/>
                 </svg>
                 <a 
                   href={`mailto:${supportEmail}`}
                   className="modal-contact-link"
+                  data-testid="about-us-support-email"
                 >
                   {supportEmail}
                 </a>

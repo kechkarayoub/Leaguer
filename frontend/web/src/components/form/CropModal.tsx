@@ -148,8 +148,8 @@ const CropModal: React.FC<CropModalProps> = ({
   if (!isOpen) return null;
 
   const modalContent = (
-    <div className="crop-modal-overlay" onClick={handleClose}>
-      <div className="crop-modal" onClick={(e) => e.stopPropagation()}>
+    <div className="crop-modal-overlay" onClick={handleClose} data-testid="crop-modal-overlay">
+      <div className="crop-modal" onClick={(e) => e.stopPropagation()} data-testid="crop-modal-content">
         <div className="crop-modal__header">
           <h3 className="crop-modal__title">
             {title || t('common:form.crop_photo')}
@@ -158,6 +158,7 @@ const CropModal: React.FC<CropModalProps> = ({
             className="crop-modal__close"
             onClick={handleClose}
             type="button"
+            aria-label="close"
           >
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

@@ -42,6 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           className="sidebar-overlay" 
           onClick={onClose}
           aria-hidden="true"
+          role="presentation"
         />
       )}
       

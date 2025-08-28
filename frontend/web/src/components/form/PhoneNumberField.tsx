@@ -63,16 +63,15 @@ const PhoneNumberField: React.FC<PhoneNumberFieldProps> = ({
     fetchGeolocation();
   }, [useGeolocation, disabled, currentLanguage]);
 
-        console.log('Current language:', currentLanguage)
   return (
-    <div className={`phone-field ${className} ${error ? 'phone-field--error' : ''}`}>
+    <div className={`phone-field ${className} ${error ? 'phone-field--error' : ''}`} data-testid="phone-field-container">
       {label && (
-        <label className="phone-field__label">
+        <label className="phone-field__label" data-testid="phone-field-label">
           {label}
           {required && <span className="required-asterisk">*</span>}
         </label>
       )}
-      <div className="phone-field__input-wrapper" key={currentLanguage}>
+      <div className="phone-field__input-wrapper" key={currentLanguage} data-testid="phone-field-wrapper">
         <PhoneInput
           country={defaultCountry}
           localization={currentLanguage === 'ar' ? ar : currentLanguage === 'fr' ? fr : undefined}
@@ -87,6 +86,7 @@ const PhoneNumberField: React.FC<PhoneNumberFieldProps> = ({
             'aria-invalid': !!error,
             'aria-describedby': error ? `${label}-error` : undefined,
             required,
+            'data-testid': 'phone-input-field',
           }}
           searchPlaceholder={t('common:form.phone.search_placeholder')}
           searchNotFound={t('common:form.phone.searchNotFound')}
@@ -95,7 +95,7 @@ const PhoneNumberField: React.FC<PhoneNumberFieldProps> = ({
         />
       </div>
       {error && (
-        <span className="form-error">{error}</span>
+        <span className="form-error" data-testid="phone-field-error">{error}</span>
       )}
     </div>
   );

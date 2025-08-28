@@ -19,6 +19,8 @@ const MenuIcon: React.FC<MenuIconProps> = ({ className = '', size = 24 }) => {
       stroke="currentColor"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
+      role="img"
+      aria-label="Menu icon"
     >
       <path
         strokeLinecap="round"

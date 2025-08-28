@@ -2,7 +2,6 @@ import React from 'react';
 import Select, { Props as SelectProps, GroupBase } from 'react-select';
 import { useTranslation } from 'react-i18next';
 import './CustomSelect.css';
-import { dir } from 'console';
 
 export interface CustomSelectOption {
   value: string;
@@ -77,9 +76,9 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   const selectedOption = options.find(opt => opt.value === value) || null;
 
   return (
-    <div className={`custom-select ${className} ${error ? 'custom-select--error' : ''}`}>
+    <div className={`custom-select ${className} ${error ? 'custom-select--error' : ''}`} data-testid="custom-select-container">
       {label && (
-        <label className="custom-select__label">
+        <label className="custom-select__label" data-testid="custom-select-label">
           {label}
           {required && <span className="required-asterisk">*</span>}
         </label>
@@ -104,7 +103,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         } : undefined}
       />
       {error && (
-        <div className="custom-select__error" id={`${label}-error`} role="alert">
+        <div className="custom-select__error" id={`${label}-error`} role="alert" data-testid="custom-select-error">
           {error}
         </div>
       )}

@@ -74,9 +74,9 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   }
 
   return (
-    <div className={`custom-datepicker ${className} ${error ? 'custom-datepicker--error' : ''}`}>
+    <div className={`custom-datepicker ${className} ${error ? 'custom-datepicker--error' : ''}`} data-testid="custom-datepicker-container">
       {label && (
-        <label className="custom-datepicker__label">
+        <label className="custom-datepicker__label" data-testid="custom-datepicker-label">
           {label}
           {required && <span className="required-asterisk">*</span>}
         </label>
@@ -104,7 +104,7 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
         aria-describedby={error ? `${label}-error` : undefined}
       />
       {error && (
-        <div className="custom-datepicker__error" id={`${label}-error`} role="alert">
+        <div className="custom-datepicker__error" id={`${label}-error`} role="alert" data-testid="custom-datepicker-error">
           {error}
         </div>
       )}

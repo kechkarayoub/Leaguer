@@ -65,8 +65,8 @@ const CameraModal: React.FC<CameraModalProps> = ({
 
   const modalContent = (
     <>
-      <div className="camera-modal-overlay" onClick={handleClose}>
-        <div className="camera-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="camera-modal-overlay" onClick={handleClose} data-testid="camera-modal-overlay">
+        <div className="camera-modal" onClick={(e) => e.stopPropagation()} data-testid="camera-modal-content">
           <div className="camera-modal__header">
             <h3 className="camera-modal__title">
               {t('common:form.take_photo')}
@@ -75,6 +75,8 @@ const CameraModal: React.FC<CameraModalProps> = ({
               className="camera-modal__close"
               onClick={handleClose}
               type="button"
+              aria-label="close"
+              data-testid="camera-modal-close"
             >
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -83,13 +85,14 @@ const CameraModal: React.FC<CameraModalProps> = ({
           </div>
 
           <div className="camera-modal__content">
-            <div className="camera-container">
+            <div className="camera-container" data-testid="camera-container">
               <Webcam
                 ref={webcamRef}
                 audio={false}
                 screenshotFormat="image/jpeg"
                 videoConstraints={videoConstraints}
                 className="camera-preview"
+                data-testid="webcam-component"
               />
             </div>
           </div>
@@ -99,6 +102,7 @@ const CameraModal: React.FC<CameraModalProps> = ({
               className="btn btn--secondary"
               onClick={handleClose}
               type="button"
+              data-testid="camera-modal-cancel"
             >
               {t('common:app.cancel')}
             </button>
@@ -106,6 +110,7 @@ const CameraModal: React.FC<CameraModalProps> = ({
               className="btn btn--primary camera-capture-btn"
               onClick={capturePhoto}
               type="button"
+              data-testid="camera-modal-capture"
             >
               <svg className="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />

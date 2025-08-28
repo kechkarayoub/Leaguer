@@ -30,17 +30,6 @@ const MainHeader: React.FC<MainHeaderProps> = ({ pageTitle, pageSubtitle, onMenu
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
-  // Debug: Log when user data changes (remove this in production)
-  useEffect(() => {
-    if (user) {
-      console.log('MainHeader: User data updated:', {
-        name: `${user.first_name} ${user.last_name}`,
-        email: user.email,
-        image: user.user_image_url
-      });
-    }
-  }, [user]);
-
   // Close user menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

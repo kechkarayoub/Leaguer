@@ -59,8 +59,9 @@ const BaseModal: React.FC<BaseModalProps> = ({
     <div 
       className={`modal-overlay ${isRTL ? 'rtl' : 'ltr'}`}
       onClick={handleBackdropClick}
+      data-testid="base-modal-overlay"
     >
-      <div className={`modal-container modal-container--${size}`}>
+      <div className={`modal-container modal-container--${size}`} data-testid="base-modal-container">
         {/* Modal Header */}
         <div className="modal-header">
           <h2 className="modal-title">{title}</h2>
@@ -68,6 +69,7 @@ const BaseModal: React.FC<BaseModalProps> = ({
             className="modal-close-button"
             onClick={onClose}
             aria-label={t('common:actions.close', { defaultValue: 'Close' })}
+            data-testid="base-modal-close-button"
           >
             <svg 
               width="24" 
@@ -83,7 +85,7 @@ const BaseModal: React.FC<BaseModalProps> = ({
         </div>
 
         {/* Modal Content */}
-        <div className="modal-content">
+        <div className="modal-content" data-testid="base-modal-content">
           {children}
         </div>
 
@@ -92,6 +94,7 @@ const BaseModal: React.FC<BaseModalProps> = ({
           <button 
             className="btn btn-secondary"
             onClick={onClose}
+            data-testid="base-modal-footer-close"
           >
             {t('common:actions.close', { defaultValue: 'Close' })}
           </button>

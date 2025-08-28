@@ -9,7 +9,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '../LanguageSwitcher';
 import AuthFooter from '../AuthFooter';
-import moment from 'moment';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -19,7 +18,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
   const { t } = useTranslation();
 
   return (
-    <div className="auth-layout">      
+    <div className="auth-layout" data-testid="auth-layout">      
       <div className="auth-layout__container">
         {/* Background decoration */}
         <div className="auth-layout__background">
@@ -51,7 +50,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
           </div>
 
           {/* Auth form content */}
-          <div className="auth-layout__form">
+          <div className="auth-layout__form" data-testid="auth-form-container">
             {children}
           </div>
 
