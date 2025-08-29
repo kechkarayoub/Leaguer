@@ -124,7 +124,7 @@ const AuthFooter: React.FC<AuthFooterProps> = ({
   };
 
   return (
-    <div className={`auth-footer-modern ${isRTL ? 'rtl' : 'ltr'}`}>
+    <footer className={`auth-footer-modern ${isRTL ? 'rtl' : 'ltr'}`} role="contentinfo">
       {/* Main Footer Content */}
       <div className="auth-footer-content">
         {/* Company Info */}
@@ -284,7 +284,7 @@ const AuthFooter: React.FC<AuthFooterProps> = ({
         isOpen={activeModal === 'cookies'} 
         onClose={closeModal} 
       />
-    </div>
+    </footer>
   );
 };
 
