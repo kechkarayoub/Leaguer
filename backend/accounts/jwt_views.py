@@ -5,12 +5,17 @@ This module provides enhanced JWT views that use our custom RefreshToken
 to maintain parent-child relationships between tokens.
 """
 
-from rest_framework_simplejwt.views import TokenObtainPairView as BaseTokenObtainPairView, TokenRefreshView as BaseTokenRefreshView
-from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-from rest_framework.response import Response
-from rest_framework import status
-from .tokens import RefreshToken
 import logging
+
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from rest_framework_simplejwt.views import \
+    TokenObtainPairView as BaseTokenObtainPairView
+from rest_framework_simplejwt.views import \
+    TokenRefreshView as BaseTokenRefreshView
+
+from .tokens import RefreshToken
 
 logger = logging.getLogger(__name__)
 
@@ -104,8 +109,8 @@ class TokenRefreshView(BaseTokenRefreshView):
             
             # Optionally rotate refresh token (if ROTATE_REFRESH_TOKENS is True)
             from django.conf import settings
-            from rest_framework_simplejwt.settings import api_settings
             from django.contrib.auth import get_user_model
+            from rest_framework_simplejwt.settings import api_settings
             
             if api_settings.ROTATE_REFRESH_TOKENS:
                 # Get user from refresh token

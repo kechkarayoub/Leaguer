@@ -1,6 +1,7 @@
+from zoneinfo import ZoneInfo
+
 from django.conf import settings
 from django.utils.timezone import activate
-from zoneinfo import ZoneInfo
 
 
 class TimezoneMiddleware:

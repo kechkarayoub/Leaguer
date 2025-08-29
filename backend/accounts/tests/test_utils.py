@@ -1,8 +1,11 @@
-from ..models import User
-from ..utils import format_phone_number, GENDERS_CHOICES, send_phone_number_verification_code
 from datetime import date
+
 from django.conf import settings
 from django.test import TestCase
+
+from ..models import User
+from ..utils import (GENDERS_CHOICES, format_phone_number,
+                     send_phone_number_verification_code)
 
 
 class UserUtilsTest(TestCase):

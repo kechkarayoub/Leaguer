@@ -1,11 +1,12 @@
-from ..services import UserService
-from ..models import User
+from unittest.mock import patch
+
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
 from django.test import TestCase
-from unittest.mock import patch
 
+from ..models import User
+from ..services import UserService
 
 
 class UserServiceTest(TestCase):
@@ -164,8 +165,8 @@ class EmailVerificationServiceTest(TestCase):
     def test_verify_email_token_service_success(self):
         """Test successful email token verification through service."""
         from django.contrib.auth.tokens import default_token_generator
-        from django.utils.http import urlsafe_base64_encode
         from django.utils.encoding import force_bytes
+        from django.utils.http import urlsafe_base64_encode
         
         token = default_token_generator.make_token(self.user)
         uid = urlsafe_base64_encode(force_bytes(self.user.pk))
@@ -177,9 +178,10 @@ class EmailVerificationServiceTest(TestCase):
     
     def test_verify_email_token_service_invalid(self):
         """Test email token verification with invalid token through service."""
-        from accounts.exceptions import TokenValidationException
-        from django.utils.http import urlsafe_base64_encode
         from django.utils.encoding import force_bytes
+        from django.utils.http import urlsafe_base64_encode
+
+        from accounts.exceptions import TokenValidationException
         
         uid = urlsafe_base64_encode(force_bytes(self.user.pk))
         invalid_token = "invalid-token"
@@ -226,7 +228,7 @@ class PhoneVerificationServiceTest(TestCase):
     def test_verify_phone_code_service_success(self):
         """Test successful phone code verification through service."""
         from django.utils import timezone
-        
+
         # Set up verification code
         self.user.user_phone_number_verification_code = '123456'
         self.user.user_phone_number_verification_code_timestamp = timezone.now()
@@ -360,7 +362,8 @@ class AccountsServiceIntegrationTest(TestCase):
     """Integration tests for accounts services."""
     
     def setUp(self):
-        from accounts.services import UserService, EmailVerificationService, PhoneVerificationService
+        from accounts.services import (EmailVerificationService,
+                                       PhoneVerificationService, UserService)
         self.user_service = UserService
         self.email_service = EmailVerificationService
         self.phone_service = PhoneVerificationService

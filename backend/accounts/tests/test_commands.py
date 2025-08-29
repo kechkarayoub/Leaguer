@@ -1,16 +1,20 @@
-from ..models import User
-from django.core.management.base import BaseCommand, CommandError
-from rest_framework.test import APIClient, APIRequestFactory
+import importlib
+from datetime import timedelta
+from io import StringIO
+from unittest.mock import MagicMock, patch
+
 from django.conf import settings
 from django.core.management import call_command
+from django.core.management.base import BaseCommand, CommandError
 from django.test import TestCase, override_settings
 from django.utils import timezone
-from datetime import timedelta
-from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
+from rest_framework.test import APIClient, APIRequestFactory
+from rest_framework_simplejwt.token_blacklist.models import (BlacklistedToken,
+                                                             OutstandingToken)
+
 from accounts.tokens import RefreshToken
-from unittest.mock import patch, MagicMock
-import importlib
-from io import StringIO
+
+from ..models import User
 
 
 class SendEmailVerificationsLinksCommandTests(TestCase):

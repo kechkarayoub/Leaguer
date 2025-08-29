@@ -1,33 +1,42 @@
-from .models import User
-from .serializers import UserSerializer
-from .tokens import RefreshToken
-from .utils import format_phone_number, send_verification_email, send_phone_number_verification_code, send_password_reset_email, validate_password_reset_token
+import datetime
+import logging
+import os
+
+import firebase_config
+from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
-from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.http import JsonResponse, QueryDict
 from django.shortcuts import get_object_or_404
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.timezone import now
-from django.utils.translation import activate, gettext_lazy as _
+from django.utils.translation import activate
+from django.utils.translation import gettext_lazy as _
 from firebase_admin import auth
-from accounts.services import UserService
-from leaguer.utils import generate_random_code, upload_file, remove_file
-from leaguer.ws_utils import notify_profile_update, notify_profile_password_update, notify_profile_password_reset
+from google.auth.transport import requests
+from google.oauth2 import id_token
+from leaguer.utils import generate_random_code, remove_file, upload_file
+from leaguer.ws_utils import (notify_profile_password_reset,
+                              notify_profile_password_update,
+                              notify_profile_update)
 from rest_framework import status
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-import datetime
-import logging
-import os
-from google.auth.transport import requests
-from google.oauth2 import id_token
-import firebase_config
+from rest_framework_simplejwt.token_blacklist.models import (BlacklistedToken,
+                                                             OutstandingToken)
+
+from accounts.services import UserService
+
+from .models import User
+from .serializers import UserSerializer
+from .tokens import RefreshToken
+from .utils import (format_phone_number, send_password_reset_email,
+                    send_phone_number_verification_code,
+                    send_verification_email, validate_password_reset_token)
 
 # Get a logger instance
 logger = logging.getLogger(__name__)

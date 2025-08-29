@@ -1,9 +1,10 @@
-from .utils import GENDERS_CHOICES, send_verification_email
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from leaguer.utils import get_all_timezones, PHONE_NUMBER_VERIFICATION_METHOD
+from leaguer.utils import PHONE_NUMBER_VERIFICATION_METHOD, get_all_timezones
+
+from .utils import GENDERS_CHOICES, send_verification_email
 
 # Theme choices
 THEME_CHOICES = [

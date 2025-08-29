@@ -1,12 +1,13 @@
-from ..models import User
-from ..serializers import UserSerializer
-from ..utils import GENDERS_CHOICES
 from datetime import date
+from unittest.mock import patch
+
 from django.conf import settings
 from django.test import TestCase
 from rest_framework.test import APITestCase
-from unittest.mock import patch
 
+from ..models import User
+from ..serializers import UserSerializer
+from ..utils import GENDERS_CHOICES
 
 
 class UserModelTest(TestCase):
@@ -404,7 +405,7 @@ class PasswordResetTestCase(TestCase):
     def test_send_password_reset_email_success(self):
         """Test successful password reset email sending."""
         from accounts.utils import send_password_reset_email
-        
+
         # Test with mocked API (testing mode)
         status_code, (uid, token) = send_password_reset_email(
             self.user, 
@@ -432,7 +433,7 @@ class PasswordResetTestCase(TestCase):
     def test_send_password_reset_email_error_handling(self):
         """Test password reset email error handling."""
         from accounts.utils import send_password_reset_email
-        
+
         # Test with simulated email error
         status_code, (uid, token) = send_password_reset_email(
             self.user, 
@@ -446,8 +447,9 @@ class PasswordResetTestCase(TestCase):
 
     def test_validate_password_reset_token_success(self):
         """Test successful password reset token validation."""
-        from accounts.utils import send_password_reset_email, validate_password_reset_token
-        
+        from accounts.utils import (send_password_reset_email,
+                                    validate_password_reset_token)
+
         # Generate a valid token
         status_code, (uid, token) = send_password_reset_email(
             self.user, 
@@ -476,12 +478,14 @@ class PasswordResetTestCase(TestCase):
 
     def test_validate_password_reset_token_inactive_user(self):
         """Test password reset token validation with inactive user."""
-        from accounts.utils import send_password_reset_email, validate_password_reset_token
+        from django.contrib.auth.tokens import default_token_generator
         from django.utils.encoding import force_bytes
         from django.utils.http import urlsafe_base64_encode
-        from django.contrib.auth.tokens import default_token_generator
         from django.utils.timezone import now
-        
+
+        from accounts.utils import (send_password_reset_email,
+                                    validate_password_reset_token)
+
         # Create a token for inactive user
         token_ = default_token_generator.make_token(self.inactive_user)
         timestamp_str = str(now().timestamp())
@@ -496,9 +500,10 @@ class PasswordResetTestCase(TestCase):
 
     def test_validate_password_reset_token_invalid_format(self):
         """Test password reset token validation with invalid token format."""
-        from accounts.utils import validate_password_reset_token
         from django.utils.encoding import force_bytes
         from django.utils.http import urlsafe_base64_encode
+
+        from accounts.utils import validate_password_reset_token
         
         uid = urlsafe_base64_encode(force_bytes(self.user.pk))
         
@@ -520,13 +525,15 @@ class PasswordResetTestCase(TestCase):
 
     def test_validate_password_reset_token_expired(self):
         """Test password reset token validation with expired token."""
-        from accounts.utils import validate_password_reset_token
+        import time
+
+        from django.contrib.auth.tokens import default_token_generator
         from django.utils.encoding import force_bytes
         from django.utils.http import urlsafe_base64_encode
-        from django.contrib.auth.tokens import default_token_generator
         from django.utils.timezone import now
-        import time
-        
+
+        from accounts.utils import validate_password_reset_token
+
         # Create an expired token (25 hours old)
         old_timestamp = now().timestamp() - (25 * 3600)  # 25 hours ago
         token_ = default_token_generator.make_token(self.user)
@@ -541,11 +548,12 @@ class PasswordResetTestCase(TestCase):
 
     def test_validate_password_reset_token_invalid_token(self):
         """Test password reset token validation with invalid token."""
-        from accounts.utils import validate_password_reset_token
         from django.utils.encoding import force_bytes
         from django.utils.http import urlsafe_base64_encode
         from django.utils.timezone import now
-        
+
+        from accounts.utils import validate_password_reset_token
+
         # Create token with invalid signature
         invalid_token = "invalid_token_signature"
         timestamp_str = str(now().timestamp())
@@ -560,8 +568,9 @@ class PasswordResetTestCase(TestCase):
 
     def test_password_reset_integration(self):
         """Test complete password reset flow integration."""
-        from accounts.utils import send_password_reset_email, validate_password_reset_token
-        
+        from accounts.utils import (send_password_reset_email,
+                                    validate_password_reset_token)
+
         # Step 1: Send password reset email
         status_code, (uid, token) = send_password_reset_email(
             self.user, 
@@ -588,7 +597,7 @@ class PasswordResetTestCase(TestCase):
     def test_send_password_reset_email_real_email_sending(self, mock_send):
         """Test password reset email sending with real email backend."""
         from accounts.utils import send_password_reset_email
-        
+
         # Mock successful email sending
         mock_send.return_value = True
         
@@ -604,9 +613,10 @@ class PasswordResetTestCase(TestCase):
     @patch('accounts.utils.EmailMultiAlternatives.send')
     def test_send_password_reset_email_smtp_error(self, mock_send):
         """Test password reset email handling SMTP errors."""
-        from accounts.utils import send_password_reset_email
         from smtplib import SMTPException
-        
+
+        from accounts.utils import send_password_reset_email
+
         # Mock SMTP error
         mock_send.side_effect = SMTPException("SMTP server error")
         
@@ -622,7 +632,7 @@ class PasswordResetTestCase(TestCase):
     def test_token_format_consistency(self):
         """Test that tokens maintain consistent format."""
         from accounts.utils import send_password_reset_email
-        
+
         # Generate multiple tokens and verify format
         for _ in range(5):
             status_code, (uid, token) = send_password_reset_email(

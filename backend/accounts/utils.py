@@ -1,16 +1,20 @@
+import datetime
+import logging
+from smtplib import (SMTPAuthenticationError, SMTPDataError, SMTPException,
+                     SMTPRecipientsRefused, SMTPSenderRefused)
+
+import phonenumbers
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.timezone import now
-from django.utils.translation import activate, gettext_lazy as _
-from leaguer.utils import generate_random_code, get_email_base_context, send_phone_message
-from smtplib import SMTPException, SMTPAuthenticationError, SMTPSenderRefused, SMTPRecipientsRefused, SMTPDataError
-import datetime
-import logging
-import phonenumbers
+from django.utils.translation import activate
+from django.utils.translation import gettext_lazy as _
+from leaguer.utils import (generate_random_code, get_email_base_context,
+                           send_phone_message)
 
 # Get a logger instance
 logger = logging.getLogger(__name__)

@@ -2,6 +2,12 @@
 Service layer for accounts app.
 """
 
+import datetime
+import logging
+import os
+
+import firebase_config
+import phonenumbers
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
@@ -11,25 +17,25 @@ from django.core.mail import EmailMultiAlternatives
 from django.db.models.functions import Lower
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.timezone import now
-from django.utils.translation import activate, gettext_lazy as _
-from .models import User
-from .exceptions import (
-    UserValidationException, EmailVerificationException, PhoneVerificationException,
-    AuthenticationException, PasswordValidationException, ProfileImageException,
-    UserRegistrationException, UserUpdateException, TokenValidationException,
-    FirebaseException, SMSException, EmailSendingException, UserNotActiveException,
-    VerificationCodeException, UserDeleteException, ProfileException
-)
-from .utils import format_phone_number, GENDERS_CHOICES
-from leaguer.utils import generate_random_code, generate_random_string, get_email_base_context, send_phone_message
-import logging
-import os
-import datetime
-import firebase_config
+from django.utils.translation import activate
+from django.utils.translation import gettext_lazy as _
 from firebase_admin import auth as firebase_auth
-import phonenumbers
+from leaguer.utils import (generate_random_code, generate_random_string,
+                           get_email_base_context, send_phone_message)
+
+from .exceptions import (AuthenticationException, EmailSendingException,
+                         EmailVerificationException, FirebaseException,
+                         PasswordValidationException,
+                         PhoneVerificationException, ProfileException,
+                         ProfileImageException, SMSException,
+                         TokenValidationException, UserDeleteException,
+                         UserNotActiveException, UserRegistrationException,
+                         UserUpdateException, UserValidationException,
+                         VerificationCodeException)
+from .models import User
+from .utils import GENDERS_CHOICES, format_phone_number
 
 logger = logging.getLogger(__name__)
 

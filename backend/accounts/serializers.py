@@ -1,11 +1,13 @@
 
-from .models import User
+import re
 from datetime import date
+
+import phonenumbers
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
-import phonenumbers
-import re
+
+from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):

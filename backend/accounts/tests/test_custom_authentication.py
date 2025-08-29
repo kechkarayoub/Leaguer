@@ -5,16 +5,19 @@ Tests that the custom JWT authentication properly handles user logout detection.
 """
 
 import unittest
-from datetime import datetime, timezone, timedelta
-from django.test import TestCase
+from datetime import datetime, timedelta, timezone
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
-from rest_framework_simplejwt.tokens import AccessToken
-from accounts.tokens import RefreshToken
-from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
-from rest_framework.test import APIRequestFactory
+from django.test import TestCase
 from rest_framework import exceptions
+from rest_framework.test import APIRequestFactory
+from rest_framework_simplejwt.token_blacklist.models import (BlacklistedToken,
+                                                             OutstandingToken)
+from rest_framework_simplejwt.tokens import AccessToken
+
 from accounts.authentication import JWTAuthentication
+from accounts.tokens import RefreshToken
 
 User = get_user_model()
 
@@ -73,8 +76,8 @@ class CustomJWTAuthenticationTests(TestCase):
         access_token = refresh_token.access_token
         
         # Decode token for testing
-        from rest_framework_simplejwt.backends import TokenBackend
         from django.conf import settings
+        from rest_framework_simplejwt.backends import TokenBackend
         
         token_backend = TokenBackend(algorithm="HS256", signing_key=settings.SECRET_KEY)
         payload = token_backend.decode(str(access_token), verify=True)
@@ -92,8 +95,8 @@ class CustomJWTAuthenticationTests(TestCase):
         BlacklistedToken.objects.create(token=outstanding_token)
         
         # Decode token for testing
-        from rest_framework_simplejwt.backends import TokenBackend
         from django.conf import settings
+        from rest_framework_simplejwt.backends import TokenBackend
         
         token_backend = TokenBackend(algorithm="HS256", signing_key=settings.SECRET_KEY)
         payload = token_backend.decode(str(access_token), verify=True)

@@ -1,9 +1,12 @@
 
-from .views import (SendVerificationEmailLinkView, SignInView, SignInThirdPartyView, SignUpView, SignUpThirdPartyView, verify_email, verify_phone_number,
-    UpdateProfileView, ForgotPasswordView, ResetPasswordView, LogoutView, UpdateSettingsView)
-from .jwt_views import TokenObtainPairView, TokenRefreshView
 from django.urls import path
 
+from .jwt_views import TokenObtainPairView, TokenRefreshView
+from .views import (ForgotPasswordView, LogoutView, ResetPasswordView,
+                    SendVerificationEmailLinkView, SignInThirdPartyView,
+                    SignInView, SignUpThirdPartyView, SignUpView,
+                    UpdateProfileView, UpdateSettingsView, verify_email,
+                    verify_phone_number)
 
 urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

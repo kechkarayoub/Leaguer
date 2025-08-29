@@ -1,10 +1,12 @@
-from ..middleware import TimezoneMiddleware
-from ..models import User
+from zoneinfo import ZoneInfo
+
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.test import RequestFactory, TestCase
 from django.utils.timezone import get_current_timezone
-from zoneinfo import ZoneInfo
+
+from ..middleware import TimezoneMiddleware
+from ..models import User
 
 
 class TimezoneMiddlewareTestCase(TestCase):

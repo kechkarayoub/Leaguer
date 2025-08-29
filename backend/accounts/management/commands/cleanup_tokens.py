@@ -1,11 +1,13 @@
 """
 Management command to clean up expired and blacklisted tokens.
 """
-from django.core.management.base import BaseCommand
-from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from django.utils import timezone
-from datetime import timedelta
 import logging
+from datetime import timedelta
+
+from django.core.management.base import BaseCommand
+from django.utils import timezone
+from rest_framework_simplejwt.token_blacklist.models import (BlacklistedToken,
+                                                             OutstandingToken)
 
 logger = logging.getLogger(__name__)
 

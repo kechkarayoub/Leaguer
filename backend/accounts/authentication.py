@@ -5,13 +5,16 @@ This module provides enhanced JWT authentication that links access tokens
 to their parent refresh tokens for device-specific logout behavior.
 """
 
-from rest_framework_simplejwt.authentication import JWTAuthentication as BaseJWTAuthentication
-from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
-from rest_framework_simplejwt.tokens import UntypedToken
-from rest_framework import exceptions
-from django.contrib.auth import get_user_model
 import logging
+
+from django.contrib.auth import get_user_model
+from rest_framework import exceptions
+from rest_framework_simplejwt.authentication import \
+    JWTAuthentication as BaseJWTAuthentication
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from rest_framework_simplejwt.token_blacklist.models import (BlacklistedToken,
+                                                             OutstandingToken)
+from rest_framework_simplejwt.tokens import UntypedToken
 
 logger = logging.getLogger(__name__)
 User = get_user_model()

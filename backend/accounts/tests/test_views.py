@@ -1,6 +1,7 @@
-from ..models import User
-from ..utils import send_phone_number_verification_code
-from ..views import send_verification_email, verify_user_email, verify_user_phone_number, SignInThirdPartyView
+import datetime
+import json
+from unittest.mock import patch
+
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -11,12 +12,11 @@ from leaguer.utils import generate_random_code
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.test import APIClient, APIRequestFactory
-from unittest.mock import patch
-import datetime
-import json
-import datetime
-import json
-import json
+
+from ..models import User
+from ..utils import send_phone_number_verification_code
+from ..views import (SignInThirdPartyView, send_verification_email,
+                     verify_user_email, verify_user_phone_number)
 
 
 class SendVerificationEmailLinkViewTest(TestCase):
@@ -1202,11 +1202,11 @@ class PasswordResetViewsTestCase(TestCase):
 
     def test_reset_password_expired_token(self):
         """Test password reset with expired token."""
+        from django.contrib.auth.tokens import default_token_generator
         from django.utils.encoding import force_bytes
         from django.utils.http import urlsafe_base64_encode
-        from django.contrib.auth.tokens import default_token_generator
         from django.utils.timezone import now
-        
+
         # Create an expired token (25 hours old)
         old_timestamp = now().timestamp() - (25 * 3600)  # 25 hours ago
         token_ = default_token_generator.make_token(self.user)
@@ -1229,12 +1229,13 @@ class PasswordResetViewsTestCase(TestCase):
 
     def test_reset_password_inactive_user(self):
         """Test password reset with inactive user."""
-        from accounts.utils import send_password_reset_email
+        from django.contrib.auth.tokens import default_token_generator
         from django.utils.encoding import force_bytes
         from django.utils.http import urlsafe_base64_encode
-        from django.contrib.auth.tokens import default_token_generator
         from django.utils.timezone import now
-        
+
+        from accounts.utils import send_password_reset_email
+
         # Create a token for inactive user
         token_ = default_token_generator.make_token(self.inactive_user)
         timestamp_str = str(now().timestamp())
@@ -1820,8 +1821,10 @@ class LogoutViewTest(TestCase):
 
     def test_logout_token_blacklisting(self):
         """Test that logout properly blacklists tokens."""
+        from rest_framework_simplejwt.token_blacklist.models import (
+            BlacklistedToken, OutstandingToken)
+
         from accounts.tokens import RefreshToken
-        from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
         
         refresh_token = RefreshToken.for_user(self.user)
         jti = refresh_token.get('jti')
@@ -1861,8 +1864,10 @@ class LogoutViewTest(TestCase):
 
     def test_logout_already_blacklisted_token(self):
         """Test logout with already blacklisted token."""
+        from rest_framework_simplejwt.token_blacklist.models import (
+            BlacklistedToken, OutstandingToken)
+
         from accounts.tokens import RefreshToken
-        from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
         
         refresh_token = RefreshToken.for_user(self.user)
         jti = refresh_token.get('jti')
@@ -1888,7 +1893,7 @@ class LogoutViewTest(TestCase):
     def test_logout_language_handling(self):
         """Test logout with different languages."""
         from accounts.tokens import RefreshToken
-        
+
         # Test with different language
         self.user.current_language = 'fr'
         self.user.save()

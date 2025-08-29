@@ -1,10 +1,12 @@
-from .models import User
-from django.contrib import admin
+import logging
+
+from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
-from django.contrib import messages
-from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-import logging
+from rest_framework_simplejwt.token_blacklist.models import (BlacklistedToken,
+                                                             OutstandingToken)
+
+from .models import User
 
 logger = logging.getLogger(__name__)
 

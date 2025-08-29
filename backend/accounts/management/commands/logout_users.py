@@ -1,12 +1,15 @@
 """
 Management command to logout users by blacklisting their tokens.
 """
-from django.core.management.base import BaseCommand, CommandError
-from django.contrib.auth import get_user_model
-from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from accounts.tokens import RefreshToken
-from accounts.models import User
 import logging
+
+from django.contrib.auth import get_user_model
+from django.core.management.base import BaseCommand, CommandError
+from rest_framework_simplejwt.token_blacklist.models import (BlacklistedToken,
+                                                             OutstandingToken)
+
+from accounts.models import User
+from accounts.tokens import RefreshToken
 
 logger = logging.getLogger(__name__)
 
