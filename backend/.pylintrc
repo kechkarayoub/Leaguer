@@ -1,5 +1,6 @@
 [MASTER]
 init-hook = 'import sys; sys.path.append(".")'
+good-names=User
 load-plugins = pylint_django
 
 [TYPECHECK]

@@ -8,16 +8,14 @@ from django.core.management.base import BaseCommand, CommandError
 from rest_framework_simplejwt.token_blacklist.models import (BlacklistedToken,
                                                              OutstandingToken)
 
-from accounts.models import User
-from accounts.tokens import RefreshToken
-
 logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
+    """
+    Management command to logout users by blacklisting their tokens.
+    """
     help = 'Logout users by blacklisting their JWT tokens'
-
     # Ex use: python manage.py logout_users -ui 1 -f
-
     def add_arguments(self, parser):
         parser.add_argument(
             '-ui',
@@ -55,83 +53,83 @@ class Command(BaseCommand):
             action='store_true',
             help='Force logout without confirmation',
         )
-
+    # pylint: disable=too-many-branches
     def handle(self, *args, **options):
         User = get_user_model()
-        
         # Determine which users to logout
         users_to_logout = []
-        
         if options['user_id']:
             try:
                 user = User.objects.get(id=options['user_id'])
                 users_to_logout = [user]
                 self.stdout.write(f"Found user: {user.username} ({user.email})")
-            except User.DoesNotExist:
-                raise CommandError(f"User with ID {options['user_id']} does not exist")
-                
+            except User.DoesNotExist as exc:
+                raise CommandError(
+                    f"User with ID {options['user_id']} does not exist"
+                ) from exc
         elif options['username']:
             try:
                 user = User.objects.get(username=options['username'])
                 users_to_logout = [user]
-                self.stdout.write(f"Found user: {user.username} ({user.email})")
-            except User.DoesNotExist:
-                raise CommandError(f"User with username '{options['username']}' does not exist")
-                
+                self.stdout.write(
+                    f"Found user: {user.username} ({user.email})"
+                )
+            except User.DoesNotExist as exc:
+                raise CommandError(
+                    f"User with username '{options['username']}' does not exist"
+                ) from exc
         elif options['email']:
             try:
                 user = User.objects.get(email=options['email'])
                 users_to_logout = [user]
                 self.stdout.write(f"Found user: {user.username} ({user.email})")
-            except User.DoesNotExist:
-                raise CommandError(f"User with email '{options['email']}' does not exist")
-                
+            except User.DoesNotExist as exc:
+                raise CommandError(
+                    f"User with email '{options['email']}' does not exist"
+                ) from exc
         elif options['all_users']:
             users_to_logout = list(User.objects.filter(is_active=True))
             self.stdout.write(f"Found {len(users_to_logout)} active users")
-            
         elif options['inactive_users']:
             users_to_logout = list(User.objects.filter(is_active=False))
             self.stdout.write(f"Found {len(users_to_logout)} inactive users")
-            
         else:
-            raise CommandError("You must specify one of: --user-id/--ui, --username/-u, --email/-e, --all-users/-a, or --inactive-users/-iu")
-
+            raise CommandError("You must specify one of: --user-id/--ui, "
+                               "--username/-u, --email/-e, --all-users/-a, "
+                               "or --inactive-users/-iu")
         if not users_to_logout:
             self.stdout.write(self.style.WARNING("No users found to logout"))
             return
-
         # Confirmation
         if not options['force']:
             if len(users_to_logout) == 1:
-                confirm = input(f"Are you sure you want to logout user '{users_to_logout[0].username}'? [y/N]: ")
+                confirm = input("Are you sure you want to logout user"
+                                f" '{users_to_logout[0].username}'? [y/N]: ")
             else:
-                confirm = input(f"Are you sure you want to logout {len(users_to_logout)} users? [y/N]: ")
-            
+                confirm = input(f"Are you sure you want to logout {len(users_to_logout)}"
+                                f" users? [y/N]: ")
             if confirm.lower() not in ['y', 'yes']:
                 self.stdout.write("Operation cancelled")
                 return
-
         # Logout users
         total_tokens_blacklisted = 0
-        
         for user in users_to_logout:
             nbr_tokens_blacklisted = self.logout_user(user)
             total_tokens_blacklisted += nbr_tokens_blacklisted
-
             if nbr_tokens_blacklisted > 0:
                 self.stdout.write(
-                    self.style.SUCCESS(f"✓ Logged out user '{user.username}' ({nbr_tokens_blacklisted} tokens blacklisted)")
+                    self.style.SUCCESS(f"✓ Logged out user '{user.username}' "
+                                       f"({nbr_tokens_blacklisted} tokens blacklisted)")
                 )
             else:
                 self.stdout.write(
                     self.style.WARNING(f"⚠ User '{user.username}' had no active tokens")
                 )
-
         self.stdout.write(
-            self.style.SUCCESS(f"\nCompleted! Total tokens blacklisted: {total_tokens_blacklisted}")
+            self.style.SUCCESS(
+                f"\nCompleted! Total tokens blacklisted: {total_tokens_blacklisted}"
+            )
         )
-
     def logout_user(self, user):
         """
         Logout a specific user by blacklisting all their outstanding tokens.
@@ -143,23 +141,19 @@ class Command(BaseCommand):
             int: Number of tokens blacklisted
         """
         nbr_tokens_blacklisted = 0
-        
         try:
             # Get all outstanding tokens for this user
             outstanding_tokens = OutstandingToken.objects.filter(user=user)
-            
             for outstanding_token in outstanding_tokens:
                 # Check if token is already blacklisted
                 if not BlacklistedToken.objects.filter(token=outstanding_token).exists():
                     # Blacklist the token
                     BlacklistedToken.objects.create(token=outstanding_token)
                     nbr_tokens_blacklisted += 1
-                    logger.info(f"Blacklisted token for user {user.username}")
-            
-        except Exception as e:
-            logger.error(f"Error logging out user {user.username}: {str(e)}")
+                    logger.info("Blacklisted token for user %s", user.username)
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            logger.error("Error logging out user %s: %s", user.username, e)
             self.stdout.write(
-                self.style.ERROR(f"Error logging out user '{user.username}': {str(e)}")
+                self.style.ERROR(f"Error logging out user '{user.username}': {e}")
             )
-
         return nbr_tokens_blacklisted
