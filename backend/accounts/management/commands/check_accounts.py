@@ -7,16 +7,17 @@ Management command for accounts app health check.
 import logging
 import os
 
-import firebase_config
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage
 from django.core.management.base import BaseCommand
 from django.db import connection
-from firebase_admin import auth as firebase_auth
+
+from firebase_admin import auth as firebase_auth  # pylint: disable=unused-import
 
 from accounts.models import User
 from accounts.services import UserValidationService
+import firebase_config  # pylint: disable=unused-import
 
 logger = logging.getLogger(__name__)
 
