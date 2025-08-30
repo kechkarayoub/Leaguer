@@ -1,14 +1,18 @@
+"""
+    Test utility functions for user accounts
+"""
 from datetime import date
 
 from django.conf import settings
 from django.test import TestCase
 
-from ..models import User
-from ..utils import (GENDERS_CHOICES, format_phone_number,
-                     send_phone_number_verification_code)
+from accounts.models import User
+from accounts.utils import (GENDERS_CHOICES, format_phone_number,
+                             send_phone_number_verification_code)
 
 
 class UserUtilsTest(TestCase):
+    """Test utility functions for user accounts"""
     def setUp(self):
         self.user = User.objects.create_user(
             user_address="123 Test Street",
@@ -26,8 +30,8 @@ class UserUtilsTest(TestCase):
             user_phone_number_verified_by="sms",
             username="testuser",
         )
-
     def test_format_phone_number(self):
+        """Test phone number formatting"""
         formatted_phone_number = format_phone_number("0612505252")
         self.assertEqual(formatted_phone_number, "+212612505252")
         formatted_phone_number = format_phone_number("06 12-505 252")
@@ -40,19 +44,18 @@ class UserUtilsTest(TestCase):
         self.assertEqual(formatted_phone_number, "+kjmnj")
         formatted_phone_number = format_phone_number("+123")
         self.assertEqual(formatted_phone_number, "+123")
-
     def test_send_phone_number_verification_code(self):
+        """Test sending phone number verification code"""
         if settings.ENABLE_PHONE_NUMBER_VERIFICATION:
             self.assertIsNone(self.user.user_phone_number_verification_code)
-            status_code, _ = send_phone_number_verification_code(self.user, handle_send_phone_number_verification_sms_error=True, do_not_mock_api=False)
+            status_code, _ = send_phone_number_verification_code(self.user,
+                handle_send_phone_number_verification_sms_error=True, do_not_mock_api=False)
             self.user = User.objects.get(pk=self.user.id)
             self.assertEqual(status_code, 500)
             self.assertIsNone(self.user.user_phone_number_verification_code)
-            status_code, (uid, verification_code) = send_phone_number_verification_code(self.user)
+            status_code, (_uid, verification_code) = send_phone_number_verification_code(self.user)
             self.user = User.objects.get(pk=self.user.id)
             self.assertEqual(status_code, 200)
             self.assertEqual(self.user.user_phone_number_verification_code, verification_code)
         else:
-            self.assertTrue(True)
-
-
+            self.assertEqual(2, 1 + 1)

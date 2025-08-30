@@ -36,17 +36,34 @@ console.error = (...args: any[]) => {
   originalConsoleError.apply(console, args);
 };
 
-// Mock i18next HTTP backend to prevent network requests
+// Mock i18next dependencies to prevent network requests
 jest.mock('i18next-http-backend', () => {
   return {
     __esModule: true,
     default: class MockHttpBackend {
       static type = 'backend';
+      type = 'backend';
       init() {}
       read(language: string, namespace: string, callback: Function) {
         // Return empty translations to prevent network requests
         callback(null, {});
       }
+      create() {}
+      readMulti() {}
+      save() {}
+    }
+  };
+});
+
+jest.mock('i18next-browser-languagedetector', () => {
+  return {
+    __esModule: true,
+    default: class MockLanguageDetector {
+      static type = 'languageDetector';
+      type = 'languageDetector';
+      init() {}
+      detect() { return 'en'; }
+      cacheUserLanguage() {}
     }
   };
 });
