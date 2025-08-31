@@ -1,13 +1,16 @@
+"""Accounts custom middlwares"""
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
 from django.utils.timezone import activate
 
 
-class TimezoneMiddleware:
+class TimezoneMiddleware:  # pylint: disable=too-few-public-methods
     """
-        Middleware to activate the timezone for each request based on the authenticated user's preference.
-        Defaults to settings.TIME_ZONE for unauthenticated users or if the user's timezone is invalid.
+        Middleware to activate the timezone for each request based on the authenticated
+         user's preference.
+        Defaults to settings.TIME_ZONE for unauthenticated users or if the user's 
+        timezone is invalid.
     """
     def __init__(self, get_response):
         """
@@ -15,7 +18,6 @@ class TimezoneMiddleware:
             :param get_response: The next middleware or view in the request-response cycle.
         """
         self.get_response = get_response
-
     def __call__(self, request):
         """
             Process each request to set the appropriate timezone.

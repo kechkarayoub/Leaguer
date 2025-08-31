@@ -4,7 +4,7 @@
  * User settings and preferences page with dirty state management
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -50,28 +50,37 @@ const SettingsPage: React.FC = () => {
   // Watch all form fields
   const watchedData = watch();
 
-  // Set initial form data when user data loads
+  // Track if initial data has been set to prevent loops
+  const initialDataSet = useRef(false);
+
+  // Memoize the initial data to prevent infinite loops
+  const initialFormData = useMemo(() => {
+    if (!user) return null;
+    return {
+      current_language: user.current_language || 'en', // Remove i18n.language dependency
+      user_timezone: user.user_timezone || 'UTC',
+      user_theme: user.user_theme || 'default',
+    };
+  }, [user]);
+
+  // Set initial form data when user data loads (only once)
   useEffect(() => {
-    if (user) {
-      const data: SettingsFormData = {
-        current_language: i18n.language || user.current_language || 'en', // Use current i18n language
-        user_timezone: user.user_timezone || 'UTC',
-        user_theme: user.user_theme || 'default',
-      };
-      
-      setInitialData(data);
-      reset(data);
+    if (initialFormData && !initialDataSet.current) {
+      setInitialData(initialFormData);
+      reset(initialFormData);
       setIsDirty(false);
+      initialDataSet.current = true;
     }
-  }, [user, reset, i18n.language]); // Add i18n.language as dependency
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialFormData]); // Reset is stable from react-hook-form
 
   // Track dirty state
   useEffect(() => {
     if (initialData && watchedData) {
       const hasChanges = Object.keys(dirtyFields).length > 0 || 
-        watchedData.current_language !== initialData.current_language ||
-        watchedData.user_timezone !== initialData.user_timezone ||
-        watchedData.user_theme !== initialData.user_theme;
+        watchedData?.current_language !== initialData.current_language ||
+        watchedData?.user_timezone !== initialData.user_timezone ||
+        watchedData?.user_theme !== initialData.user_theme;
       
       setIsDirty(hasChanges);
     }
@@ -186,7 +195,7 @@ const SettingsPage: React.FC = () => {
                   <div className="form-group">
                     <CustomSelect
                       label={t('settings:preferences.language')}
-                      value={watchedData.current_language}
+                      value={watchedData?.current_language || ''}
                       onChange={handleLanguageChange}
                       options={languageOptions}
                       placeholder={t('settings:preferences.selectLanguage', 'Select language')}
@@ -201,7 +210,7 @@ const SettingsPage: React.FC = () => {
                   <div className="form-group">
                     <CustomSelect
                       label={t('settings:preferences.timezone')}
-                      value={watchedData.user_timezone}
+                      value={watchedData?.user_timezone || ''}
                       onChange={handleTimezoneChange}
                       options={timezoneOptions}
                       placeholder={t('settings:preferences.selectTimezone', 'Select timezone')}
@@ -222,7 +231,7 @@ const SettingsPage: React.FC = () => {
                             type="radio"
                             {...register('user_theme')}
                             value={theme.value}
-                            checked={watchedData.user_theme === theme.value}
+                            checked={watchedData?.user_theme === theme.value}
                             onChange={(e) => {
                               setValue('user_theme', e.target.value, { shouldDirty: true });
                               // Immediately preview the theme change

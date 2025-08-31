@@ -11,10 +11,8 @@ from django.contrib.auth import get_user_model
 from rest_framework import exceptions
 from rest_framework_simplejwt.authentication import \
     JWTAuthentication as BaseJWTAuthentication
-from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework_simplejwt.token_blacklist.models import (BlacklistedToken,
                                                              OutstandingToken)
-from rest_framework_simplejwt.tokens import UntypedToken
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -30,27 +28,25 @@ class JWTAuthentication(BaseJWTAuthentication):
     - Check if parent refresh token is blacklisted
     - Simple, reliable, no external dependencies
     """
-    
     def authenticate(self, request):
         """
         Authenticate the request and check if parent refresh token is blacklisted.
         """
         result = super().authenticate(request)
-        
         if result is None:
             return result
-            
         user, validated_token = result
         # Check if the parent refresh token is blacklisted
         if self.is_parent_token_blacklisted(validated_token):
-            logger.warning(f"User {user.username} attempted to use access token from blacklisted parent session")
+            logger.warning(
+                "User %s attempted to use access token from blacklisted parent session",
+                user.username
+            )
             raise exceptions.AuthenticationFailed(
                 'Device session has been terminated. Please log in again.',
                 code='device_session_terminated'
             )
-        
         return user, validated_token
-    
     def is_parent_token_blacklisted(self, validated_token):
         """
         Check if the parent refresh token that generated this access token is blacklisted.
@@ -67,31 +63,26 @@ class JWTAuthentication(BaseJWTAuthentication):
         try:
             # Get the parent JTI from the access token
             parent_jti = validated_token.get('parent_jti')
-            
             if not parent_jti:
                 # If no parent_jti, this access token wasn't generated with our custom logic
                 # Fall back to standard behavior (allow the request)
                 logger.debug("No parent_jti found in access token, allowing request")
                 return False
-            
             # Check if the parent refresh token is blacklisted
             try:
                 outstanding_token = OutstandingToken.objects.get(jti=parent_jti)
-                is_blacklisted = BlacklistedToken.objects.filter(token=outstanding_token).exists()
-                
+                is_blacklisted = BlacklistedToken.objects.filter(
+                    token=outstanding_token).exists()
                 if is_blacklisted:
-                    logger.info(f"Parent refresh token {parent_jti} is blacklisted")
+                    logger.info("Parent refresh token %s is blacklisted", parent_jti)
                     return True
-                    
                 return False
-                
             except OutstandingToken.DoesNotExist:
                 # Parent token not found - might be expired or cleaned up
-                logger.debug(f"Parent token with JTI {parent_jti} not found, allowing request")
+                logger.debug("Parent token with JTI %s not found, allowing request", parent_jti)
                 return False
-                
-        except Exception as e:
-            logger.error(f"Error checking parent token blacklist status: {str(e)}")
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            logger.error("Error checking parent token blacklist status: %s", str(e))
             # In case of error, allow the request (fail open for availability)
             return False
     def is_user_logged_out(self, validated_token):

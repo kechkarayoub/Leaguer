@@ -1,6 +1,7 @@
 """
 Custom exceptions for accounts app.
 """
+# pylint: disable=unnecessary-pass
 
 
 class AccountsException(Exception):
