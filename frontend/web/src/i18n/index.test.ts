@@ -9,6 +9,9 @@
  * - Namespace configuration
  */
 
+
+import i18n from './index';
+
 // Mock the external modules to avoid loading issues BEFORE importing i18n
 jest.mock('i18next-http-backend', () => {
   const MockHttpBackend = function() {
@@ -36,8 +39,6 @@ jest.mock('i18next-browser-languagedetector', () => {
   return MockLanguageDetector;
 });
 
-import i18n from './index';
-
 describe('i18n Configuration', () => {
   describe('Basic Setup', () => {
     it('should be properly initialized', () => {
@@ -50,11 +51,11 @@ describe('i18n Configuration', () => {
     it('should have correct language configuration', () => {
       // fallbackLng can be an array or string - check if 'en' is included
       const fallbackLng = i18n.options.fallbackLng;
-      if (Array.isArray(fallbackLng)) {
-        expect(fallbackLng).toContain('en');
-      } else {
-        expect(fallbackLng).toBe('en');
-      }
+      expect(fallbackLng).toBeDefined();
+      // Check that either it's 'en' or contains 'en'
+      const isValidFallback = fallbackLng === 'en' || (Array.isArray(fallbackLng) && fallbackLng.includes('en'));
+      expect(isValidFallback).toBe(true);
+      
       expect(i18n.options.supportedLngs).toContain('en');
       expect(i18n.options.supportedLngs).toContain('fr');
       expect(i18n.options.supportedLngs).toContain('ar');
@@ -84,50 +85,45 @@ describe('i18n Configuration', () => {
   describe('Language Detection', () => {
     it('should have language detection configured', () => {
       expect(i18n.options.detection).toBeDefined();
-      if (i18n.options.detection) {
-        expect((i18n.options.detection as any).order).toEqual(['localStorage', 'navigator', 'htmlTag']);
-        expect((i18n.options.detection as any).caches).toEqual(['localStorage']);
-        expect((i18n.options.detection as any).lookupLocalStorage).toBe('i18nextLng');
-      }
+      const detection = i18n.options.detection as any;
+      expect(detection.order).toEqual(['localStorage', 'navigator', 'htmlTag']);
+      expect(detection.caches).toEqual(['localStorage']);
+      expect(detection.lookupLocalStorage).toBe('i18nextLng');
     });
   });
 
   describe('Backend Configuration', () => {
     it('should have backend load path configured', () => {
       expect(i18n.options.backend).toBeDefined();
-      if (i18n.options.backend) {
-        expect((i18n.options.backend as any).loadPath).toBe('/locales/{{lng}}/{{ns}}.json');
-        expect((i18n.options.backend as any).addPath).toBe('/locales/{{lng}}/{{ns}}.json');
-      }
+      const backend = i18n.options.backend as any;
+      expect(backend.loadPath).toBe('/locales/{{lng}}/{{ns}}.json');
+      expect(backend.addPath).toBe('/locales/{{lng}}/{{ns}}.json');
     });
   });
 
   describe('Interpolation Options', () => {
     it('should have interpolation configured', () => {
       expect(i18n.options.interpolation).toBeDefined();
-      if (i18n.options.interpolation) {
-        expect(i18n.options.interpolation.escapeValue).toBe(false);
-        expect((i18n.options.interpolation as any).formatSeparator).toBe(',');
-      }
+      const interpolation = i18n.options.interpolation as any;
+      expect(interpolation.escapeValue).toBe(false);
+      expect(interpolation.formatSeparator).toBe(',');
     });
 
     it('should have custom format function', () => {
       expect(i18n.options.interpolation).toBeDefined();
-      if (i18n.options.interpolation) {
-        expect((i18n.options.interpolation as any).format).toBeDefined();
-        expect(typeof (i18n.options.interpolation as any).format).toBe('function');
-      }
+      const interpolation = i18n.options.interpolation as any;
+      expect(interpolation.format).toBeDefined();
+      expect(typeof interpolation.format).toBe('function');
     });
 
     it('should format values correctly', () => {
-      if (i18n.options.interpolation) {
-        const formatFn = (i18n.options.interpolation as any).format;
-        
-        expect(formatFn('hello', 'uppercase')).toBe('HELLO');
-        expect(formatFn('WORLD', 'lowercase')).toBe('world');
-        expect(formatFn('test', 'capitalize')).toBe('Test');
-        expect(formatFn('unchanged', 'unknown')).toBe('unchanged');
-      }
+      const interpolation = i18n.options.interpolation as any;
+      const formatFn = interpolation.format;
+      
+      expect(formatFn('hello', 'uppercase')).toBe('HELLO');
+      expect(formatFn('WORLD', 'lowercase')).toBe('world');
+      expect(formatFn('test', 'capitalize')).toBe('Test');
+      expect(formatFn('unchanged', 'unknown')).toBe('unchanged');
     });
   });
 
@@ -143,11 +139,10 @@ describe('i18n Configuration', () => {
   describe('React Integration', () => {
     it('should have React options configured', () => {
       expect(i18n.options.react).toBeDefined();
-      if (i18n.options.react) {
-        expect((i18n.options.react as any).useSuspense).toBe(false);
-        expect((i18n.options.react as any).transSupportBasicHtmlNodes).toBe(true);
-        expect((i18n.options.react as any).transKeepBasicHtmlNodesFor).toEqual(['br', 'strong', 'i', 'em', 'span']);
-      }
+      const react = i18n.options.react as any;
+      expect(react.useSuspense).toBe(false);
+      expect(react.transSupportBasicHtmlNodes).toBe(true);
+      expect(react.transKeepBasicHtmlNodesFor).toEqual(['br', 'strong', 'i', 'em', 'span']);
     });
   });
 
@@ -180,11 +175,10 @@ describe('i18n Configuration', () => {
     it('should support English as fallback', () => {
       expect(i18n.options.supportedLngs).toContain('en');
       const fallbackLng = i18n.options.fallbackLng;
-      if (Array.isArray(fallbackLng)) {
-        expect(fallbackLng).toContain('en');
-      } else {
-        expect(fallbackLng).toBe('en');
-      }
+      expect(fallbackLng).toBeDefined();
+      // Check that either it's 'en' or contains 'en'
+      const isValidFallback = fallbackLng === 'en' || (Array.isArray(fallbackLng) && fallbackLng.includes('en'));
+      expect(isValidFallback).toBe(true);
     });
 
     it('should support French and Arabic', () => {
@@ -195,15 +189,14 @@ describe('i18n Configuration', () => {
     it('should have at least 3 supported languages', () => {
       // i18next may add 'cimode' for test mode
       const supportedLngs = i18n.options.supportedLngs;
-      if (Array.isArray(supportedLngs)) {
-        expect(supportedLngs.length).toBeGreaterThanOrEqual(3);
-        expect(supportedLngs).toContain('en');
-        expect(supportedLngs).toContain('fr');
-        expect(supportedLngs).toContain('ar');
-      } else {
-        // Fallback check if not an array
-        expect(supportedLngs).toBeDefined();
-      }
+      expect(supportedLngs).toBeDefined();
+      expect(Array.isArray(supportedLngs)).toBe(true);
+      
+      const languages = supportedLngs as string[];
+      expect(languages.length).toBeGreaterThanOrEqual(3);
+      expect(languages).toContain('en');
+      expect(languages).toContain('fr');
+      expect(languages).toContain('ar');
     });
   });
 
