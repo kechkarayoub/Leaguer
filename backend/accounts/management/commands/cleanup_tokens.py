@@ -92,5 +92,5 @@ class Command(BaseCommand):
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.error("Error during token cleanup: %s", e)
             self.stdout.write(
-                self.style.ERROR("Error during cleanup: %s", e)
+                self.style.ERROR(f"Error during cleanup: {e}")
             )
