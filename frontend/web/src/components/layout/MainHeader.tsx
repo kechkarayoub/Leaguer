@@ -81,7 +81,7 @@ const MainHeader: React.FC<MainHeaderProps> = ({ pageTitle, pageSubtitle, onMenu
             <button
                 className="menu-button"
                 onClick={onMenuClick}
-                aria-label={t('navigation.menu')}
+                aria-label={t('navigation:menu')}
             >
                 <MenuIcon size={24} />
             </button>

@@ -1,4 +1,5 @@
 
+"""Accounts related urls"""
 from django.urls import path
 
 from .jwt_views import TokenObtainPairView, TokenRefreshView
@@ -11,7 +12,8 @@ from .views import (ForgotPasswordView, LogoutView, ResetPasswordView,
 urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('send-verification-email-link/', SendVerificationEmailLinkView.as_view(), name='send-verification-email-link'),
+    path('send-verification-email-link/', SendVerificationEmailLinkView.as_view(),
+         name='send-verification-email-link'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('sign-in/', SignInView.as_view(), name='sign-in'),
     path('sign-in-third-party/', SignInThirdPartyView.as_view(), name='sign-in-third-party'),

@@ -16,7 +16,6 @@ class RefreshToken(BaseRefreshToken):
     This enables device-specific logout by linking access tokens
     to their parent refresh tokens.
     """
-    
     @property
     def access_token(self):
         """
@@ -26,12 +25,9 @@ class RefreshToken(BaseRefreshToken):
         allowing us to check if the parent refresh token is blacklisted.
         """
         access = super().access_token
-        
         # Add the parent refresh token's JTI to the access token
         access['parent_jti'] = self.get('jti')
-        
         return access
-    
     @classmethod
     @sync_to_async
     def for_user_async(cls, user):
