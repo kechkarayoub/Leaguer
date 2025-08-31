@@ -1,3 +1,4 @@
+# pylint: disable=broad-exception-caught,too-many-locals,too-many-branches,too-many-return-statements
 """Accounts related views"""
 import datetime
 import logging
@@ -9,8 +10,6 @@ from django.utils.http import urlsafe_base64_decode
 from django.utils.timezone import now
 from django.utils.translation import activate
 from django.utils.translation import gettext_lazy as _
-from leaguer.ws_utils import (notify_profile_password_reset,
-                              notify_profile_update)
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -18,10 +17,13 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.token_blacklist.models import (BlacklistedToken,
                                                              OutstandingToken)
 
-from accounts.models import User
+from accounts.models import THEME_CHOICES, User
 from accounts.tokens import RefreshToken
 from accounts.utils import (send_phone_number_verification_code,
                     send_verification_email)
+from leaguer.utils import get_all_timezones
+from leaguer.ws_utils import (notify_profile_password_reset,
+                              notify_profile_update)
 
 # Get a logger instance
 logger = logging.getLogger(__name__)
@@ -50,7 +52,7 @@ def verify_phone_number(request):
     activate(user.current_language)
     if not user.is_user_phone_number_validated and not user.user_phone_number_to_verify:
         return JsonResponse({
-            "message": _(f"You should add a phone number before validate it!")
+            "message": _("You should add a phone number before validate it!")
         }, status=400)
     if not user.is_user_phone_number_validated and user.user_phone_number_to_verify and \
             User.objects.filter(is_user_phone_number_validated=True,
@@ -74,27 +76,24 @@ def verify_phone_number(request):
     if verified:
         if already_verified:
             return JsonResponse({"message": _("Phone number already verified.")})
-        else:
-            return JsonResponse({"message": _("Phone number verified successfully.")})
-    else:
-        if expired_code:
-            if resend_verification_phone_number_code:
-                return JsonResponse({
-                    "message": _("A new verification code will be sent to your phone "
-                                 "number.")
-                }, status=400)
+        return JsonResponse({"message": _("Phone number verified successfully.")})
+    if expired_code:
+        if resend_verification_phone_number_code:
             return JsonResponse({
-                "message": _("Expired verification code.")
+                "message": _("A new verification code will be sent to your phone "
+                            "number.")
             }, status=400)
-        elif quota_exceeded:
-            return JsonResponse({
-                "message": _("Your sms verification code quota has been exceeded. "
-                    "Please contact the technical service at {technical_service_email} "
-                    "to resolve your problem.").format(
-                        technical_service_email=settings.TECHNICAL_SERVICE_EMAIL)
-            }, status=400)
-        else:
-            return JsonResponse({"message": _("Invalid code.")}, status=400)
+        return JsonResponse({
+            "message": _("Expired verification code.")
+        }, status=400)
+    if quota_exceeded:
+        return JsonResponse({
+            "message": _("Your sms verification code quota has been exceeded. "
+                "Please contact the technical service at {technical_service_email} "
+                "to resolve your problem.").format(
+                    technical_service_email=settings.TECHNICAL_SERVICE_EMAIL)
+        }, status=400)
+    return JsonResponse({"message": _("Invalid code.")}, status=400)
 
 
 def verify_user_phone_number(uid, verification_code_,
@@ -105,7 +104,8 @@ def verify_user_phone_number(uid, verification_code_,
     Args:
         uid (str): Base64 encoded user ID.
         verification_code_ (str): Code for user_phone_number verification.
-        resend_verification_phone_number_code (bool): resend the phone number verification code for the user if True.
+        resend_verification_phone_number_code (bool): resend the phone number
+            verification code for the user if True.
 
     Returns:
         tuple: (
@@ -122,12 +122,12 @@ def verify_user_phone_number(uid, verification_code_,
     if user.is_user_phone_number_validated:
         return True, True, False, False
     # the verification_code is expired (not the same day)
-    elif user.user_phone_number_verification_code_generated_at and (
+    if user.user_phone_number_verification_code_generated_at and (
             user.user_phone_number_verification_code_generated_at + datetime.timedelta(
         minutes=settings.NUMBER_MINUTES_BEFORE_PHONE_NUMBER_VERIFICATION_CODE_EXPIRATION)) < now():
         return False, False, True, False
     # The resend_verification_phone_number_code is True
-    elif resend_verification_phone_number_code:
+    if resend_verification_phone_number_code:
         if user.nbr_phone_number_verification_code_used >= settings.PHONE_NUMBER_VERIFICATION_CODE_QUOTA:   # pylint: disable=line-too-long
             return False, False, False, True
         send_phone_number_verification_code(user)
@@ -138,8 +138,7 @@ def verify_user_phone_number(uid, verification_code_,
         user.save()
         return True, False, False, False
     # If the token is not valid, the email address will not be validated
-    else:
-        return False, False, False, False
+    return False, False, False, False
 
 
 def verify_user_email(uid, token_, resend_verification_email=False):
@@ -173,7 +172,9 @@ def verify_user_email(uid, token_, resend_verification_email=False):
     if user.is_user_email_validated:
         return True, True, False
     # The resend_verification_email is True or the token is expired (not the same day)
-    elif resend_verification_email or date_token and date_token.strftime("%Y-%m-%d") != now().strftime("%Y-%m-%d"):
+    if resend_verification_email or (
+        date_token and date_token.strftime("%Y-%m-%d") != now().strftime("%Y-%m-%d")
+    ):
         send_verification_email(user)
         return False, False, True
     # If the token is valid, the email address will be validated
@@ -182,8 +183,7 @@ def verify_user_email(uid, token_, resend_verification_email=False):
         user.save()
         return True, False, False
     # If the token is not valid, the email address will not be validated
-    else:
-        return False, False, False
+    return False, False, False
 
 
 def verify_email(request):
@@ -217,16 +217,13 @@ def verify_email(request):
     if verified:
         if already_verified:
             return JsonResponse({"message": _("Email already verified.")})
-        else:
-            return JsonResponse({"message": _("Email verified successfully.")})
-    else:
-        if expired_token:
-            return JsonResponse({
-                "message": _("Expired token. A new verification email will be sent to "
-                             "your email address.")
-            }, status=400)
-        else:
-            return JsonResponse({"message": _("Invalid token.")}, status=400)
+        return JsonResponse({"message": _("Email verified successfully.")})
+    if expired_token:
+        return JsonResponse({
+            "message": _("Expired token. A new verification email will be sent to "
+                            "your email address.")
+        }, status=400)
+    return JsonResponse({"message": _("Invalid token.")}, status=400)
 
 
 class LogoutView(APIView):
@@ -250,8 +247,8 @@ class LogoutView(APIView):
         try:
             current_language = request.data.get("selected_language") or 'en'
             activate(current_language)
-            
-            # Optional: Blacklist all tokens for this user (more secure but logs out 
+
+            # Optional: Blacklist all tokens for this user (more secure but logs out
             # all devices)
             # You can enable this if you want to logout from all devices
             logout_all_devices = request.data.get("logout_all_devices", False)
@@ -273,17 +270,21 @@ class LogoutView(APIView):
                         if not BlacklistedToken.objects.filter(
                             token=outstanding_token).exists():
                             BlacklistedToken.objects.create(token=outstanding_token)
-                            logger.info(f"Successfully blacklisted token for user {request.user.username}")
+                            logger.info("Successfully blacklisted token for user %s",
+                                        request.user.username)
                         else:
-                            logger.info(f"Token already blacklisted for user {request.user.username}")
+                            logger.info("Token already blacklisted for user %s",
+                                        request.user.username)
                     except OutstandingToken.DoesNotExist:
-                        logger.warning(f"Outstanding token not found for JTI {jti}")
-                        # Token might already be expired or invalid, but that's okay for 
+                        logger.warning("Outstanding token not found for JTI %s",
+                                       jti)
+                        # Token might already be expired or invalid, but that's okay for
                         # logout
                 else:
                     logger.warning("No JTI found in refresh token")
             except Exception as token_error:
-                logger.warning(f"Error processing refresh token: {str(token_error)}")
+                logger.warning("Error processing refresh token: %s",
+                               str(token_error))
                 # Continue with logout even if token processing fails
                 if not logout_all_devices:
                     return Response({
@@ -300,15 +301,17 @@ class LogoutView(APIView):
                             token=outstanding_token).exists():
                             BlacklistedToken.objects.create(token=outstanding_token)
                             tokens_blacklisted += 1
-                    logger.info(f"Blacklisted {tokens_blacklisted} tokens for user {request.user.username} (all devices)")
-                    
+                    logger.info("Blacklisted %d tokens for user %s (all devices)",
+                                tokens_blacklisted, request.user.username)
+
                 except Exception as e:
-                    logger.error(f"Error blacklisting all tokens for user {request.user.username}: {str(e)}")
+                    logger.error("Error blacklisting all tokens for user %s: %s",
+                                 request.user.username, str(e))
             # Get device ID for WebSocket notification
             device_id = request.headers.get('X-Device-ID')
-            
+
             # Notify all connected devices about logout (except the current device)
-            # This will trigger automatic logout on other devices if logout_all_devices 
+            # This will trigger automatic logout on other devices if logout_all_devices
             # is True
             if logout_all_devices:
                 notify_profile_password_reset(request.user.id, device_id=device_id)
@@ -317,7 +320,8 @@ class LogoutView(APIView):
                 "success": True
             }, status=status.HTTP_200_OK)
         except Exception as e:
-            logger.error(f"Error during logout for user {request.user.id if request.user else 'unknown'}: {str(e)}")
+            logger.error("Error during logout for user %s: %s",
+                         request.user.id if request.user else 'unknown', str(e))
             return Response({
                 "message": _("An error occurred during logout"),
                 "success": False
@@ -365,7 +369,6 @@ class UpdateSettingsView(APIView):
             new_timezone = request.data.get("user_timezone")
             if new_timezone and new_timezone != user.user_timezone:
                 # Validate timezone
-                from leaguer.utils import get_all_timezones
                 valid_timezones = [tz[0] for tz in get_all_timezones()]
                 if new_timezone in valid_timezones:
                     user.user_timezone = new_timezone
@@ -378,7 +381,6 @@ class UpdateSettingsView(APIView):
             # Update theme
             new_theme = request.data.get("user_theme")
             if new_theme and new_theme != user.user_theme:
-                from accounts.models import THEME_CHOICES
                 valid_themes = [theme[0] for theme in THEME_CHOICES]
                 if new_theme in valid_themes:
                     user.user_theme = new_theme
@@ -400,16 +402,17 @@ class UpdateSettingsView(APIView):
             # Notify other devices about settings update
             user_data = user.to_login_dict()
             notify_profile_update(user.id, user_data, device_id=device_id)
-            logger.info(f"Settings updated for user {user.username}: {', '.join(updated_fields)}")
+            logger.info("Settings updated for user %s: %s",
+                        user.username, ', '.join(updated_fields))
             return Response({
                 "message": _("Settings updated successfully"),
                 "success": True,
                 "user": user_data
             }, status=status.HTTP_200_OK)
         except Exception as e:
-            logger.error(f"Error updating settings for user {request.user.id if request.user else 'unknown'}: {str(e)}")
+            logger.error("Error updating settings for user %s: %s",
+                         request.user.id if request.user else 'unknown', str(e))
             return Response({
                 "message": _("An error occurred while updating settings"),
                 "success": False
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-

@@ -1,6 +1,7 @@
 """
 Custom exceptions for the i18n_switcher app.
 """
+# pylint: disable=unnecessary-pass
 
 
 class I18nSwitcherBaseException(Exception):

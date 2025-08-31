@@ -1,14 +1,12 @@
 """
 Service layer for i18n_switcher app.
 """
+import logging
 
 from django.conf import settings
-from django.http import HttpRequest
-from django.utils import translation
 from django.utils.translation import get_language_from_request
+
 from .exceptions import InvalidPathException, UnsupportedLanguageException, LanguageDetectionException
-import logging
-import re
 
 
 logger = logging.getLogger(__name__)
@@ -157,7 +155,7 @@ class LanguageSwitchService:
             
         except Exception as e:
             logger.error(f"Language detection failed: {str(e)}")
-            raise LanguageDetectionException(f"Language detection failed: {str(e)}")
+            raise LanguageDetectionException(f"Language detection failed: {str(e)}") from e
     
     @staticmethod
     def get_current_language_from_path(path):

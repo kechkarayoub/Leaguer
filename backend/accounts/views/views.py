@@ -1,3 +1,4 @@
+# pylint: disable=broad-exception-caught,too-many-locals,too-many-branches,too-many-return-statements
 """Accounts related views"""
 import logging
 
@@ -40,7 +41,7 @@ logger = logging.getLogger(__name__)
 class SendVerificationEmailLinkView(APIView):
     """
     API endpoint to send a verification email link.
-    This allows a user to request a new verification link if they haven't validated 
+    This allows a user to request a new verification link if they haven't validated
         their email.
     """
     permission_classes = [AllowAny]
@@ -170,14 +171,10 @@ class SignInView(APIView):
                     "success": True,
                     "user": user_data,
                 }, status=status.HTTP_200_OK)
-            else:
-                return Response({"message": _("Invalid credentials"), "success": False},
-                                status=status.HTTP_400_BAD_REQUEST)
-        else:
             return Response({"message": _("Invalid credentials"), "success": False},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-
+                                status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": _("Invalid credentials"), "success": False},
+                        status=status.HTTP_400_BAD_REQUEST)
 class SignInThirdPartyView(APIView):
     """
     API endpoint for user authentication using third party.
@@ -221,34 +218,38 @@ class SignInThirdPartyView(APIView):
                         # Use Google OAuth verification instead of Firebase
                         request_adapter = requests.Request()
                         # Your Google OAuth client ID (the audience in the token)
-                        GOOGLE_CLIENT_ID = getattr(
+                        google_client_id = getattr(
                             settings, 'GOOGLE_SIGN_IN_WEB_CLIENT_ID', None)
                         # Verify the Google OAuth ID token
                         idinfo = id_token.verify_oauth2_token(
-                            token_value, request_adapter, GOOGLE_CLIENT_ID)
+                            token_value, request_adapter, google_client_id)
                         # Check if the token is valid and email matches
                         verified_email = idinfo.get('email')
                         email_verified = idinfo.get('email_verified', False)
                         if verified_email == email and email_verified:
                             email = verified_email
-                            logger.info(f"Successfully verified Google OAuth token "
-                                        "for email: {email}")
+                            logger.info(
+                                "Successfully verified Google OAuth token for email: %s",
+                                email)
                         else:
                             logger.warning(
-                                f"Email mismatch or not verified: provided={email}, "
-                                f"token={verified_email}, verified={email_verified}")
+                                "Email mismatch or not verified: provided=%s, "
+                                "token=%s, verified=%s", email, verified_email, 
+                                email_verified)
                             email = None
                     except Exception as google_error:
                         logger.error(
-                            f"Google OAuth token verification failed: {str(google_error)}")
+                            "Google OAuth token verification failed: %s", 
+                            str(google_error))
                         email = None
                 else:
                     # For other third-party providers, implement similar verification
                     logger.warning(
-                        f"Third-party provider '{type_third_party}' not implemented yet")
+                        "Third-party provider '%s' not implemented yet", 
+                        type_third_party)
                     email = None
             except Exception as e:
-                logger.error(f"Unexpected error during token verification: {str(e)}")
+                logger.error("Unexpected error during token verification: %s", str(e))
                 email = None
             user = User.objects.filter(email=email).first()
         if user is not None:
@@ -284,9 +285,8 @@ class SignInThirdPartyView(APIView):
                 "success": True,
                 "user": user_data,
             }, status=status.HTTP_200_OK)
-        else:
-            return Response({"message": _("Invalid credentials"), "success": False},
-                            status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": _("Invalid credentials"), "success": False},
+                        status=status.HTTP_400_BAD_REQUEST)
 
 
 class ForgotPasswordView(APIView):
@@ -316,7 +316,7 @@ class ForgotPasswordView(APIView):
                 {"message": _("Email or username is required"), "success": False},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        # Always return success message for security 
+        # Always return success message for security
         # (don't reveal if email/username exists)
         success_message = _("If an account with this email or username exists, you will "
                             "receive a password reset link shortly.")
@@ -340,7 +340,7 @@ class ForgotPasswordView(APIView):
                 send_password_reset_email(user)
         except Exception as e:
             # Log the error but don't expose it to the user
-            logger.error(f"Error sending password reset email: {str(e)}")
+            logger.error("Error sending password reset email: %s", str(e))
         return Response({
             "message": success_message,
             "success": True,
@@ -397,9 +397,13 @@ class ResetPasswordView(APIView):
                         token=outstanding_token).exists():
                         BlacklistedToken.objects.create(token=outstanding_token)
                         tokens_blacklisted += 1
-                logger.info(f"Blacklisted {tokens_blacklisted} tokens for user {user.username} due to password reset")
+                logger.info(
+                    "Blacklisted %d tokens for user %s due to password reset",
+                    tokens_blacklisted, user.username)
             except Exception as e:
-                logger.error(f"Error blacklisting tokens during password reset for user {user.username}: {str(e)}")
+                logger.error(
+                    "Error blacklisting tokens during password reset for user %s: %s",
+                    user.username, str(e))
             # Reset password
             user.set_password(new_password)
             user.save()
@@ -413,9 +417,9 @@ class ResetPasswordView(APIView):
                              "in with your new password."),
                 "success": True,
             }, status=status.HTTP_200_OK)
-            
+
         except Exception as e:
-            logger.error(f"Error resetting password: {str(e)}")
+            logger.error("Error resetting password: %s", str(e))
             return Response({
                 "message": _("An error occurred while resetting your password. Please "
                              "try again."),
@@ -504,7 +508,6 @@ class SignUpThirdPartyView(APIView):
         current_language = request.data.get("selected_language") or 'fr'
         email = request.data.get("email")
         first_name = request.data.get("first_name")
-        from_platform = request.data.get("from_platform") or 'web'
         last_name = request.data.get("last_name")
         token_value = request.data.get("id_token")
         type_third_party = request.data.get("type_third_party")
@@ -523,27 +526,35 @@ class SignUpThirdPartyView(APIView):
             if type_third_party == "google":
                 try:
                     request_adapter = requests.Request()
-                    GOOGLE_CLIENT_ID = getattr(
+                    google_client_id = getattr(
                         settings, 'GOOGLE_SIGN_IN_WEB_CLIENT_ID', None)
                     idinfo = id_token.verify_oauth2_token(token_value, request_adapter,
-                                                          GOOGLE_CLIENT_ID)
+                                                          google_client_id)
                     verified_email = idinfo.get('email')
                     email_verified = idinfo.get('email_verified', False)
                     if verified_email == email and email_verified:
                         email = verified_email
-                        logger.info(f"Successfully verified Google OAuth token for email: {email}")
+                        logger.info(
+                            "Successfully verified Google OAuth token for email: %s", 
+                            email)
                     else:
-                        logger.warning(f"Email mismatch or not verified: provided={email}, token={verified_email}, verified={email_verified}")
+                        logger.warning(
+                            "Email mismatch or not verified: provided=%s, token=%s, "
+                            "verified=%s", email, verified_email, email_verified)
                         email = None
                 except Exception as google_error:
-                    logger.error(f"Google OAuth token verification failed: {str(google_error)}")
+                    logger.error(
+                        "Google OAuth token verification failed: %s", 
+                        str(google_error))
                     email = None
             else:
                 # Placeholder for other providers
-                logger.warning(f"Third-party provider '{type_third_party}' not implemented yet")
+                logger.warning(
+                    "Third-party provider '%s' not implemented yet", 
+                    type_third_party)
                 email = None
         except Exception as e:
-            logger.error(f"Unexpected error during token verification: {str(e)}")
+            logger.error("Unexpected error during token verification: %s", str(e))
             email = None
         if not email_verified:
             return Response({
@@ -556,40 +567,41 @@ class SignUpThirdPartyView(APIView):
         if user is not None:
             # If user exists, delegate to sign-in logic
             return SignInThirdPartyView().post(request, user=user)
-        else:
-            # Create new user with normalized names and generated username
-            def normalize_name(name):
-                return ' '.join(name.split()) if name else ''
-            username = UserService.generate_unique_username(
-                email=email, first_name=first_name, last_name=last_name)
-            data = {
-                'first_name': normalize_name(first_name),
-                'last_name': normalize_name(last_name),
-                'username': username,
-                'email': email,
-                'user_image_url': user_image_url or "",
-                'is_user_email_validated': True,
-            }
-            serializer = UserSerializer(data=data)
-            if serializer.is_valid():
-                user = serializer.save()
-                refresh = RefreshToken.for_user(user)
-                user_data = user.to_login_dict()
-                return Response({
-                    "access_token": str(refresh.access_token),
-                    "refresh_token": str(refresh),
-                    "success": True,
-                    "user": user_data,
-                    "is_new_user": True,
-                }, status=status.HTTP_200_OK)
-            # Log serializer errors for debugging
-            logger.error("Third-party signup failed: %s", serializer.errors)
+        # Create new user with normalized names and generated username
+        def normalize_name(name):
+            return ' '.join(name.split()) if name else ''
+
+        username = UserService.generate_unique_username(
+            email=email, first_name=first_name, last_name=last_name)
+        data = {
+            'first_name': normalize_name(first_name),
+            'last_name': normalize_name(last_name),
+            'username': username,
+            'email': email,
+            'user_image_url': user_image_url or "",
+            'is_user_email_validated': True,
+        }
+        serializer = UserSerializer(data=data)
+        if serializer.is_valid():
+            user = serializer.save()
+            refresh = RefreshToken.for_user(user)
+            user_data = user.to_login_dict()
             return Response({
-                "message": _("Unable to create or authenticate your account with "
-                    "the provided third-party credentials. Please check your "
-                    "information or try a different sign-up method."),
-                "success": False
-            }, status=status.HTTP_400_BAD_REQUEST)
+                "access_token": str(refresh.access_token),
+                "refresh_token": str(refresh),
+                "success": True,
+                "user": user_data,
+                "is_new_user": True,
+            }, status=status.HTTP_200_OK)
+        # Log serializer errors for debugging
+        logger.error("Third-party signup failed: %s", serializer.errors)
+        return Response({
+            "message": _(
+                "Unable to create or authenticate your account with "
+                "the provided third-party credentials. Please check your "
+                "information or try a different sign-up method."),
+            "success": False
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateProfileView(APIView):
@@ -601,7 +613,7 @@ class UpdateProfileView(APIView):
     - Requires the user to be authenticated.
     - Allows updating of basic profile information such as name, gender, and birthday.
     - Handles the optional upload of a profile image.
-    - Optionally, allows the user to update their password if the correct current 
+    - Optionally, allows the user to update their password if the correct current
         password is provided.
 
     Methods:
@@ -632,7 +644,7 @@ class UpdateProfileView(APIView):
         activate(current_language)
         action = data.get('action')
         if action in ['update_profile']:
-            # Generate a unique prefix to avoid email/username uniqueness validation 
+            # Generate a unique prefix to avoid email/username uniqueness validation
             # errors
             random_prefix = generate_random_code()
             data['email'] = random_prefix + data.get('email', '')
@@ -647,26 +659,18 @@ class UpdateProfileView(APIView):
             # Create a dummy serializer for validation purposes only
             serializer = UserSerializer(data=data)
             if not serializer.is_valid():
-                message = _("Your profile could not be updated due to the errors listed above. Please correct them and try again.")
+                message = _(
+                    "Your profile could not be updated due to the errors listed "
+                    "above. Please correct them and try again.")
                 return Response(
                     {'message': message, 'errors': serializer.errors, 'success': False},
                     status=status.HTTP_409_CONFLICT
                 )
             # Retrieve additional profile data
             profile_image = request.FILES.get('profile_image')
-            current_password = data.get('current_password')
-            first_name = data.get('first_name')
             image_updated = data.get('image_updated') in [True, 'true']
-            last_name = data.get('last_name')
-            new_password = data.get('new_password')
             update_password = data.get('update_password') in [True, 'true']
-            user_address = data.get('user_address')
-            user_birthday = data.get('user_birthday')
-            user_cin = user_cin
-            user_country = data.get('user_country')
-            user_gender = data.get('user_gender')
             user_image_url = user.user_image_url
-            user_initials_bg_color = data.get('user_initials_bg_color')
             # Handle profile image update
             if image_updated:
                 user_image_url = None
@@ -674,24 +678,24 @@ class UpdateProfileView(APIView):
                     try:
                         user_image_url, file_path = upload_file(request, profile_image,
                             'profile_images', prefix="profile_")
-                        logger.info(f"file_path: {file_path}")
+                        logger.info("file_path: %s", file_path)
                     except Exception as e:
-                        logger.error(f"Image upload failed: {str(e)}")
+                        logger.error("Image upload failed: %s", str(e))
                         return Response({'message': _("Image upload failed."),
                                          'success': False}, status=500)
                 if user.user_image_url:
                     remove_file(request, user.user_image_url)
             # Update user fields
             user.current_language = current_language
-            user.first_name = first_name
-            user.last_name = last_name
-            user.user_address = user_address
-            user.user_birthday = user_birthday
-            user.user_cin = user_cin
-            user.user_country = user_country
-            user.user_gender = user_gender
+            user.first_name = data.get('first_name')
+            user.last_name = data.get('last_name')
+            user.user_address = data.get('user_address')
+            user.user_birthday = data.get('user_birthday')
+            user.user_cin = data.get('user_cin')
+            user.user_country = data.get('user_country')
+            user.user_gender = data.get('user_gender')
             user.user_image_url = user_image_url
-            user.user_initials_bg_color = user_initials_bg_color
+            user.user_initials_bg_color = data.get('user_initials_bg_color')
             user.user_phone_number = user_phone_number
             user.save()
             # Handle password update
@@ -700,9 +704,9 @@ class UpdateProfileView(APIView):
             refresh_token = None
             if update_password:
                 authenticated_user = authenticate(request, username=user.username,
-                                                  password=current_password)
+                                                  password=data.get('current_password'))
                 if authenticated_user is not None:
-                    user.set_password(new_password)
+                    user.set_password(data.get('new_password'))
                     user.save()
                     refresh = RefreshToken.for_user(user)
                     access_token = str(refresh.access_token)
@@ -712,13 +716,18 @@ class UpdateProfileView(APIView):
             # Prepare response
             user_data = user.to_login_dict()
             message = _('Your profile has been updated successfully.')
-            # Get device ID from request headers or data to exclude from WebSocket 
+            # Get device ID from request headers or data to exclude from WebSocket
             # updates
             device_id = request.headers.get('X-Device-ID')
-            # Notify all connected clients (via WebSocket) that the user's profile has 
+            # Notify all connected clients (via WebSocket) that the user's profile has
             # changed
-            logger.info(f"Sending profile update notification for user {user.id} from device {device_id}")
-            notify_profile_update(user.id, user_data, password_updated=access_token is not None, device_id=device_id)
+            logger.info(
+                "Sending profile update notification for user %s from device %s",
+                user.id, device_id)
+            notify_profile_update(
+                user.id, user_data,
+                password_updated=access_token is not None,
+                device_id=device_id)
             return Response({
                     'message': message,
                     "access_token": access_token,
@@ -728,7 +737,7 @@ class UpdateProfileView(APIView):
                     "wrong_password": wrong_password,
                 }, status=status.HTTP_200_OK,
             )
-        elif action in ['update_password']:
+        if action in ['update_password']:
             # Handle password update
             current_password = data.get('current_password')
             new_password = data.get('new_password')
@@ -747,9 +756,13 @@ class UpdateProfileView(APIView):
                             token=outstanding_token).exists():
                             BlacklistedToken.objects.create(token=outstanding_token)
                             tokens_blacklisted += 1
-                    logger.info(f"Blacklisted {tokens_blacklisted} tokens for user {user.username} due to password change")
+                    logger.info(
+                        "Blacklisted %d tokens for user %s due to password change",
+                        tokens_blacklisted, user.username)
                 except Exception as e:
-                    logger.error(f"Error blacklisting tokens during password change for user {user.username}: {str(e)}")
+                    logger.error(
+                        "Error blacklisting tokens during password change for "
+                        "user %s: %s", user.username, str(e))
                 # Set new password and generate new tokens
                 user.set_password(new_password)
                 user.save()
@@ -758,7 +771,9 @@ class UpdateProfileView(APIView):
                 refresh_token = str(refresh)
                 message = _('Your password has been updated successfully.')
             else:
-                message = _('Your password update failed. Please check your current password and try again.')
+                message = _(
+                    'Your password update failed. Please check your current '
+                    'password and try again.')
                 wrong_password = True
             # Prepare response
             if not wrong_password:

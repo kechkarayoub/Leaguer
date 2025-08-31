@@ -1,7 +1,9 @@
+"""Template tags for i18n language switching functionality."""
 # -*- coding: utf-8 -*-
-from ..views import switch_lang_code
 from django import template
 from django.template.defaultfilters import stringfilter
+
+from ..views import switch_lang_code
 
 register = template.Library()
 
