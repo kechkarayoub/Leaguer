@@ -55,7 +55,6 @@ export const getAllTimezones = (): TimezoneOption[] => {
     'Asia/Manila',
     'Asia/Riyadh',
     'Asia/Seoul',
-    'Asia/Shanghai',
     'Asia/Singapore',
     'Asia/Tehran',
     'Asia/Tokyo',
