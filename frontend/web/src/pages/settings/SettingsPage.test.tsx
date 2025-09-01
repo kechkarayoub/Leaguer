@@ -3,14 +3,63 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
-// Import mocked modules
 import useAuth from '../../hooks/useAuth';
 import { useTheme } from '../../contexts/ThemeContext';
 import * as TimezoneUtils from '../../utils/TimezoneUtils';
 import AuthenticatedApiService from '../../services/AuthenticatedApiService';
 import { toast } from 'react-toastify';
 import SettingsPage from './SettingsPage';
+
+// Mock moment and moment-timezone first before any imports
+jest.mock('moment', () => {
+  const mockMoment = (date?: any) => ({
+    tz: (timezone: string) => ({
+      utcOffset: () => {
+        // Mock different timezone offsets
+        const offsets: { [key: string]: number } = {
+          'UTC': 0,
+          'America/New_York': -300, // UTC-5
+          'Europe/London': 0, // UTC+0
+          'Asia/Tokyo': 540, // UTC+9
+        };
+        return offsets[timezone] || 0;
+      }
+    }),
+    format: (format: string) => {
+      if (!date) return '';
+      if (format === 'YYYY-MM-DD') return '2023-01-01';
+      return date;
+    }
+  });
+  
+  // Add the tz method to the main function
+  mockMoment.tz = mockMoment;
+  
+  return mockMoment;
+});
+
+jest.mock('moment-timezone', () => {
+  const mockMoment = (date?: any) => ({
+    tz: (timezone: string) => ({
+      utcOffset: () => {
+        const offsets: { [key: string]: number } = {
+          'UTC': 0,
+          'America/New_York': -300,
+          'Europe/London': 0,
+          'Asia/Tokyo': 540,
+        };
+        return offsets[timezone] || 0;
+      }
+    }),
+    format: (format: string) => {
+      if (format === 'YYYY-MM-DD') return '2023-01-01';
+      return date || '';
+    }
+  });
+  
+  mockMoment.tz = mockMoment;
+  return mockMoment;
+});
 
 // Mock i18n before importing the component
 jest.mock('../../i18n', () => ({}));

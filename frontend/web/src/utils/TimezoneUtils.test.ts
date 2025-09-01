@@ -4,30 +4,161 @@
 
 import { getAllTimezones, getLanguageOptions, getThemeOptions, TimezoneOption } from './TimezoneUtils';
 
-// Mock moment-timezone
-jest.mock('moment-timezone', () => {
-  const actualMoment = jest.requireActual('moment-timezone');
+// Mock moment and moment-timezone first before any imports
+jest.mock('moment', () => {
+  const mockMoment = (date?: any) => ({
+    tz: (timezone: string) => ({
+      utcOffset: () => {
+        // Mock different timezone offsets for testing
+        const offsets: { [key: string]: number } = {
+          'UTC': 0,
+          'America/New_York': -300, // UTC-5
+          'Europe/London': 60,      // UTC+1
+          'Asia/Tokyo': 540,        // UTC+9
+          'Australia/Sydney': 660,  // UTC+11
+          'America/Los_Angeles': -480, // UTC-8
+          'Africa/Cairo': 120,      // UTC+2
+          'Africa/Algiers': 60,     // UTC+1
+          'Africa/Casablanca': 60,  // UTC+1
+          'Africa/Johannesburg': 120, // UTC+2
+          'Africa/Lagos': 60,       // UTC+1
+          'Africa/Nairobi': 180,    // UTC+3
+          'Africa/Tunis': 60,       // UTC+1
+          'Europe/Amsterdam': 60,   // UTC+1
+          'Europe/Berlin': 60,      // UTC+1
+          'Europe/Brussels': 60,    // UTC+1
+          'Europe/Budapest': 60,    // UTC+1
+          'Europe/Dublin': 0,       // UTC+0
+          'Europe/Madrid': 60,      // UTC+1
+          'Europe/Oslo': 60,        // UTC+1
+          'Europe/Paris': 60,       // UTC+1
+          'Europe/Prague': 60,      // UTC+1
+          'Europe/Rome': 60,        // UTC+1
+          'Europe/Stockholm': 60,   // UTC+1
+          'Europe/Vienna': 60,      // UTC+1
+          'Europe/Warsaw': 60,      // UTC+1
+          'Europe/Zurich': 60,      // UTC+1
+          'Asia/Bangkok': 420,      // UTC+7
+          'Asia/Shanghai': 480,     // UTC+8
+          'Asia/Dhaka': 360,        // UTC+6
+          'Asia/Dubai': 240,        // UTC+4
+          'Asia/Hong_Kong': 480,    // UTC+8
+          'Asia/Jakarta': 420,      // UTC+7
+          'Asia/Karachi': 300,      // UTC+5
+          'Asia/Kolkata': 330,      // UTC+5:30
+          'Asia/Kuala_Lumpur': 480, // UTC+8
+          'Asia/Manila': 480,       // UTC+8
+          'Asia/Riyadh': 180,       // UTC+3
+          'Asia/Seoul': 540,        // UTC+9
+          'Asia/Singapore': 480,    // UTC+8
+          'Asia/Tehran': 210,       // UTC+3:30
+          'America/Anchorage': -540, // UTC-9
+          'America/Argentina/Buenos_Aires': -180, // UTC-3
+          'America/Bogota': -300,   // UTC-5
+          'America/Chicago': -360,  // UTC-6
+          'America/Denver': -420,   // UTC-7
+          'America/Mexico_City': -360, // UTC-6
+          'America/Phoenix': -420,  // UTC-7
+          'America/Sao_Paulo': -180, // UTC-3
+          'America/Toronto': -300,  // UTC-5
+          'America/Vancouver': -480, // UTC-8
+          'Australia/Adelaide': 570, // UTC+9:30
+          'Australia/Brisbane': 600, // UTC+10
+          'Australia/Melbourne': 660, // UTC+11
+          'Australia/Perth': 480,   // UTC+8
+          'Pacific/Auckland': 720,  // UTC+12
+          'Pacific/Fiji': 720,      // UTC+12
+          'Pacific/Honolulu': -600, // UTC-10
+          'invalid-timezone': 0,
+        };
+        return offsets[timezone] !== undefined ? offsets[timezone] : 0;
+      }
+    }),
+    format: (format: string) => {
+      if (format === 'YYYY-MM-DD') return '2023-01-01';
+      return date || '';
+    }
+  });
   
-  return {
-    ...actualMoment,
-    default: jest.fn(() => ({
-      tz: jest.fn((timezone: string) => ({
-        utcOffset: jest.fn(() => {
-          // Mock different timezone offsets for testing
-          const offsets: { [key: string]: number } = {
-            'UTC': 0,
-            'America/New_York': -300, // UTC-5
-            'Europe/London': 60,      // UTC+1
-            'Asia/Tokyo': 540,        // UTC+9
-            'Australia/Sydney': 660,  // UTC+11
-            'America/Los_Angeles': -480, // UTC-8
-            'invalid-timezone': 0,
-          };
-          return offsets[timezone] !== undefined ? offsets[timezone] : 0;
-        })
-      }))
-    }))
-  };
+  mockMoment.tz = mockMoment;
+  return mockMoment;
+});
+
+jest.mock('moment-timezone', () => {
+  const mockMoment = (date?: any) => ({
+    tz: (timezone: string) => ({
+      utcOffset: () => {
+        const offsets: { [key: string]: number } = {
+          'UTC': 0,
+          'America/New_York': -300,
+          'Europe/London': 60,
+          'Asia/Tokyo': 540,
+          'Australia/Sydney': 660,
+          'America/Los_Angeles': -480,
+          'Africa/Cairo': 120,
+          'Africa/Algiers': 60,
+          'Africa/Casablanca': 60,
+          'Africa/Johannesburg': 120,
+          'Africa/Lagos': 60,
+          'Africa/Nairobi': 180,
+          'Africa/Tunis': 60,
+          'Europe/Amsterdam': 60,
+          'Europe/Berlin': 60,
+          'Europe/Brussels': 60,
+          'Europe/Budapest': 60,
+          'Europe/Dublin': 0,
+          'Europe/Madrid': 60,
+          'Europe/Oslo': 60,
+          'Europe/Paris': 60,
+          'Europe/Prague': 60,
+          'Europe/Rome': 60,
+          'Europe/Stockholm': 60,
+          'Europe/Vienna': 60,
+          'Europe/Warsaw': 60,
+          'Europe/Zurich': 60,
+          'Asia/Bangkok': 420,
+          'Asia/Shanghai': 480,
+          'Asia/Dhaka': 360,
+          'Asia/Dubai': 240,
+          'Asia/Hong_Kong': 480,
+          'Asia/Jakarta': 420,
+          'Asia/Karachi': 300,
+          'Asia/Kolkata': 330,
+          'Asia/Kuala_Lumpur': 480,
+          'Asia/Manila': 480,
+          'Asia/Riyadh': 180,
+          'Asia/Seoul': 540,
+          'Asia/Singapore': 480,
+          'Asia/Tehran': 210,
+          'America/Anchorage': -540,
+          'America/Argentina/Buenos_Aires': -180,
+          'America/Bogota': -300,
+          'America/Chicago': -360,
+          'America/Denver': -420,
+          'America/Mexico_City': -360,
+          'America/Phoenix': -420,
+          'America/Sao_Paulo': -180,
+          'America/Toronto': -300,
+          'America/Vancouver': -480,
+          'Australia/Adelaide': 570,
+          'Australia/Brisbane': 600,
+          'Australia/Melbourne': 660,
+          'Australia/Perth': 480,
+          'Pacific/Auckland': 720,
+          'Pacific/Fiji': 720,
+          'Pacific/Honolulu': -600,
+        };
+        return offsets[timezone] !== undefined ? offsets[timezone] : 0;
+      }
+    }),
+    format: (format: string) => {
+      if (format === 'YYYY-MM-DD') return '2023-01-01';
+      return date || '';
+    }
+  });
+  
+  mockMoment.tz = mockMoment;
+  return mockMoment;
 });
 
 describe('TimezoneUtils', () => {
