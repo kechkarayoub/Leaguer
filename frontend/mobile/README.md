@@ -1,97 +1,237 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Leaguer Mobile App
 
-# Getting Started
+A React Native mobile application that mirrors the functionality of the Leaguer web app, providing a native mobile experience for both iOS and Android platforms.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Features
 
-## Step 1: Start Metro
+- **Authentication System**: Login, registration, password reset with validation
+- **Theme Support**: Light/dark mode with automatic system detection
+- **Navigation**: Stack and tab-based navigation using React Navigation
+- **Form Validation**: React Hook Form with Yup schema validation
+- **State Management**: TanStack Query for server state and caching
+- **Secure Storage**: Token and sensitive data storage using Keychain/EncryptedSharedPreferences
+- **TypeScript**: Full TypeScript support with strict typing
+- **Error Handling**: Comprehensive error handling and user feedback
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## Tech Stack
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+- **React Native**: 0.80.1
+- **TypeScript**: Full TypeScript support
+- **React Navigation**: v7 for navigation
+- **TanStack Query**: Server state management
+- **React Hook Form**: Form handling and validation
+- **Yup**: Schema validation
+- **React Native Keychain**: Secure storage
+- **React Native Config**: Environment variables
+- **React Native Device Info**: Device identification
+- **React Native Toast Message**: User notifications
 
-```sh
-# Using npm
-npm start
+## Project Structure
 
-# OR using Yarn
-yarn start
+```
+src/
+├── components/          # Reusable UI components
+│   ├── form/           # Form-specific components
+│   │   ├── CustomButton.tsx
+│   │   └── CustomTextInput.tsx
+│   └── LoadingSpinner.tsx
+├── config/             # App configuration
+│   └── config.ts
+├── contexts/           # React contexts
+│   └── ThemeContext.tsx
+├── hooks/              # Custom hooks
+│   └── useAuth.ts
+├── navigation/         # Navigation configuration
+│   └── AppNavigation.tsx
+├── screens/            # Screen components
+│   ├── auth/          # Authentication screens
+│   │   ├── ForgotPasswordScreen.tsx
+│   │   ├── LoginScreen.tsx
+│   │   └── RegisterScreen.tsx
+│   └── main/          # Main app screens
+│       ├── HomeScreen.tsx
+│       ├── ProfileScreen.tsx
+│       └── SettingsScreen.tsx
+├── services/           # API and storage services
+│   ├── AuthenticatedApiService.ts
+│   └── SecureStorageService.ts
+└── types/              # TypeScript type definitions
+    └── auth.types.ts
 ```
 
-## Step 2: Build and run your app
+## Setup Instructions
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+### Prerequisites
 
-### Android
+- Node.js (v16 or higher)
+- React Native CLI
+- Android Studio (for Android development)
+- Xcode (for iOS development, macOS only)
+- Java JDK 17
 
-```sh
-# Using npm
-npm run android
+### Installation
 
-# OR using Yarn
+1. **Navigate to the mobile directory:**
+   ```bash
+   cd frontend/mobile
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   yarn install
+   ```
+
+3. **Configure environment variables:**
+   Update `.env` file with your actual values:
+   ```env
+   API_BASE_URL=http://localhost:8000/api
+   GOOGLE_WEB_CLIENT_ID=your-google-web-client-id
+   GOOGLE_IOS_CLIENT_ID=your-google-ios-client-id
+   GOOGLE_ANDROID_CLIENT_ID=your-google-android-client-id
+   FACEBOOK_APP_ID=your-facebook-app-id
+   ```
+
+4. **Install additional dependencies for iOS (macOS only):**
+   ```bash
+   cd ios
+   pod install
+   cd ..
+   ```
+
+### Running the App
+
+#### Android
+```bash
+# Start Metro bundler
+yarn start
+
+# In another terminal, run Android app
 yarn android
 ```
 
-### iOS
+#### iOS (macOS only)
+```bash
+# Start Metro bundler
+yarn start
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
+# In another terminal, run iOS app
 yarn ios
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+## Key Components
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+### Authentication Flow
+- **LoginScreen**: User login with email/username and password
+- **RegisterScreen**: User registration with validation
+- **ForgotPasswordScreen**: Password reset functionality
+- **useAuth Hook**: Manages authentication state and API calls
 
-## Step 3: Modify your app
+### Navigation
+- **AuthStack**: Authentication-related screens
+- **MainTabs**: Main app navigation with bottom tabs
+- **AppNavigation**: Root navigator with conditional rendering
 
-Now that you have successfully run the app, let's make changes!
+### State Management
+- **TanStack Query**: Handles API calls, caching, and synchronization
+- **ThemeContext**: Manages app theme and dark/light mode
+- **SecureStorage**: Handles token storage and session management
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+### API Integration
+- **AuthenticatedApiService**: HTTP client with automatic token refresh
+- **Device ID Integration**: Unique device identification
+- **Error Handling**: Comprehensive error handling and user feedback
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+## Configuration
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+### Backend Integration
+The mobile app is configured to work with the Django backend:
+- Development: `http://10.0.2.2:8000` (Android emulator)
+- Production: Update `BACKEND_URL` in config
 
-## Congratulations! :tada:
+### Environment Variables
+Use `.env` file for configuration:
+- `API_BASE_URL`: Backend API URL
+- `GOOGLE_*_CLIENT_ID`: Google OAuth credentials
+- `FACEBOOK_APP_ID`: Facebook app ID
 
-You've successfully run and modified your React Native App. :partying_face:
+## Development Guidelines
 
-### Now what?
+### Code Style
+- Use TypeScript for all components and services
+- Follow React Native best practices
+- Use functional components with hooks
+- Implement proper error boundaries
+- Use StyleSheet for styling (avoid inline styles)
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+### State Management
+- Use TanStack Query for server state
+- Use React Context for app-wide state (theme, auth)
+- Avoid excessive prop drilling
 
-# Troubleshooting
+### Navigation
+- Use type-safe navigation with TypeScript
+- Implement proper screen options and headers
+- Handle deep linking when needed
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+## Testing
 
-# Learn More
+```bash
+# Run tests
+yarn test
 
-To learn more about React Native, take a look at the following resources:
+# Type checking
+npx tsc --noEmit
+```
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+## Building for Production
+
+### Android
+```bash
+# Generate APK
+cd android
+./gradlew assembleRelease
+
+# Generate AAB (for Play Store)
+./gradlew bundleRelease
+```
+
+### iOS
+1. Open `ios/Leaguer.xcworkspace` in Xcode
+2. Select "Generic iOS Device" or your device
+3. Product → Archive
+4. Distribute to App Store or save for local distribution
+
+## Common Issues and Solutions
+
+### Metro bundler issues
+```bash
+yarn start --reset-cache
+```
+
+### Android build issues
+```bash
+cd android
+./gradlew clean
+cd ..
+yarn android
+```
+
+### iOS build issues
+```bash
+cd ios
+pod install --repo-update
+cd ..
+yarn ios
+```
+
+## Contributing
+
+1. Follow the existing code structure and conventions
+2. Write TypeScript types for all components and services
+3. Add tests for new functionality
+4. Update documentation when adding new features
+5. Use conventional commit messages
+
+## License
+
+This project is part of the Leaguer application suite.

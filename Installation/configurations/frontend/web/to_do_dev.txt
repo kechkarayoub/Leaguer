@@ -1,0 +1,11 @@
+
+- Add .env.example
+- Optimizing images before upload.
+- Add websocket receive message system.
+- Add preferences update
+- Asynchron websokets/push notifications
+- Notifications && Push notifications.
+- Test update profile on mobile.
+- Add phone number to profile update.
+- Add permission manage.
+- Add translations.

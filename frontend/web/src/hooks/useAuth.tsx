@@ -20,8 +20,8 @@ export interface User {
   email: string;
   first_name?: string;
   last_name?: string;
-  firstName?: string; // Keep for backward compatibility
-  lastName?: string; // Keep for backward compatibility
+  // firstName?: string; // Keep for backward compatibility
+  // lastName?: string; // Keep for backward compatibility
   user_phone_number?: string;
   user_image_url?: string;
   profileImage?: string; // Keep for backward compatibility

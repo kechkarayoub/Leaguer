@@ -5,14 +5,17 @@
  * Used throughout the app for loading states
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import logo from '../logo.svg';
 
 interface LoadingSpinnerProps {
   size?: 'small' | 'medium' | 'large';
   text?: string;
   overlay?: boolean;
   className?: string;
+  showLogo?: boolean;
+  variant?: 'spinner' | 'dots';
 }
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
@@ -20,8 +23,24 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   text,
   overlay = false,
   className = '',
+  showLogo = false,
+  variant = 'spinner',
 }) => {
   const { t } = useTranslation();
+  const [dots, setDots] = useState('.');
+
+  // Animate dots: . → .. → ... → . → ..
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDots(prev => {
+        if (prev === '.') return '..';
+        if (prev === '..') return '...';
+        return '.';
+      });
+    }, 500); // Change every 500ms
+
+    return () => clearInterval(interval);
+  }, [variant]);
 
   const getSizeClass = () => {
     switch (size) {
@@ -34,9 +53,29 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     }
   };
 
-  const spinner = (
-    <div className={`loading-spinner ${getSizeClass()} ${className}`}>
-      <div className="loading-spinner__circle">
+  const renderSpinner = (onlyDots?: boolean) => {
+    if (showLogo && !onlyDots) {
+      return (
+        <div className="loading-spinner__logo" data-testid="loading-logo">
+          <img 
+            src={logo} 
+            alt="Loading" 
+            className="loading-spinner__logo-image"
+          />
+        </div>
+      );
+    }
+
+    if (variant === 'dots' || onlyDots) {
+      return (
+        <div className="loading-spinner__dots-text" data-testid="loading-dots">
+          <span className="loading-spinner__dots-animated">{dots}</span>
+        </div>
+      );
+    }
+
+    return (
+      <div className="loading-spinner__circle" data-testid="loading-spinner">
         <svg
           className="loading-spinner__svg"
           viewBox="0 0 50 50"
@@ -53,11 +92,17 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
           />
         </svg>
       </div>
+    );
+  };
+
+  const spinner = (
+    <div className={`loading-spinner ${getSizeClass()} ${className}`}>
+      {renderSpinner()}
       
-      {(text || !text) && (
-        <p className="loading-spinner__text">
-          {text || t('common:app.loading', { defaultValue: 'Loading...' } )}
-        </p>
+      {(variant !== 'dots') && (
+        <div className="loading-spinner__text">
+          {text || t('common:app.loading', { defaultValue: 'Loading' } )}{renderSpinner(true)}
+        </div>
       )}
     </div>
   );

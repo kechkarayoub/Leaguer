@@ -3086,6 +3086,7 @@ a:hover {
   text-align: center;
   font-weight: 500;
   letter-spacing: -0.01em;
+  display: flex;
 }
 
 /* Size variants */
@@ -3158,6 +3159,91 @@ a:hover {
     stroke-dasharray: 90, 150;
     stroke-dashoffset: -124;
   }
+}
+
+/* Loading spinner animated dots text variant */
+.loading-spinner__dots-text {
+  width: 50px;
+  text-align: left;
+}
+
+.loading-spinner__dots-animated {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--color-primary, #3b82f6);
+  font-family: monospace;
+  min-width: 40px;
+  text-align: center;
+  line-height: 1;
+}
+
+/* Size variants for animated dots text */
+.loading-spinner--small .loading-spinner__dots-animated {
+  font-size: 16px;
+  min-width: 24px;
+}
+
+.loading-spinner--medium .loading-spinner__dots-animated {
+  font-size: 24px;
+  min-width: 40px;
+}
+
+.loading-spinner--large .loading-spinner__dots-animated {
+  font-size: 32px;
+  min-width: 56px;
+}
+
+/* Loading spinner logo variant */
+.loading-spinner__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-spinner__logo-image {
+  width: 48px;
+  height: 48px;
+  animation: logoPulse 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.3));
+}
+
+@keyframes logoPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.3));
+  }
+  50% {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 12px rgba(99, 102, 241, 0.6));
+  }
+}
+
+/* Size variants for logo */
+.loading-spinner--small .loading-spinner__logo-image {
+  width: 32px;
+  height: 32px;
+}
+
+.loading-spinner--medium .loading-spinner__logo-image {
+  width: 48px;
+  height: 48px;
+}
+
+.loading-spinner--large .loading-spinner__logo-image {
+  width: 64px;
+  height: 64px;
+}
+
+/* Overlay variant adjustments */
+.loading-spinner-overlay .loading-spinner__dots-animated {
+  color: var(--color-white, #ffffff);
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+.loading-spinner-overlay .loading-spinner__logo-image {
+  width: 120px;
+  height: 120px;
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.5));
 }
 
 /* Enhanced alert/toast styles */

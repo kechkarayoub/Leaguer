@@ -76,7 +76,7 @@ const AppRoutes: React.FC = () => {
   useRTL();
 
   if (!ready || isLoading) {
-    return <LoadingSpinner overlay />;
+    return <LoadingSpinner overlay showLogo />;
   }
 
   return (

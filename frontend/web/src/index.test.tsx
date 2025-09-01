@@ -124,3 +124,6 @@ describe('index.tsx', () => {
     expect(() => require('./reportWebVitals')).not.toThrow();
   });
 });
+
+// Export statement to make this file a module under TypeScript's isolatedModules
+export {};
