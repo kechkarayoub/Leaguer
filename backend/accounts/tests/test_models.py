@@ -233,7 +233,7 @@ class UserSerializerTest(APITestCase):
             'user_cin': "Cin test",
             'user_country': "Testland",
             'current_language': "en",
-            'email': "testuser@example.com",
+            'email': "testuserser@example.com",
             'first_name': "First name",
             'user_gender': GENDERS_CHOICES[1][0],
             'user_image_url': "https://www.s3.com/image_url",
@@ -243,7 +243,7 @@ class UserSerializerTest(APITestCase):
             'user_phone_number': "+2126-234 56789",
             'user_phone_number_to_verify': "+212623456789",
             'user_phone_number_verified_by': "",
-            'username': "testuser",
+            'username': "testuserser",
         }
         self.valid_data2 = {
             'user_address': "123 Test Street",
@@ -251,7 +251,7 @@ class UserSerializerTest(APITestCase):
             'user_cin': "Cin test2",
             'user_country': "Testland",
             'current_language': "en",
-            'email': "testuser2@example.com",
+            'email': "testuserser2@example.com",
             'first_name': "First name",
             'user_gender': GENDERS_CHOICES[1][0],
             'user_image_url': "https://www.s3.com/image_url",
@@ -263,7 +263,7 @@ class UserSerializerTest(APITestCase):
             'user_phone_number_to_verify': "+212623456709",
             'user_phone_number_verified_by': "google",
             'user_timezone': "",
-            'username': "testuser2",
+            'username': "testuserser2",
         }
     def test_serializer_fields(self):
         """Test that serializer includes all expected fields."""
@@ -277,7 +277,7 @@ class UserSerializerTest(APITestCase):
         self.assertEqual(data['user_cin'], "Cin test")
         self.assertEqual(data['user_country'], "Testland")
         self.assertEqual(data['current_language'], "en")
-        self.assertEqual(data['email'], "testuser@example.com")
+        self.assertEqual(data['email'], "testuserser@example.com")
         self.assertEqual(data['first_name'], "First name")
         self.assertEqual(data['user_gender'], GENDERS_CHOICES[1][0])
         self.assertEqual(data['user_image_url'], "https://www.s3.com/image_url")
@@ -291,7 +291,7 @@ class UserSerializerTest(APITestCase):
             self.assertEqual(data['user_phone_number_verified_by'], "default")
             self.assertEqual(data['user_phone_number'], "+212623456789")
         self.assertEqual(data['user_timezone'], settings.TIME_ZONE)
-        self.assertEqual(data['username'], "testuser")
+        self.assertEqual(data['username'], "testuserser")
         self.assertEqual(len(data.keys()), 25)
         self.assertIn('date_joined', data)
         user2 = User.objects.create_user(
@@ -304,7 +304,7 @@ class UserSerializerTest(APITestCase):
         self.assertEqual(data2['user_cin'], "Cin test2")
         self.assertEqual(data2['user_country'], "Testland")
         self.assertEqual(data2['current_language'], "en")
-        self.assertEqual(data2['email'], "testuser2@example.com")
+        self.assertEqual(data2['email'], "testuserser2@example.com")
         self.assertEqual(data2['first_name'], "First name")
         self.assertEqual(data2['user_gender'], GENDERS_CHOICES[1][0])
         self.assertEqual(data2['user_image_url'], "https://www.s3.com/image_url")
@@ -314,7 +314,7 @@ class UserSerializerTest(APITestCase):
         self.assertEqual(data2['user_phone_number_to_verify'], "+212623456709")
         self.assertEqual(data2['user_phone_number_verified_by'], "google")
         self.assertEqual(data2['user_timezone'], "")
-        self.assertEqual(data2['username'], "testuser2")
+        self.assertEqual(data2['username'], "testuserser2")
         self.assertEqual(len(data2.keys()), 25)
         self.assertIn('date_joined', data2)
     def test_valid_serializer(self):
@@ -396,7 +396,7 @@ class PasswordResetTestCase(TestCase):
     def setUp(self):
         """Set up test data."""
         self.user = User.objects.create_user(
-            username='testuser',
+            username='testuserpr',
             email='test@example.com',
             password='oldpassword123',
             is_active=True

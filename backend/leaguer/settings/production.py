@@ -1,3 +1,4 @@
+# pylint: disable=unused-wildcard-import,wildcard-import
 """
 Production settings for leaguer project.
 """
@@ -31,7 +32,7 @@ CSRF_COOKIE_SAMESITE = 'Lax'  # Less restrictive for admin panel
 CSRF_TRUSTED_ORIGINS = get_secret("CORS_ALLOWED_ORIGINS", "").split(",")
 CSRF_TRUSTED_ORIGINS = [origin for origin in CSRF_TRUSTED_ORIGINS if origin]
 
-# Session cookie settings for production  
+# Session cookie settings for production
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'  # Less restrictive for admin panel
@@ -62,8 +63,10 @@ CHANNEL_LAYERS = {
 TECHNICAL_SERVICE_EMAIL = get_secret("TECHNICAL_SERVICE_EMAIL", "")
 
 # Feature flags
-ENABLE_EMAIL_VERIFICATION = get_secret("ENABLE_EMAIL_VERIFICATION", "false").lower() == "true"
-ENABLE_PHONE_NUMBER_VERIFICATION = get_secret("ENABLE_PHONE_NUMBER_VERIFICATION", "false").lower() == "true"
+ENABLE_EMAIL_VERIFICATION = get_secret("ENABLE_EMAIL_VERIFICATION",
+                                       "false").lower() == "true"
+ENABLE_PHONE_NUMBER_VERIFICATION = get_secret("ENABLE_PHONE_NUMBER_VERIFICATION",
+                                              "false").lower() == "true"
 
 # Media configuration
 MEDIA_ROOT = PARENT_DIR / 'media'

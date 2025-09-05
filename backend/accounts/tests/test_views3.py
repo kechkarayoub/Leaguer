@@ -395,6 +395,7 @@ class EmailVerificationTests(TestCase):
             self.assertEqual(2, 1 + 1)
             return
         _, (uid, token) = send_verification_email(self.user)
+        now = datetime.datetime.now()
         token_date = token.split("_*_")
         yesterday_timestamp = (now() - datetime.timedelta(days=1)).timestamp()
         token_date[1] = str(yesterday_timestamp)

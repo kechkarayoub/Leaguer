@@ -9,7 +9,7 @@ from .models import User
 
 
 @receiver(pre_save, sender=User)
-def format_phone_numbers(sender, instance, **kwargs):
+def format_phone_numbers(sender, instance, **kwargs): # pylint: disable=unused-argument
     """Format phone numbers before saving the user instance."""
     if instance.user_phone_number:
         if not instance.is_user_phone_number_validated and settings.ENABLE_PHONE_NUMBER_VERIFICATION:

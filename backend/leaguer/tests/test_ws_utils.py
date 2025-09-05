@@ -1,16 +1,14 @@
+# pylint: disable=too-few-public-methods
 """
 Tests for WebSocket utility functions.
 """
 
-import asyncio
-import json
 from datetime import date, datetime
 from decimal import Decimal
-from unittest.mock import AsyncMock, MagicMock, patch
-from django.test import TestCase
-from django.utils import timezone
+from unittest.mock import AsyncMock, patch
+
 from channels.layers import InMemoryChannelLayer
-from channels.testing import ApplicationCommunicator
+from django.test import TestCase
 
 from leaguer.ws_utils import (
     serialize_for_websocket,
@@ -64,7 +62,6 @@ class TestSerializationFunctions(TestCase):
             "active": True,
         }
         result = serialize_for_websocket(test_dict)
-        
         expected = {
             "name": "John Doe",
             "birthday": "1990-05-15",
@@ -86,7 +83,6 @@ class TestSerializationFunctions(TestCase):
             True,
         ]
         result = serialize_for_websocket(test_list)
-        
         expected = [
             "string",
             "2023-01-01",
@@ -114,7 +110,6 @@ class TestSerializationFunctions(TestCase):
             }
         }
         result = serialize_for_websocket(test_dict)
-        
         expected = {
             "user": {
                 "name": "Jane",
@@ -140,7 +135,6 @@ class TestSerializationFunctions(TestCase):
             "another_public": "also_visible",
         }
         result = serialize_dict_for_websocket(test_dict)
-        
         expected = {
             "public_field": "visible",
             "another_public": "also_visible",
@@ -150,15 +144,14 @@ class TestSerializationFunctions(TestCase):
     def test_serialize_model_like_object(self):
         """Test serialization of object with __dict__ attribute."""
         class MockModel:
+            """Mock model-like object."""
             def __init__(self):
                 self.id = 1
                 self.name = "Test"
                 self.created_date = date(2023, 1, 1)
                 self._state = "hidden"
-
         mock_obj = MockModel()
         result = serialize_for_websocket(mock_obj)
-        
         expected = {
             "id": 1,
             "name": "Test",
@@ -176,7 +169,6 @@ class TestSerializationFunctions(TestCase):
             False,
             None,
         ]
-        
         for primitive in primitives:
             result = serialize_for_websocket(primitive)
             self.assertEqual(result, primitive)
@@ -193,7 +185,6 @@ class TestWebSocketNotificationService(TestCase):
     async def test_send_to_group_success(self, mock_get_channel_layer):
         """Test successful sending to group."""
         mock_get_channel_layer.return_value = self.channel_layer
-        
         group_name = "test_group"
         event_type = "test_event"
         data = {
@@ -201,9 +192,7 @@ class TestWebSocketNotificationService(TestCase):
             "timestamp": date(2023, 1, 1),
             "amount": Decimal("100.50")
         }
-        
         await WebSocketNotificationService.send_to_group(group_name, event_type, data)
-        
         # Check that the event was added to the channel layer
         # Note: InMemoryChannelLayer doesn't have direct access to check sent messages
         # but we can verify no exceptions were raised
@@ -215,21 +204,18 @@ class TestWebSocketNotificationService(TestCase):
         mock_channel_layer = AsyncMock()
         mock_channel_layer.group_send.side_effect = Exception("Channel error")
         mock_get_channel_layer.return_value = mock_channel_layer
-        
         await WebSocketNotificationService.send_to_group("test_group", "test_event", {})
-        
         # Verify error was logged
         mock_logger.error.assert_called_once()
         self.assertIn("Failed to send WebSocket event", str(mock_logger.error.call_args))
 
     @patch('leaguer.ws_utils.get_channel_layer')
     @patch('leaguer.ws_utils.logger')
-    async def test_send_to_group_no_channel_layer(self, mock_logger, mock_get_channel_layer):
+    async def test_send_to_group_no_channel_layer(self, mock_logger,
+                                                  mock_get_channel_layer):
         """Test behavior when channel layer is not configured."""
         mock_get_channel_layer.return_value = None
-        
         await WebSocketNotificationService.send_to_group("test_group", "test_event", {})
-        
         # Verify warning was logged
         mock_logger.warning.assert_called_once_with("Channel layer not configured")
 
@@ -238,22 +224,17 @@ class TestWebSocketNotificationService(TestCase):
         """Test that data is properly serialized before sending."""
         mock_channel_layer = AsyncMock()
         mock_get_channel_layer.return_value = mock_channel_layer
-        
         data = {
             "user_birthday": date(2023, 1, 1),
             "balance": Decimal("999.99"),
             "login_time": datetime(2023, 12, 25, 15, 30)
         }
-        
         await WebSocketNotificationService.send_to_group("test_group", "test_event", data)
-        
         # Verify group_send was called
         mock_channel_layer.group_send.assert_called_once()
-        
         # Get the actual call arguments
         call_args = mock_channel_layer.group_send.call_args[0]
         sent_data = call_args[1]
-        
         # Verify data was serialized
         self.assertEqual(sent_data["user_birthday"], "2023-01-01")
         self.assertEqual(sent_data["balance"], 999.99)
@@ -274,9 +255,8 @@ class TestProfileNotificationFunctions(TestCase):
             "birthday": date(1990, 1, 1),
             "balance": Decimal("1000.00")
         }
-        
-        await notify_profile_update_async(user_id, profile_data, password_updated=True, device_id="device123")
-        
+        await notify_profile_update_async(user_id, profile_data,
+                                          password_updated=True, device_id="device123")
         mock_send_to_group.assert_called_once_with(
             "profile_123",
             "profile_update",
@@ -292,9 +272,7 @@ class TestProfileNotificationFunctions(TestCase):
         """Test sync profile update notification."""
         user_id = 123
         profile_data = {"name": "John Doe"}
-        
         notify_profile_update(user_id, profile_data)
-        
         mock_async_to_sync.assert_called_once()
 
     @patch('leaguer.ws_utils.WebSocketNotificationService.send_to_group')
@@ -302,9 +280,7 @@ class TestProfileNotificationFunctions(TestCase):
         """Test async profile password update notification."""
         user_id = 456
         device_id = "device456"
-        
         await notify_profile_password_update_async(user_id, device_id)
-        
         mock_send_to_group.assert_called_once_with(
             "profile_456",
             "profile_password_update",
@@ -318,9 +294,7 @@ class TestProfileNotificationFunctions(TestCase):
     def test_notify_profile_password_update_sync(self, mock_async_to_sync):
         """Test sync profile password update notification."""
         user_id = 456
-        
         notify_profile_password_update(user_id)
-        
         mock_async_to_sync.assert_called_once()
 
 
@@ -333,9 +307,7 @@ class TestGeneralNotificationFunctions(TestCase):
         user_id = 789
         message = "Test notification"
         data = {"key": "value"}
-        
         await notify_user_async(user_id, message, data)
-        
         mock_send_to_group.assert_called_once_with(
             "profile_789",
             "notification",
@@ -350,9 +322,7 @@ class TestGeneralNotificationFunctions(TestCase):
         """Test async user notification without additional data."""
         user_id = 789
         message = "Test notification"
-        
         await notify_user_async(user_id, message)
-        
         mock_send_to_group.assert_called_once_with(
             "profile_789",
             "notification",
@@ -367,9 +337,7 @@ class TestGeneralNotificationFunctions(TestCase):
         """Test sync user notification."""
         user_id = 789
         message = "Test notification"
-        
         notify_user(user_id, message)
-        
         mock_async_to_sync.assert_called_once()
 
     @patch('leaguer.ws_utils.notify_user_async')
@@ -378,9 +346,7 @@ class TestGeneralNotificationFunctions(TestCase):
         user_ids = [1, 2, 3]
         message = "Broadcast message"
         data = {"broadcast": True}
-        
         await notify_multiple_users_async(user_ids, message, data)
-        
         # Verify notify_user_async was called for each user
         self.assertEqual(mock_notify_user_async.call_count, 3)
         for user_id in user_ids:
@@ -391,9 +357,7 @@ class TestGeneralNotificationFunctions(TestCase):
         """Test sync multiple users notification."""
         user_ids = [1, 2, 3]
         message = "Broadcast message"
-        
         notify_multiple_users(user_ids, message)
-        
         mock_async_to_sync.assert_called_once()
 
 
@@ -404,9 +368,7 @@ class TestConnectionMonitoring(TestCase):
     async def test_ping_user_connection(self, mock_send_to_group):
         """Test async ping user connection."""
         user_id = 999
-        
         await ping_user_connection(user_id)
-        
         mock_send_to_group.assert_called_once_with(
             "profile_999",
             "ping",
@@ -417,9 +379,7 @@ class TestConnectionMonitoring(TestCase):
     def test_ping_user_connection_sync(self, mock_async_to_sync):
         """Test sync ping user connection."""
         user_id = 999
-        
         ping_user_connection_sync(user_id)
-        
         mock_async_to_sync.assert_called_once()
 
 
@@ -431,9 +391,7 @@ class TestPasswordResetNotifications(TestCase):
         """Test async profile password reset notification."""
         user_id = 111
         device_id = "device111"
-        
         await notify_profile_password_reset_async(user_id, device_id)
-        
         mock_send_to_group.assert_called_once_with(
             "profile_111",
             "profile_password_reset",
@@ -448,9 +406,7 @@ class TestPasswordResetNotifications(TestCase):
     def test_notify_profile_password_reset_sync(self, mock_async_to_sync):
         """Test sync profile password reset notification."""
         user_id = 111
-        
         notify_profile_password_reset(user_id)
-        
         mock_async_to_sync.assert_called_once()
 
 
@@ -459,33 +415,31 @@ class TestErrorHandling(TestCase):
 
     @patch('leaguer.ws_utils.WebSocketNotificationService.send_to_group')
     @patch('leaguer.ws_utils.logger')
-    async def test_notify_profile_update_async_with_exception(self, mock_logger, mock_send_to_group):
+    async def test_notify_profile_update_async_with_exception(self, mock_logger,
+                                                              mock_send_to_group):
         """Test error handling in async profile update notification."""
         mock_send_to_group.side_effect = Exception("WebSocket error")
-        
         user_id = 123
         profile_data = {"name": "John"}
-        
         await notify_profile_update_async(user_id, profile_data)
-        
         # Verify error was logged
         mock_logger.error.assert_called_once()
-        self.assertIn("Failed to send profile update notification", str(mock_logger.error.call_args))
+        self.assertIn("Failed to send profile update notification",
+                      str(mock_logger.error.call_args))
 
     @patch('leaguer.ws_utils.async_to_sync')
     @patch('leaguer.ws_utils.logger')
-    def test_notify_profile_update_sync_with_exception(self, mock_logger, mock_async_to_sync):
+    def test_notify_profile_update_sync_with_exception(self, mock_logger,
+                                                       mock_async_to_sync):
         """Test error handling in sync profile update notification."""
         mock_async_to_sync.side_effect = Exception("Sync error")
-        
         user_id = 123
         profile_data = {"name": "John"}
-        
         notify_profile_update(user_id, profile_data)
-        
         # Verify error was logged
         mock_logger.error.assert_called_once()
-        self.assertIn("Failed to send sync profile update notification", str(mock_logger.error.call_args))
+        self.assertIn("Failed to send sync profile update notification",
+                      str(mock_logger.error.call_args))
 
 
 class TestIntegration(TestCase):
@@ -499,7 +453,6 @@ class TestIntegration(TestCase):
     async def test_end_to_end_profile_update(self, mock_get_channel_layer):
         """Test end-to-end profile update notification."""
         mock_get_channel_layer.return_value = self.channel_layer
-        
         # Create profile data with various data types
         profile_data = {
             "id": 123,
@@ -515,7 +468,6 @@ class TestIntegration(TestCase):
                 "created_at": datetime(2023, 1, 1, 0, 0, 0)
             }
         }
-        
         # Send the notification
         await notify_profile_update_async(
             user_id=123,
@@ -523,10 +475,8 @@ class TestIntegration(TestCase):
             password_updated=False,
             device_id="device123"
         )
-        
         # This test mainly verifies that no exceptions are raised
         # and the serialization works correctly
-        
     def test_complex_serialization_scenario(self):
         """Test complex nested data serialization."""
         complex_data = {
@@ -555,34 +505,27 @@ class TestIntegration(TestCase):
                 "amounts": [Decimal("100.00"), Decimal("250.50"), Decimal("999.99")]
             }
         }
-        
         result = serialize_for_websocket(complex_data)
-        
         # Verify all datetime objects are converted to strings
         self.assertEqual(result["user"]["profile"]["personal"]["birthday"], "1985-12-25")
         self.assertEqual(
             result["user"]["profile"]["personal"]["preferences"]["last_updated"],
             "2023-12-25T15:30:45"
         )
-        
         # Verify all Decimal objects are converted to floats
         self.assertEqual(
             result["user"]["profile"]["personal"]["preferences"]["settings"]["balance"],
             2500.99
         )
-        
         # Verify lists are properly handled
         expected_rates = [1.5, 2.0, 3.75]
         self.assertEqual(
             result["user"]["profile"]["personal"]["preferences"]["settings"]["rates"],
             expected_rates
         )
-        
         expected_timestamps = ["2023-01-01T12:00:00", "2023-06-15T18:30:00"]
         self.assertEqual(result["metadata"]["timestamps"], expected_timestamps)
-        
         expected_dates = ["2023-01-01", "2023-12-31"]
         self.assertEqual(result["metadata"]["dates"], expected_dates)
-        
         expected_amounts = [100.0, 250.5, 999.99]
         self.assertEqual(result["metadata"]["amounts"], expected_amounts)

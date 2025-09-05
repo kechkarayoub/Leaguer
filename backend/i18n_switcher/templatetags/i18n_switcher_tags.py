@@ -1,14 +1,15 @@
+# pylint: disable=broad-exception-caught
 """
 Enhanced template tags for i18n_switcher app.
 """
 
-from django import template
-from django.conf import settings
-from django.utils import translation
-from django.utils.safestring import mark_safe
-from ..services import LanguageSwitchService, LanguagePreferenceService
-from ..exceptions import InvalidPathException, UnsupportedLanguageException
 import logging
+
+from django import template
+from django.utils import translation
+
+from i18n_switcher.services import LanguageSwitchService, LanguagePreferenceService
+from i18n_switcher.exceptions import InvalidPathException, UnsupportedLanguageException
 
 register = template.Library()
 logger = logging.getLogger(__name__)
@@ -18,18 +19,18 @@ logger = logging.getLogger(__name__)
 def switch_lang_url(context, language_code):
     """
     Generate URL for switching to a specific language.
-    
+
     Usage: {% switch_lang_url 'en' %}
     """
     request = context.get('request')
     if not request:
         return '#'
-    
+
     try:
         current_path = request.path
         return LanguageSwitchService.switch_language_in_path(current_path, language_code)
     except (InvalidPathException, UnsupportedLanguageException) as e:
-        logger.warning(f"Failed to generate language switch URL: {str(e)}")
+        logger.warning("Failed to generate language switch URL: %s", str(e))
         return '#'
 
 
@@ -37,7 +38,7 @@ def switch_lang_url(context, language_code):
 def get_language_name(language_code):
     """
     Get the display name for a language code.
-    
+
     Usage: {% get_language_name 'en' %}
     """
     language_names = LanguageSwitchService.get_language_names()
@@ -48,7 +49,7 @@ def get_language_name(language_code):
 def get_supported_languages():
     """
     Get list of supported language codes.
-    
+
     Usage: {% get_supported_languages %}
     """
     return LanguageSwitchService.get_supported_languages()
@@ -58,7 +59,6 @@ def get_supported_languages():
 def get_language_info():
     """
     Get comprehensive language information.
-    
     Usage: {% get_language_info %}
     """
     return {
@@ -73,17 +73,16 @@ def get_language_info():
 def language_selector(context, css_class='language-selector'):
     """
     Render a language selector widget.
-    
     Usage: {% language_selector %}
     Usage: {% language_selector 'custom-css-class' %}
     """
     request = context.get('request')
     current_language = translation.get_language()
     current_path = request.path if request else '/'
-    
+
     try:
         language_urls = LanguageSwitchService.build_language_switch_urls(current_path)
-        
+
         return {
             'current_language': current_language,
             'language_urls': language_urls,
@@ -91,7 +90,7 @@ def language_selector(context, css_class='language-selector'):
             'request': request
         }
     except Exception as e:
-        logger.error(f"Error building language selector: {str(e)}")
+        logger.error("Error building language selector: %s", str(e))
         return {
             'current_language': current_language,
             'language_urls': {},
@@ -104,7 +103,7 @@ def language_selector(context, css_class='language-selector'):
 def is_rtl_language(language_code):
     """
     Check if a language is right-to-left.
-    
+
     Usage: {{ 'ar'|is_rtl_language }}
     """
     rtl_languages = ['ar', 'he', 'fa', 'ur']  # Common RTL languages
@@ -115,7 +114,7 @@ def is_rtl_language(language_code):
 def language_name(language_code):
     """
     Filter to get language name from code.
-    
+
     Usage: {{ 'en'|language_name }}
     """
     return get_language_name(language_code)
@@ -125,22 +124,23 @@ def language_name(language_code):
 def current_language_info(context):
     """
     Get current language information from request.
-    
+
     Usage: {% current_language_info %}
     """
     request = context.get('request')
     current_language = translation.get_language()
-    
+
     result = {
         'code': current_language,
         'name': get_language_name(current_language),
         'is_rtl': translation.get_language_bidi()
     }
-    
+
     if request:
         result['preference'] = LanguagePreferenceService.get_language_preference(request)
-        result['path_language'] = LanguageSwitchService.get_current_language_from_path(request.path)
-    
+        result['path_language'] = LanguageSwitchService.get_current_language_from_path(
+            request.path)
+
     return result
 
 
@@ -148,18 +148,19 @@ def current_language_info(context):
 def language_switch_form(context, method='POST', css_class='language-switch-form'):
     """
     Generate a language switch form.
-    
+
     Usage: {% language_switch_form %}
     Usage: {% language_switch_form 'GET' 'custom-form-class' %}
     """
     request = context.get('request')
     current_language = translation.get_language()
     current_path = request.path if request else '/'
-    
+
     languages = []
     for lang_code in LanguageSwitchService.get_supported_languages():
         try:
-            switch_url = LanguageSwitchService.switch_language_in_path(current_path, lang_code)
+            switch_url = LanguageSwitchService.switch_language_in_path(
+                current_path, lang_code)
             languages.append({
                 'code': lang_code,
                 'name': get_language_name(lang_code),
@@ -167,9 +168,9 @@ def language_switch_form(context, method='POST', css_class='language-switch-form
                 'is_current': lang_code == current_language
             })
         except Exception as e:
-            logger.warning(f"Skipping language {lang_code} in form: {str(e)}")
+            logger.warning("Skipping language %s in form: %s", lang_code, str(e))
             continue
-    
+
     return {
         'languages': languages,
         'current_language': current_language,

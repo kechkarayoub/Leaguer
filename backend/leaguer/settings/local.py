@@ -1,3 +1,4 @@
+# pylint: disable=unused-wildcard-import,wildcard-import
 """
 Development settings for leaguer project.
 """
@@ -93,8 +94,10 @@ DEFAULT_FROM_EMAIL = get_secret("DEFAULT_FROM_EMAIL")
 TECHNICAL_SERVICE_EMAIL = get_secret("TECHNICAL_SERVICE_EMAIL", "")
 
 # Feature flags
-ENABLE_EMAIL_VERIFICATION = get_secret("ENABLE_EMAIL_VERIFICATION", "false").lower() == "true"
-ENABLE_PHONE_NUMBER_VERIFICATION = get_secret("ENABLE_PHONE_NUMBER_VERIFICATION", "false").lower() == "true"
+ENABLE_EMAIL_VERIFICATION = get_secret("ENABLE_EMAIL_VERIFICATION",
+                                       "false").lower() == "true"
+ENABLE_PHONE_NUMBER_VERIFICATION = get_secret("ENABLE_PHONE_NUMBER_VERIFICATION",
+                                              "false").lower() == "true"
 
 # Environment
 ENVIRONMENT = "development"

@@ -32,7 +32,8 @@ urlpatterns += i18n_patterns(
 )
 
 # Add debug toolbar URLs in development
-if settings.DEBUG and hasattr(settings, 'INTERNAL_IPS') and 'debug_toolbar' in settings.INSTALLED_APPS:
+if settings.DEBUG and hasattr(settings, 'INTERNAL_IPS') and\
+    'debug_toolbar' in settings.INSTALLED_APPS:
     try:
         import debug_toolbar
         urlpatterns = [

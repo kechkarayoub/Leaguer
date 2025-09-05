@@ -1,19 +1,24 @@
+# pylint: disable=broad-exception-caught,logging-fstring-interpolation
 """
 Core views for the leaguer project.
 """
 
+import logging
+
+from django.conf import settings
 from django.http import JsonResponse
 from django.utils.translation import activate, gettext_lazy as _
 from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.vary import vary_on_headers
+from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework import status
+
 from .exceptions import GeolocationException
+from .serializers import ContactMessageSerializer
 from .services import GeolocationService
-import logging
 
 
 logger = logging.getLogger(__name__)
@@ -25,11 +30,10 @@ logger = logging.getLogger(__name__)
 def get_geolocation(request):
     """
     Fetch geolocation data for a client's IP address.
-
     Query Parameters:
-        - requested_info (str, optional): Comma-separated fields (e.g., "country,countryCode")
+        - requested_info (str, optional): Comma-separated fields 
+            (e.g., "country,countryCode")
         - selected_language (str, optional): Language code (e.g., "fr" for French)
-
     Returns:
         JsonResponse: Geolocation data or error message
         - Success: 200 + { "country": "France", "countryCode": "FR", ... }
@@ -39,25 +43,19 @@ def get_geolocation(request):
     try:
         # Get client IP address
         client_ip = GeolocationService.get_client_ip(request)
-        
         # Parse query parameters
         requested_info = request.GET.get("requested_info", "country,countryCode")
         current_language = request.GET.get("selected_language", "fr")
-        
         # Activate language
         activate(current_language)
-        
         # Get geolocation data
         data = GeolocationService.get_geolocation_data(client_ip, requested_info)
-        
         return JsonResponse(data, status=200)
-        
     except GeolocationException as e:
         logger.warning(f"Geolocation error for IP {client_ip}: {str(e)}")
         return JsonResponse({
             "error": str(e)
         }, status=400)
-        
     except Exception as e:
         logger.error(f"Unexpected error in geolocation view: {str(e)}", exc_info=True)
         return JsonResponse({
@@ -70,7 +68,6 @@ def get_geolocation(request):
 def health_check(request):
     """
     Health check endpoint for monitoring.
-    
     Returns:
         Response: Health status
     """
@@ -85,12 +82,9 @@ def health_check(request):
 def api_info(request):
     """
     API information endpoint.
-    
     Returns:
         Response: API information
     """
-    from django.conf import settings
-    
     return Response({
         "application": settings.APPLICATION_NAME,
         "version": "1.0.0",
@@ -105,46 +99,40 @@ def api_info(request):
 def contact_message_create(request):
     """
     Create a new contact message.
-    
     POST /api/contact/
-    
     Request Body:
         - name (str): Full name of the person
         - email (str): Email address for response
         - subject (str): Subject category (support, billing, feature, partnership, other)
         - message (str): The message content (min 10 characters)
-    
     Returns:
         201: Message created successfully
         400: Validation errors
     """
-    from .serializers import ContactMessageSerializer
-    
     try:
-        serializer = ContactMessageSerializer(data=request.data, context={'request': request})
-        
+        serializer = ContactMessageSerializer(data=request.data,
+                                            context={'request': request})
         if serializer.is_valid():
             contact_message = serializer.save()
-            
             # Log the contact message creation
-            logger.info(f"Contact message created: ID {contact_message.id} from {contact_message.email}")
-            
+            logger.info(
+                f"Contact message created: ID {contact_message.id} from"
+                f" {contact_message.email}")
             return Response({
                 'success': True,
-                'message': _('Your message has been sent successfully. We will get back to you within 24 hours.'),
+                'message': _('Your message has been sent successfully. We will get '
+                             'back to you within 24 hours.'),
                 'id': contact_message.id
             }, status=status.HTTP_201_CREATED)
-        else:
-            return Response({
-                'success': False,
-                'message': _('Please correct the errors below.'),
-                'errors': serializer.errors
-            }, status=status.HTTP_400_BAD_REQUEST)
-            
+        return Response({
+            'success': False,
+            'message': _('Please correct the errors below.'),
+            'errors': serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         logger.error(f"Error creating contact message: {str(e)}")
         return Response({
             'success': False,
-            'message': _('An error occurred while sending your message. Please try again later.')
+            'message': _('An error occurred while sending your message. Please try again '
+                         'later.')
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-

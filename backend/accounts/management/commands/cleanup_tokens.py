@@ -1,3 +1,4 @@
+# pylint: disable=logging-fstring-interpolation
 """
 Management command to clean up expired and blacklisted tokens.
 """
@@ -61,9 +62,7 @@ class Command(BaseCommand):
         )
         # Confirmation
         if not options['force']:
-            confirm = input(
-                f"Are you sure you want to remove {total_count} expired tokens older than {days} days? [y/N]: "
-            )
+            confirm = input(f"Are you sure you want to remove {total_count} expired tokens older than {days} days? [y/N]: ") # pylint: disable=line-too-long
             if confirm.lower() not in ['y', 'yes']:
                 self.stdout.write("Operation cancelled")
                 return
@@ -86,11 +85,9 @@ class Command(BaseCommand):
                     f"Total tokens cleaned up: {blacklisted_deleted + outstanding_deleted}"
                 )
             )
-            logger.info(
-                "Token cleanup completed: %d tokens removed", blacklisted_deleted + outstanding_deleted
-            )
+            logger.info(f"Token cleanup completed: {blacklisted_deleted + outstanding_deleted} tokens removed") # pylint: disable=line-too-long
         except Exception as e:  # pylint: disable=broad-exception-caught
-            logger.error("Error during token cleanup: %s", e)
+            logger.error(f"Error during token cleanup: {e}")
             self.stdout.write(
                 self.style.ERROR(f"Error during cleanup: {e}")
             )

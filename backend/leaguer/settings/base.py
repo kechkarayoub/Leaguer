@@ -3,12 +3,12 @@ Base Django settings for leaguer project.
 This file contains settings that are common to all environments.
 """
 
-from datetime import timedelta
-from decouple import config
-from django.utils.translation import gettext_lazy as _
-from pathlib import Path
-import os
 import sys
+from datetime import timedelta
+from pathlib import Path
+from decouple import config
+
+from django.utils.translation import gettext_lazy as _
 
 
 def get_secret(secret_id, backup=None):
@@ -226,7 +226,6 @@ def get_logging_config():
     """Get logging configuration."""
     log_dir = BASE_DIR / 'logs'
     log_dir.mkdir(exist_ok=True)
-    
     return {
         'version': 1,
         'disable_existing_loggers': False,

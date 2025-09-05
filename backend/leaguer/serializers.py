@@ -1,5 +1,7 @@
-from rest_framework import serializers
+"""Serializers for contact messages."""
 from django.utils.translation import gettext_lazy as _
+from rest_framework import serializers
+
 from .models import ContactMessage
 
 
@@ -7,7 +9,6 @@ class ContactMessageSerializer(serializers.ModelSerializer):
     """
     Serializer for contact messages
     """
-    
     class Meta:
         model = ContactMessage
         fields = [
@@ -19,7 +20,7 @@ class ContactMessageSerializer(serializers.ModelSerializer):
             'created_at'
         ]
         read_only_fields = ['id', 'created_at']
-        
+
     def validate_message(self, value):
         """
         Validate that the message has minimum length
@@ -29,7 +30,7 @@ class ContactMessageSerializer(serializers.ModelSerializer):
                 _('Message must be at least 10 characters long')
             )
         return value.strip()
-    
+
     def validate_name(self, value):
         """
         Validate that the name is not empty
@@ -39,7 +40,7 @@ class ContactMessageSerializer(serializers.ModelSerializer):
                 _('Name is required')
             )
         return value.strip()
-    
+
     def create(self, validated_data):
         """
         Create a new contact message, optionally linking to authenticated user
@@ -48,7 +49,6 @@ class ContactMessageSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if request and request.user.is_authenticated:
             validated_data['user'] = request.user
-            
         return ContactMessage.objects.create(**validated_data)
 
 
@@ -58,7 +58,7 @@ class ContactMessageListSerializer(serializers.ModelSerializer):
     """
     subject_display = serializers.CharField(source='get_subject_display', read_only=True)
     status_display = serializers.CharField(source='get_status_display', read_only=True)
-    
+
     class Meta:
         model = ContactMessage
         fields = [

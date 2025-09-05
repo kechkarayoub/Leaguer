@@ -1,3 +1,4 @@
+# pylint: disable=unnecessary-pass
 """
 Custom exceptions for the leaguer project.
 """

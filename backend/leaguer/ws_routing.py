@@ -1,5 +1,7 @@
-from . import ws_consumers
+"""WebSocket routing configuration for the leaguer application."""
 from django.urls import re_path
+
+from . import ws_consumers
 
 
 # WebSocket URL routing for the profile feature

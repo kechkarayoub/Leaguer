@@ -95,24 +95,24 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.WARNING('⚠ LOCALE_PATHS is not configured')
             )
-    
+
     def _check_supported_languages(self, verbose):
         """Check supported languages configuration."""
         self.stdout.write('\n🌍 Checking supported languages...')
-        
+
         try:
             supported_languages = LanguageSwitchService.get_supported_languages()
             language_names = LanguageSwitchService.get_language_names()
-            
+
             self.stdout.write(
                 self.style.SUCCESS(f'✓ Found {len(supported_languages)} supported languages')
             )
-            
+
             if verbose:
                 for lang_code in supported_languages:
                     lang_name = language_names.get(lang_code, lang_code)
                     self.stdout.write(f'    - {lang_code}: {lang_name}')
-            
+
             # Check if default language is supported
             default_lang = getattr(settings, 'LANGUAGE_CODE', 'en')
             if LanguageSwitchService.is_language_supported(default_lang):
@@ -123,7 +123,7 @@ class Command(BaseCommand):
                 self.stdout.write(
                     self.style.ERROR(f'✗ Default language ({default_lang}) is not in LANGUAGES')
                 )
-                
+
         except Exception as e:
             self.stdout.write(
                 self.style.ERROR(f'✗ Error checking languages: {str(e)}')
@@ -142,43 +142,43 @@ class Command(BaseCommand):
             'LANGUAGE_COOKIE_HTTPONLY': getattr(settings, 'LANGUAGE_COOKIE_HTTPONLY', False),
             'LANGUAGE_COOKIE_SAMESITE': getattr(settings, 'LANGUAGE_COOKIE_SAMESITE', None),
         }
-        
+
         for setting_name, value in cookie_settings.items():
             if verbose or value is not None:
                 self.stdout.write(f'  {setting_name}: {value}')
-        
+
         self.stdout.write(
             self.style.SUCCESS('✓ Cookie settings checked')
         )
-    
+
     def _check_translation_files(self, verbose):
         """Check for translation files."""
         self.stdout.write('\n📁 Checking translation files...')
-        
+
         try:
             supported_languages = LanguageSwitchService.get_supported_languages()
             locale_paths = getattr(settings, 'LOCALE_PATHS', [])
-            
+
             if not locale_paths:
                 self.stdout.write(
                     self.style.WARNING('⚠ No LOCALE_PATHS configured, skipping file check')
                 )
                 return
-            
+
             for locale_path in locale_paths:
                 self.stdout.write(f'\n📂 Checking locale path: {locale_path}')
-                
+
                 if not os.path.exists(locale_path):
                     self.stdout.write(
                         self.style.ERROR(f'✗ Locale path does not exist: {locale_path}')
                     )
                     continue
-                
+
                 for lang_code in supported_languages:
                     lang_dir = os.path.join(locale_path, lang_code, 'LC_MESSAGES')
                     po_file = os.path.join(lang_dir, 'django.po')
                     mo_file = os.path.join(lang_dir, 'django.mo')
-                    
+
                     if os.path.exists(po_file):
                         if os.path.exists(mo_file):
                             self.stdout.write(
@@ -196,16 +196,16 @@ class Command(BaseCommand):
                             self.stdout.write(
                                 self.style.ERROR(f'✗ {lang_code}: No translation files found')
                             )
-                            
+
         except Exception as e:
             self.stdout.write(
                 self.style.ERROR(f'✗ Error checking translation files: {str(e)}')
             )
-    
+
     def _test_services(self, verbose):
         """Test service functionality."""
         self.stdout.write('\n🧪 Testing service functionality...')
-        
+
         try:
             # Test path switching
             test_paths = [
@@ -213,7 +213,7 @@ class Command(BaseCommand):
                 ('/fr/test/', 'en'),
                 ('/test/', 'fr'),
             ]
-            
+
             for path, language in test_paths:
                 try:
                     result = LanguageSwitchService.switch_language_in_path(path, language)
@@ -226,11 +226,11 @@ class Command(BaseCommand):
                         )
                     )
                     return
-            
+
             self.stdout.write(
                 self.style.SUCCESS('✓ Service functionality tests passed')
             )
-            
+
         except Exception as e:
             self.stdout.write(
                 self.style.ERROR(f'✗ Service testing failed: {str(e)}')

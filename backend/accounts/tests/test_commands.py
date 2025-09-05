@@ -104,10 +104,10 @@ class LogoutUsersCommandTests(TestCase):
     """Tests for the logout_users management command."""
     def setUp(self):
         self.user = User.objects.create_user(
-            username='testuser', email='test@example.com', password='password123'
+            username='testuserlo', email='test@example.com', password='password123'
         )
         self.user2 = User.objects.create_user(
-            username='testuser2', email='test2@example.com', password='password123'
+            username='testuserlo2', email='test2@example.com', password='password123'
         )
         self.inactive_user = User.objects.create_user(
             username='inactive', email='inactive@example.com',
@@ -148,7 +148,7 @@ class LogoutUsersCommandTests(TestCase):
         )
         output = out.getvalue()
         self.assertIn(f"Found user: {self.user.username}", output)
-        self.assertIn("Logged out user 'testuser'", output)
+        self.assertIn("Logged out user 'testuserlo'", output)
         self.assertIn("Total tokens blacklisted: 2", output)
         # Verify tokens are blacklisted
         outstanding_tokens = OutstandingToken.objects.filter(user=self.user)
@@ -164,7 +164,7 @@ class LogoutUsersCommandTests(TestCase):
         )
         output = out.getvalue()
         self.assertIn(f"Found user: {self.user2.username}", output)
-        self.assertIn("Logged out user 'testuser2'", output)
+        self.assertIn("Logged out user 'testuserlo2'", output)
     def test_logout_user_by_email_with_tokens(self):
         """Test logout user by email with tokens."""
         # Create tokens for user
@@ -175,7 +175,7 @@ class LogoutUsersCommandTests(TestCase):
         )
         output = out.getvalue()
         self.assertIn(f"Found user: {self.user.username}", output)
-        self.assertIn("Logged out user 'testuser'", output)
+        self.assertIn("Logged out user 'testuserlo'", output)
     def test_logout_user_without_tokens(self):
         """Test logout user without tokens."""
         out = StringIO()
@@ -183,7 +183,7 @@ class LogoutUsersCommandTests(TestCase):
             'logout_users', '--user-id', self.user.id, '--force', stdout=out
         )
         output = out.getvalue()
-        self.assertIn("User 'testuser' had no active tokens", output)
+        self.assertIn("User 'testuserlo' had no active tokens", output)
         self.assertIn("Total tokens blacklisted: 0", output)
     def test_logout_all_active_users(self):
         """Test logout for all active users."""
@@ -210,7 +210,7 @@ class LogoutUsersCommandTests(TestCase):
         out = StringIO()
         call_command('logout_users', '-ui', self.user.id, '-f', stdout=out)
         output = out.getvalue()
-        self.assertIn("Logged out user 'testuser'", output)
+        self.assertIn("Logged out user 'testuserlo'", output)
     @patch('builtins.input', return_value='n')
     def test_logout_with_confirmation_no(self, _mock_input):
         """Test logout confirmation (no)."""
@@ -226,7 +226,7 @@ class LogoutUsersCommandTests(TestCase):
         out = StringIO()
         call_command('logout_users', '--user-id', self.user.id, stdout=out)
         output = out.getvalue()
-        self.assertIn("Logged out user 'testuser'", output)
+        self.assertIn("Logged out user 'testuserlo'", output)
     def test_logout_user_with_already_blacklisted_tokens(self):
         """Test logout user with already blacklisted tokens."""
         # Create token and blacklist it
@@ -240,17 +240,17 @@ class LogoutUsersCommandTests(TestCase):
             'logout_users', '--user-id', self.user.id, '--force', stdout=out
         )
         output = out.getvalue()
-        self.assertIn("User 'testuser' had no active tokens", output)
+        self.assertIn("User 'testuserlo' had no active tokens", output)
 
 
 class CleanupTokensCommandTests(TestCase):
     """Tests for the cleanup_tokens management command."""
     def setUp(self):
         self.user = User.objects.create_user(
-            username='testuser', email='test@example.com', password='password123'
+            username='testuserct', email='test@example.com', password='password123'
         )
         self.user2 = User.objects.create_user(
-            username='testuser2', email='test2@example.com', password='password123'
+            username='testuserct2', email='test2@example.com', password='password123'
         )
     def _create_old_tokens(self, days_ago=8):
         """Helper method to create old tokens."""
@@ -343,7 +343,7 @@ class CheckAccountsCommandTests(TestCase):
     """Tests for the check_accounts management command."""
     def setUp(self):
         self.user = User.objects.create_user(
-            username='testuser', email='test@example.com', password='password123'
+            username='testuserca', email='test@example.com', password='password123'
         )
     def test_basic_health_check(self):
         """Test basic health check."""

@@ -1,3 +1,6 @@
+"""
+Init file for accounts tests.
+"""
 from .test_commands import *
 from .test_middlwares import *
 from .test_models import *

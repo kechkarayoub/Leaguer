@@ -3,34 +3,40 @@ Comprehensive test suite for leaguer core functionality.
 This file replaces and consolidates all existing tests with improved coverage.
 """
 
-from io import StringIO
+import asyncio
 import json
 import os
-import asyncio
 import time
+from io import StringIO
 from unittest.mock import patch, Mock
-from accounts.tokens import RefreshToken
+
+from asgiref.sync import sync_to_async
+from channels.db import database_sync_to_async
 from channels.testing import WebsocketCommunicator
 from decouple import config
-from django.test import TestCase, TransactionTestCase, RequestFactory
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.core.cache import cache
 from django.core.management import call_command
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.conf import settings
+from django.test import TestCase, TransactionTestCase, RequestFactory
 from django.utils.translation import activate, gettext_lazy as _
-from asgiref.sync import sync_to_async
+
+from accounts.tokens import RefreshToken
 from leaguer.asgi import application
-from ..exceptions import GeolocationException, MessageSendException, FileUploadException
-from ..services import GeolocationService, MessageService, ValidationService, CacheService
-from ..utils import (
+from leaguer.exceptions import (GeolocationException, MessageSendException,
+                                FileUploadException)
+from leaguer.monitoring import PerformanceMonitor, DatabaseMonitor
+from leaguer.services import (GeolocationService, MessageService, ValidationService,
+                              CacheService)
+from leaguer.utils import (
     execute_native_query, generate_random_code, get_all_timezones,
     get_email_base_context, get_geolocation_info,
     remove_file, send_whatsapp, send_phone_message, upload_file
 )
-from ..views import get_geolocation, health_check, api_info
-from ..ws_utils import (
+from leaguer.views import get_geolocation, health_check, api_info
+from leaguer.ws_utils import (
     WebSocketNotificationService, notify_profile_update_async,
     notify_profile_password_update_async, notify_profile_password_update,
     notify_profile_update, notify_user_async, notify_user,
@@ -38,9 +44,6 @@ from ..ws_utils import (
     ping_user_connection, ping_user_connection_sync,
     notify_profile_password_reset_async, notify_profile_password_reset
 )
-from channels.db import database_sync_to_async
-from ..monitoring import PerformanceMonitor, DatabaseMonitor
-
 
 User = get_user_model()
 
@@ -49,14 +52,16 @@ class EnvironmentTestCase(TestCase):
     """Test environment configuration and setup."""
     def test_env_file_exists(self):
         """Test that the .env file exists in the project root."""
-        env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), '.env')
+        env_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(__file__))), '.env')
         self.assertTrue(os.path.exists(env_path), "⚠️ .env file is missing!")
     def test_required_env_variables(self):
         """Test that all required environment variables are set."""
         required_vars = [
             "ALLOWED_HOSTS", "API_BURST_LIMIT", "API_RATE_LIMIT",
             "BACKEND_ENDPOINT", "COMPANY_ADDRESS", "CORS_ALLOW_ALL_ORIGINS",
-            "CORS_ALLOWED_ORIGINS", "DB_CONTAINER_EXTERNAL_PORT", "DB_CONTAINER_INTERNAL_PORT",
+            "CORS_ALLOWED_ORIGINS", "DB_CONTAINER_EXTERNAL_PORT",
+            "DB_CONTAINER_INTERNAL_PORT",
             "DB_IP", "DB_NAME", "DB_ROOT_PASSWORD", "DB_USER_NM", "DB_USER_PW",
             "DEFAULT_FROM_EMAIL", "DJANGO_CONTAINER_EXTERNAL_PORT",
             "DJANGO_CONTAINER_INTERNAL_PORT", "DJANGO_SECRET_KEY", "EMAIL_HOST",
@@ -71,7 +76,8 @@ class EnvironmentTestCase(TestCase):
         ]
         missing_vars = [var for var in required_vars if not config(var, None)]
         self.assertEqual(
-            missing_vars, [], f"⚠️ Missing environment variables: {', '.join(missing_vars)}"
+            missing_vars, [],
+            f"⚠️ Missing environment variables: {', '.join(missing_vars)}"
         )
     def test_firebase_credentials_path(self):
         """Test Firebase credentials configuration."""
@@ -187,7 +193,8 @@ class ServicesTestCase(TestCase):
             'nbr_verification_codes_sent': 2,
             'all_verification_codes_sent': True
         }
-        result = MessageService.send_bulk_message(['+1234567890', '+1234567891'], 'Test message')
+        result = MessageService.send_bulk_message(
+            ['+1234567890', '+1234567891'], 'Test message')
         self.assertTrue(result['all_verification_codes_sent'])
         self.assertEqual(result['nbr_verification_codes_sent'], 2)
     def test_validation_service_phone_number(self):
@@ -252,12 +259,13 @@ class UtilsTestCase(TestCase):
         self.assertEqual(len(users), 1)
         # Test INSERT query
         query_insert_user = """
-            INSERT INTO leaguer_user (email, first_name, is_active, last_name, username, password, is_superuser, 
-                is_staff, date_joined, nbr_phone_number_verification_code_used,
-                user_gender, is_user_deleted, current_language, is_user_email_validated, is_user_phone_number_validated,
-                user_phone_number_verified_by, user_timezone)
-            VALUES ('test@example.com', 'Test', True, 'User', 'testuser2', 'password', False, False, NOW(),
-                0, '', False, 'en', False, False, '', 'UTC');
+            INSERT INTO leaguer_user (email, first_name, is_active, last_name, username,
+                password, is_superuser, is_staff, date_joined,
+                nbr_phone_number_verification_code_used, user_gender, is_user_deleted,
+                current_language, is_user_email_validated, is_user_phone_number_validated,
+                user_phone_number_verified_by, user_timezone, user_theme)
+            VALUES ('test@example.com', 'Test', True, 'User', 'testuser2', 'password',
+                False, False, NOW(), 0, '', False, 'en', False, False, '', 'UTC', 'light');
         """
         result = execute_native_query(query_insert_user, is_get=False)
         self.assertIsNone(result)
@@ -337,8 +345,10 @@ class UtilsTestCase(TestCase):
         )
         mock_save.return_value = 'profile_images/profile_test_image.jpg'
         request = self.factory.post('/test/')
-        file_url, file_path = upload_file(request, test_file, 'profile_images', prefix="profile_")
-        expected_url = f'{request.build_absolute_uri(settings.MEDIA_URL)}profile_images/profile_test_image.jpg'
+        file_url, file_path = upload_file(request, test_file, 'profile_images',
+                                          prefix="profile_")
+        expected_url = f'{request.build_absolute_uri(
+            settings.MEDIA_URL)}profile_images/profile_test_image.jpg'
         self.assertEqual(file_url, expected_url)
         self.assertEqual(file_path, 'profile_images/profile_test_image.jpg')
     def test_send_whatsapp(self):
@@ -478,7 +488,8 @@ class WebSocketTestCase(TransactionTestCase):
             user_id = str(self.user.id)
             new_profile_data = {"id": user_id, "name": "Test User"}
             # Should not raise any exceptions
-            await notify_profile_update_async(user_id, new_profile_data, password_updated=True)
+            await notify_profile_update_async(
+                user_id, new_profile_data, password_updated=True)
         asyncio.get_event_loop().run_until_complete(async_test())
     def notify_profile_password_update_async(self):
         """Test async profile password update notification."""
@@ -546,7 +557,8 @@ class WebSocketTestCase(TransactionTestCase):
             self.assertTrue(data["data"]["connected"])
             self.assertEqual(data["data"]["user_id"], user_id)
             # Test profile update notification
-            await notify_profile_update_async(user_id, {"id": user_id, "name": "Updated Name"})
+            await notify_profile_update_async(
+                user_id, {"id": user_id, "name": "Updated Name"})
             response = await communicator.receive_from()
             data = json.loads(response)
             self.assertEqual(data["type"], "profile_update")
@@ -554,7 +566,6 @@ class WebSocketTestCase(TransactionTestCase):
             response = await communicator.receive_from()
             data = json.loads(response)
             self.assertEqual(data["type"], "profile_password_update")
-            
             # Test password reset notification
             await notify_profile_password_reset_async(user_id)
             response = await communicator.receive_from()
@@ -562,7 +573,6 @@ class WebSocketTestCase(TransactionTestCase):
             self.assertEqual(data["type"], "profile_password_reset")
             self.assertTrue(data["password_reset"])
             self.assertEqual(data["action"], "logout_required")
-            
             await communicator.disconnect()
         asyncio.get_event_loop().run_until_complete(async_test())
     def test_profile_consumer_unauthenticated(self):
@@ -575,13 +585,11 @@ class WebSocketTestCase(TransactionTestCase):
             communicator.scope['auth_error'] = 'no_token'
             connected, _ = await communicator.connect()
             self.assertTrue(connected)  # Connection is initially accepted
-
             # Should receive auth error message
             response = await communicator.receive_from()
             data = json.loads(response)
             self.assertEqual(data["type"], "auth_error")
             self.assertEqual(data["error"], "no_token")
-            
             # Connection should be closed with appropriate code
             await communicator.disconnect()
         asyncio.get_event_loop().run_until_complete(async_test())
@@ -605,7 +613,6 @@ class WebSocketTestCase(TransactionTestCase):
             data = json.loads(response)
             self.assertEqual(data["type"], "auth_error")
             self.assertEqual(data["error"], "access_denied")
-            
             # Connection should be closed with appropriate code
             await communicator.disconnect()
         asyncio.get_event_loop().run_until_complete(async_test())
@@ -690,8 +697,8 @@ class ConfigurationTestCase(TestCase):
             'django.contrib.messages', 'django.contrib.staticfiles',
         ]
         third_party_apps = [
-            'corsheaders', 'rest_framework', 'rest_framework_simplejwt', 'rest_framework_simplejwt.token_blacklist',
-            'channels',
+            'corsheaders', 'rest_framework', 'rest_framework_simplejwt',
+            'rest_framework_simplejwt.token_blacklist', 'channels',
         ]
         local_apps = ['accounts', 'i18n_switcher', 'leaguer']
         # Expected apps count (13 base apps, debug toolbar conditionally added)
@@ -702,11 +709,13 @@ class ConfigurationTestCase(TestCase):
     def test_middleware_order(self):
         """Test that middleware is in correct order."""
         self.assertEqual(settings.MIDDLEWARE[0], 'corsheaders.middleware.CorsMiddleware')
-        self.assertIn('django.middleware.security.SecurityMiddleware', settings.MIDDLEWARE[:3])
+        self.assertIn('django.middleware.security.SecurityMiddleware',
+                      settings.MIDDLEWARE[:3])
     def test_database_configuration(self):
         """Test database configuration."""
         self.assertIn('default', settings.DATABASES)
-        self.assertEqual(settings.DATABASES['default']['ENGINE'], 'django.db.backends.postgresql')
+        self.assertEqual(settings.DATABASES['default']['ENGINE'],
+                         'django.db.backends.postgresql')
     def test_security_settings(self):
         """Test security configuration."""
         self.assertTrue(hasattr(settings, 'SECRET_KEY'))

@@ -1,24 +1,25 @@
 #!/usr/bin/env python
+# pylint: disable=broad-exception-caught
 """
 Debug the channel layer and group membership
 """
 import os
-import django
 import asyncio
+
+import django
+
+from channels.layers import get_channel_layer
 
 # Setup Django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'leaguer.settings')
 django.setup()
 
-from channels.layers import get_channel_layer
 
 async def debug_channel_layer():
     """Debug the channel layer and group membership"""
     channel_layer = get_channel_layer()
-    
     print(f"Channel layer type: {type(channel_layer)}")
     print(f"Channel layer backend: {channel_layer.__class__.__module__}")
-    
     # Check if we can introspect groups (InMemoryChannelLayer doesn't support this well)
     try:
         # This will likely fail for InMemoryChannelLayer
@@ -28,7 +29,6 @@ async def debug_channel_layer():
             print("Channel layer doesn't expose group information")
     except Exception as e:
         print(f"Error accessing groups: {e}")
-    
     # Try to send a direct message to a specific channel
     try:
         # First, let's see what happens if we try to send to a non-existent channel
@@ -40,7 +40,6 @@ async def debug_channel_layer():
         print("Direct channel send completed (no error means it was queued)")
     except Exception as e:
         print(f"Direct channel send failed: {e}")
-    
     # Test group send
     try:
         print("\nTesting group send...")
