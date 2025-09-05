@@ -480,8 +480,7 @@ class ContactMessageQuerySetTest(TestCase):
         # Use timezone-aware date filtering
         # Filter by the actual date when the contacts were created
         # Since all contacts are created in the same test, they should all have the same date
-        actual_contact = ContactMessage.objects.first()
-        actual_date = actual_contact.created_at.date()
+        actual_date = ContactMessage.objects.filter().values_list('created_at__date', flat=True)[0]
         # All contacts should be created on the same date as our test contacts
         today_contacts = ContactMessage.objects.filter(created_at__date=actual_date)
         self.assertEqual(today_contacts.count(), 3)

@@ -4,9 +4,8 @@ import logging
 from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
-from rest_framework_simplejwt.token_blacklist.models import (BlacklistedToken,
-                                                             OutstandingToken)
 
+from accounts.utils import blacklist_user_tokens
 from .models import User
 
 logger = logging.getLogger(__name__)
@@ -131,19 +130,7 @@ class UserAdmin(BaseUserAdmin):
         Returns:
             int: Number of tokens blacklisted
         """
-        tokens_blacklisted = 0
-        try:
-            # Get all outstanding tokens for this user
-            outstanding_tokens = OutstandingToken.objects.filter(user=user)
-            for outstanding_token in outstanding_tokens:
-                # Check if token is already blacklisted
-                if not BlacklistedToken.objects.filter(token=outstanding_token).exists():
-                    # Blacklist the token
-                    BlacklistedToken.objects.create(token=outstanding_token)
-                    tokens_blacklisted += 1
-        except Exception as e:  # pylint: disable=broad-exception-caught
-            logger.error("Error logging out user %s: %s", user.username, str(e))
-        return tokens_blacklisted
+        return blacklist_user_tokens(user)
 
 # Register the custom User model with the custom UserAdmin
 admin.site.register(User, UserAdmin)

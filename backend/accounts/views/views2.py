@@ -19,7 +19,7 @@ from rest_framework_simplejwt.token_blacklist.models import (BlacklistedToken,
 
 from accounts.models import THEME_CHOICES, User
 from accounts.tokens import RefreshToken
-from accounts.utils import (send_phone_number_verification_code,
+from accounts.utils import (blacklist_user_tokens, send_phone_number_verification_code,
                     send_verification_email)
 from leaguer.utils import get_all_timezones
 from leaguer.ws_utils import (notify_profile_password_reset,
@@ -292,21 +292,7 @@ class LogoutView(APIView):
                         "success": False
                     }, status=status.HTTP_400_BAD_REQUEST)
             if logout_all_devices:
-                try:
-                    # Get all outstanding tokens for this user
-                    outstanding_tokens = OutstandingToken.objects.filter(user=request.user)
-                    tokens_blacklisted = 0
-                    for outstanding_token in outstanding_tokens:
-                        if not BlacklistedToken.objects.filter(
-                            token=outstanding_token).exists():
-                            BlacklistedToken.objects.create(token=outstanding_token)
-                            tokens_blacklisted += 1
-                    logger.info("Blacklisted %d tokens for user %s (all devices)",
-                                tokens_blacklisted, request.user.username)
-
-                except Exception as e:
-                    logger.error("Error blacklisting all tokens for user %s: %s",
-                                 request.user.username, str(e))
+                blacklist_user_tokens(request.user)
             # Get device ID for WebSocket notification
             device_id = request.headers.get('X-Device-ID')
 

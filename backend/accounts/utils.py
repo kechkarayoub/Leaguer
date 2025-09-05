@@ -14,6 +14,9 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
+from rest_framework_simplejwt.token_blacklist.models import (BlacklistedToken,
+                                                             OutstandingToken)
+
 from leaguer.utils import (generate_random_code, get_email_base_context,
                            send_phone_message)
 
@@ -252,3 +255,28 @@ def validate_password_reset_token(uid, token): # pylint: disable=too-many-return
     if not default_token_generator.check_token(user, actual_token):
         return False, None, "Invalid token"
     return True, user, None
+
+def blacklist_user_tokens(user):
+    """
+    Blacklist all existing tokens for the user
+    Args:
+        user (User): The ouner of tokens to be blacklisted.
+        token (str): The password reset token.
+
+    Returns:
+        tuple: (is_valid, user, error_message)
+    """
+    nbr_tokens_blacklisted = 0
+    try:
+        outstanding_tokens = OutstandingToken.objects.filter(user=user)
+        for outstanding_token in outstanding_tokens:
+            if not BlacklistedToken.objects.filter(
+                token=outstanding_token).exists():
+                BlacklistedToken.objects.create(token=outstanding_token)
+                nbr_tokens_blacklisted += 1
+        logger.info("Blacklisted %d tokens for user %s due to password change",
+            nbr_tokens_blacklisted, user.username)
+    except Exception as e: # pylint: disable=broad-exception-caught
+        logger.error("Error blacklisting tokens during password change for "
+            "user %s: %s", user.username, str(e))
+    return nbr_tokens_blacklisted

@@ -33,23 +33,23 @@ class ThirdPartyAuthTestCase(TestCase):
         # Missing email
         data = {
             'id_token': 'fake_token',
-            'type_third_party': 'google',
-            'selected_language': 'en'
-        }
-        response = self.client.post(url, data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('required', response.data['message'].lower())
-        # Missing id_token
-        data = {
+            'type_third_party': 'google', # pylint: disable=R0801
+            'selected_language': 'en' # pylint: disable=R0801
+        } # pylint: disable=R0801
+        response = self.client.post(url, data) # pylint: disable=R0801
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST) # pylint: disable=R0801
+        self.assertIn('required', response.data['message'].lower()) # pylint: disable=R0801
+        # Missing id_token # pylint: disable=R0801
+        data = { # pylint: disable=R0801
             'email': 'test@example.com',
-            'type_third_party': 'google',
-            'selected_language': 'en'
-        }
-        response = self.client.post(url, data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('required', response.data['message'].lower())
-        # Missing type_third_party
-        data = {
+            'type_third_party': 'google', # pylint: disable=R0801
+            'selected_language': 'en' # pylint: disable=R0801
+        } # pylint: disable=R0801
+        response = self.client.post(url, data) # pylint: disable=R0801
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST) # pylint: disable=R0801
+        self.assertIn('required', response.data['message'].lower()) # pylint: disable=R0801
+        # Missing type_third_party # pylint: disable=R0801
+        data = { # pylint: disable=R0801
             'email': 'test@example.com',
             'id_token': 'fake_token',
             'selected_language': 'en'

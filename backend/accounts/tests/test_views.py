@@ -577,7 +577,7 @@ class PasswordResetViewsTestCase(TestCase):
         url = '/accounts/reset-password/'
         data = {
             'uid': 'invalid_uid',
-            'token': 'some_token_*_1234567890',
+            'token': 'some_tokenx_*_1234567890',
             'new_password': 'newpassword123',
             'selected_language': 'en'
         }
@@ -626,7 +626,7 @@ class PasswordResetViewsTestCase(TestCase):
         url = '/accounts/reset-password/'
         # Test missing uid
         data = {
-            'token': 'some_token',
+            'token': 'some_tokenx',
             'new_password': 'newpassword123',
             'selected_language': 'en'
         }
@@ -645,7 +645,7 @@ class PasswordResetViewsTestCase(TestCase):
         # Test missing new_password
         data = {
             'uid': 'some_uid',
-            'token': 'some_token',
+            'token': 'some_tokenx',
             'selected_language': 'en'
         }
         response = self.client.post(url, data)

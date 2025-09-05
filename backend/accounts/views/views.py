@@ -16,10 +16,7 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.token_blacklist.models import (BlacklistedToken,
-                                                             OutstandingToken)
 import firebase_config  # pylint: disable=unused-import
-
 
 from leaguer.utils import generate_random_code, remove_file, upload_file
 from leaguer.ws_utils import (notify_profile_password_reset,
@@ -27,12 +24,12 @@ from leaguer.ws_utils import (notify_profile_password_reset,
                               notify_profile_update)
 
 from accounts.services import UserService
-
 from accounts.models import User
 from accounts.serializers import UserSerializer
 from accounts.tokens import RefreshToken
-from accounts.utils import (format_phone_number, send_password_reset_email,
-                    send_verification_email, validate_password_reset_token)
+from accounts.utils import (blacklist_user_tokens, format_phone_number,
+                    send_password_reset_email, send_verification_email,
+                    validate_password_reset_token)
 
 # Get a logger instance
 logger = logging.getLogger(__name__)
@@ -389,21 +386,7 @@ class ResetPasswordView(APIView):
             # Activate user's language
             activate(user.current_language)
             # Blacklist all existing tokens for this user before resetting password
-            try:
-                outstanding_tokens = OutstandingToken.objects.filter(user=user)
-                tokens_blacklisted = 0
-                for outstanding_token in outstanding_tokens:
-                    if not BlacklistedToken.objects.filter(
-                        token=outstanding_token).exists():
-                        BlacklistedToken.objects.create(token=outstanding_token)
-                        tokens_blacklisted += 1
-                logger.info(
-                    "Blacklisted %d tokens for user %s due to password reset",
-                    tokens_blacklisted, user.username)
-            except Exception as e:
-                logger.error(
-                    "Error blacklisting tokens during password reset for user %s: %s",
-                    user.username, str(e))
+            blacklist_user_tokens(user)
             # Reset password
             user.set_password(new_password)
             user.save()
@@ -748,21 +731,7 @@ class UpdateProfileView(APIView):
                                               password=current_password)
             if authenticated_user is not None:
                 # Blacklist all existing tokens for this user before setting new password
-                try:
-                    outstanding_tokens = OutstandingToken.objects.filter(user=user)
-                    tokens_blacklisted = 0
-                    for outstanding_token in outstanding_tokens:
-                        if not BlacklistedToken.objects.filter(
-                            token=outstanding_token).exists():
-                            BlacklistedToken.objects.create(token=outstanding_token)
-                            tokens_blacklisted += 1
-                    logger.info(
-                        "Blacklisted %d tokens for user %s due to password change",
-                        tokens_blacklisted, user.username)
-                except Exception as e:
-                    logger.error(
-                        "Error blacklisting tokens during password change for "
-                        "user %s: %s", user.username, str(e))
+                blacklist_user_tokens(user)
                 # Set new password and generate new tokens
                 user.set_password(new_password)
                 user.save()

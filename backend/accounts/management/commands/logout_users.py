@@ -5,8 +5,8 @@ import logging
 
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
-from rest_framework_simplejwt.token_blacklist.models import (BlacklistedToken,
-                                                             OutstandingToken)
+
+from accounts.utils import blacklist_user_tokens
 
 logger = logging.getLogger(__name__)
 
@@ -140,20 +140,4 @@ class Command(BaseCommand):
         Returns:
             int: Number of tokens blacklisted
         """
-        nbr_tokens_blacklisted = 0
-        try:
-            # Get all outstanding tokens for this user
-            outstanding_tokens = OutstandingToken.objects.filter(user=user)
-            for outstanding_token in outstanding_tokens:
-                # Check if token is already blacklisted
-                if not BlacklistedToken.objects.filter(token=outstanding_token).exists():
-                    # Blacklist the token
-                    BlacklistedToken.objects.create(token=outstanding_token)
-                    nbr_tokens_blacklisted += 1
-                    logger.info("Blacklisted token for user %s", user.username)
-        except Exception as e:  # pylint: disable=broad-exception-caught
-            logger.error("Error logging out user %s: %s", user.username, e)
-            self.stdout.write(
-                self.style.ERROR(f"Error logging out user '{user.username}': {e}")
-            )
-        return nbr_tokens_blacklisted
+        return blacklist_user_tokens(user)
