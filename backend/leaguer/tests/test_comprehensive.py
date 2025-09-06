@@ -1,3 +1,4 @@
+# pylint: disable=R0801
 """
 Comprehensive test suite for leaguer core functionality.
 This file replaces and consolidates all existing tests with improved coverage.

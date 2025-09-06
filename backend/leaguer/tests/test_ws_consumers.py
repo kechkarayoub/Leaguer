@@ -1,4 +1,4 @@
-
+# pylint: disable=R0801
 """
 Focused WebSocket tests for real-time communication.
 These tests are kept separate due to TransactionTestCase requirements.

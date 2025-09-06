@@ -1,4 +1,4 @@
-# pylint: disable=protected-access,too-many-instance-attributes
+# pylint: disable=protected-access,too-many-instance-attributes,R0801
 """
 Comprehensive test suite for leaguer models.
 

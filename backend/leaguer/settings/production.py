@@ -1,4 +1,4 @@
-# pylint: disable=unused-wildcard-import,wildcard-import
+# pylint: disable=unused-wildcard-import,wildcard-import,R0801
 """
 Production settings for leaguer project.
 """
