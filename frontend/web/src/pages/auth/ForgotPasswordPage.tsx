@@ -22,7 +22,7 @@ const apiService = AuthenticatedApiService.getInstance();
 
 const ForgotPasswordPage: React.FC = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
 

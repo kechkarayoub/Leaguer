@@ -1,5 +1,5 @@
 import React from 'react';
-import Select, { Props as SelectProps, GroupBase } from 'react-select';
+import Select from 'react-select';
 import { useTranslation } from 'react-i18next';
 import './CustomSelect.css';
 

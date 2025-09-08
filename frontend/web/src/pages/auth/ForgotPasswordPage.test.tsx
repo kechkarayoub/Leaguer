@@ -8,7 +8,6 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 
 import ForgotPasswordPage from './ForgotPasswordPage';
-import AuthenticatedApiService from '../../services/AuthenticatedApiService';
 
 // Mock dependencies first
 jest.mock('../../i18n', () => ({}));

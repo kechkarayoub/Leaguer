@@ -23,7 +23,7 @@ const apiService = AuthenticatedApiService.getInstance();
 
 const ResetPasswordPage: React.FC = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);

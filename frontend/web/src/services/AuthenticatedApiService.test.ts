@@ -1,6 +1,5 @@
 import axios from 'axios';
 import AuthenticatedApiService from './AuthenticatedApiService';
-import { toast } from 'react-toastify';
 
 // Mock axios
 jest.mock('axios');

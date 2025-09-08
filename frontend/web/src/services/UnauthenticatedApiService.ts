@@ -4,7 +4,7 @@
  * Handles public API requests that don't require authentication
  */
 
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import config from '../config/config';
 import DeviceIdService from './DeviceIdService';
 

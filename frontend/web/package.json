@@ -48,7 +48,7 @@
     "react-webcam": "^7.2.0",
     "socket.io-client": "^4.8.1",
     "styled-components": "^6.1.19",
-    "typescript": "^4.4.2",
+    "typescript": "^5.6.0",
     "web-vitals": "^2.1.0",
     "yup": "^1.7.0"
   },
@@ -56,6 +56,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
     "start_craco": "craco start",
     "build_craco": "craco build",
     "test_craco": "craco test",
@@ -92,6 +94,7 @@
     "@craco/craco": "^7.1.0",
     "@types/react-image-crop": "^9.0.2",
     "@types/styled-components": "^5.1.34",
+    "eslint": "^8.57.0",
     "identity-obj-proxy": "^3.0.0"
   }
 }

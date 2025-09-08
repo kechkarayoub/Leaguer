@@ -23,7 +23,6 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../../i18n';
 
 import useAuth, { RegisterCredentials, SocialRegisterCredentials } from '../../hooks/useAuth';
-import LoadingSpinner from '../../components/LoadingSpinner';
 import SocialLoginButton from '../../components/SocialLoginButton';
 
 const RegisterPage: React.FC = () => {

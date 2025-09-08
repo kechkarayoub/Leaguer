@@ -1,7 +1,7 @@
 import React from 'react';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import { useTranslation } from 'react-i18next';
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
 import './CustomDatePicker.css';
 

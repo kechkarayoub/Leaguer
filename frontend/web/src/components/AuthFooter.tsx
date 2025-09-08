@@ -5,7 +5,6 @@
  */
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useRTL from '../hooks/useRTL';
 import AboutUsModal from './modals/AboutUsModal';

@@ -9,7 +9,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 
 import useAuthenticatedWebSocket from './useAuthenticatedWebSocket';
-import { ConnectionState } from '../services/WebSocketService';
 
 // Mock the useAuth hook
 const mockUseAuth = {
