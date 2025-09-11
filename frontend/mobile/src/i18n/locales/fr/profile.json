@@ -1,0 +1,94 @@
+{
+  "actions": {
+    "saveChanges": "Enregistrer les Modifications",
+    "updatePassword": "Mettre à Jour le Mot de Passe"
+  },
+  "description": "Gérez les informations de votre compte et les paramètres de sécurité.",
+  "fields": {
+    "address": "Adresse",
+    "birthday": "Date de Naissance",
+    "cin": "Numéro d'Identité Nationale",
+    "confirmPassword": "Confirmer le Nouveau Mot de Passe",
+    "country": "Pays",
+    "currentPassword": "Mot de Passe Actuel",
+    "email": "Adresse Email",
+    "firstName": "Prénom",
+    "gender": "Genre",
+    "language": "Langue Préférée",
+    "lastName": "Nom de Famille",
+    "newPassword": "Nouveau Mot de Passe",
+    "phoneNumber": "Numéro de Téléphone",
+    "preferredLanguage": "Langue Préférée",
+    "profilePicture": "Photo de Profil",
+    "timezone": "Fuseau Horaire",
+    "username": "Nom d'utilisateur"
+  },
+  "gender": {
+    "female": "Femme",
+    "male": "Homme"
+  },
+  "help": {
+    "emailVerified": "Votre adresse email a été vérifiée.",
+    "phoneValidated": "Votre numéro de téléphone a été validé et ne peut pas être modifié.",
+    "usernameLocked": "Le nom d'utilisateur ne peut pas être modifié après la création du compte."
+  },
+  "languages": {
+    "arabic": "العربية",
+    "english": "Anglais",
+    "french": "Français"
+  },
+  "messages": {
+    "currentPasswordIncorrect": "Le mot de passe actuel est incorrect.",
+    "passwordUpdateError": "Échec de la mise à jour du mot de passe. Veuillez réessayer.",
+    "passwordUpdated": "Mot de passe mis à jour avec succès !",
+    "profileUpdateError": "Échec de la mise à jour du profil. Veuillez réessayer.",
+    "profileUpdated": "Profil mis à jour avec succès !"
+  },
+  "placeholders": {
+    "address": "Entrez votre adresse complète",
+    "cin": "Entrez votre numéro d'identité nationale",
+    "datePlaceholder": "Sélectionnez une date",
+    "selectCountry": "Sélectionnez votre pays",
+    "selectGender": "Sélectionnez votre genre",
+    "userBirthday": "Entrez votre date de naissance"
+  },
+  "sections": {
+    "changePassword": "Changer le Mot de Passe",
+    "personalInformation": "Informations Personnelles",
+    "profilePicture": "Photo de Profil"
+  },
+  "select": {
+    "noOptions": "Aucune option trouvée"
+  },
+  "tabs": {
+    "password": "Mot de Passe et Sécurité",
+    "personalInfo": "Informations Personnelles"
+  },
+  "title": "Paramètres du Profil",
+  "validation": {
+    "addressMaxLength": "L'adresse doit contenir moins de 500 caractères",
+    "cinFormat": "Veuillez entrer un numéro d'identité nationale valide",
+    "confirmPasswordRequired": "Veuillez confirmer votre nouveau mot de passe",
+    "addressRequired": "Veuillez entrer votre adresse",
+    "birthdayRequired": "Veuillez sélectionner une date de naissance",
+    "cinRequired": "Veuillez sélectionner un numéro d'identité nationale",
+    "genderRequired": "Veuillez sélectionner un genre",
+    "countryRequired": "Veuillez sélectionner un pays",
+    "emailRequired": "Veuillez entrer une adresse email",
+    "phoneRequired": "Veuillez sélectionner un numéro de téléphone",
+    "phoneMinLength": "Le numéro de téléphone doit contenir au moins 9 caractères",
+    "usernameRequired": "Veuillez sélectionner un nom d'utilisateur",
+    "currentPasswordRequired": "Le mot de passe actuel est requis",
+    "firstNameAlphaOnly": "Le prénom ne doit contenir que des lettres",
+    "lastNameAlphaOnly": "Le nom de famille ne doit contenir que des lettres",
+    "firstNameMinLength": "Le prénom doit contenir au moins 2 caractères",
+    "firstNameRequired": "Le prénom est requis",
+    "lastNameMinLength": "Le nom de famille doit contenir au moins 2 caractères",
+    "lastNameRequired": "Le nom de famille est requis",
+    "newPasswordRequired": "Le nouveau mot de passe est requis",
+    "passwordMinLength": "Le mot de passe doit contenir au moins 8 caractères",
+    "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+    "phoneNumberRequired": "Le numéro de téléphone est requis",
+    "userCinAlphanumOnly": "Le numéro d'identité nationale doit contenir uniquement des lettres et des chiffres"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "authentication": {
+    "accountDisabled": "Le compte a été désactivé",
+    "accountLocked": "Le compte a été verrouillé",
+    "invalidCredentials": "E-mail ou mot de passe invalide",
+    "loginRequired": "Veuillez vous connecter pour continuer",
+    "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
+    "title": "Erreur d'authentification",
+    "tokenExpired": "Le jeton d'authentification a expiré",
+    "unauthorized": "Vous n'êtes pas autorisé à accéder à cette ressource"
+  },
+  "errorDescription": "Une erreur inattendue s'est produite. Veuillez actualiser la page.",
+  "errorDetails": "Détails de l'erreur",
+  "forbidden": "L'accès à cette ressource est interdit",
+  "form": {
+    "invalidData": "Veuillez vérifier votre saisie et réessayer",
+    "invalidFormat": "Format invalide",
+    "missingFields": "Veuillez remplir tous les champs requis",
+    "submissionFailed": "Échec de la soumission du formulaire",
+    "title": "Erreur de formulaire"
+  },
+  "general": {
+    "accessDenied": "Accès refusé",
+    "badRequest": "Mauvaise requête",
+    "contactSupport": "Si le problème persiste, veuillez contacter le support",
+    "generic": "Une erreur s'est produite",
+    "network": "Une erreur réseau est survenue. Veuillez vérifier votre connexion.",
+    "notFound": "Page non trouvée",
+    "resourceNotFound": "Ressource non trouvée",
+    "serverError": "Une erreur serveur est survenue. Veuillez réessayer plus tard.",
+    "somethingWentWrong": "Quelque chose s'est mal passé",
+    "title": "Erreur",
+    "tryAgain": "Veuillez réessayer",
+    "unexpected": "Une erreur inattendue s'est produite",
+    "unknown": "Une erreur inconnue s'est produite"
+  },
+  "goBack": "Retour",
+  "network": {
+    "message": "Impossible de se connecter au serveur. Veuillez vérifier votre connexion internet.",
+    "offline": "Vous êtes actuellement hors ligne",
+    "retry": "Réessayer",
+    "serverError": "Erreur serveur survenue",
+    "timeout": "Délai d'attente dépassé",
+    "title": "Erreur réseau"
+  },
+  "networkError": "Erreur réseau survenue",
+  "notFound": "Ressource non trouvée",
+  "reloadPage": "Recharger la page",
+  "server": {
+    "badRequest": "Mauvaise requête",
+    "forbidden": "Accès interdit",
+    "internal": "Erreur interne du serveur",
+    "maintenance": "Le serveur est en maintenance",
+    "notFound": "Ressource non trouvée",
+    "title": "Erreur serveur",
+    "tooManyRequests": "Trop de requêtes. Veuillez réessayer plus tard."
+  },
+  "serverError": "Erreur serveur survenue",
+  "tryAgain": "Veuillez réessayer",
+  "unauthorized": "Vous n'êtes pas autorisé à accéder à cette ressource",
+  "unexpectedError": "Quelque chose s'est mal passé",
+  "validation": {
+    "fileTooLarge": "La taille du fichier est trop importante",
+    "fileTypeNotSupported": "Type de fichier non pris en charge",
+    "invalidEmail": "Veuillez entrer une adresse e-mail valide",
+    "invalidPassword": "Le mot de passe doit contenir au moins 8 caractères",
+    "invalidPhone": "Veuillez entrer un numéro de téléphone valide",
+    "invalidUrl": "Veuillez entrer une URL valide",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "required": "Ce champ est requis",
+    "title": "Erreur de validation"
+  },
+  "validationError": "Erreur de validation"
+}

@@ -1,0 +1,12 @@
+node_modules/
+android/
+ios/
+babel.config.js
+metro.config.js
+jest.config.js
+*.config.js
+__tests__/
+coverage/
+.expo/
+.bundle/
+*.d.ts

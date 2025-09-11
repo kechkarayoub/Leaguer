@@ -84,11 +84,8 @@ src/
 3. **Configure environment variables:**
    Update `.env` file with your actual values:
    ```env
-   API_BASE_URL=http://localhost:8000/api
-   GOOGLE_WEB_CLIENT_ID=your-google-web-client-id
-   GOOGLE_IOS_CLIENT_ID=your-google-ios-client-id
-   GOOGLE_ANDROID_CLIENT_ID=your-google-android-client-id
-   FACEBOOK_APP_ID=your-facebook-app-id
+   REACT_APP_BACKEND_ENDPOINT=http://localhost:8000
+   REACT_APP_FACEBOOK_SIGN_IN_WEB_CLIENT_ID=your-facebook-app-id
    ```
 
 4. **Install additional dependencies for iOS (macOS only):**
@@ -150,9 +147,9 @@ The mobile app is configured to work with the Django backend:
 
 ### Environment Variables
 Use `.env` file for configuration:
-- `API_BASE_URL`: Backend API URL
+- `REACT_APP_BACKEND_ENDPOINT`: Backend API URL
 - `GOOGLE_*_CLIENT_ID`: Google OAuth credentials
-- `FACEBOOK_APP_ID`: Facebook app ID
+- `REACT_APP_FACEBOOK_SIGN_IN_WEB_CLIENT_ID`: Facebook app ID
 
 ## Development Guidelines
 

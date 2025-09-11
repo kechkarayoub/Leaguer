@@ -1,0 +1,32 @@
+{
+  "title": "Home",
+  "welcome": {
+    "title": "Welcome to Leaguer",
+    "greeting": "Hello, {{name}}!",
+    "default": "Welcome back!"
+  },
+  "quickActions": {
+    "title": "Quick Actions",
+    "action1": "Create Team",
+    "action2": "Join Game"
+  },
+  "accountInfo": {
+    "title": "Account Information",
+    "email": "Email",
+    "username": "Username"
+  },
+  "actions": {
+    "createProject": "Create New Project",
+    "manageUsers": "Manage Users",
+    "systemSettings": "System Settings",
+    "viewReports": "View Reports"
+  },
+  "noContentYet": "No content available yet.",
+  "quickStats": "Quick Stats",
+  "stats": {
+    "activeProjects": "Active Projects",
+    "completedTasks": "Completed Tasks",
+    "pendingReviews": "Pending Reviews",
+    "totalUsers": "Total Users"
+  }
+}

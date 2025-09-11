@@ -1,2 +1,41 @@
 Change variables in .env.
-Change "Leaguer\frontend\web\src\logo.png".
+
+For icons:
+    Add icon.png (usually a big square PNG, at least 1024x1024 px) in "assets/app-icons/"
+        and run "npx react-native set-icon --path ./assets/app-icons/icon.png"
+    Then check these files are generated:
+        Change "Leaguer\frontend\mobile\android\app\src\main\res\drawable-hdpi\bootsplash_logo.png(25dpi/432px)".
+        Change "Leaguer\frontend\mobile\android\app\src\main\res\drawable-mdpi\bootsplash_logo.png(25dpi/288px)".
+        Change "Leaguer\frontend\mobile\android\app\src\main\res\drawable-xdpi\bootsplash_logo.png(25dpi/576px)".
+        Change "Leaguer\frontend\mobile\android\app\src\main\res\drawable-xxdpi\bootsplash_logo.png(25dpi/864px)".
+        Change "Leaguer\frontend\mobile\android\app\src\main\res\drawable-xxxdpi\bootsplash_logo.png(25dpi/1152px)".
+        Change "Leaguer\frontend\mobile\android\app\src\main\res\mipmap-hdpi\ic_launcher.png(72dpi/72px)".
+        Change "Leaguer\frontend\mobile\android\app\src\main\res\mipmap-hdpi\ic_launcher_round.png(72dpi/72px)".
+        Change "Leaguer\frontend\mobile\android\app\src\main\res\mipmap-mdpi\ic_launcher.png(72dpi/48px)".
+        Change "Leaguer\frontend\mobile\android\app\src\main\res\mipmap-mdpi\ic_launcher_round.png(72dpi/48px)".
+        Change "Leaguer\frontend\mobile\android\app\src\main\res\mipmap-xhdpi\ic_launcher.png(72dpi/96px)".
+        Change "Leaguer\frontend\mobile\android\app\src\main\res\mipmap-xhdpi\ic_launcher_round.png(72dpi/96px)".
+        Change "Leaguer\frontend\mobile\android\app\src\main\res\mipmap-xhdpi\ic_launcher.png(72dpi/96px)".
+        Change "Leaguer\frontend\mobile\android\app\src\main\res\mipmap-xhdpi\ic_launcher_round.png(72dpi/96px)".
+        Change "Leaguer\frontend\mobile\android\app\src\main\res\mipmap-xxxhdpi\ic_launcher.png(72dpi/192px)".
+        Change "Leaguer\frontend\mobile\android\app\src\main\res\mipmap-xxxhdpi\ic_launcher_round.png(72dpi/192px)".
+        Change "Leaguer\frontend\mobile\assets\bootsplash\logo.png(75dpi/120px)".
+        Change "Leaguer\frontend\mobile\assets\bootsplash\logo@1,5x.png(72dpi/180px)".
+        Change "Leaguer\frontend\mobile\assets\bootsplash\logo@2x.png(72dpi/240px)".
+        Change "Leaguer\frontend\mobile\assets\bootsplash\logo@3x.png(72dpi/360px)".
+        Change "Leaguer\frontend\mobile\assets\bootsplash\logo@4x.png(72dpi/480px)".
+        Change "Leaguer\frontend\mobile\assets\icons\app-icon.svg".
+        Change "Leaguer\frontend\mobile\assets\logo.svg".
+        Change "Leaguer\frontend\mobile\ios\leaguer\Images.xcassets\AppIcon.appiconset\Icon-20x20.png(72dpi/20px)".
+        Change "Leaguer\frontend\mobile\ios\leaguer\Images.xcassets\AppIcon.appiconset\Icon-29x29.png(72dpi/29px)".
+        Change "Leaguer\frontend\mobile\ios\leaguer\Images.xcassets\AppIcon.appiconset\Icon-40x40.png(72dpi/40px)".
+        Change "Leaguer\frontend\mobile\ios\leaguer\Images.xcassets\AppIcon.appiconset\Icon-58x58.png(72dpi/58px)".
+        Change "Leaguer\frontend\mobile\ios\leaguer\Images.xcassets\AppIcon.appiconset\Icon-60x60.png(72dpi/60px)".
+        Change "Leaguer\frontend\mobile\ios\leaguer\Images.xcassets\AppIcon.appiconset\Icon-80x80.png(72dpi/80px)".
+        Change "Leaguer\frontend\mobile\ios\leaguer\Images.xcassets\AppIcon.appiconset\Icon-87x87.png(72dpi/87px)".
+        Change "Leaguer\frontend\mobile\ios\leaguer\Images.xcassets\AppIcon.appiconset\Icon-120x120.png(72dpi/120px)".
+        Change "Leaguer\frontend\mobile\ios\leaguer\Images.xcassets\AppIcon.appiconset\Icon-180x180.png(72dpi/180px)".
+        Change "Leaguer\frontend\mobile\ios\leaguer\Images.xcassets\AppIcon.appiconset\Icon-1024x1024.png(72dpi/1024px)".
+        Change "Leaguer\frontend\mobile\ios\LeaguerMobile\Images.xcassets\BootSplashLogo-b443ca.imageset\logo-b443ca.png(72dpi/120px)".
+        Change "Leaguer\frontend\mobile\ios\LeaguerMobile\Images.xcassets\BootSplashLogo-b443ca.imageset\logo-b443ca@2x.png(72dpi/240px)".
+        Change "Leaguer\frontend\mobile\ios\LeaguerMobile\Images.xcassets\BootSplashLogo-b443ca.imageset\logo-b443ca@3x.png(72dpi/360px)".

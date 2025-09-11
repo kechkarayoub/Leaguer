@@ -117,3 +117,12 @@ dependencies {
         implementation jscFlavor
     }
 }
+
+// Fix for duplicate class errors between AndroidX and old support libraries
+configurations.all {
+    exclude group: 'com.android.support', module: 'support-media-compat'
+    exclude group: 'com.android.support', module: 'support-compat'
+    exclude group: 'com.android.support', module: 'support-core-ui'
+    exclude group: 'com.android.support', module: 'support-core-utils'
+    exclude group: 'com.android.support', module: 'support-annotations'
+}

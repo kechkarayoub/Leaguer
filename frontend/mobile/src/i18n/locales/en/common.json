@@ -1,0 +1,749 @@
+{
+  "about": {
+    "community": "Community",
+    "communityBuilding": "Community Building",
+    "communityBuildingDesc": "Connect with fellow athletes, share experiences, and build lasting relationships within the sports community.",
+    "communityDesc": "Building connections that last beyond the game",
+    "contactText": "Have questions or want to learn more? We'd love to hear from you! Contact our team for support, partnerships, or general inquiries.",
+    "eventOrganization": "Event Organization",
+    "eventOrganizationDesc": "Organize tournaments, matches, and sporting events with easy scheduling and management tools.",
+    "excellence": "Excellence",
+    "excellenceDesc": "Striving for the best in everything we do",
+    "getInTouch": "Get in Touch",
+    "inclusivity": "Inclusivity",
+    "inclusivityDesc": "Welcoming athletes of all levels and backgrounds",
+    "innovation": "Innovation",
+    "innovationDesc": "Using technology to enhance the sports experience",
+    "missionText": "At Leaguer, we believe in bringing sports communities together. Our platform connects athletes, teams, and sports enthusiasts, providing tools to organize, participate, and excel in various sporting activities.",
+    "ourMission": "Our Mission",
+    "ourValues": "Our Values",
+    "teamManagement": "Team Management",
+    "teamManagementDesc": "Create and manage sports teams, track player statistics, and organize team activities.",
+    "whatWeOffer": "What We Offer"
+  },
+  "actions": {
+    "close": "Close"
+  },
+  "app": {
+    "add": "Add",
+    "allRightsReserved": "All rights reserved.",
+    "back": "Back",
+    "cancel": "Cancel",
+    "clear": "Clear",
+    "close": "Close",
+    "confirm": "Confirm",
+    "create": "Create",
+    "delete": "Delete",
+    "edit": "Edit",
+    "error": "An error occurred",
+    "filter": "Filter",
+    "loading": "Loading",
+    "name": "Leaguer",
+    "next": "Next",
+    "no": "No",
+    "notAvailable": "Not Available",
+    "ok": "OK",
+    "open": "Open",
+    "or": "or",
+    "previous": "Previous",
+    "refresh": "Refresh",
+    "remember": "Remember me",
+    "remove": "Remove",
+    "reset": "Reset",
+    "retry": "Retry",
+    "save": "Save",
+    "search": "Search",
+    "sending": "Sending...",
+    "submit": "Submit",
+    "tagline": "Your Sports Community Platform",
+    "update": "Update",
+    "updating": "Updating...",
+    "user": "User",
+    "welcome": "Welcome to Leaguer",
+    "yes": "Yes"
+  },
+  "cancelChanges": "Cancel Changes",
+  "connection": {
+    "connecting": "Connecting...",
+    "failed": "Connection failed",
+    "lost": "Connection lost",
+    "offline": "Offline",
+    "online": "Connected",
+    "reconnecting": "Reconnecting..."
+  },
+  "contact": {
+    "form": {
+      "email": "Email Address",
+      "emailPlaceholder": "Enter your email address",
+      "message": "Message",
+      "messageMinLength": "Message must be at least 10 characters long",
+      "messagePlaceholder": "Tell us how we can help you...",
+      "name": "Full Name",
+      "namePlaceholder": "Enter your full name",
+      "send": "Send Message",
+      "sending": "Sending...",
+      "subject": "Subject",
+      "subjectOptions": {
+        "billing": "Billing & Account",
+        "feature": "Feature Request",
+        "other": "Other",
+        "partnership": "Partnership",
+        "support": "Technical Support"
+      },
+      "subjectPlaceholder": "Select a subject",
+      "successMessage": "Thank you for contacting us. We'll get back to you within 24 hours.",
+      "successTitle": "Message Sent Successfully!",
+      "title": "Send us a Message"
+    },
+    "info": {
+      "email": "Email Support",
+      "emailDesc": "Get help with your account, billing, or technical issues",
+      "responseTime": "Response Time",
+      "responseTimeDesc": "We respond to all inquiries within one business day",
+      "responseTimeValue": "Within 24 hours",
+      "support": "Support Available",
+      "supportDesc": "Our support team is here to help during business hours",
+      "supportTime": "Monday - Friday, 9AM - 6PM EST",
+      "title": "Contact Information"
+    },
+    "subtitle": "Have questions or need support? We're here to help! Send us a message and we'll get back to you as soon as possible.",
+    "title": "Get in Touch"
+  },
+  "cookies": {
+    "browserInstructions": {
+      "chrome": "Chrome Cookie Settings",
+      "edge": "Edge Cookie Settings",
+      "firefox": "Firefox Cookie Settings",
+      "safari": "Safari Cookie Settings",
+      "text": "Here are links to cookie management instructions for popular browsers:",
+      "title": "Browser-Specific Instructions"
+    },
+    "contact": {
+      "email": "Email:",
+      "text": "If you have any questions about our use of cookies or this Cookies Policy, please contact us:",
+      "title": "Contact Us"
+    },
+    "duration": {
+      "items": {
+        "longTerm": {
+          "text": "Some cookies may last up to 2 years to remember your preferences",
+          "title": "Long-term Cookies:"
+        },
+        "persistent": {
+          "text": "These remain on your device for a set period or until you delete them",
+          "title": "Persistent Cookies:"
+        },
+        "session": {
+          "text": "These are temporary and are deleted when you close your browser",
+          "title": "Session Cookies:"
+        }
+      },
+      "text": "Cookies have different lifespans depending on their purpose:",
+      "title": "How Long Do Cookies Last?"
+    },
+    "footer": {
+      "text": "By continuing to use {{companyName}}, you acknowledge that you have read and understood this Cookies Policy and consent to our use of cookies as described herein."
+    },
+    "impact": {
+      "items": {
+        "analytics": "We may not be able to improve our services based on usage patterns",
+        "functionality": "Some features may not work properly or may be unavailable",
+        "personalization": "Personalized content and recommendations may not be displayed",
+        "preferences": "Your preferences and settings may not be remembered"
+      },
+      "text": "Please note that disabling certain cookies may affect your experience on our website:",
+      "title": "Impact of Disabling Cookies"
+    },
+    "introduction": {
+      "text": "This Cookies Policy explains how {{companyName}} uses cookies and similar tracking technologies when you visit our sports community platform. We use cookies to enhance your experience, analyze usage patterns, and provide personalized content.",
+      "title": "What Are Cookies?"
+    },
+    "lastUpdated": "Last updated:",
+    "managing": {
+      "browser": {
+        "items": {
+          "block": "Block cookies from specific websites",
+          "disable": "Disable all cookies (may affect website functionality)",
+          "notify": "Get notifications when cookies are set",
+          "view": "View and delete existing cookies"
+        },
+        "text": "You can control and delete cookies through your browser settings. Most browsers allow you to:",
+        "title": "Browser Settings"
+      },
+      "consent": {
+        "text": "When you first visit our website, you will see a cookie consent banner where you can choose which types of cookies to accept or reject.",
+        "title": "Cookie Consent Banner"
+      },
+      "text": "You have several options for managing cookies on our website:",
+      "title": "Managing Your Cookie Preferences"
+    },
+    "thirdParty": {
+      "items": {
+        "analytics": "Google Analytics for website analytics and user behavior tracking",
+        "payment": "Payment processors for secure transaction handling",
+        "social": "Social media platforms for sharing and integration features",
+        "support": "Customer support and chat services"
+      },
+      "text": "We may use third-party services that set cookies on our website. These services help us provide better functionality and analyze website performance.",
+      "title": "Third-Party Cookies"
+    },
+    "title": "Cookies Policy",
+    "typesOfCookies": {
+      "essential": {
+        "items": {
+          "authentication": "User authentication and session management",
+          "functionality": "Basic website functionality and navigation",
+          "preferences": "Your consent preferences for cookies",
+          "security": "Security and fraud prevention"
+        },
+        "text": "These cookies are necessary for the website to function properly. They enable core functionality such as security, network management, and accessibility.",
+        "title": "Essential Cookies"
+      },
+      "functional": {
+        "items": {
+          "content": "Personalized content and recommendations",
+          "forms": "Form data and user inputs",
+          "language": "Language and region preferences",
+          "settings": "User interface settings and customizations"
+        },
+        "text": "These cookies enable enhanced functionality and personalization, such as remembering your preferences and settings.",
+        "title": "Functional Cookies"
+      },
+      "performance": {
+        "items": {
+          "analytics": "Website analytics and usage statistics",
+          "errors": "Error tracking and performance monitoring",
+          "optimization": "Website optimization and A/B testing",
+          "speed": "Loading speed and performance metrics"
+        },
+        "text": "These cookies collect information about how you use our website, helping us understand and improve performance.",
+        "title": "Performance Cookies"
+      },
+      "targeting": {
+        "items": {
+          "advertising": "Targeted advertising and marketing campaigns",
+          "retargeting": "Retargeting and remarketing campaigns",
+          "social": "Social media integration and sharing",
+          "tracking": "Cross-site tracking and behavior analysis"
+        },
+        "text": "These cookies are used to deliver relevant advertisements and marketing content based on your interests and behavior.",
+        "title": "Targeting Cookies"
+      },
+      "title": "Types of Cookies We Use"
+    },
+    "updates": {
+      "text": "We may update this Cookies Policy from time to time to reflect changes in technology, legislation, or our business practices. We will notify you of any significant changes by updating the \"Last updated\" date at the top of this policy.",
+      "title": "Updates to This Policy"
+    },
+    "whatAreCookies": {
+      "text": "Cookies are small text files that are stored on your device when you visit a website. They help websites remember information about your visit, such as your preferred settings and login status, which can make your next visit easier and the site more useful to you.",
+      "title": "Understanding Cookies"
+    }
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "network": "Network error. Please check your connection.",
+    "server": "Server error. Please try again later."
+  },
+  "features": {
+    "advancedFeatures": "Advanced Features",
+    "analytics": "Performance Analytics",
+    "analyticsDesc": "Track detailed statistics, analyze performance trends, and generate comprehensive reports for players and teams.",
+    "communication": "Real-time Communication",
+    "communicationDesc": "Stay connected with instant messaging, team announcements, and group chats. Never miss important updates.",
+    "coreFeatures": "Core Features",
+    "eventOrganization": "Event Organization",
+    "eventOrganizationDesc": "Schedule tournaments, matches, and training sessions. Send automated reminders and manage event logistics seamlessly.",
+    "freeTrial": "Free 30-day trial",
+    "getStarted": "Ready to Get Started?",
+    "getStartedDesc": "Join thousands of sports communities already using Leaguer to manage their teams and events.",
+    "integration": "Third-party Integrations",
+    "integrationDesc": "Connect with popular fitness trackers, payment systems, and social media platforms.",
+    "liveTracking": "Live Match Tracking",
+    "liveTrackingDesc": "Real-time score updates, live commentary, and instant match statistics.",
+    "mobileApp": "Mobile Application",
+    "mobileAppDesc": "Access all features on the go with our native mobile apps for iOS and Android devices.",
+    "noSetupFee": "No setup fees",
+    "security": "Advanced Security",
+    "securityDesc": "Enterprise-grade security with data encryption, secure authentication, and privacy controls.",
+    "subtitle": "Everything you need to manage, organize, and grow your sports community",
+    "support": "24/7 customer support",
+    "teamManagement": "Team Management",
+    "teamManagementDesc": "Create and manage teams, track player rosters, monitor performance statistics, and organize team activities with ease.",
+    "title": "Powerful Features for Sports Communities",
+    "tournaments": "Tournament Management",
+    "tournamentsDesc": "Create and manage tournaments with bracket generation, score tracking, and automated scheduling."
+  },
+  "footer": {
+    "about": "About Us",
+    "contact": "Contact",
+    "cookies": "Cookies",
+    "features": "Features",
+    "followUs": "Follow Us",
+    "help": "Help Center",
+    "privacy": "Privacy Policy",
+    "quickLinks": "Quick Links",
+    "support": "Support",
+    "terms": "Terms of Service"
+  },
+  "form": {
+    "changeImage": "Change Image",
+    "countryCode": "Country",
+    "cropImage": "Crop Image",
+    "dragDropHint": "Drag and drop your image here, or click to select",
+    "email": {
+      "invalid": "Please enter a valid email address",
+      "label": "Email",
+      "placeholder": "Enter your email"
+    },
+    "emailOrUsername": {
+      "invalid": "Please enter a valid email address or username",
+      "label": "Email or Username",
+      "placeholder": "Enter your email or username"
+    },
+    "fileSizeError": "File size exceeds {{maxSize}}MB",
+    "fileTypeError": "Please select a valid image file (JPEG, PNG, GIF, WebP)",
+    "hide": "Hide",
+    "show": "Show",
+    "imageInvalidType": "Invalid image type. Please upload a JPEG, PNG, GIF, or WebP file.",
+    "imageTooLarge": "Image size exceeds the maximum limit of {{maxSize}}MB. Please upload a smaller image.",
+    "imageUploadHint": "Click to upload or drag and drop an image file here",
+    "imageUploadText": "Upload your profile picture",
+    "invalid": "Invalid value",
+    "takePhoto": "Take Photo",
+    "photoCaptured": "Photo Captured",
+    "cropPhoto": "Crop Photo",
+    "retakePhoto": "Retake Photo",
+    "confirm": "Confirm",
+    "cameraNotAvailable": "Camera not available",
+    "cameraPermissionDenied": "Camera permission denied",
+    "name": {
+      "alpha": "Only letters and single spaces are allowed. No numbers, special characters, or consecutive spaces.",
+      "first": "First Name",
+      "last": "Last Name"
+    },
+    "password": {
+      "confirm": "Confirm password",
+      "confirmPlaceholder": "Confirm your password",
+      "label": "Password",
+      "mismatch": "Passwords do not match",
+      "new": "New password",
+      "placeholder": "Enter your password",
+      "requirements": "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number",
+      "weak": "Password is too weak"
+    },
+    "phone": {
+      "invalid": "Please enter a valid phone number",
+      "label": "Phone number",
+      "placeholder": "Enter your phone number",
+      "searchNotFound": "No results found.",
+      "searchPlaceholder": "Search for your country"
+    },
+    "phoneNumber": "Phone Number",
+    "removeImage": "Remove Image",
+    "required": "This field is required",
+    "selectCountry": "Select country",
+    "username": {
+      "alphanumeric": "Username must contain only letters and numbers (no spaces or special characters).",
+      "label": "Username",
+      "min": "Username must be at least {{min}} characters.",
+      "noSpaces": "Username cannot contain spaces.",
+      "placeholder": "Enter your username"
+    }
+  },
+  "helpCenter": {
+    "allCategories": "All Categories",
+    "categories": {
+      "accountSettings": "Account Settings",
+      "billingPayments": "Billing & Payments",
+      "gettingStarted": "Getting Started",
+      "privacySecurity": "Privacy & Security",
+      "teamsManagement": "Teams Management",
+      "troubleshooting": "Troubleshooting"
+    },
+    "contactSupport": {
+      "button": "Contact Support",
+      "description": "Can't find what you're looking for? Our support team is here to help you with any questions or issues.",
+      "email": "support@leaguer.com",
+      "responseTime": "We typically respond within 24 hours",
+      "title": "Need More Help?"
+    },
+    "faqs": {
+      "accountSettings": {
+        "changePassword": {
+          "answer": "Go to your Account Settings, click on 'Security', and select 'Change Password'. You'll need to enter your current password and then create a new one.",
+          "question": "How do I change my password?"
+        },
+        "notificationSettings": {
+          "answer": "Visit your Account Settings and click on 'Notifications'. Here you can choose which types of notifications you want to receive via email, push notifications, or SMS.",
+          "question": "How do I manage my notification preferences?"
+        },
+        "updateEmail": {
+          "answer": "In your Account Settings, go to 'Personal Information' and click 'Edit' next to your email address. You'll need to verify the new email address before the change takes effect.",
+          "question": "How do I update my email address?"
+        }
+      },
+      "billingPayments": {
+        "changePaymentMethod": {
+          "answer": "Go to your Account Settings, select 'Billing', and click 'Payment Methods'. You can add a new card, update existing payment information, or set a different card as your primary payment method.",
+          "question": "How do I update my payment method?"
+        },
+        "refundPolicy": {
+          "answer": "We offer a 30-day money-back guarantee for all paid subscriptions. If you're not satisfied, contact our support team within 30 days of your purchase for a full refund.",
+          "question": "What is your refund policy?"
+        },
+        "subscriptionPlans": {
+          "answer": "We offer Free, Premium, and Team plans. The Free plan includes basic features, Premium adds advanced analytics and priority support, while Team plans include additional management tools and higher limits.",
+          "question": "What subscription plans are available?"
+        }
+      },
+      "gettingStarted": {
+        "howToCreateAccount": {
+          "answer": "To create an account, click on the 'Sign Up' button in the top right corner of our homepage. Fill in your email, create a password, and verify your email address to get started.",
+          "question": "How do I create an account?"
+        },
+        "howToJoinTeam": {
+          "answer": "You can join a team by receiving an invitation from a team manager or by searching for public teams in your area. Go to 'Teams' in your dashboard and use the search function or browse available teams.",
+          "question": "How do I join a team?"
+        },
+        "profileSetup": {
+          "answer": "After creating your account, go to your profile settings to add your personal information, sports preferences, skill level, and profile picture. A complete profile helps other players and teams find you.",
+          "question": "How do I set up my profile?"
+        }
+      },
+      "privacySecurity": {
+        "dataProtection": {
+          "answer": "We use industry-standard encryption and security measures to protect your data. We never sell your personal information and only share data as outlined in our Privacy Policy.",
+          "question": "How do you protect my personal data?"
+        },
+        "deleteAccount": {
+          "answer": "To delete your account, go to Account Settings, select 'Privacy & Security', and click 'Delete Account'. Note that this action is permanent and cannot be undone.",
+          "question": "How do I delete my account?"
+        },
+        "whoCanSeeProfile": {
+          "answer": "You can control your profile visibility in Privacy Settings. You can choose to make your profile public, visible to team members only, or completely private.",
+          "question": "Who can see my profile information?"
+        }
+      },
+      "teamsManagement": {
+        "createTeam": {
+          "answer": "Go to your dashboard and click 'Create Team'. Fill in your team details including name, sport, location, and team description. You can then invite players to join your team.",
+          "question": "How do I create a new team?"
+        },
+        "invitePlayers": {
+          "answer": "As a team manager, go to your team page and click 'Invite Players'. You can send invitations by email or share your team's invite code with potential members.",
+          "question": "How do I invite players to my team?"
+        },
+        "manageRoster": {
+          "answer": "In your team management panel, you can view all team members, assign roles (captain, co-captain), manage player status (active, inactive), and remove players if necessary.",
+          "question": "How do I manage my team roster?"
+        }
+      },
+      "troubleshooting": {
+        "loginIssues": {
+          "answer": "First, check that you're using the correct email and password. If you've forgotten your password, use the 'Forgot Password' link. If issues persist, clear your browser cache or try a different browser.",
+          "question": "I can't log into my account"
+        },
+        "notificationsNotWorking": {
+          "answer": "Check your notification settings to ensure they're enabled. Also verify your email address is correct and check your spam/junk folder. For mobile notifications, ensure the app has permission to send notifications.",
+          "question": "I'm not receiving notifications"
+        },
+        "performanceIssues": {
+          "answer": "Try refreshing the page or restarting the app. Clear your browser cache and ensure you have a stable internet connection. If problems persist, try using a different browser or updating your current one.",
+          "question": "The app is running slowly"
+        }
+      }
+    },
+    "noResults": "No articles found for your search.",
+    "noResultsSuggestion": "Try different keywords or check out our popular articles below.",
+    "popularArticles": "Popular Articles",
+    "searchButton": "Search",
+    "searchPlaceholder": "Search for help...",
+    "title": "Help Center"
+  },
+  "language": {
+    "arabic": "العربية",
+    "change": "Change language",
+    "current": "Current language",
+    "english": "English",
+    "french": "Français",
+    "select": "Select language"
+  },
+  "loading": "Loading...",
+  "messages": {
+    "loginFailed": "Login failed",
+    "loginSuccess": "Successfully logged in",
+    "loginSuccessRemembered": "Successfully logged in. You will stay signed in.",
+    "logoutSuccess": "Successfully logged out",
+    "profileUpdateFailed": "Failed to update profile",
+    "profileUpdated": "Profile updated successfully",
+    "registerFailed": "Registration failed",
+    "registerSuccess": "Successfully registered"
+  },
+  "navigation": {
+    "forgotPassword": "Forgot Password",
+    "pageNotFound": "Page Not Found",
+    "login": "Login",
+    "register": "Register",
+    "resetPassword": "Reset Password",
+    "about": "About",
+    "contact": "Contact",
+    "dashboard": "Dashboard",
+    "help": "Help",
+    "home": "Home",
+    "logout": "Logout",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "notFound": {
+    "goHome": "Go to Home",
+    "text": "Sorry, the page you are looking for does not exist.",
+    "title": "Page Not Found"
+  },
+  "privacy": {
+    "changes": {
+      "text": "We may update this Privacy Policy from time to time. We will notify you of any material changes by posting the new Privacy Policy on this page and updating the \"Last updated\" date.",
+      "title": "Changes to This Privacy Policy"
+    },
+    "childrens": {
+      "text": "Our platform is not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13. If you become aware that a child has provided us with personal information, please contact us.",
+      "title": "Children's Privacy"
+    },
+    "contact": {
+      "address": "Address:",
+      "email": "Email:",
+      "text": "If you have any questions about this Privacy Policy or our privacy practices, please contact us:",
+      "title": "Contact Us"
+    },
+    "cookies": {
+      "text": "We use cookies and similar tracking technologies to enhance your experience on our platform. You can control cookie settings through your browser preferences.",
+      "title": "Cookies and Tracking Technologies"
+    },
+    "dataSecurity": {
+      "text": "We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the internet or electronic storage is 100% secure.",
+      "title": "Data Security"
+    },
+    "footer": {
+      "text": "By using {{companyName}}, you acknowledge that you have read and understood this Privacy Policy and agree to the collection and use of your information as described herein."
+    },
+    "howWeUse": {
+      "items": {
+        "communicate": "To communicate with you and provide customer support",
+        "connect": "To help you connect with other players and teams",
+        "improve": "To improve, personalize, and expand our services",
+        "legal": "To comply with legal obligations and protect our rights",
+        "notifications": "To send you notifications about your account and activities",
+        "provide": "To provide, operate, and maintain our platform",
+        "security": "To monitor and analyze usage patterns for security purposes"
+      },
+      "text": "We use the information we collect for the following purposes:",
+      "title": "How We Use Your Information"
+    },
+    "informationSharing": {
+      "items": {
+        "business": "In connection with a business transfer or merger",
+        "consent": "With your explicit consent",
+        "legal": "When required by law or to protect our rights and safety",
+        "service": "With trusted service providers who assist us in operating our platform"
+      },
+      "text": "We do not sell, trade, or otherwise transfer your personal information to third parties without your consent, except in the following circumstances:",
+      "title": "Information Sharing and Disclosure"
+    },
+    "informationWeCollect": {
+      "automaticInfo": {
+        "items": {
+          "cookies": "Cookies and similar tracking technologies",
+          "device": "Device information and browser type",
+          "ip": "IP address and location data",
+          "usage": "Usage data and analytics"
+        },
+        "text": "We automatically collect certain information when you access and use our platform:",
+        "title": "Automatically Collected Information"
+      },
+      "personalInfo": {
+        "items": {
+          "location": "Location information (if you choose to share it)",
+          "name": "Name and contact information (email address, phone number)",
+          "photos": "Profile photos and other images you upload",
+          "profile": "Profile information (age, sports preferences, skill level)"
+        },
+        "text": "We may collect personal information that you voluntarily provide to us when you register for an account, create a profile, join teams, or contact us. This may include:",
+        "title": "Personal Information"
+      },
+      "title": "Information We Collect"
+    },
+    "international": {
+      "text": "Your information may be transferred to and processed in countries other than your own. We ensure appropriate safeguards are in place to protect your information in accordance with this Privacy Policy.",
+      "title": "International Data Transfers"
+    },
+    "introduction": {
+      "text": "At {{companyName}}, we are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our sports community platform.",
+      "title": "Introduction"
+    },
+    "lastUpdated": "Last updated:",
+    "title": "Privacy Policy",
+    "yourRights": {
+      "items": {
+        "access": "Access and review your personal information",
+        "correct": "Correct inaccurate or incomplete information",
+        "delete": "Request deletion of your personal information",
+        "portability": "Request data portability",
+        "restrict": "Restrict or object to certain processing of your information",
+        "withdraw": "Withdraw consent where applicable"
+      },
+      "text": "You have the following rights regarding your personal information:",
+      "title": "Your Privacy Rights"
+    }
+  },
+  "terms": {
+    "acceptance": {
+      "text": "By creating an account, accessing, or using our services, you acknowledge that you have read, understood, and agree to be bound by these Terms and our Privacy Policy. If you do not agree to these Terms, you may not use our services.",
+      "title": "Acceptance of Terms"
+    },
+    "accountRegistration": {
+      "items": {
+        "activities": "All activities that occur under your account",
+        "notify": "Immediately notifying us of any unauthorized use of your account",
+        "security": "Maintaining the security of your account and password",
+        "update": "Keeping your account information accurate and up-to-date"
+      },
+      "text": "When you create an account with us, you must provide information that is accurate, complete, and current. You are responsible for:",
+      "title": "Account Registration and Security"
+    },
+    "changes": {
+      "text": "We reserve the right to modify these Terms at any time. We will notify you of material changes by posting the updated Terms on our platform and updating the \"Last updated\" date.",
+      "title": "Changes to These Terms"
+    },
+    "contact": {
+      "address": "Address:",
+      "email": "Email:",
+      "text": "If you have any questions about these Terms of Service, please contact us:",
+      "title": "Contact Us"
+    },
+    "disclaimers": {
+      "text": "Our services are provided \"as is\" and \"as available\" without warranties of any kind. We disclaim all warranties, express or implied, including but not limited to merchantability, fitness for a particular purpose, and non-infringement.",
+      "title": "Disclaimers"
+    },
+    "eligibility": {
+      "items": {
+        "accuracy": "Provide accurate and complete information during registration",
+        "age": "Be at least 13 years old (or the minimum age required in your jurisdiction)",
+        "capacity": "Have the legal capacity to enter into this agreement",
+        "compliance": "Comply with all applicable laws and regulations"
+      },
+      "text": "To use our services, you must:",
+      "title": "Eligibility"
+    },
+    "footer": {
+      "text": "By using {{companyName}}, you acknowledge that you have read and understood these Terms of Service and agree to be bound by them."
+    },
+    "governingLaw": {
+      "text": "These Terms are governed by and construed in accordance with the laws of the jurisdiction where our company is incorporated, without regard to conflict of law principles.",
+      "title": "Governing Law"
+    },
+    "intellectualProperty": {
+      "text": "The platform and its content, features, and functionality are owned by {{companyName}} and are protected by international copyright, trademark, and other intellectual property laws.",
+      "title": "Intellectual Property"
+    },
+    "introduction": {
+      "text": "Welcome to {{companyName}}! These Terms of Service (\"Terms\") govern your use of our sports community platform and services. By accessing or using our platform, you agree to be bound by these Terms.",
+      "title": "Introduction"
+    },
+    "lastUpdated": "Last updated:",
+    "limitation": {
+      "text": "To the fullest extent permitted by law, {{companyName}} shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues.",
+      "title": "Limitation of Liability"
+    },
+    "payments": {
+      "items": {
+        "accuracy": "You are responsible for providing accurate payment information",
+        "authorization": "You authorize us to charge your payment method for applicable fees",
+        "cancellation": "You may cancel your subscription at any time through your account settings",
+        "refunds": "Refunds are subject to our refund policy"
+      },
+      "text": "Some features of our platform may require payment. By making a payment, you agree to our billing terms and policies.",
+      "title": "Payments and Subscriptions"
+    },
+    "privacy": {
+      "text": "Your privacy is important to us. Our collection and use of personal information is governed by our Privacy Policy, which is incorporated into these Terms by reference.",
+      "title": "Privacy and Data Protection"
+    },
+    "termination": {
+      "text": "We may terminate or suspend your account and access to our services at any time, with or without cause, and with or without notice. You may also terminate your account at any time.",
+      "title": "Termination"
+    },
+    "title": "Terms of Service",
+    "useOfServices": {
+      "permitted": {
+        "items": {
+          "connect": "Connect with other players and teams",
+          "create": "Create and manage sports teams",
+          "participate": "Participate in sports activities and events",
+          "share": "Share sports-related content and experiences"
+        },
+        "title": "Permitted Uses"
+      },
+      "prohibited": {
+        "items": {
+          "harass": "Harass, abuse, or harm other users",
+          "illegal": "Use the platform for any illegal or unauthorized purpose",
+          "impersonate": "Impersonate others or provide false information",
+          "interfere": "Interfere with or disrupt the platform or servers",
+          "spam": "Send spam, unsolicited communications, or engage in commercial activities",
+          "violate": "Violate any laws, regulations, or third-party rights"
+        },
+        "title": "Prohibited Uses"
+      },
+      "text": "Our platform provides tools and services to help you connect with other sports enthusiasts, create and join teams, and participate in sports activities. You may use our services for lawful purposes only.",
+      "title": "Use of Services"
+    },
+    "userContent": {
+      "license": {
+        "text": "By submitting User Content, you grant us a worldwide, non-exclusive, royalty-free license to use, reproduce, modify, adapt, publish, translate, and distribute your content in connection with our services.",
+        "title": "License to User Content"
+      },
+      "responsibilities": {
+        "items": {
+          "accurate": "Is accurate and not misleading",
+          "appropriate": "Is appropriate and not offensive or harmful",
+          "legal": "Does not violate any laws or regulations",
+          "rights": "Does not infringe on third-party rights"
+        },
+        "text": "You are solely responsible for your User Content and must ensure that it:",
+        "title": "Your Responsibilities"
+      },
+      "text": "You may submit, upload, or post content on our platform (\"User Content\"). You retain ownership of your User Content, but you grant us certain rights to use it.",
+      "title": "User Content"
+    }
+  },
+  "time": {
+    "ago": "{{time}} ago",
+    "days": "{{count}} day",
+    "hours": "{{count}} hour",
+    "in": "in {{time}}",
+    "minutes": "{{count}} minute",
+    "months": "{{count}} month",
+    "now": "now",
+    "seconds": "{{count}} second",
+    "weeks": "{{count}} week",
+    "years": "{{count}} year"
+  },
+  "user": {
+    "guest": "Guest"
+  },
+  "validation": {
+    "date": "Please enter a valid date",
+    "email": "Please enter a valid email address",
+    "integer": "Please enter a valid integer",
+    "invalidEmail": "Please enter a valid email address",
+    "max": "{{field}} must be no more than {{max}} characters",
+    "min": "{{field}} must be at least {{min}} characters",
+    "number": "Please enter a valid number",
+    "passwordComplexity": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+    "passwordMatch": "Passwords do not match",
+    "phone": "Please enter a valid phone number",
+    "required": "{{field}} is required",
+    "time": "Please enter a valid time",
+    "url": "Please enter a valid URL"
+  }
+}

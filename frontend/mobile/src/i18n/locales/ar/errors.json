@@ -1,0 +1,74 @@
+{
+  "authentication": {
+    "accountDisabled": "تم تعطيل الحساب",
+    "accountLocked": "تم قفل الحساب",
+    "invalidCredentials": "بريد إلكتروني أو كلمة مرور غير صحيحة",
+    "loginRequired": "يرجى تسجيل الدخول للمتابعة",
+    "sessionExpired": "انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى.",
+    "title": "خطأ في المصادقة",
+    "tokenExpired": "انتهت صلاحية رمز المصادقة",
+    "unauthorized": "غير مخول لك الوصول إلى هذا المورد"
+  },
+  "errorDescription": "حدث خطأ غير متوقع. يرجى تحديث الصفحة.",
+  "errorDetails": "تفاصيل الخطأ",
+  "forbidden": "الوصول إلى هذا المورد محظور",
+  "form": {
+    "invalidData": "يرجى التحقق من البيانات المدخلة والمحاولة مرة أخرى",
+    "invalidFormat": "تنسيق غير صحيح",
+    "missingFields": "يرجى ملء جميع الحقول المطلوبة",
+    "submissionFailed": "فشل في إرسال النموذج",
+    "title": "خطأ في النموذج"
+  },
+  "general": {
+    "accessDenied": "الوصول مرفوض",
+    "badRequest": "طلب خاطئ",
+    "contactSupport": "إذا استمرت المشكلة، يرجى الاتصال بالدعم",
+    "generic": "حدث خطأ ما",
+    "network": "حدث خطأ في الشبكة. يرجى التحقق من اتصالك.",
+    "notFound": "الصفحة غير موجودة",
+    "resourceNotFound": "المورد غير موجود",
+    "serverError": "حدث خطأ في الخادم. يرجى المحاولة لاحقاً.",
+    "somethingWentWrong": "حدث خطأ ما",
+    "title": "خطأ",
+    "tryAgain": "يرجى المحاولة مرة أخرى",
+    "unexpected": "حدث خطأ غير متوقع",
+    "unknown": "حدث خطأ غير معروف"
+  },
+  "goBack": "العودة",
+  "network": {
+    "message": "غير قادر على الاتصال بالخادم. يرجى التحقق من اتصالك بالإنترنت.",
+    "offline": "أنت حالياً غير متصل بالإنترنت",
+    "retry": "إعادة المحاولة",
+    "serverError": "حدث خطأ في الخادم",
+    "timeout": "انتهت مهلة الطلب",
+    "title": "خطأ في الشبكة"
+  },
+  "networkError": "حدث خطأ في الشبكة",
+  "notFound": "المورد غير موجود",
+  "reloadPage": "إعادة تحميل الصفحة",
+  "server": {
+    "badRequest": "طلب خاطئ",
+    "forbidden": "الوصول محظور",
+    "internal": "خطأ داخلي في الخادم",
+    "maintenance": "الخادم تحت الصيانة",
+    "notFound": "المورد غير موجود",
+    "title": "خطأ في الخادم",
+    "tooManyRequests": "طلبات كثيرة جداً. يرجى المحاولة لاحقاً."
+  },
+  "serverError": "حدث خطأ في الخادم",
+  "tryAgain": "يرجى المحاولة مرة أخرى",
+  "unauthorized": "غير مخول لك الوصول إلى هذا المورد",
+  "unexpectedError": "حدث خطأ ما",
+  "validation": {
+    "fileTooLarge": "حجم الملف كبير جداً",
+    "fileTypeNotSupported": "نوع الملف غير مدعوم",
+    "invalidEmail": "يرجى إدخال عنوان بريد إلكتروني صحيح",
+    "invalidPassword": "يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل",
+    "invalidPhone": "يرجى إدخال رقم هاتف صحيح",
+    "invalidUrl": "يرجى إدخال رابط صحيح",
+    "passwordMismatch": "كلمات المرور غير متطابقة",
+    "required": "هذا الحقل مطلوب",
+    "title": "خطأ في التحقق"
+  },
+  "validationError": "خطأ في التحقق"
+}

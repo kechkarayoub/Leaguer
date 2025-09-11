@@ -1,0 +1,87 @@
+{
+  "achievements": "Achievements",
+  "actions": {
+    "configure": "Configure",
+    "create": "Create New",
+    "delete": "Delete",
+    "edit": "Edit",
+    "export": "Export",
+    "import": "Import",
+    "manage": "Manage",
+    "refresh": "Refresh Data",
+    "view": "View"
+  },
+  "description": "Here's an overview of your gaming activity and quick actions to get you started.",
+  "findOpponents": "Find Opponents",
+  "gameResult": {
+    "draw": "Draw",
+    "loss": "Loss",
+    "win": "Win"
+  },
+  "joinTournament": "Join Tournament",
+  "loss": "Loss",
+  "losses": "Losses",
+  "noAchievements": "No achievements yet",
+  "noRecentGames": "No recent games",
+  "notifications": {
+    "markAllRead": "Mark all as read",
+    "markRead": "Mark as read",
+    "newMessage": "New message",
+    "noNotifications": "No notifications",
+    "reminder": "Reminder",
+    "systemUpdate": "System update",
+    "title": "Notifications"
+  },
+  "overview": {
+    "notifications": "Notifications",
+    "recent": "Recent Activity",
+    "stats": "Statistics",
+    "title": "Overview"
+  },
+  "quickActions": {
+    "findPlayers": "Find Players",
+    "newGame": "Start New Game",
+    "title": "Quick Actions",
+    "viewStats": "View Statistics"
+  },
+  "readyToPlay": "Ready to dominate today's matches?",
+  "recentGames": {
+    "title": "Recent Games",
+    "viewAll": "View All"
+  },
+  "startNewGame": "Start New Game",
+  "stats": {
+    "active": "Active",
+    "change": "Change",
+    "completed": "Completed",
+    "growth": "Growth",
+    "lastMonth": "Last month",
+    "losses": "Losses",
+    "pending": "Pending",
+    "thisMonth": "This month",
+    "thisWeek": "This week",
+    "today": "Today",
+    "total": "Total",
+    "totalGames": "Total Games",
+    "winRate": "Win Rate",
+    "wins": "Wins"
+  },
+  "tables": {
+    "empty": "No items found",
+    "error": "Failed to load data",
+    "loading": "Loading data...",
+    "noData": "No data available",
+    "of": "of",
+    "page": "Page",
+    "rowsPerPage": "Rows per page"
+  },
+  "title": "Dashboard",
+  "totalGames": "Total Games",
+  "user": "User",
+  "viewAll": "View All",
+  "welcome": "Welcome back, {{name}}!",
+  "welcomeBack": "Welcome back",
+  "win": "Win",
+  "winRate": "Win Rate",
+  "wins": "Wins"
+}

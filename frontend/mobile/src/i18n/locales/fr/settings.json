@@ -1,0 +1,47 @@
+{
+  "preferences": {
+    "description": "Personnalisez vos préférences d'application.",
+    "language": "Langue",
+    "notifications": "Notifications",
+    "save": "Sauvegarder les préférences",
+    "selectLanguage": "Sélectionner la langue",
+    "selectTimezone": "Sélectionner le fuseau horaire",
+    "theme": "Thème",
+    "themeLight": "Clair",
+    "themeDark": "Sombre",
+    "themeDefault": "Par défaut",
+    "themeAuto": "Automatique",
+    "timezone": "Fuseau horaire",
+    "title": "Préférences",
+    "updateSuccess": "Les paramètres ont été mis à jour avec succès",
+    "updateError": "Échec de la mise à jour des paramètres",
+    "emailNotifications": "Notifications par e-mail",
+    "pushNotifications": "Notifications push"
+  },
+  "profile": {
+    "bio": "Biographie",
+    "description": "Mettez à jour vos informations de profil et préférences.",
+    "email": "Email",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "phoneNumber": "Numéro de téléphone",
+    "profileImage": "Image de profil",
+    "save": "Sauvegarder les modifications",
+    "title": "Informations de profil"
+  },
+  "security": {
+    "changePassword": "Changer le mot de passe",
+    "description": "Gérez la sécurité et la confidentialité de votre compte.",
+    "privacy": "Paramètres de confidentialité",
+    "save": "Sauvegarder les paramètres de sécurité",
+    "sessions": "Sessions actives",
+    "title": "Paramètres de sécurité",
+    "twoFactor": "Authentification à deux facteurs"
+  },
+  "tabs": {
+    "preferences": "Préférences",
+    "profile": "Profil",
+    "security": "Sécurité"
+  },
+  "title": "Paramètres"
+}

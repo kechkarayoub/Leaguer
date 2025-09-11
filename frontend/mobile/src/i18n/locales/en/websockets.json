@@ -1,0 +1,9 @@
+{
+  "profile": {
+    "updatedRemotely": "Profile updated from another device"
+  },
+  "auth": {
+    "passwordChangedElsewhere": "Password changed from another device. You will be logged out.",
+    "passwordReset": "Password was reset. You will be logged out."
+  }
+}

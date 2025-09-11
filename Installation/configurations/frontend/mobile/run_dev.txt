@@ -1,0 +1,13 @@
+cd frontend/mobile && npx react-native start --reset-cache --port 8082
+& "$env:ANDROID_HOME\platform-tools\adb.exe" reverse tcp:8081 tcp:8082
+cd frontend/mobile && npx react-native run-android --port 8082
+
+
+netstat -ano | findstr :8081
+taskkill /F /PID [process_id]
+yarn start
+yarn android
+
+
+start emulator: & "$env:ANDROID_HOME\emulator\emulator.exe" -avd Pixel_7_API_34
+            or: & "$env:ANDROID_HOME\emulator\emulator.exe" -avd Pixel_7_API_34 -no-snapshot-load -no-snapshot-save

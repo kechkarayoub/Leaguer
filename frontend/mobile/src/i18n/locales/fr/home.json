@@ -1,0 +1,19 @@
+{
+  "actions": {
+    "createProject": "Créer un nouveau projet",
+    "manageUsers": "Gérer les utilisateurs",
+    "systemSettings": "Paramètres système",
+    "viewReports": "Voir les rapports"
+  },
+  "noContentYet": "Aucun contenu disponible pour le moment.",
+  "quickActions": "Actions rapides",
+  "quickStats": "Statistiques rapides",
+  "stats": {
+    "activeProjects": "Projets actifs",
+    "completedTasks": "Tâches terminées",
+    "pendingReviews": "Révisions en attente",
+    "totalUsers": "Utilisateurs totaux"
+  },
+  "title": "Accueil",
+  "welcome": "Bon retour"
+}

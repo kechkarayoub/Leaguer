@@ -1,0 +1,82 @@
+{
+  "preferences": {
+    "description": "Customize your application preferences.",
+    "language": "Language",
+    "notifications": "Notifications",
+    "save": "Save Preferences",
+    "selectLanguage": "Select language",
+    "selectTimezone": "Select timezone",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeDefault": "Default",
+    "themeAuto": "Auto",
+    "timezone": "Timezone",
+    "title": "Preferences",
+    "updateSuccess": "Settings updated successfully",
+    "updateError": "Failed to update settings",
+    "emailNotifications": "Email notifications",
+    "pushNotifications": "Push notifications"
+  },
+  "language": {
+    "title": "Language",
+    "selectLanguage": "Select Language",
+    "restartNote": "The app may need to restart to fully apply language changes, especially for right-to-left languages."
+  },
+  "theme": {
+    "title": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "default": "System Default",
+    "lightDescription": "Light theme with bright colors",
+    "darkDescription": "Dark theme with dim colors",
+    "defaultDescription": "Follow system theme setting"
+  },
+  "sections": {
+    "appearance": "Appearance & Language",
+    "notifications": "Notifications",
+    "privacySecurity": "Privacy & Security",
+    "about": "About"
+  },
+  "notifications": {
+    "pushNotifications": "Push Notifications",
+    "emailNotifications": "Email Notifications"
+  },
+  "security": {
+    "changePassword": "Change Password",
+    "description": "Manage your account security and privacy.",
+    "privacy": "Privacy Settings",
+    "save": "Save Security Settings",
+    "sessions": "Active Sessions",
+    "title": "Security Settings",
+    "twoFactor": "Two-Factor Authentication"
+  },
+  "legal": {
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service"
+  },
+  "about": {
+    "version": "Version",
+    "appInfo": "App Information"
+  },
+  "actions": {
+    "signOut": "Sign Out"
+  },
+  "profile": {
+    "bio": "Bio",
+    "description": "Update your profile information and preferences.",
+    "email": "Email",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phoneNumber": "Phone Number",
+    "profileImage": "Profile Image",
+    "save": "Save Changes",
+    "title": "Profile Information"
+  },
+  "tabs": {
+    "preferences": "Preferences",
+    "profile": "Profile",
+    "security": "Security"
+  },
+  "title": "Settings"
+}

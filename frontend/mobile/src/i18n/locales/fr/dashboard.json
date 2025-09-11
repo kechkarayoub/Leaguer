@@ -1,0 +1,87 @@
+{
+  "achievements": "Succès",
+  "actions": {
+    "configure": "Configurer",
+    "create": "Créer nouveau",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "export": "Exporter",
+    "import": "Importer",
+    "manage": "Gérer",
+    "refresh": "Rafraîchir les données",
+    "view": "Voir"
+  },
+  "description": "Voici un aperçu de votre activité de jeu et des actions rapides pour commencer.",
+  "findOpponents": "Trouver des adversaires",
+  "gameResult": {
+    "draw": "Match Nul",
+    "loss": "Défaite",
+    "win": "Victoire"
+  },
+  "joinTournament": "Rejoindre le tournoi",
+  "loss": "Défaite",
+  "losses": "Défaites",
+  "noAchievements": "Aucun succès pour le moment",
+  "noRecentGames": "Aucune partie récente",
+  "notifications": {
+    "markAllRead": "Tout marquer comme lu",
+    "markRead": "Marquer comme lu",
+    "newMessage": "Nouveau message",
+    "noNotifications": "Aucune notification",
+    "reminder": "Rappel",
+    "systemUpdate": "Mise à jour du système",
+    "title": "Notifications"
+  },
+  "overview": {
+    "notifications": "Notifications",
+    "recent": "Activité récente",
+    "stats": "Statistiques",
+    "title": "Vue d'ensemble"
+  },
+  "quickActions": {
+    "findPlayers": "Trouver des Joueurs",
+    "newGame": "Nouvelle Partie",
+    "title": "Actions Rapides",
+    "viewStats": "Voir les Statistiques"
+  },
+  "readyToPlay": "Prêt à dominer les matchs d'aujourd'hui ?",
+  "recentGames": {
+    "title": "Parties Récentes",
+    "viewAll": "Voir Tout"
+  },
+  "startNewGame": "Nouvelle partie",
+  "stats": {
+    "active": "Actif",
+    "change": "Changement",
+    "completed": "Terminé",
+    "growth": "Croissance",
+    "lastMonth": "Le mois dernier",
+    "losses": "Défaites",
+    "pending": "En attente",
+    "thisMonth": "Ce mois-ci",
+    "thisWeek": "Cette semaine",
+    "today": "Aujourd'hui",
+    "total": "Total",
+    "totalGames": "Total des parties",
+    "winRate": "Taux de victoire",
+    "wins": "Victoires"
+  },
+  "tables": {
+    "empty": "Aucun élément trouvé",
+    "error": "Échec du chargement des données",
+    "loading": "Chargement des données...",
+    "noData": "Aucune donnée disponible",
+    "of": "de",
+    "page": "Page",
+    "rowsPerPage": "Lignes par page"
+  },
+  "title": "Tableau de bord",
+  "totalGames": "Total des parties",
+  "user": "Utilisateur",
+  "viewAll": "Voir tout",
+  "welcome": "Bon retour, {{name}} !",
+  "welcomeBack": "Bon retour",
+  "win": "Victoire",
+  "winRate": "Taux de victoire",
+  "wins": "Victoires"
+}

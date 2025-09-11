@@ -1,0 +1,74 @@
+{
+  "authentication": {
+    "accountDisabled": "Account has been disabled",
+    "accountLocked": "Account has been locked",
+    "invalidCredentials": "Invalid email or password",
+    "loginRequired": "Please sign in to continue",
+    "sessionExpired": "Your session has expired. Please sign in again.",
+    "title": "Authentication Error",
+    "tokenExpired": "Authentication token has expired",
+    "unauthorized": "You are not authorized to access this resource"
+  },
+  "errorDescription": "An unexpected error occurred. Please try refreshing the page.",
+  "errorDetails": "Error Details",
+  "forbidden": "Access to this resource is forbidden",
+  "form": {
+    "invalidData": "Please check your input and try again",
+    "invalidFormat": "Invalid format",
+    "missingFields": "Please fill in all required fields",
+    "submissionFailed": "Form submission failed",
+    "title": "Form Error"
+  },
+  "general": {
+    "accessDenied": "Access denied",
+    "badRequest": "Bad request",
+    "contactSupport": "If the problem persists, please contact support",
+    "generic": "An error occurred",
+    "network": "Network error occurred. Please check your connection.",
+    "notFound": "Page not found",
+    "resourceNotFound": "Resource not found",
+    "serverError": "Server error occurred. Please try again later.",
+    "somethingWentWrong": "Something went wrong",
+    "title": "Error",
+    "tryAgain": "Please try again",
+    "unexpected": "An unexpected error occurred",
+    "unknown": "An unknown error occurred"
+  },
+  "goBack": "Go Back",
+  "network": {
+    "message": "Unable to connect to the server. Please check your internet connection.",
+    "offline": "You are currently offline",
+    "retry": "Retry",
+    "serverError": "Server error occurred",
+    "timeout": "Request timed out",
+    "title": "Network Error"
+  },
+  "networkError": "Network error occurred",
+  "notFound": "Resource not found",
+  "reloadPage": "Reload Page",
+  "server": {
+    "badRequest": "Bad request",
+    "forbidden": "Access forbidden",
+    "internal": "Internal server error",
+    "maintenance": "Server is under maintenance",
+    "notFound": "Resource not found",
+    "title": "Server Error",
+    "tooManyRequests": "Too many requests. Please try again later."
+  },
+  "serverError": "Server error occurred",
+  "tryAgain": "Please try again",
+  "unauthorized": "You are not authorized to access this resource",
+  "unexpectedError": "Something went wrong",
+  "validation": {
+    "fileTooLarge": "File size is too large",
+    "fileTypeNotSupported": "File type is not supported",
+    "invalidEmail": "Please enter a valid email address",
+    "invalidPassword": "Password must be at least 8 characters long",
+    "invalidPhone": "Please enter a valid phone number",
+    "invalidUrl": "Please enter a valid URL",
+    "passwordMismatch": "Passwords do not match",
+    "required": "This field is required",
+    "title": "Validation Error"
+  },
+  "validationError": "Validation error"
+}

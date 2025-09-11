@@ -1,0 +1,95 @@
+{
+  "actions": {
+    "saveChanges": "حفظ التغييرات",
+    "updatePassword": "تحديث كلمة المرور"
+  },
+  "description": "إدارة معلومات حسابك وإعدادات الأمان.",
+  "fields": {
+    "address": "العنوان",
+    "birthday": "تاريخ الميلاد",
+    "cin": "رقم الهوية الوطنية",
+    "confirmPassword": "تأكيد كلمة المرور الجديدة",
+    "country": "البلد",
+    "currentPassword": "كلمة المرور الحالية",
+    "email": "عنوان البريد الإلكتروني",
+    "firstName": "الاسم الأول",
+    "gender": "الجنس",
+    "language": "اللغة المفضلة",
+    "lastName": "الاسم الأخير",
+    "newPassword": "كلمة المرور الجديدة",
+    "phoneNumber": "رقم الهاتف",
+    "preferredLanguage": "اللغة المفضلة",
+    "profilePicture": "صورة الملف الشخصي",
+    "timezone": "المنطقة الزمنية",
+    "username": "اسم المستخدم"
+  },
+  "gender": {
+    "female": "أنثى",
+    "male": "ذكر"
+  },
+  "help": {
+    "emailVerified": "تم التحقق من عنوان بريدك الإلكتروني.",
+    "phoneValidated": "تم التحقق من رقم هاتفك ولا يمكن تغييره.",
+    "usernameLocked": "لا يمكن تغيير اسم المستخدم بعد إنشاء الحساب."
+  },
+  "languages": {
+    "arabic": "العربية",
+    "english": "English",
+    "french": "Français"
+  },
+  "messages": {
+    "currentPasswordIncorrect": "كلمة المرور الحالية غير صحيحة.",
+    "passwordUpdateError": "فشل في تحديث كلمة المرور. يرجى المحاولة مرة أخرى.",
+    "passwordUpdated": "تم تحديث كلمة المرور بنجاح!",
+    "profileUpdateError": "فشل في تحديث الملف الشخصي. يرجى المحاولة مرة أخرى.",
+    "profileUpdated": "تم تحديث الملف الشخصي بنجاح!"
+  },
+  "placeholders": {
+    "address": "أدخل عنوانك الكامل",
+    "cin": "أدخل رقم الهوية الوطنية",
+    "datePlaceholder": "اختر تاريخًا",
+    "selectCountry": "حدد بلدك",
+    "selectGender": "حدد جنسك",
+    "userBirthday": "أدخل تاريخ ميلادك"
+  },
+  "sections": {
+    "changePassword": "تغيير كلمة المرور",
+    "personalInformation": "المعلومات الشخصية",
+    "profilePicture": "صورة الملف الشخصي"
+  },
+  "select": {
+    "noOptions": "لا توجد خيارات متاحة"
+  },
+  "tabs": {
+    "password": "كلمة المرور والأمان",
+    "personalInfo": "المعلومات الشخصية"
+  },
+  "title": "إعدادات الملف الشخصي",
+  "validation": {
+    "addressMaxLength": "يجب أن يكون العنوان أقل من 500 حرف",
+    "cinFormat": "يرجى إدخال رقم هوية وطنية صالح",
+    "confirmPasswordRequired": "يرجى تأكيد كلمة المرور الجديدة",
+    "addressRequired": "يرجى إدخال عنوانك",
+    "birthdayRequired": "يرجى تحديد تاريخ الميلاد",
+    "cinRequired": "يرجى تحديد رقم الهوية الوطنية",
+    "genderRequired": "يرجى تحديد الجنس",
+    "countryRequired": "يرجى تحديد البلد",
+    "emailInvalid": "يرجى إدخال عنوان بريد إلكتروني صحيح",
+    "emailRequired": "يرجى إدخال عنوان بريدك الإلكتروني",
+    "phoneRequired": "يرجى تحديد رقم الهاتف",
+    "phoneMinLength": "يجب أن يحتوي رقم الهاتف على 9 أحرف على الأقل",
+    "usernameRequired": "يرجى تحديد اسم المستخدم",
+    "currentPasswordRequired": "كلمة المرور الحالية مطلوبة",
+    "firstNameAlphaOnly": "الاسم الأول يجب أن يحتوي على أحرف فقط",
+    "lastNameAlphaOnly": "الاسم الأخير يجب أن يحتوي على أحرف فقط",
+    "firstNameMinLength": "يجب أن يحتوي الاسم الأول على حرفين على الأقل",
+    "firstNameRequired": "الاسم الأول مطلوب",
+    "lastNameMinLength": "يجب أن يحتوي الاسم الأخير على حرفين على الأقل",
+    "lastNameRequired": "الاسم الأخير مطلوب",
+    "newPasswordRequired": "كلمة المرور الجديدة مطلوبة",
+    "passwordMinLength": "يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل",
+    "passwordsDoNotMatch": "كلمات المرور غير متطابقة",
+    "phoneNumberRequired": "رقم الهاتف مطلوب",
+    "userCinAlphanumOnly": "رقم الهوية الوطنية يجب أن يحتوي على أحرف وأرقام فقط"
+  }
+}

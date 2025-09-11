@@ -1,0 +1,87 @@
+{
+  "achievements": "الإنجازات",
+  "actions": {
+    "configure": "إعداد",
+    "create": "إنشاء جديد",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "export": "تصدير",
+    "import": "استيراد",
+    "manage": "إدارة",
+    "refresh": "تحديث البيانات",
+    "view": "عرض"
+  },
+  "description": "إليك نظرة عامة على نشاط الألعاب الخاص بك والإجراءات السريعة للبدء.",
+  "findOpponents": "ابحث عن منافسين",
+  "gameResult": {
+    "draw": "تعادل",
+    "loss": "هزيمة",
+    "win": "فوز"
+  },
+  "joinTournament": "انضم إلى البطولة",
+  "loss": "هزيمة",
+  "losses": "الهزائم",
+  "noAchievements": "لا توجد إنجازات حتى الآن",
+  "noRecentGames": "لا توجد ألعاب حديثة",
+  "notifications": {
+    "markAllRead": "تحديد الكل كمقروء",
+    "markRead": "تحديد كمقروء",
+    "newMessage": "رسالة جديدة",
+    "noNotifications": "لا توجد إشعارات",
+    "reminder": "تذكير",
+    "systemUpdate": "تحديث النظام",
+    "title": "الإشعارات"
+  },
+  "overview": {
+    "notifications": "الإشعارات",
+    "recent": "النشاط الأخير",
+    "stats": "الإحصائيات",
+    "title": "نظرة عامة"
+  },
+  "quickActions": {
+    "findPlayers": "العثور على لاعبين",
+    "newGame": "بدء لعبة جديدة",
+    "title": "الإجراءات السريعة",
+    "viewStats": "عرض الإحصائيات"
+  },
+  "readyToPlay": "هل أنت جاهز للسيطرة على مباريات اليوم؟",
+  "recentGames": {
+    "title": "الألعاب الأخيرة",
+    "viewAll": "عرض الكل"
+  },
+  "startNewGame": "بدء لعبة جديدة",
+  "stats": {
+    "active": "نشط",
+    "change": "تغيير",
+    "completed": "مكتمل",
+    "growth": "النمو",
+    "lastMonth": "الشهر الماضي",
+    "losses": "الهزائم",
+    "pending": "قيد الانتظار",
+    "thisMonth": "هذا الشهر",
+    "thisWeek": "هذا الأسبوع",
+    "today": "اليوم",
+    "total": "الإجمالي",
+    "totalGames": "إجمالي الألعاب",
+    "winRate": "معدل الفوز",
+    "wins": "الانتصارات"
+  },
+  "tables": {
+    "empty": "لم يتم العثور على عناصر",
+    "error": "فشل في تحميل البيانات",
+    "loading": "جارٍ تحميل البيانات...",
+    "noData": "لا توجد بيانات متاحة",
+    "of": "من",
+    "page": "صفحة",
+    "rowsPerPage": "عدد الصفوف لكل صفحة"
+  },
+  "title": "لوحة التحكم",
+  "totalGames": "إجمالي الألعاب",
+  "user": "المستخدم",
+  "viewAll": "عرض الكل",
+  "welcome": "مرحباً بعودتك، {{name}}!",
+  "welcomeBack": "مرحباً بعودتك",
+  "win": "فوز",
+  "winRate": "معدل الفوز",
+  "wins": "الانتصارات"
+}

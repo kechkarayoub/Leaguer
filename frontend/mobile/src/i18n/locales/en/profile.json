@@ -1,0 +1,94 @@
+{
+  "actions": {
+    "saveChanges": "Save Changes",
+    "updatePassword": "Update Password"
+  },
+  "description": "Manage your account information and security settings.",
+  "fields": {
+    "address": "Address",
+    "birthday": "Date of Birth",
+    "cin": "National ID Number",
+    "confirmPassword": "Confirm New Password",
+    "country": "Country",
+    "currentPassword": "Current Password",
+    "email": "Email Address",
+    "firstName": "First Name",
+    "gender": "Gender",
+    "language": "Preferred Language",
+    "lastName": "Last Name",
+    "newPassword": "New Password",
+    "phoneNumber": "Phone Number",
+    "preferredLanguage": "Preferred Language",
+    "profilePicture": "Profile Picture",
+    "timezone": "Timezone",
+    "username": "Username"
+  },
+  "gender": {
+    "female": "Female",
+    "male": "Male"
+  },
+  "help": {
+    "emailVerified": "Your email address has been verified.",
+    "phoneValidated": "Your phone number has been validated and cannot be changed.",
+    "usernameLocked": "Username cannot be changed after account creation."
+  },
+  "languages": {
+    "arabic": "العربية",
+    "english": "English",
+    "french": "Français"
+  },
+  "messages": {
+    "currentPasswordIncorrect": "Current password is incorrect.",
+    "passwordUpdateError": "Failed to update password. Please try again.",
+    "passwordUpdated": "Password updated successfully!",
+    "profileUpdateError": "Failed to update profile. Please try again.",
+    "profileUpdated": "Profile updated successfully!"
+  },
+  "placeholders": {
+    "address": "Enter your full address",
+    "cin": "Enter your national ID number",
+    "datePlaceholder": "Select a date",
+    "selectCountry": "Select your country",
+    "selectGender": "Select your gender",
+    "userBirthday": "Enter your date of birth"
+  },
+  "sections": {
+    "changePassword": "Change Password",
+    "personalInformation": "Personal Information",
+    "profilePicture": "Profile Picture"
+  },
+  "select": {
+    "noOptions": "No options found"
+  },
+  "tabs": {
+    "password": "Password & Security",
+    "personalInfo": "Personal Information"
+  },
+  "title": "Profile Settings",
+  "validation": {
+    "addressMaxLength": "Address must be less than 500 characters",
+    "cinFormat": "Please enter a valid national ID number",
+    "confirmPasswordRequired": "Please confirm your new password",
+    "addressRequired": "Please enter your address",
+    "birthdayRequired": "Please select a date of birth",
+    "cinRequired": "Please select a national ID number",
+    "genderRequired": "Please select a gender",
+    "countryRequired": "Please select a country",
+    "emailRequired": "Please enter an email address",
+    "phoneRequired": "Please select a phone number",
+    "phoneMinLength": "Phone number must be at least 9 characters",
+    "usernameRequired": "Please select a username",
+    "currentPasswordRequired": "Current password is required",
+    "firstNameAlphaOnly": "First name must contain only letters",
+    "lastNameAlphaOnly": "Last name must contain only letters",
+    "firstNameMinLength": "First name must be at least 2 characters",
+    "firstNameRequired": "First name is required",
+    "lastNameMinLength": "Last name must be at least 2 characters",
+    "lastNameRequired": "Last name is required",
+    "newPasswordRequired": "New password is required",
+    "passwordMinLength": "Password must be at least 8 characters",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "phoneNumberRequired": "Phone number is required",
+    "userCinAlphanumOnly": "National ID number must contain only letters and numbers"
+  }
+}

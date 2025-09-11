@@ -1,0 +1,10 @@
+{
+  "changeLanguage": "Language Changed",
+  "restartNote": "The app will restart to apply the language change.",
+  "currentLanguage": "Current Language",
+  "selectLanguage": "Select Language",
+  "languageSettings": "Language Settings",
+  "english": "English",
+  "french": "French", 
+  "arabic": "Arabic"
+}
