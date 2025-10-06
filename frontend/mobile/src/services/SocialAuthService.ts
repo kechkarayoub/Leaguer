@@ -58,19 +58,17 @@ class SocialAuthService {
     }
 
     try {
-      const clientId = Platform.select({
-        ios: config.social.google.iosClientId,
-        android: config.social.google.androidClientId,
-        default: config.social.google.webClientId,
-      });
-
-      if (!clientId) {
-        console.error('Google client ID not configured for this platform');
+      const webClientId = config.social.google.webClientId;
+      if (!webClientId || !/\.apps\.googleusercontent\.com$/.test(webClientId)) {
+        console.error(
+          'Google webClientId is missing or invalid. Expected an OAuth client ID ending with ".apps.googleusercontent.com". Check REACT_APP_GOOGLE_SIGN_IN_WEB_CLIENT_ID in .env.'
+        );
+        this.isGoogleConfigured = false;
         return;
       }
 
       await GoogleSignin.configure({
-        webClientId: config.social.google.webClientId,
+        webClientId,
         iosClientId: config.social.google.iosClientId,
         offlineAccess: true,
         hostedDomain: '',
@@ -78,7 +76,8 @@ class SocialAuthService {
       });
 
       this.isGoogleConfigured = true;
-      console.log('Google Sign-In configured successfully');
+      const masked = webClientId.replace(/^[^-.]+/, '***');
+      console.log('Google Sign-In configured successfully with webClientId:', masked);
     } catch (error) {
       console.error('Failed to configure Google Sign-In:', error);
       this.isGoogleConfigured = false;
@@ -133,12 +132,13 @@ class SocialAuthService {
       
       // Get the user's sign in response
       const signInResponse = await GoogleSignin.signIn();
-      
+      console.log('Google Sign-In response:', signInResponse);
       if (!signInResponse.data?.idToken) {
         throw new Error('No ID token received from Google');
       }
 
       const { data } = signInResponse;
+      console.log('Google Sign-In data:', data);
       const { idToken, user } = data;
 
       // Create a Google credential with the token
@@ -167,17 +167,34 @@ class SocialAuthService {
         accessToken: await firebaseUser.getIdToken(),
       };
     } catch (error: any) {
-      console.error('Google Sign-In Error:', error);
-      
+      // Log full error object for debugging
+      try {
+        const full = JSON.stringify(error, Object.getOwnPropertyNames(error));
+        console.error('Google Sign-In Error (full):', full);
+      } catch {
+        console.error('Google Sign-In Error:', error);
+      }
+
+      // Map known error codes to actionable messages
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         throw new Error('Google Sign-In was cancelled');
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        throw new Error('Google Sign-In is already in progress');
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        throw new Error('Google Play Services not available');
-      } else {
-        throw new Error('Google Sign-In failed');
       }
+      if (error.code === statusCodes.IN_PROGRESS) {
+        throw new Error('Google Sign-In is already in progress');
+      }
+      if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        throw new Error('Google Play Services not available');
+      }
+      // Common Android misconfig errors
+      if (error.code === 'DEVELOPER_ERROR' || error.code === 10) {
+        throw new Error('Google Sign-In misconfiguration (DEVELOPER_ERROR). Ensure debug SHA-1/SH-256 are added to Firebase and webClientId matches your project.');
+      }
+      if (error.code === '12500') {
+        throw new Error('Google Sign-In failed (12500). This often means an OAuth client ID mismatch or missing SHA-1 in Firebase.');
+      }
+
+      // Fallback: include upstream message when present
+      throw new Error(error?.message || 'Google Sign-In failed');
     }
   }
 

@@ -8,3 +8,11 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
+
+# Keep react-native-config (new package name)
+-keep class com.lugg.RNCConfig.** { *; }
+-dontwarn com.lugg.RNCConfig.**
+
+# Backward compatibility for older package name
+-keep class com.lugg.ReactNativeConfig.** { *; }
+-dontwarn com.lugg.ReactNativeConfig.**

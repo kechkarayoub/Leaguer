@@ -10,6 +10,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { Platform } from 'react-native';
 import Toast from 'react-native-toast-message';
+import { t } from 'i18next';
 
 import config from '../config/config';
 import DeviceIdService from './DeviceIdService';
@@ -84,6 +85,8 @@ class AuthenticatedApiService {
         const originalRequest = error.config;
 
         // Only retry for 401 errors (token expired) and only once
+        console.log('API response error status:', error.response?.status);
+        console.log('Original request _retry flag:', originalRequest._retry);
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
           try {
@@ -102,6 +105,7 @@ class AuthenticatedApiService {
         } else if (error.response?.status === 401) {
           await this.handleSessionExpired();
         }
+        console.log('end calllllllllllllllllllllllllllll');
 
         // For all other error codes, handle the error and reject
         this.handleApiError(error);
@@ -181,8 +185,8 @@ class AuthenticatedApiService {
     // Show toast message
     Toast.show({
       type: 'error',
-      text1: 'Session Expired',
-      text2: 'Please login again',
+      text1: t('errors:authentication.title', { defaultValue: t('errors:title', { defaultValue: 'Error' }) }),
+      text2: t('errors:authentication.sessionExpired', { defaultValue: 'Your session has expired. Please log in again.' }),
     });
     
     // Notify callback if set (for additional cleanup)
@@ -200,15 +204,15 @@ class AuthenticatedApiService {
         case 403:
           Toast.show({
             type: 'error',
-            text1: 'Access Denied',
-            text2: 'You do not have permission to perform this action',
+            text1: t('errors:general.accessDenied', { defaultValue: 'Access denied' }),
+            text2: t('errors:general.contactSupport', { defaultValue: 'If the problem persists, please contact support' }),
           });
           break;
         case 404:
           Toast.show({
             type: 'error',
-            text1: 'Not Found',
-            text2: 'The requested resource was not found',
+            text1: t('errors:general.notFound', { defaultValue: 'Resource not found' }),
+            text2: t('errors:server.notFound', { defaultValue: 'Resource not found' }),
           });
           break;
         case 409:
@@ -218,30 +222,32 @@ class AuthenticatedApiService {
         case 500:
           Toast.show({
             type: 'error',
-            text1: 'Server Error',
-            text2: 'Please try again later',
+            text1: t('errors:server.title', { defaultValue: 'Server Error' }),
+            text2: t('errors:server.internal', { defaultValue: 'Internal server error' }),
           });
           break;
         default:
           if (status !== 409) {
+            const fallbackGeneric = t('errors:general.generic', { defaultValue: 'An error occurred' });
+            const serverMessage = typeof data?.message === 'string' && data.message.trim() ? data.message : undefined;
             Toast.show({
               type: 'error',
-              text1: 'Error',
-              text2: data.message || 'An error occurred',
+              text1: t('errors:title', { defaultValue: 'Error' }),
+              text2: serverMessage || fallbackGeneric,
             });
           }
       }
     } else if (error.request) {
       Toast.show({
         type: 'error',
-        text1: 'Network Error',
-        text2: 'Please check your internet connection',
+        text1: t('errors:network.title', { defaultValue: 'Network Error' }),
+        text2: t('errors:network.message', { defaultValue: 'Unable to connect to the server. Please check your internet connection.' }),
       });
     } else {
       Toast.show({
         type: 'error',
-        text1: 'Unexpected Error',
-        text2: 'An unexpected error occurred',
+        text1: t('errors:general.unexpected', { defaultValue: 'An unexpected error occurred' }),
+        text2: t('errors:errorDescription', { defaultValue: 'An unexpected error occurred. Please try refreshing the page.' }),
       });
     }
   }
@@ -268,13 +274,13 @@ class AuthenticatedApiService {
   }
 
   // Authentication methods
-  public async setTokens(tokens: AuthTokens, rememberMe: boolean = false): Promise<void> {
-    if (rememberMe) {
-      await this.secureStorage.setSecureItem('access_token', tokens.accessToken);
-      await this.secureStorage.setSecureItem('refresh_token', tokens.refreshToken);
-    } else {
+  public async setTokens(tokens: AuthTokens, useSessionStorage: boolean = false): Promise<void> {
+    if (useSessionStorage) {
       await this.secureStorage.setSessionItem('access_token', tokens.accessToken);
       await this.secureStorage.setSessionItem('refresh_token', tokens.refreshToken);
+    } else {
+      await this.secureStorage.setSecureItem('access_token', tokens.accessToken);
+      await this.secureStorage.setSecureItem('refresh_token', tokens.refreshToken);
     }
   }
 

@@ -1,4 +1,5 @@
 {
+  "title": "Erreur",
   "authentication": {
     "accountDisabled": "Le compte a été désactivé",
     "accountLocked": "Le compte a été verrouillé",

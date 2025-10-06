@@ -15,5 +15,10 @@
     "totalUsers": "Utilisateurs totaux"
   },
   "title": "Accueil",
-  "welcome": "Bon retour"
+  "welcome": "Bon retour",
+  "accountInfo": {
+    "title": "Account Information",
+    "email": "Email",
+    "username": "Username"
+  }
 }

@@ -1,0 +1,7 @@
+{
+  "loginFailed": "Login failed",
+  "loginFailedTitle": "Login failed",
+  "loginSuccess": "Login successful",
+  "loginSuccessRemembered": "Login successful (remembered)",
+  "loginSuccessTitle": "Welcome back!"
+}

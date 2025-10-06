@@ -46,6 +46,7 @@
     "open": "Open",
     "or": "or",
     "previous": "Previous",
+    "progress...": "Progress...",
     "refresh": "Refresh",
     "remember": "Remember me",
     "remove": "Remove",
@@ -595,6 +596,7 @@
       "title": "Your Privacy Rights"
     }
   },
+  "progress...": "Progress...",
   "terms": {
     "acceptance": {
       "text": "By creating an account, accessing, or using our services, you acknowledge that you have read, understood, and agree to be bound by these Terms and our Privacy Policy. If you do not agree to these Terms, you may not use our services.",

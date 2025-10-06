@@ -5,16 +5,17 @@
  * Provides authentication status, user data, and auth actions
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
-import { getLocales } from 'react-native-localize';
+import { useTranslation } from 'react-i18next';
 
 import AuthenticatedApiService from '../services/AuthenticatedApiService';
 import SecureStorageService from '../services/SecureStorageService';
 import {
   LoginCredentials,
   RegisterCredentials,
+  ResendEmailVerificationCredentials,
   SocialLoginCredentials,
   SocialRegisterCredentials,
   AuthResponse,
@@ -24,7 +25,11 @@ import {
 const apiService = AuthenticatedApiService.getInstance();
 const secureStorage = SecureStorageService.getInstance();
 
-const useAuth = () => {
+// ---------------------------
+// Internal implementation hook
+// ---------------------------
+const useProvideAuth = () => {
+  const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -79,18 +84,13 @@ const useAuth = () => {
     gcTime: 5 * 60 * 1000,
   });
 
-  // Get current language
-  const getCurrentLanguage = () => {
-    const locales = getLocales();
-    return locales[0]?.languageCode || 'en';
-  };
 
   // Login mutation
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginCredentials): Promise<AuthResponse> => {
       const loginData = {
-        ...credentials,
-        selected_language: getCurrentLanguage(),
+        ...credentials, 
+        selected_language: i18n.language,
       };
       const response = await apiService.post('/accounts/sign-in/', loginData);
       return response.data;
@@ -98,17 +98,17 @@ const useAuth = () => {
     retry: false,
     onSuccess: async (data, variables) => {
       // Store tokens with appropriate persistence
-      const rememberMe = variables.rememberMe || false;
+      const useSessionStorage = !(variables.rememberMe || false);
       await apiService.setTokens(
         {
           accessToken: data.access_token,
           refreshToken: data.refresh_token,
         },
-        rememberMe
+        useSessionStorage
       );
       
       // Store user data
-      const userStorage = rememberMe ? secureStorage.setItem : secureStorage.setSessionItem;
+      const userStorage = useSessionStorage ? secureStorage.setSessionItem : secureStorage.setItem;
       await userStorage.call(secureStorage, 'user', JSON.stringify(data.user));
       
       // Update auth state
@@ -117,21 +117,54 @@ const useAuth = () => {
       // Update user data in cache
       queryClient.setQueryData(['user', 'profile'], data.user);
       
-      const message = rememberMe 
-        ? 'Login successful (remembered)'
-        : 'Login successful';
-      
+      const message = useSessionStorage 
+        ? t('messages:loginSuccess')
+        : t('messages:loginSuccessRemembered');
+
       Toast.show({
         type: 'success',
-        text1: 'Welcome back!',
+        text1: t('messages:loginSuccessTitle'),
         text2: message,
       });
     },
     onError: (error: any) => {
-      const message = error?.response?.data?.message || 'Login failed';
+      const message = t(error?.response?.data?.message || 'messages:loginFailed');
       Toast.show({
         type: 'error',
-        text1: 'Login Failed',
+        text1: t('messages:loginFailedTitle'),
+        text2: message,
+      });
+    },
+  });
+
+  // Resend email verification mutation
+  const resendEmailVerificationMutation = useMutation({
+    mutationFn: async (credentials: ResendEmailVerificationCredentials): Promise<AuthResponse> => {
+      // Use user_id instead of username to match backend expectations
+      const data = {
+        user_id: credentials.user_id,
+        selected_language: credentials.selected_language || i18n.language,
+      };
+      const response = await apiService.post('/accounts/send-verification-email-link/', data);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      const message = data.message || t('auth:emailVerification.resendSuccess');
+      Toast.show({
+        type: 'success',
+        text1: t('auth:emailVerification.resendTitle'),
+        text2: message,
+      });
+    },
+    onError: (error: any) => {
+      let message = t('auth:emailVerification.resendError');
+      if (error?.response?.data?.message) {
+        message = error.response.data.message;
+      }
+      
+      Toast.show({
+        type: 'error',
+        text1: t('auth:emailVerification.resendTitle'),
         text2: message,
       });
     },
@@ -146,23 +179,24 @@ const useAuth = () => {
         first_name: credentials.firstName.trim(),
         last_name: credentials.lastName.trim(),
         username: credentials.username.trim(),
-        selected_language: getCurrentLanguage(),
+        selected_language: i18n.language,
       };
       const response = await apiService.post('/accounts/sign-up/', registerData);
       return response.data;
     },
+    retry: false, // Explicitly disable retry for registration
     onSuccess: async (_data) => {
       Toast.show({
         type: 'success',
-        text1: 'Registration Successful',
-        text2: 'Please check your email to verify your account',
+        text1: t('auth:register.title'),
+        text2: t('auth:register.success'),
       });
     },
     onError: (error: any) => {
-      const message = error?.response?.data?.message || 'Registration failed';
+      const message = t(error?.response?.data?.message || 'auth:messages.registerFailed');
       Toast.show({
         type: 'error',
-        text1: 'Registration Failed',
+        text1: t('auth:register.title'),
         text2: message,
       });
     },
@@ -196,22 +230,22 @@ const useAuth = () => {
 
         Toast.show({
           type: 'success',
-          text1: data.is_new_user ? 'Registration Successful' : 'Welcome back!',
-          text2: data.is_new_user ? 'Account created successfully' : 'Login successful',
+          text1: data.is_new_user ? t('auth:register.title') : t('auth:login.welcomeBack'),
+          text2: data.is_new_user ? t('auth:register.success') : t('auth:login.success'),
         });
       } else {
         Toast.show({
           type: 'error',
-          text1: 'Registration Failed',
-          text2: data.message || 'Unable to create account',
+          text1: t('auth:register.title'),
+          text2: t(data.message || 'auth:register.error'),
         });
       }
     },
     onError: (error: any) => {
-      const message = error?.response?.data?.message || 'Social registration failed';
+      const message = t(error?.response?.data?.message || 'auth:messages.registerFailed');
       Toast.show({
         type: 'error',
-        text1: 'Registration Failed',
+        text1: t('auth:register.title'),
         text2: message,
       });
     },
@@ -244,15 +278,15 @@ const useAuth = () => {
       
       Toast.show({
         type: 'success',
-        text1: 'Welcome back!',
-        text2: 'Login successful',
+        text1: t('auth:login.welcomeBack'),
+        text2: t('auth:login.success'),
       });
     },
     onError: (error: any) => {
-      const message = error?.response?.data?.message || 'Social login failed';
+      const message = t(error?.response?.data?.message || 'auth:messages.loginFailed');
       Toast.show({
         type: 'error',
-        text1: 'Login Failed',
+        text1: t('messages:loginFailedTitle'),
         text2: message,
       });
     },
@@ -265,7 +299,7 @@ const useAuth = () => {
       
       const data = {
         logout_all_devices: logoutAllDevices,
-        selected_language: getCurrentLanguage(),
+        selected_language: i18n.language,
       };
       await apiService.logout(data);
 
@@ -287,11 +321,11 @@ const useAuth = () => {
       
       Toast.show({
         type: 'success',
-        text1: 'Logged Out',
-        text2: 'You have been successfully logged out',
+        text1: t('auth:logout.title'),
+        text2: t('auth:logout.success'),
       });
     }
-  }, [queryClient]);
+  }, [queryClient, t, i18n.language]);
 
   // Update profile mutation
   const updateProfileMutation = useMutation({
@@ -326,15 +360,15 @@ const useAuth = () => {
       
       Toast.show({
         type: 'success',
-        text1: 'Profile Updated',
-        text2: 'Your profile has been updated successfully',
+        text1: t('profile:title'),
+        text2: t('auth:messages.profileUpdated'),
       });
     },
     onError: (error: any) => {
-      const message = error?.response?.data?.message || 'Profile update failed';
+      const message = t(error?.response?.data?.message || 'auth:messages.profileUpdateFailed');
       Toast.show({
         type: 'error',
-        text1: 'Update Failed',
+        text1: t('errors:title', { defaultValue: 'Error' }),
         text2: message,
       });
     },
@@ -365,22 +399,29 @@ const useAuth = () => {
         
         Toast.show({
           type: 'success',
-          text1: 'Password Changed',
-          text2: 'Your password has been updated successfully',
+          text1: t('auth:changePassword.title', { defaultValue: 'Change Password' }),
+          text2: t('auth:messages.passwordChanged'),
         });
       }
     },
     onError: (error: any) => {
-      const message = error?.response?.data?.message || 'Password change failed';
+      const message = t(error?.response?.data?.message || 'auth:messages.passwordChangeFailed');
       Toast.show({
         type: 'error',
-        text1: 'Password Change Failed',
+        text1: t('errors:title', { defaultValue: 'Error' }),
         text2: message,
       });
     },
   });
 
-  return {
+  // Attach session expired callback once
+  useEffect(() => {
+    apiService.onSessionExpired = () => {
+      setIsAuthenticated(false);
+    };
+  }, []);
+
+  const value = useMemo(() => ({
     // Auth state
     isAuthenticated,
     isLoading: !isInitialized || isUserLoading,
@@ -391,6 +432,7 @@ const useAuth = () => {
     // Auth actions
     login: loginMutation.mutateAsync,
     socialLogin: socialLoginMutation.mutateAsync,
+    resendEmailVerification: resendEmailVerificationMutation.mutateAsync,
     register: registerMutation.mutateAsync,
     socialRegister: socialRegisterMutation.mutateAsync,
     logout,
@@ -403,7 +445,51 @@ const useAuth = () => {
     isRegistering: registerMutation.isPending,
     isUpdatingProfile: updateProfileMutation.isPending,
     isChangingPassword: changePasswordMutation.isPending,
-  };
+    isResendingEmailVerification: resendEmailVerificationMutation.isPending,
+  }), [
+    isAuthenticated,
+    isInitialized,
+    isUserLoading,
+    user,
+    userError,
+    loginMutation.isPending,
+    socialLoginMutation.isPending,
+    registerMutation.isPending,
+    resendEmailVerificationMutation.isPending,
+    updateProfileMutation.isPending,
+    changePasswordMutation.isPending,
+    logout,
+    loginMutation.mutateAsync,
+    socialLoginMutation.mutateAsync,
+    registerMutation.mutateAsync,
+    resendEmailVerificationMutation.mutateAsync,
+    socialRegisterMutation.mutateAsync,
+    updateProfileMutation.mutateAsync,
+    changePasswordMutation.mutateAsync,
+  ]);
+
+  return value;
+};
+
+// ---------------------------
+// Context + Provider
+// ---------------------------
+type AuthContextType = ReturnType<typeof useProvideAuth>;
+
+const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const auth = useProvideAuth();
+  return React.createElement(AuthContext.Provider, { value: auth }, children);
+};
+
+// Public hook consumed by components
+const useAuth = () => {
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return ctx;
 };
 
 export default useAuth;

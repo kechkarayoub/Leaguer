@@ -186,6 +186,7 @@ const SettingsScreen: React.FC = () => {
           onPress={handleLogout}
           fullWidth
           style={styles.logoutButton}
+          loadingTitle={t('settings:actions.signOut')}
         />
 
         {/* Language Picker Modal */}

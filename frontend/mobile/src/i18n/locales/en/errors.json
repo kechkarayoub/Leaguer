@@ -1,4 +1,5 @@
 {
+  "title": "Error",
   "authentication": {
     "accountDisabled": "Account has been disabled",
     "accountLocked": "Account has been locked",

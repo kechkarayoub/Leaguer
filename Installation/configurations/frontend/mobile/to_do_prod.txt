@@ -39,3 +39,9 @@ For icons:
         Change "Leaguer\frontend\mobile\ios\LeaguerMobile\Images.xcassets\BootSplashLogo-b443ca.imageset\logo-b443ca.png(72dpi/120px)".
         Change "Leaguer\frontend\mobile\ios\LeaguerMobile\Images.xcassets\BootSplashLogo-b443ca.imageset\logo-b443ca@2x.png(72dpi/240px)".
         Change "Leaguer\frontend\mobile\ios\LeaguerMobile\Images.xcassets\BootSplashLogo-b443ca.imageset\logo-b443ca@3x.png(72dpi/360px)".
+
+
+For DeepLinkingService:
+    Use https://myapp.com/auth/reset-password?....
+    Configure App Links + Universal Links.
+    Your DeepLinkingService works for both since it just checks the URL path.

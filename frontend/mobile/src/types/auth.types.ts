@@ -84,9 +84,20 @@ export interface AuthResponse {
   success: boolean;
   message?: string;
   is_new_user?: boolean;
+  already_verified?: boolean;
+  user_id?: string;
+  username?: string;
+  email_verification_required?: boolean;
 }
 
 export interface AuthTokens {
   accessToken: string;
   refreshToken: string;
+}
+
+export interface ResendEmailVerificationCredentials {
+  user_id?: string;
+  username?: string;
+  resend_verification_email?: boolean;
+  selected_language?: string;
 }

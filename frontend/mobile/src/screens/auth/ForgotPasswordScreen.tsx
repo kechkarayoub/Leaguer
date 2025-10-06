@@ -36,26 +36,30 @@ interface ForgotPasswordForm {
   email_or_username: string;
 }
 
-const forgotPasswordSchema = yup.object({
-  email_or_username: yup
-    .string()
-    .required('Email or username is required')
-    .min(3, 'Email or username must be at least 3 characters'),
-});
+const buildSchema = (t: (key: string) => string) =>
+  yup.object({
+    email_or_username: yup
+      .string()
+      .required(t('auth:validation.emailOrUsernameRequired'))
+      .min(3, t('auth:validation.emailOrUsernameMinLength')),
+  });
 
 const ForgotPasswordScreen: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { colors } = useTheme();
   const navigation = useNavigation<ForgotPasswordScreenNavigationProp>();
+  const [responseMessage, setResponseMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
   const apiService = AuthenticatedApiService.getInstance();
 
   const {
     control,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = useForm<ForgotPasswordForm>({
-    resolver: yupResolver(forgotPasswordSchema),
+    resolver: yupResolver(buildSchema(t)),
     defaultValues: {
       email_or_username: '',
     },
@@ -65,26 +69,19 @@ const ForgotPasswordScreen: React.FC = () => {
     try {
       setIsLoading(true);
       
-      // Send password reset request to backend
-      const response = await apiService.post('/accounts/password-reset/', {
+      // Send password reset request to backend (matching web endpoint)
+      const response = await apiService.post('/accounts/forgot-password/', {
         email_or_username: data.email_or_username,
+        selected_language: i18n.language,
       });
 
-      if (response.data.success) {
-        Toast.show({
-          type: 'success',
-          text1: t('auth:forgotPassword.successTitle'),
-          text2: t('auth:forgotPassword.successMessage'),
-        });
-        
-        // Navigate back to login after successful request
-        setTimeout(() => {
-          navigation.navigate('Login');
-        }, 2000);
-      }
+      // Show success state instead of just toast
+      setEmailSent(true);
+      setResponseMessage(response.data.message);
+      
     } catch (error: any) {
       console.error('Forgot password error:', error);
-      
+      setResponseMessage('');
       const message = error?.response?.data?.message || t('auth:forgotPassword.errorMessage');
       Toast.show({
         type: 'error',
@@ -99,6 +96,62 @@ const ForgotPasswordScreen: React.FC = () => {
   const handleBackToLogin = () => {
     navigation.navigate('Login');
   };
+
+  // Success view when email is sent (matching web behavior)
+  if (emailSent) {
+    return (
+      <>
+        <AppHeader 
+          title={t('auth:forgotPassword.emailSentTitle')}
+          showBackButton={true}
+          onBackPress={handleBackToLogin}
+        />
+        
+        <KeyboardAvoidingView
+          style={[styles.container, { backgroundColor: colors.background }]}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+          >
+            <View style={styles.content}>
+              {/* Success Header */}
+              <View style={styles.header}>
+                <View style={[styles.successIcon, { borderColor: colors.success }]}>
+                  <Text style={[styles.successCheckmark, { color: colors.success }]}>✓</Text>
+                </View>
+                <Text style={[styles.title, { color: colors.text }]}>
+                  {t('auth:forgotPassword.emailSentTitle')}
+                </Text>
+                <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+                  {t(responseMessage || 'auth:forgotPassword.emailSentMessage', { email: getValues('email_or_username') })}
+                </Text>
+              </View>
+
+              {/* Instructions */}
+              <View style={styles.form}>
+                <Text style={[styles.instructionText, { color: colors.textSecondary }]}>
+                  {t('auth:forgotPassword.checkEmail')}
+                </Text>
+
+                {/* Back to Login Button */}
+                <CustomButton
+                  title={t('auth:forgotPassword.backToLogin')}
+                  onPress={handleBackToLogin}
+                  variant="primary"
+                  size="md"
+                  fullWidth
+                  style={styles.submitButton}
+                  loadingTitle={t('auth:forgotPassword.backToLogin')}
+                />
+              </View>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </>
+    );
+  }
 
   return (
     <>
@@ -158,6 +211,7 @@ const ForgotPasswordScreen: React.FC = () => {
                 size="md"
                 fullWidth
                 style={styles.submitButton}
+                loadingTitle={t('auth:forgotPassword.loadingSendButton')}
               />
             </View>
 
@@ -214,6 +268,8 @@ const styles = StyleSheet.create({
     marginTop: 16,
     backgroundColor: '#007AFF', // Ensure visible button
     minHeight: 44,
+    textAlign: 'center',
+    borderRadius: 8,
   },
   footer: {
     flexDirection: 'row',
@@ -226,6 +282,25 @@ const styles = StyleSheet.create({
   linkText: {
     fontSize: 16,
     fontWeight: '600',
+  },
+  successIcon: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  successCheckmark: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  instructionText: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 24,
+    lineHeight: 24,
   },
 });
 

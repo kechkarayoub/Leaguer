@@ -16,6 +16,10 @@ import { getLocales } from 'react-native-localize';
 import enCommon from './locales/en/common.json';
 import enAuth from './locales/en/auth.json';
 import enSettings from './locales/en/settings.json';
+import enMessages from './locales/en/messages.json';
+import enDashboard from './locales/en/dashboard.json';
+import enHome from './locales/en/home.json';
+import enWebsockets from './locales/en/websockets.json';
 import enProfile from './locales/en/profile.json';
 import enCountries from './locales/en/countries.json';
 import enErrors from './locales/en/errors.json';
@@ -25,6 +29,10 @@ import enLanguage from './locales/en/language.json';
 import frCommon from './locales/fr/common.json';
 import frAuth from './locales/fr/auth.json';
 import frSettings from './locales/fr/settings.json';
+import frMessages from './locales/fr/messages.json';
+import frDashboard from './locales/fr/dashboard.json';
+import frHome from './locales/fr/home.json';
+import frWebsockets from './locales/fr/websockets.json';
 import frProfile from './locales/fr/profile.json';
 import frCountries from './locales/fr/countries.json';
 import frErrors from './locales/fr/errors.json';
@@ -34,6 +42,10 @@ import frLanguage from './locales/fr/language.json';
 import arCommon from './locales/ar/common.json';
 import arAuth from './locales/ar/auth.json';
 import arSettings from './locales/ar/settings.json';
+import arMessages from './locales/ar/messages.json';
+import arDashboard from './locales/ar/dashboard.json';
+import arHome from './locales/ar/home.json';
+import arWebsockets from './locales/ar/websockets.json';
 import arProfile from './locales/ar/profile.json';
 import arCountries from './locales/ar/countries.json';
 import arErrors from './locales/ar/errors.json';
@@ -47,6 +59,10 @@ const resources = {
     common: enCommon,
     auth: enAuth,
     settings: enSettings,
+  messages: enMessages,
+  dashboard: enDashboard,
+  home: enHome,
+  websockets: enWebsockets,
     profile: enProfile,
     countries: enCountries,
     errors: enErrors,
@@ -57,6 +73,10 @@ const resources = {
     common: frCommon,
     auth: frAuth,
     settings: frSettings,
+  messages: frMessages,
+  dashboard: frDashboard,
+  home: frHome,
+  websockets: frWebsockets,
     profile: frProfile,
     countries: frCountries,
     errors: frErrors,
@@ -67,6 +87,10 @@ const resources = {
     common: arCommon,
     auth: arAuth,
     settings: arSettings,
+  messages: arMessages,
+  dashboard: arDashboard,
+  home: arHome,
+  websockets: arWebsockets,
     profile: arProfile,
     countries: arCountries,
     errors: arErrors,
@@ -130,7 +154,7 @@ i18n
 
     // Namespace and key options
     defaultNS: 'common',
-    ns: ['common', 'auth', 'countries', 'settings', 'profile', 'errors', 'navigation', 'language'],
+    ns: ['common', 'auth', 'countries', 'dashboard', 'home', 'messages', 'settings', 'profile', 'errors', 'navigation', 'language', 'websockets'],
 
     // Key separator
     keySeparator: '.',

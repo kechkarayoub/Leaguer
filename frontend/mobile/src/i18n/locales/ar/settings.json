@@ -43,5 +43,40 @@
     "profile": "الملف الشخصي",
     "security": "الأمان"
   },
-  "title": "الإعدادات"
+  "title": "الإعدادات",
+  "language": {
+    "title": "Language",
+    "selectLanguage": "Select Language",
+    "restartNote": "The app may need to restart to fully apply language changes, especially for right-to-left languages."
+  },
+  "theme": {
+    "title": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "default": "System Default",
+    "lightDescription": "Light theme with bright colors",
+    "darkDescription": "Dark theme with dim colors",
+    "defaultDescription": "Follow system theme setting"
+  },
+  "sections": {
+    "appearance": "Appearance & Language",
+    "notifications": "Notifications",
+    "privacySecurity": "Privacy & Security",
+    "about": "About"
+  },
+  "notifications": {
+    "pushNotifications": "Push Notifications",
+    "emailNotifications": "Email Notifications"
+  },
+  "legal": {
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service"
+  },
+  "about": {
+    "version": "Version",
+    "appInfo": "App Information"
+  },
+  "actions": {
+    "signOut": "Sign Out"
+  }
 }

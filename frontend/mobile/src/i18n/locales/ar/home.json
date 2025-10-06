@@ -15,5 +15,10 @@
     "totalUsers": "إجمالي المستخدمين"
   },
   "title": "الرئيسية",
-  "welcome": "مرحباً بعودتك"
+  "welcome": "مرحباً بعودتك",
+  "accountInfo": {
+    "title": "Account Information",
+    "email": "Email",
+    "username": "Username"
+  }
 }

@@ -35,6 +35,8 @@ interface CustomButtonProps extends TouchableOpacityProps {
   buttonStyle?: any;
   /** Custom text style */
   textStyle?: any;
+
+  loadingTitle: string;
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -48,6 +50,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   buttonStyle,
   textStyle,
   disabled,
+  loadingTitle,
   ...touchableProps
 }) => {
   const { colors } = useTheme();
@@ -157,7 +160,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   };
 
   const getTextStyles = () => {
-    const textStyles: any[] = [styles.text];
+    const textStyles: any[] = [styles.text,];
     
     // Size text styles
     if (size === 'sm') {
@@ -207,7 +210,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
             color={getLoadingColor()}
           />
           <Text style={[getTextStyles(), styles.loadingText]}>
-            Loading...
+            {loadingTitle}
           </Text>
         </View>
       );
@@ -254,6 +257,9 @@ const styles = StyleSheet.create({
   loadingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    textAlign: 'center',
+    justifyContent: 'center',
+    flex: 1,
   },
   loadingText: {
     marginLeft: spacing.xs,
@@ -263,6 +269,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     textAlign: 'center',
     justifyContent: 'center',
+    flex: 1,
   },
   iconLeft: {
     marginRight: spacing.xs,

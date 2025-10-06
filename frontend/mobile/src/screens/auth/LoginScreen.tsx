@@ -37,8 +37,9 @@ import AppHeader from '../../components/AppHeader';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import useAuth from '../../hooks/useAuth';
-import { LoginCredentials, SocialLoginCredentials } from '../../types/auth.types';
+import { LoginCredentials, ResendEmailVerificationCredentials, SocialLoginCredentials } from '../../types/auth.types';
 import { SocialAuthResult } from '../../services/SocialAuthService';
+import Toast from 'react-native-toast-message';
 import config from '../../config/config';
 
 type LoginScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Login'>;
@@ -48,7 +49,11 @@ const LoginScreen: React.FC = () => {
   const { colors } = useTheme();
   const { language } = useLanguage();
   const navigation = useNavigation<LoginScreenNavigationProp>();
-  const { login, socialLogin, isLoggingIn } = useAuth();
+  const { login, socialLogin, isLoggingIn, resendEmailVerification } = useAuth();
+  const [emailVerificationRequired, setEmailVerificationRequired] = useState(false);
+  const [userId, setUserId] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [isResendingVerification, setIsResendingVerification] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const loginSchema = yup.object({
@@ -91,7 +96,20 @@ const LoginScreen: React.FC = () => {
       // Navigation will be handled automatically by the auth state change
     } catch (error: any) {
       console.error('Login error:', error);
-      
+
+      // Handle email verification requirement
+      if (error.response?.status === 403 && error.response?.data?.email_verification_required) {
+        setEmailVerificationRequired(true);
+        setUserId(error.response.data.user_id || '');
+        setUserEmail(error.response.data.email || '');
+        Toast.show({
+          type: 'info',
+          text1: t('auth:emailVerification.title'),
+          text2: error.response.data.message || t('auth:emailVerification.loginRequiredMessage'),
+        });
+        return;
+      }
+
       // Handle specific validation errors from the backend
       if (error.response?.status === 409) {
         const errorData = error.response.data;
@@ -99,6 +117,16 @@ const LoginScreen: React.FC = () => {
           Object.keys(errorData.field_errors).forEach((field) => {
             setError(field as keyof LoginCredentials, {
               message: errorData.field_errors[field][0],
+            });
+          });
+        }
+      }
+      else if (error.response?.status === 400) {
+        const message = error.response.data.message;
+        if (message) {
+          ['email_or_username', 'password'].forEach((field) => {
+            setError(field as keyof LoginCredentials, {
+              message: message,
             });
           });
         }
@@ -124,6 +152,70 @@ const LoginScreen: React.FC = () => {
 
   const handleSocialLoginError = (error: Error) => {
     console.error('Social login error:', error);
+  };
+
+  const handleResendVerification = async () => {
+    if (!userId) return;
+
+    try {
+      setIsResendingVerification(true);
+      
+      const resendEmailData: ResendEmailVerificationCredentials = {
+        user_id: userId,
+        selected_language: language,
+      };
+      
+      const response = await resendEmailVerification(resendEmailData);
+      const message = response.message || t('auth:emailVerification.resendSuccess');
+      const isAlreadyVerified = !!response.already_verified;
+      
+      if (isAlreadyVerified) {
+        // Email was already verified
+        setEmailVerificationRequired(false);
+        Toast.show({
+          type: 'info',
+          text1: t('auth:emailVerification.alreadyVerifiedTitle'),
+          text2: message,
+        });
+      } else {
+        // Verification email sent successfully
+        Toast.show({
+          type: 'success',
+          text1: t('auth:emailVerification.resendTitle'),
+          text2: message,
+        });
+      }
+    } catch (error: any) {
+      let errorMessage = t('auth:emailVerification.resendError');
+      
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+      
+      // Check if email is already verified
+      if (error.response?.status === 401 && error.response?.data?.already_verified) {
+        setEmailVerificationRequired(false);
+        Toast.show({
+          type: 'info',
+          text1: t('auth:emailVerification.alreadyVerifiedTitle'),
+          text2: errorMessage,
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: t('auth:emailVerification.resendTitle'),
+          text2: errorMessage,
+        });
+      }
+    } finally {
+      setIsResendingVerification(false);
+    }
+  };
+
+  const handleDismissVerificationMessage = () => {
+    setEmailVerificationRequired(false);
+    setUserId('');
+    setUserEmail('');
   };
 
   const handleForgotPassword = () => {
@@ -161,6 +253,43 @@ const LoginScreen: React.FC = () => {
                 {t('auth:login.signInSubtitle')}
               </Text>
             </View>
+
+            {/* Email Verification Required Message */}
+            {emailVerificationRequired && (
+              <View style={[styles.verificationMessage, { backgroundColor: colors.surface, borderColor: colors.warning }]}>
+                <Text style={[styles.verificationTitle, { color: colors.warning }]}>
+                  {t('auth:emailVerification.title')}
+                </Text>
+                <Text style={[styles.verificationText, { color: colors.text }]}>
+                  {t('auth:emailVerification.loginRequiredMessage')}
+                </Text>
+                {userEmail && (
+                  <Text style={[styles.verificationEmail, { color: colors.textSecondary }]}>
+                    {userEmail}
+                  </Text>
+                )}
+                <View style={styles.verificationActions}>
+                  <CustomButton
+                    title={t('auth:emailVerification.resendButton')}
+                    onPress={handleResendVerification}
+                    loading={isResendingVerification}
+                    disabled={isResendingVerification}
+                    variant="outline"
+                    size="sm"
+                    style={styles.resendButton}
+                    loadingTitle={t('auth:emailVerification.resending')}
+                  />
+                  <TouchableOpacity
+                    onPress={handleDismissVerificationMessage}
+                    style={styles.dismissButton}
+                  >
+                    <Text style={[styles.dismissText, { color: colors.textSecondary }]}>
+                      {t('auth:emailVerification.dismissMessage')}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
 
             {/* Social Login Buttons */}
             {config.features.enableSocialLogin && (
@@ -257,6 +386,7 @@ const LoginScreen: React.FC = () => {
               {/* Sign In Button */}
               <CustomButton
                 title={t('auth:login.signInButton')}
+                loadingTitle={t('auth:login.loadingSignInButton')}
                 onPress={handleSubmit(onSubmit)}
                 loading={isLoggingIn}
                 disabled={isLoggingIn}
@@ -283,7 +413,7 @@ const LoginScreen: React.FC = () => {
           </View>
         </ScrollView>
 
-        {isLoggingIn && <LoadingSpinner visible overlay />}
+        {isLoggingIn && <LoadingSpinner text={t('common:progress...')} visible overlay />}
       </KeyboardAvoidingView>
     </>
   );
@@ -356,6 +486,43 @@ const styles = StyleSheet.create({
   linkText: {
     fontSize: 16,
     fontWeight: '600',
+  },
+  verificationMessage: {
+    padding: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    marginBottom: 24,
+  },
+  verificationTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  verificationText: {
+    fontSize: 14,
+    lineHeight: 20,
+    marginBottom: 8,
+  },
+  verificationEmail: {
+    fontSize: 14,
+    fontStyle: 'italic',
+    marginBottom: 12,
+  },
+  verificationActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  resendButton: {
+    flex: 1,
+    marginRight: 12,
+  },
+  dismissButton: {
+    padding: 8,
+  },
+  dismissText: {
+    fontSize: 14,
+    textDecorationLine: 'underline',
   },
 });
 

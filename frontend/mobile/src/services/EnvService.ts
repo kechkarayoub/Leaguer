@@ -6,6 +6,8 @@
  */
 
 import Config from 'react-native-config';
+import GeneratedEnvRaw from '../env.generated';
+const GeneratedEnv: Record<string, string> = (GeneratedEnvRaw ?? {}) as any;
 
 interface EnvConfig {
   // App Configuration
@@ -27,8 +29,14 @@ interface EnvConfig {
   REACT_APP_ENCRYPTION_KEY: string;
   
   // Social Login
+  REACT_APP_FACEBOOK_SIGN_IN_ANDROID_CLIENT_ID: string;
+  REACT_APP_FACEBOOK_SIGN_IN_IOS_CLIENT_ID: string;
   REACT_APP_FACEBOOK_SIGN_IN_WEB_CLIENT_ID: string;
+  REACT_APP_GOOGLE_SIGN_IN_ANDROID_CLIENT_ID: string;
+  REACT_APP_GOOGLE_SIGN_IN_IOS_CLIENT_ID: string;
   REACT_APP_GOOGLE_SIGN_IN_WEB_CLIENT_ID: string;
+  REACT_APP_APPLE_SIGN_IN_ANDROID_CLIENT_ID: string;
+  REACT_APP_APPLE_SIGN_IN_IOS_CLIENT_ID: string;
   REACT_APP_APPLE_SIGN_IN_WEB_CLIENT_ID: string;
   
   // Firebase Configuration
@@ -66,67 +74,29 @@ interface EnvConfig {
 // Falls back to default values when variables are not available
 const getEnvValue = (key: string, defaultValue: string = ''): string => {
   try {
-    return Config[key] || defaultValue;
-  } catch {
-    console.warn(`Unable to read env variable ${key}, using fallback: ${defaultValue}`);
+    
+    // Try react-native-config first
+    if (Config[key] !== undefined && Config[key] !== null && Config[key] !== '') {
+      if(key === 'REACT_APP_ENABLE_SIGNUP') {
+        console.log(`Using react-native-config value for ${key}:`, Config[key]);
+      }
+      return Config[key];
+    }
+    // Fallback to generated env
+    if (GeneratedEnv && GeneratedEnv[key] !== undefined && GeneratedEnv[key] !== null && GeneratedEnv[key] !== '') {
+      if(key === 'REACT_APP_ENABLE_SIGNUP') {
+        console.log(`Using generated env value for ${key}:`, GeneratedEnv[key]);
+      }
+      return GeneratedEnv[key] as string;
+    }
+    if(key === 'REACT_APP_ENABLE_SIGNUP') {
+      console.log(`Using default value for ${key}:`, defaultValue);
+    }
+    return defaultValue;
+  } catch (error) {
+    console.warn(`Unable to read env variable ${key}, using fallback: ${defaultValue}`, error);
     return defaultValue;
   }
-};
-
-// Default configuration for fallback values when .env is not available
-const defaultConfig: EnvConfig = {
-  // App Configuration
-  REACT_APP_NAME: "Leaguer",
-  REACT_APP_VERSION: "1.0.0",
-  REACT_APP_BACKEND_ENDPOINT: "http://localhost:8080",
-  REACT_APP_DEFAULT_COUNTRY_CODE: "MA",
-  REACT_APP_DISABLE_LOG_MESSAGE: "true",
-  
-  // Feature Flags
-  REACT_APP_ENABLE_APPLE_LOGIN: "false",
-  REACT_APP_ENABLE_EMAIL_VERIFICATION: "false",
-  REACT_APP_ENABLE_FACEBOOK_LOGIN: "false",
-  REACT_APP_ENABLE_GOOGLE_LOGIN: "true",
-  REACT_APP_ENABLE_SIGNUP: "true",
-  REACT_APP_ENABLE_USERS_REGISTRATION: "true",
-  
-  // Security - empty in default config for security
-  REACT_APP_ENCRYPTION_KEY: "",
-  
-  // Social Login - empty in default config for security
-  REACT_APP_FACEBOOK_SIGN_IN_WEB_CLIENT_ID: "",
-  REACT_APP_GOOGLE_SIGN_IN_WEB_CLIENT_ID: "",
-  REACT_APP_APPLE_SIGN_IN_WEB_CLIENT_ID: "",
-  
-  // Firebase Configuration - empty in default config for security
-  REACT_APP_FIREBASE_VAPID_KEY: "",
-  REACT_APP_FIREBASE_WEB_API_KEY: "",
-  REACT_APP_FIREBASE_WEB_APP_ID: "",
-  REACT_APP_FIREBASE_WEB_AUTH_DOMAIN: "",
-  REACT_APP_FIREBASE_WEB_MESSAGING_SENDER_ID: "",
-  REACT_APP_FIREBASE_WEB_MEASUREMENT_ID: "",
-  REACT_APP_FIREBASE_WEB_PROJECT_ID: "",
-  REACT_APP_FIREBASE_WEB_STORAGE_BUCKET: "",
-  
-  // Development/Testing
-  REACT_APP_IS_TEST: "false",
-  REACT_APP_PIPLINE: "development",
-  
-  // Contact Information
-  REACT_APP_SUPPORT_EMAIL: "support@leaguer.com",
-  
-  // Social Media
-  REACT_APP_SOCIAL_FACEBOOK_URL: "https://facebook.com/leaguer",
-  REACT_APP_SOCIAL_TWITTER_URL: "https://twitter.com/leaguer",
-  REACT_APP_SOCIAL_INSTAGRAM_URL: "https://instagram.com/leaguer",
-  REACT_APP_SOCIAL_TIKTOK_URL: "https://tiktok.com/@leaguer",
-  REACT_APP_SOCIAL_YOUTUBE_URL: "https://youtube.com/@leaguer",
-  REACT_APP_SOCIAL_LINKEDIN_URL: "",
-  
-  // WebSocket Configuration
-  REACT_APP_USE_WEBSOCKETS: "true",
-  REACT_APP_WS_BACKEND_HOST: "localhost",
-  REACT_APP_WS_BACKEND_PORT: "9000",
 };
 
 class EnvService {
@@ -147,8 +117,11 @@ class EnvService {
    * Get environment variable value from .env file
    */
   public get(key: keyof EnvConfig, defaultValue?: string): string {
-    const fallback = defaultValue || defaultConfig[key] || '';
-    return getEnvValue(key, fallback);
+    const value = getEnvValue(key, defaultValue);
+    if(key === 'REACT_APP_ENABLE_SIGNUP') {
+      console.log(`EnvService: Loaded ${key} = ${value}`);
+    }
+    return value;
   }
 
   /**
@@ -156,6 +129,9 @@ class EnvService {
    */
   public getBoolean(key: keyof EnvConfig, defaultValue: boolean = false): boolean {
     const value = this.get(key, String(defaultValue)).toLowerCase();
+    if(key === 'REACT_APP_ENABLE_SIGNUP') {
+      console.log(`Debug: REACT_APP_ENABLE_SIGNUP raw value = ${this.get(key)}`);
+    }
     return value === 'true' || value === '1' || value === 'yes';
   }
 
@@ -218,14 +194,20 @@ class EnvService {
   public getSocialConfig() {
     return {
       google: {
+        androidClientId: this.get('REACT_APP_GOOGLE_SIGN_IN_ANDROID_CLIENT_ID'),
+        iosClientId: this.get('REACT_APP_GOOGLE_SIGN_IN_IOS_CLIENT_ID'),
         webClientId: this.get('REACT_APP_GOOGLE_SIGN_IN_WEB_CLIENT_ID'),
         enabled: this.getBoolean('REACT_APP_ENABLE_GOOGLE_LOGIN'),
       },
       facebook: {
+        androidClientId: this.get('REACT_APP_FACEBOOK_SIGN_IN_ANDROID_CLIENT_ID'),
+        iosClientId: this.get('REACT_APP_FACEBOOK_SIGN_IN_IOS_CLIENT_ID'),
         webClientId: this.get('REACT_APP_FACEBOOK_SIGN_IN_WEB_CLIENT_ID'),
         enabled: this.getBoolean('REACT_APP_ENABLE_FACEBOOK_LOGIN'),
       },
       apple: {
+        androidClientId: this.get('REACT_APP_APPLE_SIGN_IN_ANDROID_CLIENT_ID'),
+        iosClientId: this.get('REACT_APP_APPLE_SIGN_IN_IOS_CLIENT_ID'),
         webClientId: this.get('REACT_APP_APPLE_SIGN_IN_WEB_CLIENT_ID'),
         enabled: this.getBoolean('REACT_APP_ENABLE_APPLE_LOGIN'),
       },

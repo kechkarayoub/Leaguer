@@ -1,0 +1,3 @@
+cd ios && pod install
+Add required permissions:
+    NSCameraUsageDescription, NSPhotoLibraryUsageDescription in Info.plist.

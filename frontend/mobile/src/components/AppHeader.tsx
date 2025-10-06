@@ -17,6 +17,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import LanguagePicker from './LanguagePicker';
 import LoadingSpinner from './LoadingSpinner';
+import { useTranslation } from 'react-i18next';
 
 interface AppHeaderProps {
   title?: string;
@@ -39,6 +40,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
   const { language, isChangingLanguage } = useLanguage();
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const insets = useSafeAreaInsets();
+    const { t } = useTranslation();
 
   const getLanguageFlag = () => {
     switch (language) {
@@ -97,7 +99,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
               </Text>
               {isChangingLanguage && (
                 <View style={styles.loadingIndicator}>
-                  <LoadingSpinner visible size="small" />
+                  <LoadingSpinner visible size="small" text={t('common:progress...')} />
                 </View>
               )}
             </TouchableOpacity>

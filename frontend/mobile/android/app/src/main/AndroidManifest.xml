@@ -21,6 +21,22 @@
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
+      
+      <!-- Deep linking intent filter for reset password URLs -->
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="http" android:host="localhost" android:port="3000" />
+      </intent-filter>
+      
+      <!-- Custom scheme for deep linking -->
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="leaguer" />
+      </intent-filter>
     </activity>
   </application>
 </manifest>

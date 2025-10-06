@@ -101,6 +101,7 @@ const HomeScreen: React.FC = () => {
           onPress={handleLogout}
           fullWidth
           style={styles.logoutButton}
+          loadingTitle={t('auth:logout.button')}
         />
       </ScrollView>
     </>

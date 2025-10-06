@@ -13,6 +13,8 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useTheme } from '../contexts/ThemeContext';
 import SocialAuthService, { SocialAuthResult } from '../services/SocialAuthService';
 
@@ -44,36 +46,46 @@ const SocialLoginButton: React.FC<SocialLoginButtonProps> = ({
     switch (provider) {
       case 'google':
         return {
-          title: t('auth:oauth.signInWithGoogle'),
-          icon: '🔍', // Replace with actual Google icon
-          backgroundColor: '#4285F4',
+          title: t('auth:oauth.signInWithGoogle', { defaultValue: t('auth:oauth.google', { defaultValue: 'Continue with Google' }) }),
+          icon: (
+            <AntDesign name="google" size={18} color="#FFFFFF" />
+          ),
+          backgroundColor: '#DB4437', // Google Red
           textColor: '#FFFFFF',
+          borderColor: '#C33D32',
           available: socialAuthService.isGoogleSignInAvailable(),
-        };
+        } as const;
       case 'facebook':
         return {
-          title: t('auth:oauth.signInWithFacebook'),
-          icon: '📘', // Replace with actual Facebook icon
+          title: t('auth:oauth.signInWithFacebook', { defaultValue: t('auth:oauth.facebook', { defaultValue: 'Continue with Facebook' }) }),
+          icon: (
+            <FontAwesome name="facebook" size={18} color="#FFFFFF" />
+          ),
           backgroundColor: '#1877F2',
           textColor: '#FFFFFF',
+          borderColor: '#1877F2',
           available: socialAuthService.isFacebookSignInAvailable(),
-        };
+        } as const;
       case 'apple':
         return {
-          title: t('auth:oauth.signInWithApple'),
-          icon: '🍎', // Replace with actual Apple icon
+          title: t('auth:oauth.signInWithApple', { defaultValue: t('auth:oauth.apple', { defaultValue: 'Continue with Apple' }) }),
+          icon: (
+            <AntDesign name="apple1" size={18} color="#FFFFFF" />
+          ),
           backgroundColor: '#000000',
           textColor: '#FFFFFF',
+          borderColor: '#000000',
           available: socialAuthService.isAppleSignInAvailable(),
-        };
+        } as const;
       default:
         return {
-          title: 'Unknown Provider',
-          icon: '❓',
+          title: t('auth:oauth.continueWith', { defaultValue: 'Continue with' }),
+          icon: null,
           backgroundColor: colors.surface,
           textColor: colors.text,
+          borderColor: colors.border ?? '#E0E0E0',
           available: false,
-        };
+        } as const;
     }
   };
 
@@ -122,12 +134,15 @@ const SocialLoginButton: React.FC<SocialLoginButtonProps> = ({
 
   const buttonOpacity = (disabled || isLoading) ? 0.6 : 1;
 
+  const contentColorStyles = { color: config.textColor } as const;
+
   return (
     <TouchableOpacity
       style={[
         styles.button,
         {
           backgroundColor: config.backgroundColor,
+          borderColor: (config as any).borderColor,
           opacity: buttonOpacity,
         },
         fullWidth && styles.fullWidth,
@@ -145,13 +160,13 @@ const SocialLoginButton: React.FC<SocialLoginButtonProps> = ({
             style={styles.icon}
           />
         ) : (
-          <Text style={[styles.icon, { color: config.textColor }]}>
+          <View style={[styles.icon, styles.iconContainer]}>
             {config.icon}
-          </Text>
+          </View>
         )}
         
-        <Text style={[styles.title, { color: config.textColor }]}>
-          {isLoading ? t('common:app.loading') : config.title}
+        <Text style={[styles.title, contentColorStyles]}>
+          {isLoading ? t('common:app.progress...') : config.title} 
         </Text>
       </View>
     </TouchableOpacity>
@@ -164,6 +179,12 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     marginVertical: 4,
+    borderWidth: 1,
+    shadowColor: '#000000',
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
   },
   fullWidth: {
     width: '100%',
@@ -174,9 +195,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   icon: {
-    fontSize: 18,
     marginRight: 12,
   },
+  iconContainer: { justifyContent: 'center', alignItems: 'center' },
   title: {
     fontSize: 16,
     fontWeight: '600',

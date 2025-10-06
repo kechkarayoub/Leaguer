@@ -46,6 +46,7 @@
     "open": "Ouvrir",
     "or": "ou",
     "previous": "Précédent",
+    "progress...": "En cours...",
     "refresh": "Rafraîchir",
     "remember": "Se souvenir de moi",
     "remove": "Supprimer",
@@ -595,6 +596,7 @@
       "title": "Vos Droits en Matière de Confidentialité"
     }
   },
+  "progress...": "En cours...",
   "terms": {
     "acceptance": {
       "text": "En créant un compte, en accédant ou en utilisant nos services, vous reconnaissez avoir lu, compris et acceptez d'être lié par ces Conditions et notre Politique de confidentialité. Si vous n'acceptez pas ces Conditions, vous ne pouvez pas utiliser nos services.",

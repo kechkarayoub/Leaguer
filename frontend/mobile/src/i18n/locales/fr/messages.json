@@ -1,0 +1,7 @@
+{
+  "loginFailed": "Échec de la connexion",
+  "loginFailedTitle": "Échec de la connexion",
+  "loginSuccess": "Connexion réussie",
+  "loginSuccessRemembered": "Connexion réussie (mémorisée)",
+  "loginSuccessTitle": "Bon retour!"
+}

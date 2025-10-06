@@ -25,7 +25,7 @@ import SplashScreen from './src/components/SplashScreen';
 import AppNavigation from './src/navigation/AppNavigation';
 
 // Hooks
-import useAuth from './src/hooks/useAuth';
+import useAuth, { AuthProvider } from './src/hooks/useAuth';
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -36,7 +36,7 @@ const queryClient = new QueryClient({
       gcTime: 10 * 60 * 1000, // 10 minutes
     },
     mutations: {
-      retry: 1,
+      retry: false, // Disable retry for mutations to prevent double submissions
     },
   },
 });
@@ -121,11 +121,13 @@ const styles = StyleSheet.create({
 const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <LanguageProvider>
-        <ThemeProvider>
-          <AppContent />
-        </ThemeProvider>
-      </LanguageProvider>
+      <AuthProvider>
+        <LanguageProvider>
+          <ThemeProvider>
+            <AppContent />
+          </ThemeProvider>
+        </LanguageProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };

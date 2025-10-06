@@ -1,0 +1,2 @@
+Add required permissions:
+    android.permission.CAMERA, READ_MEDIA_IMAGES (API 33+) or READ_EXTERNAL_STORAGE (<=32) in AndroidManifest.xml.

@@ -190,6 +190,7 @@ interface StyledButtonProps {
   disabled?: boolean;
   fullWidth?: boolean;
   style?: ViewStyle;
+  loadingTitle: string;
 }
 
 export const StyledButton: React.FC<StyledButtonProps> = (props) => {

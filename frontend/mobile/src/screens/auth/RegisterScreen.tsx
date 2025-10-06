@@ -4,7 +4,7 @@
  * Enhanced user registration screen with complete form validation and social auth
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -28,6 +28,8 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import SocialLoginButton from '../../components/SocialLoginButton';
 import AppHeader from '../../components/AppHeader';
 import { useTheme } from '../../contexts/ThemeContext';
+// Add a lightweight toast; if you have a global toast util replace this with it
+import { ToastAndroid, Alert, Platform as RNPlatform } from 'react-native';
 import { useLanguage } from '../../contexts/LanguageContext';
 import useAuth from '../../hooks/useAuth';
 import { RegisterCredentials, SocialLoginCredentials } from '../../types/auth.types';
@@ -44,8 +46,12 @@ const RegisterScreen: React.FC = () => {
   const { register, socialLogin, isRegistering } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  // Guard to avoid double submission (fast double tap or secondary trigger)
+  const submittingRef = useRef(false);
 
-  const registerSchema = yup.object({
+  type RegisterFormValues = RegisterCredentials; // mirror web version
+
+  const registerSchema: yup.ObjectSchema<any> = yup.object({
     firstName: yup
       .string()
       .required(t('auth:validation.firstNameRequired'))
@@ -77,7 +83,8 @@ const RegisterScreen: React.FC = () => {
     handleSubmit,
     formState: { errors },
     setError,
-  } = useForm<RegisterCredentials>({
+    watch,
+  } = useForm<RegisterFormValues>({
     resolver: yupResolver(registerSchema),
     defaultValues: {
       firstName: '',
@@ -89,23 +96,106 @@ const RegisterScreen: React.FC = () => {
     },
   });
 
-  const onSubmit = async (data: RegisterCredentials) => {
+  const passwordValue = watch('password');
+
+  const getPasswordStrength = (pwd: string) => {
+    let score = 0;
+    if (pwd.length >= 8) score++;
+    if (/[A-Z]/.test(pwd)) score++;
+    if (/[a-z]/.test(pwd)) score++;
+    if (/[0-9]/.test(pwd)) score++;
+    if (/[^A-Za-z0-9]/.test(pwd)) score++;
+    return score; // 0 - 5
+  };
+  const passwordStrength = getPasswordStrength(passwordValue || '');
+
+  const onSubmit = async (data: RegisterFormValues) => {
+    // Best practice: lightweight client-side lock to avoid accidental double POST
+    if (submittingRef.current || isRegistering) {
+      console.log('Registration already in progress, ignoring duplicate submission');
+      return;
+    }
+    
+    submittingRef.current = true;
+    
+    // Generate a unique request ID for tracking
+    const requestId = `reg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    console.log(`Starting registration request: ${requestId}`);
+    
     try {
-      await register(data);
+      await register({
+        email: data.email.trim(),
+        password: data.password,
+        firstName: data.firstName.trim(),
+        lastName: data.lastName.trim(),
+        username: data.username.trim(),
+        confirmPassword: data.confirmPassword,
+      });
+      
+      console.log(`Registration successful: ${requestId}`);
       navigation.navigate('Login');
     } catch (error: any) {
-      console.error('Registration error:', error);
+      console.log(`Registration failed: ${requestId}`, error);
       
-      if (error.response?.status === 409) {
-        const errorData = error.response.data;
-        if (errorData.field_errors) {
-          Object.keys(errorData.field_errors).forEach((field) => {
-            setError(field as keyof RegisterCredentials, {
-              message: errorData.field_errors[field][0],
-            });
-          });
+      // Normalize potential response structure
+      const errorData = error?.response?.data || {};
+      // Map backend keys (possibly snake_case) to our form field names
+      const keyMap: Record<string, keyof RegisterCredentials> = {
+        first_name: 'firstName',
+        last_name: 'lastName',
+        username: 'username',
+        email: 'email',
+        password: 'password',
+        confirm_password: 'confirmPassword',
+      };
+
+      let fieldErrorsFound = 0;
+      const fieldErrorsContainer = errorData.field_errors || errorData.errors || errorData;
+      if (fieldErrorsContainer && typeof fieldErrorsContainer === 'object') {
+        Object.entries(fieldErrorsContainer).forEach(([rawKey, val]) => {
+          const mappedKey = keyMap[rawKey];
+          if (mappedKey && Array.isArray(val) && val.length > 0) {
+            fieldErrorsFound++;
+            setError(mappedKey, { message: String(val[0]) });
+          } else if (mappedKey && typeof val === 'string') {
+            fieldErrorsFound++;
+            setError(mappedKey, { message: val });
+          }
+        });
+      }
+
+      // Handle global / non-field error arrays or strings
+      const globalMessages: string[] = [];
+      const possibleGlobalKeys = ['non_field_errors', 'detail', 'message'];
+      possibleGlobalKeys.forEach((k) => {
+        const v = errorData[k];
+        if (Array.isArray(v)) {
+          globalMessages.push(...v.map(String));
+        } else if (typeof v === 'string') {
+          globalMessages.push(v);
+        }
+      });
+
+      // If username duplication error comes under a different structure like { username: ['...'] } we already handled.
+      // Show toast only if no field errors OR still want to surface a global context message.
+      const toastMessage =
+        globalMessages[0] ||
+        (!fieldErrorsFound
+          ? t('auth:register.failureGeneric', { defaultValue: 'Registration failed. Please correct highlighted fields.' })
+          : null);
+
+      if (toastMessage) {
+        if (RNPlatform.OS === 'android') {
+          ToastAndroid.show(toastMessage, ToastAndroid.LONG);
+        } else {
+          Alert.alert(t('auth:register.title'), toastMessage);
         }
       }
+
+      // (Optional) Add debug logging here if needed
+    } finally {
+      submittingRef.current = false;
+      console.log(`Registration request completed: ${requestId}`);
     }
   };
 
@@ -303,6 +393,31 @@ const RegisterScreen: React.FC = () => {
                 )}
               />
 
+              {/* Password Strength Indicator */}
+              {passwordValue?.length > 0 && (
+                <View style={styles.passwordStrengthContainer}>
+                  <View style={styles.passwordStrengthBar}>
+                    {Array.from({ length: 4 }).map((_, idx) => {
+                      const active = passwordStrength > idx;
+                      const barStyle = [
+                        styles.passwordStrengthSegment,
+                        active && (passwordStrength <= 2
+                          ? { backgroundColor: colors.error }
+                          : passwordStrength === 3
+                            ? { backgroundColor: colors.warning }
+                            : { backgroundColor: colors.success }),
+                      ];
+                      return <View key={idx} style={barStyle} />;
+                    })}
+                  </View>
+                  <Text style={[styles.passwordStrengthText, { color: colors.textSecondary }]}> 
+                    {passwordStrength <= 2 ? t('auth:register.passwordWeak', { defaultValue: 'Weak password' })
+                      : passwordStrength === 3 ? t('auth:register.passwordMedium', { defaultValue: 'Medium strength' })
+                        : t('auth:register.passwordStrong', { defaultValue: 'Strong password' })}
+                  </Text>
+                </View>
+              )}
+
               <Controller
                 control={control}
                 name="confirmPassword"
@@ -328,6 +443,7 @@ const RegisterScreen: React.FC = () => {
                 )}
               />
 
+
               {/* Create Account Button */}
               <CustomButton
                 title={t('auth:register.createAccountButton')}
@@ -337,7 +453,8 @@ const RegisterScreen: React.FC = () => {
                 variant="primary"
                 size="md"
                 fullWidth
-                style={styles.submitButton}
+                style={[styles.submitButton]}
+                loadingTitle={t('auth:register.creatingAccount')}
               />
             </View>
 
@@ -355,7 +472,7 @@ const RegisterScreen: React.FC = () => {
           </View>
         </ScrollView>
 
-        {isRegistering && <LoadingSpinner visible overlay />}
+        {isRegistering && <LoadingSpinner text={t('common:progress...')} visible overlay />}
       </KeyboardAvoidingView>
     </>
   );
@@ -414,9 +531,11 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   submitButton: {
-    marginTop: 16,
-    backgroundColor: '#007AFF', // Ensure visible button
+    marginTop: 8,
+    backgroundColor: '#007AFF', // match LoginScreen style
     minHeight: 44,
+    textAlign: 'center',
+    borderRadius: 8,
   },
   footer: {
     flexDirection: 'row',
@@ -429,6 +548,25 @@ const styles = StyleSheet.create({
   linkText: {
     fontSize: 16,
     fontWeight: '600',
+  },
+  passwordStrengthContainer: {
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  passwordStrengthBar: {
+    flexDirection: 'row',
+    gap: 6,
+    marginBottom: 4,
+  },
+  passwordStrengthSegment: {
+    flex: 1,
+    height: 6,
+    backgroundColor: '#D1D5DB',
+    borderRadius: 4,
+  },
+  passwordStrengthText: {
+    fontSize: 12,
+    fontWeight: '500',
   },
 });
 

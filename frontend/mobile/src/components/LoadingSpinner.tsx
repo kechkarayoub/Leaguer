@@ -12,6 +12,8 @@ import {
   Text,
   Modal,
 } from 'react-native';
+
+import { t } from 'i18next';
 import { useTheme } from '../contexts/ThemeContext';
 
 interface LoadingSpinnerProps {
@@ -29,7 +31,7 @@ interface LoadingSpinnerProps {
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   visible = true,
-  text = 'Loading...',
+  text = t('common:loading'),
   size = 'large',
   overlay = false,
   color,
