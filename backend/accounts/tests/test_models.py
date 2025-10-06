@@ -12,6 +12,7 @@ from django.test import TestCase
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.utils.timezone import now
+from django.utils.translation import gettext_lazy as _
 from rest_framework.test import APITestCase
 
 from accounts.exceptions import (AuthenticationException, EmailSendingException,
@@ -499,7 +500,7 @@ class PasswordResetTestCase(TestCase):
         is_valid, user, error_message = validate_password_reset_token(uid, token)
         self.assertFalse(is_valid)
         self.assertIsNone(user)
-        self.assertEqual(error_message, "Token has expired")
+        self.assertEqual(error_message, _("Token has expired"))
     def test_validate_password_reset_token_invalid_token(self):
         """Test password reset token validation with invalid token."""
         # Create token with invalid signature

@@ -69,7 +69,7 @@ def send_verification_email(user, handle_send_email_error=False, do_not_mock_api
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     # Build the verification URL
     # This url is for frontend and it not the backend url: accounts/verify-email
-    verification_url = f"{settings.FRONTEND_ENDPOINT}/verify-email?uid={uid}&token={token}"
+    verification_url = f"{settings.FRONTEND_ENDPOINT}/accounts/verify-email?uid={uid}&token={token}"
     # Render the email content
     subject = _("Verify Your Email Address")
     # Get emails common context
@@ -250,7 +250,7 @@ def validate_password_reset_token(uid, token): # pylint: disable=too-many-return
     current_timestamp = now().timestamp()
     token_age_hours = (current_timestamp - timestamp) / 3600
     if token_age_hours > 24:  # 24 hours expiration
-        return False, None, "Token has expired"
+        return False, None, _("Token has expired")
     # Verify the token
     if not default_token_generator.check_token(user, actual_token):
         return False, None, "Invalid token"

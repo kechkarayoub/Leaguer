@@ -61,6 +61,7 @@ class SendVerificationEmailLinkViewTest(TestCase):
             data.get("message"),
             "Your email is already verified. Try to sign in."
         )
+        self.assertTrue(data.get("already_verified"))
         self.assertFalse(data.get("success"))
     def test_send_verification_email_link_success(self):
         """Test sending verification email link success"""
@@ -323,12 +324,42 @@ class SignInViewTest(TestCase):
         self.user.save()
         response = self.client.post('/accounts/sign-in/',{'selected_language': 'en',
                         'email_or_username': "testuser", 'password': "password123"})
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
         data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(data.get("message"), "Your email is not yet verified. "
                          "Please verify your email address before sign in.")
-        self.assertEqual(data.get("user_id"), 1)
+        self.assertEqual(data.get("user_id"), self.user.id)
+        self.assertEqual(data.get("email"), self.user.email)
+        self.assertTrue(data.get("email_verification_required"))
         self.assertFalse(data.get("success"))
+    def test_sign_in_auto_validate_email_when_verification_disabled(self):
+        """ Test sign in auto validates email when email verification is disabled """
+        # This test verifies the new behavior where email gets auto-validated
+        # when ENABLE_EMAIL_VERIFICATION is False
+        with self.settings(ENABLE_EMAIL_VERIFICATION=False):
+            # Create a user with unvalidated email
+            user = User.objects.create_user(
+                username='testuser2',
+                email='testuser2@example.com',
+                password='password123'
+            )
+            user.is_user_email_validated = False
+            user.save()
+            
+            response = self.client.post('/accounts/sign-in/', {
+                'selected_language': 'en',
+                'email_or_username': "testuser2", 
+                'password': "password123"
+            })
+            self.assertEqual(response.status_code, 200)
+            data = json.loads(response.content.decode('utf-8'))
+            self.assertTrue(data.get("success"))
+            self.assertTrue("access_token" in data)
+            self.assertTrue("refresh_token" in data)
+            
+            # Verify that the user's email was automatically validated
+            user.refresh_from_db()
+            self.assertTrue(user.is_user_email_validated)
     def test_sign_in_success(self):
         """ Test sign in success """
         response = self.client.post('/accounts/sign-in/', {'selected_language': 'en',
@@ -369,26 +400,29 @@ class EmailVerificationTests(TestCase):
             self.assertEqual(2, 1 + 1)
             return
         _, (uid, token) = send_verification_email(self.user)
-        verified, already_verified, expired_token = verify_user_email(uid, token)
+        verified, already_verified, expired_token, new_verification_email_sent = verify_user_email(uid, token)
         self.assertTrue(verified)
         self.assertFalse(already_verified)
         self.assertFalse(expired_token)
+        self.assertFalse(new_verification_email_sent)
         self.user = User.objects.get(pk=self.user.id)
         self.assertTrue(self.user.is_user_email_validated)
-        verified, already_verified, expired_token = verify_user_email(uid, token)
+        verified, already_verified, expired_token, new_verification_email_sent = verify_user_email(uid, token)
         self.assertTrue(verified)
         self.assertTrue(already_verified)
         self.assertFalse(expired_token)
+        self.assertFalse(new_verification_email_sent)
     def test_verify_user_email_invalid(self):
         """Test verifying user email with invalid token."""
         if settings.ENABLE_EMAIL_VERIFICATION is False:
             self.assertEqual(2, 1 + 1)
             return
         _, (uid, _token) = send_verification_email(self.user)
-        verified, already_verified, expired_token = verify_user_email(uid, 'invalid-token')
+        verified, already_verified, expired_token, new_verification_email_sent = verify_user_email(uid, 'invalid-token')
         self.assertFalse(verified)
         self.assertFalse(already_verified)
         self.assertFalse(expired_token)
+        self.assertFalse(new_verification_email_sent)
     def test_verify_user_email_expired(self):
         """Test verifying user email with expired token."""
         if settings.ENABLE_EMAIL_VERIFICATION is False:
@@ -400,10 +434,26 @@ class EmailVerificationTests(TestCase):
         yesterday_timestamp = (now() - datetime.timedelta(days=1)).timestamp()
         token_date[1] = str(yesterday_timestamp)
         token = "_*_".join(token_date)
-        verified, already_verified, expired_token = verify_user_email(uid, token)
+        verified, already_verified, expired_token, new_verification_email_sent = verify_user_email(uid, token)
         self.assertFalse(verified)
         self.assertFalse(already_verified)
         self.assertTrue(expired_token)
+        self.assertFalse(new_verification_email_sent)
+    def test_verify_user_email_resend_verification(self):
+        """Test verifying user email with resend_verification_email=True."""
+        if settings.ENABLE_EMAIL_VERIFICATION is False:
+            self.assertEqual(2, 1 + 1)
+            return
+        _, (uid, token) = send_verification_email(self.user)
+        # Test that resend_verification_email=True sends new email and returns new_verification_email_sent=True
+        verified, already_verified, expired_token, new_verification_email_sent = verify_user_email(uid, token, resend_verification_email=True)
+        self.assertFalse(verified)
+        self.assertFalse(already_verified)
+        self.assertFalse(expired_token)
+        self.assertTrue(new_verification_email_sent)
+        # Email should still not be verified after resend
+        self.user = User.objects.get(pk=self.user.id)
+        self.assertFalse(self.user.is_user_email_validated)
     def test_verify_email_view(self):
         """Test the email verification view."""
         if settings.ENABLE_EMAIL_VERIFICATION is False:
@@ -426,6 +476,7 @@ class EmailVerificationTests(TestCase):
         data = json.loads(response.content.decode('utf-8'))
         message = data.get("message")
         self.assertEqual(message, "L'email a déjà été vérifié.")
+        self.assertTrue(data.get("already_verified"))
         User.objects.filter(pk=self.user.id).update(is_user_email_validated=False)
         response = self.client.get('/accounts/verify-email/',
             {'uid': uid, 'token': token, 'resend_verification_email': "true"})
@@ -434,8 +485,8 @@ class EmailVerificationTests(TestCase):
         self.assertFalse(self.user.is_user_email_validated)
         data = json.loads(response.content.decode('utf-8'))
         message = data.get("message")
-        self.assertEqual(message, "Jeton expiré. Un nouvel e-mail de "
-                         "vérification sera envoyé à votre adresse e-mail.")
+        self.assertEqual(message, "Un nouvel e-mail de vérification a été envoyé.")
+        self.assertTrue(data.get("new_verification_email_sent"))
     def test_verify_email_view_en(self):
         """Test the email verification view for English."""
         if settings.ENABLE_EMAIL_VERIFICATION is False:
@@ -458,8 +509,8 @@ class EmailVerificationTests(TestCase):
             {'uid': uid, 'token': token, 'resend_verification_email': "true"})
         data = json.loads(response.content.decode('utf-8'))
         message = data.get("message")
-        self.assertEqual(message, "Expired token. A new verification "
-                         "email will be sent to your email address.")
+        self.assertEqual(message, "A new verification email has been sent.")
+        self.assertTrue(data.get("new_verification_email_sent"))
     def test_verify_email_view_ar(self):
         """Test the email verification view for Arabic."""
         if settings.ENABLE_EMAIL_VERIFICATION is False:
@@ -482,8 +533,8 @@ class EmailVerificationTests(TestCase):
             {'uid': uid, 'token': token, 'resend_verification_email': "true"})
         data = json.loads(response.content.decode('utf-8'))
         message = data.get("message")
-        self.assertEqual(message, "انتهت صلاحية الرمز. سيتم إرسال رسالة تحقق جديدة"
-                         " إلى عنوان بريدك الإلكتروني.")
+        self.assertEqual(message, "تم إرسال رسالة تحقق جديدة.")
+        self.assertTrue(data.get("new_verification_email_sent"))
     def test_verify_email_view_missing_params(self):
         """Test missing parameters"""
         if settings.ENABLE_EMAIL_VERIFICATION is False:
@@ -504,6 +555,27 @@ class EmailVerificationTests(TestCase):
         data = json.loads(response.content.decode('utf-8'))
         message = data.get("message")
         self.assertEqual(message, "Paramètres requis manquants.")
+    def test_verify_email_view_expired_token(self):
+        """Test verify_email view with expired token returns expired field."""
+        if settings.ENABLE_EMAIL_VERIFICATION is False:
+            self.assertEqual(2, 1 + 1)
+            return
+        _, (uid, token) = send_verification_email(self.user)
+        # Modify token to be expired
+        now = datetime.datetime.now()
+        token_date = token.split("_*_")
+        yesterday_timestamp = (now() - datetime.timedelta(days=1)).timestamp()
+        token_date[1] = str(yesterday_timestamp)
+        expired_token = "_*_".join(token_date)
+        
+        response = self.client.get('/accounts/verify-email/',
+                                   {'uid': uid, 'token': expired_token})
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content.decode('utf-8'))
+        message = data.get("message")
+        self.assertEqual(message, "Jeton expiré. Envoyez un nouvel e-mail de vérification à "
+                         "votre adresse e-mail.")
+        self.assertTrue(data.get("expired"))
 
 
 class PhoneNumberVerificationTests(TestCase):

@@ -156,6 +156,7 @@ def verify_user_email(uid, token_, resend_verification_email=False):
             (True if verification is successful, False otherwise),
             (True if already verified, False otherwise),
             (True if not verified and expired, False otherwise),
+            (True if not a new verification email sent, False otherwise),
         ).
     """
     # Get user's token and timestamp str from the token in request
@@ -170,20 +171,22 @@ def verify_user_email(uid, token_, resend_verification_email=False):
     user = User.objects.get(pk=uid)
     # The email is already validated
     if user.is_user_email_validated:
-        return True, True, False
+        return True, True, False, False
     # The resend_verification_email is True or the token is expired (not the same day)
-    if resend_verification_email or (
+    if resend_verification_email:
+        send_verification_email(user)
+        return False, False, False, True
+    if (
         date_token and date_token.strftime("%Y-%m-%d") != now().strftime("%Y-%m-%d")
     ):
-        send_verification_email(user)
-        return False, False, True
+        return False, False, True, False
     # If the token is valid, the email address will be validated
     if default_token_generator.check_token(user, token):
         user.is_user_email_validated = True
         user.save()
-        return True, False, False
+        return True, False, False, False
     # If the token is not valid, the email address will not be validated
-    return False, False, False
+    return False, False, False, False
 
 
 def verify_email(request):
@@ -205,10 +208,12 @@ def verify_email(request):
                                                                                  "true"]
     uid_ = urlsafe_base64_decode(uid).decode()
     user = User.objects.get(pk=uid_)
+    selected_language = request.GET.get('selected_language') or user.current_language or 'en'
     # Activate user's current language for translations
-    activate(user.current_language)
+    activate(selected_language)
     try:
-        verified, already_verified, expired_token = verify_user_email(uid, token,
+        (verified, already_verified, expired_token,
+         new_verification_email_sent) = verify_user_email(uid, token,
                             resend_verification_email=resend_verification_email)
     except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
         # Save error in the log
@@ -216,12 +221,19 @@ def verify_email(request):
         return JsonResponse({"message": _("Invalid verification link.")}, status=400)
     if verified:
         if already_verified:
-            return JsonResponse({"message": _("Email already verified.")})
+            return JsonResponse({"message": _("Email already verified."),
+                                 "already_verified": True})
         return JsonResponse({"message": _("Email verified successfully.")})
+    if resend_verification_email and new_verification_email_sent:
+        return JsonResponse({
+            "message": _("A new verification email has been sent."),
+            "new_verification_email_sent": True
+        }, status=400)
     if expired_token:
         return JsonResponse({
-            "message": _("Expired token. A new verification email will be sent to "
-                            "your email address.")
+            "message": _("Expired token. Send a new verification email to "
+                            "your email address."),
+            "expired": True
         }, status=400)
     return JsonResponse({"message": _("Invalid token.")}, status=400)
 

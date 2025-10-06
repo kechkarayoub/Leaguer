@@ -379,11 +379,11 @@ frontend_flutter/ios/Runner/GeneratedPluginRegistrant.*
 
 
 # Firebase configuration
-frontend_flutter/android/app/google-services.json
-frontend_flutter/ios/Runner/GoogleService-Info.plist
-frontend_flutter/ios/GoogleService-Info.plist
-frontend_flutter/macos/Runner/GoogleService-Info.plist
-frontend_flutter/macos/GoogleService-Info.plist
+frontend/mobile/android/app/google-services.json
+frontend/mobile/ios/Runner/GoogleService-Info.plist
+frontend/mobile/ios/GoogleService-Info.plist
+frontend/mobile/macos/Runner/GoogleService-Info.plist
+frontend/mobile/macos/GoogleService-Info.plist
 
 
 # Miscellaneous

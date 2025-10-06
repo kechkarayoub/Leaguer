@@ -69,6 +69,7 @@ class SendVerificationEmailLinkView(APIView):
             return Response(
                 {
                     "message": _("Your email is already verified. Try to sign in."),
+                    "already_verified": True,
                     "success": False,
                 },
                 status=status.HTTP_401_UNAUTHORIZED
@@ -146,18 +147,24 @@ class SignInView(APIView):
                     },
                     status=status.HTTP_401_UNAUTHORIZED
                 )
-            if user.is_user_email_validated is False:
-                return Response(
-                    {
-                        "message": _("Your email is not yet verified. Please verify "
-                                     "your email address before sign in."),
-                        "success": False,
-                        "user_id": user.id,
-                    },
-                    status=status.HTTP_401_UNAUTHORIZED
-                )
             user = authenticate(request, username=user.username, password=password)
             if user is not None:
+                if user.is_user_email_validated is False:
+                    if getattr(settings, 'ENABLE_EMAIL_VERIFICATION', False):
+                        return Response(
+                            {
+                                "message": _("Your email is not yet verified. Please verify "
+                                            "your email address before sign in."),
+                                "success": False,
+                                "user_id": user.id,
+                                "email": user.email,
+                                "email_verification_required": True,
+                            },
+                            status=status.HTTP_403_FORBIDDEN
+                        )
+                    else:
+                        user.is_user_email_validated = True
+                        user.save()
                 if user.current_language != current_language:
                     activate(user.current_language)
                 refresh = RefreshToken.for_user(user)
@@ -413,6 +420,7 @@ class ResetPasswordView(APIView):
 class SignUpView(APIView):
     """Handles user registration."""
     permission_classes = [AllowAny]
+
     def post(self, request, *args, **kwargs):
         """
         Handles user registration.
@@ -434,6 +442,7 @@ class SignUpView(APIView):
         data['username'] = data.get('username', '').strip()
         data['email'] = data.get('email', '').strip()
         data['password'] = data.get('password', '')
+
         # Profile image upload is currently disabled; enable if needed
         # profile_image = request.FILES.get('profile_image')
         # image_url = None
@@ -444,6 +453,7 @@ class SignUpView(APIView):
         #     logger.info(f"file_path: {file_path}")
         # if image_url:
         #     data['image_url'] = image_url
+
         serializer = UserSerializer(data=data)
         user = None
         if serializer.is_valid():

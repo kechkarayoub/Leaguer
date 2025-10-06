@@ -278,7 +278,7 @@ class EmailVerificationService:
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             # Build verification URL
-            verification_url = f"{settings.FRONTEND_ENDPOINT}/verify-email/{uid}/{token}/"
+            verification_url = f"{settings.FRONTEND_ENDPOINT}/accounts/verify-email/{uid}/{token}/"
             # Prepare email context
             context = get_email_base_context()
             context.update({
